@@ -1,0 +1,1 @@
+https://realpython.com/qt-designer-python/#building-main-windows-with-qt-designer-and-python

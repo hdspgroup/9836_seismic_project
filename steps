@@ -1,0 +1,6 @@
+1.  python -m pip install --upgrade pip
+2. sudo apt install python3-dev
+3. sudo apt install libfftw3-dev
+4. pip install cython
+5. install openblas: sudo apt-get install libopenblas-dev
+6. pip install scipy numpy sporco bm3d scikit-image
