@@ -6,7 +6,7 @@ from scipy.sparse.linalg import LinearOperator
 
 from bm3d import bm3d_rgb
 from bm3d import bm3d
-
+# Paul added this line
 from sporco.linalg import _cg_wrapper
 from ppp import PPPConsensus
 from sporco.interp import bilinear_demosaic
