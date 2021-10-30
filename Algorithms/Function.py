@@ -16,6 +16,7 @@ def idct2():
     return idct2_function
 
 class Operator:
+    """ Class with operators and metrics"""
   def __init__(self, H, m,n,operator_dir,operator_inv):
     self.H = H
     self.m = m
@@ -52,6 +53,10 @@ def PSNR(original, compressed):
 
 
 class Algorithms:
+    """
+    Class with algorithms used in seismic reconstruction
+    Solvers: FISTA, 
+    """
     def __init__(self, x, H, operator_dir, operator_inv):
 
         # ------- change the dimention of the inputs image --------
