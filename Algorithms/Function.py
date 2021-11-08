@@ -100,6 +100,12 @@ class Algorithms:
         self.A = Operator(self.H, self.m, self.n, self.operator_dir, self.operator_inv)
 
     def measurements(self):
+        '''
+        Operator measurement models the subsampled acquisition process given a
+        sampling matrix H
+        :return: measures Y
+        '''
+
         return self.H * np.squeeze(self.x.reshape(-1))
 
     def FISTA(self, lamnda, mu, max_itr):
