@@ -20,12 +20,6 @@ if case == 0:
 
 # ------------------GAP--------------
 if case == 1:
-    # ------for loading the H matrix
-    #H0 = scipy.io.loadmat('H.mat')
-    #H = H0['H']
-    #HtH_i = H0['HtH_i']
-    #cort = H0['cort'].ravel() - 1
-
     H = 0.75
     Alg = Algorithms(x,H, 'DCT2D', 'IDCT2D')
     tau = 1e-0
