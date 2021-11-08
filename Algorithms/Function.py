@@ -58,7 +58,7 @@ def PSNR(original, compressed):
 class Algorithms:
     def __init__(self, x, H, operator_dir, operator_inv):
 
-        # ------- change the dimention of the inputs image --------
+        # ------- change the dimension of the inputs image --------
         m, n = x.shape
         m = int(2 ** (np.ceil(np.log2(m)) - 1))
         n = int(2 ** (np.ceil(np.log2(n)) - 1))
