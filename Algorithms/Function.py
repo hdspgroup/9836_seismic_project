@@ -16,7 +16,6 @@ def idct2():
     return idct2_function
 
 class Operator:
-    """ Class with operators and metrics"""
   def __init__(self, H, m,n,operator_dir,operator_inv):
     self.H = H
     self.m = m
@@ -53,10 +52,6 @@ def PSNR(original, compressed):
 
 
 class Algorithms:
-    """
-    Class with algorithms used in seismic reconstruction
-    Solvers: FISTA, 
-    """
     def __init__(self, x, H, operator_dir, operator_inv):
 
         # ------- change the dimention of the inputs image --------
@@ -74,7 +69,7 @@ class Algorithms:
         else:
             Nsub = int(np.round(m * (H)))
             # iava = np.random.permutation(m)
-            iava = np.squeeze(loadmat('iava.mat') ['iava']) - 1
+            iava = np.squeeze(loadmat('data/iava.mat') ['iava']) - 1
             self.cort = np.sort(iava [Nsub:])
             iava = np.sort(iava [0:Nsub])
             temp = np.asarray(range(0, int(m * n), m))
@@ -131,13 +126,99 @@ class Algorithms:
             s = x + ((q_old - 1) / (q)) * (x - x_old)
             itr = itr + 1
 
-            residualx = np.linalg.norm(self.x - x_old) / np.linalg.norm(self.x)
+            residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
 
             psnr_val = PSNR(self.operator_inv(s), self.x)
 
             hist [itr, 0] = residualx
             hist [itr, 1] = psnr_val
 
-            print(itr, '\t', hist [itr, 0], '\t', hist [itr, 1], '\n')
+            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1],".3f"), 'dB \n')
 
         return self.operator_inv(s), hist
+
+
+    # ---------------------------------------------GAP----------------------------------------
+    def GAP(self, lamnda, max_itr): # 311021
+
+        y = self.measurements()
+
+        print('---------GAP method---------- \n')
+
+        dim = self.x.shape
+        x = np.zeros(dim)
+        hist = np.zeros((max_itr + 1, 2))
+
+        residualx = 1
+        tol = 1e-2
+
+        print('itr \t ||x-xold|| \t PSNR \n')
+        itr = 0
+        while (itr < max_itr ): #& residualx>tol):
+            x_old = x
+
+            temp = self.A.direct(x) - y
+
+            grad = self.A.transpose(temp)
+            z = x - grad
+
+            # proximal
+            x = soft_threshold(z, lamnda)
+            itr = itr + 1
+
+            residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
+
+            psnr_val = PSNR(self.operator_inv(x), self.x)
+
+            hist[itr, 0] = residualx
+            hist[itr, 1] = psnr_val
+
+            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1],".3f"), 'dB \n')
+
+        return self.operator_inv(x), hist
+
+    #---------------------------------------------
+    def TwIST(self, lamnda, alpha, beta, max_itr):
+
+        y = self.measurements()
+
+        print('---------TwIST method---------- \n')
+
+        dim = self.x.shape
+        x = np.zeros(dim)
+        hist = np.zeros((max_itr + 1, 2))
+
+        residualx = 1
+        tol = 1e-3
+
+        print('itr \t ||x-xold|| \t PSNR \n')
+        itr = 0
+        x_old = x
+
+        while (itr < max_itr ): #& residualx <= tol):
+
+            temp = self.A.direct(x) - y
+
+            grad = self.A.transpose(temp)
+            z = x - grad
+
+            # proximal
+            s = soft_threshold(z, lamnda)
+
+            # Actualizacion
+            temp = (1 - alpha)* x_old + (alpha - beta)* x + beta * s
+            x_old = x
+            x = temp
+
+            itr = itr + 1
+
+            residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
+
+            psnr_val = PSNR(self.operator_inv(x), self.x)
+
+            hist[itr, 0] = residualx
+            hist[itr, 1] = psnr_val
+
+            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1],".3f"), 'dB \n')
+
+        return self.operator_inv(x), hist
