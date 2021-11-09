@@ -5,10 +5,10 @@ from Function import *
 import scipy
 #----------------- --------------------
 x = np.load('data/data.npy')
-maxiter = 1000
+maxiter = 100
 
 # Select the Algorithm
-case = 2 # opt: 0,1,2
+case = 3 # opt: 0,1,2
 #----------------- FISTA --------------------
 if case == 0:
     H = 0.75
@@ -35,6 +35,20 @@ if case == 2:
     tau = 0.5
 
     x_result, hist = Alg.TwIST(tau, alpha, beta, maxiter)
+
+# --------------- ADMM -----------------
+if case == 3:
+    H = 0.75
+    Alg = Algorithms(x,H, 'DCT2D', 'IDCT2D')
+    # default parameters
+    # step_size = 1e-2
+    # weight  = 0.5
+    # eta = 1e-1
+    rho = 0.5
+    gamma = 1
+    lamnda = 0.0078
+
+    x_result, hist = Alg.ADMM(rho, gamma, lamnda, maxiter)
 # --------------------------------
 
 #-------------- Visualization ----------------

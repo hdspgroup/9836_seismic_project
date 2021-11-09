@@ -4,6 +4,12 @@ from skimage import transform
 from scipy.io import loadmat
 from scipy.sparse import csr_matrix
 import inspect
+import scipy.sparse.linalg as ln
+from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
+                                 denoise_wavelet, estimate_sigma)
+import time
+# from skimage.measure import (compare_psnr, compare_ssim)
+
 
 def dct2():
     def dct2_function(x):
@@ -35,6 +41,10 @@ class Operator:
       y = self.H * np.squeeze(theta.reshape(-1))  # H * D * x
       return  y
 
+
+
+
+# -------------------------------------------------------------------------
 def soft_threshold(x,t):
     tmp = (np.abs(x)-t)
     tmp = (tmp+np.abs(tmp))/2
@@ -222,3 +232,63 @@ class Algorithms:
             print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1],".3f"), 'dB \n')
 
         return self.operator_inv(x), hist
+
+    def ADMM(self, rho, gamma, lamnda, max_itr):
+
+        y = self.measurements()
+
+        print('---------ADMM method---------- \n')
+
+        hist = np.zeros((max_itr + 1, 2))
+        dim = self.x.shape
+        x = np.zeros(dim)
+
+        begin_time = time.time()
+
+        residualx = 1
+        tol = 1e-3
+
+        v = x.ravel()
+        u = x.ravel()
+
+        print('itr \t ||x-xold|| \t PSNR \n')
+        itr = 0
+
+        HtY = self.A.transpose(y)
+
+        while (itr < max_itr ): #& residualx <= tol):
+            x_old = x
+
+            # F-update
+            temp = HtY.ravel() + np.sqrt(rho)*(v-u)
+            x = ln.cgs(self.A, temp, x0=None, tol=1e-05, maxiter=20)
+
+            # Proximal
+            vtilde = x + u
+            v = soft_threshold(vtilde, lamnda/rho)
+
+            # Update langrangian multiplier
+            u = u + (x - v)
+
+            # update rho
+            rho = rho * gamma
+
+            itr+=1
+
+            residualx = np.linalg.norm(x - x_old)  / np.linalg.norm(x)
+
+            x = np.reshape(x, [self.m, self.n])
+            psnr_val = PSNR(self.operator_inv(x), x_old)
+            hist[itr, 0] = residualx
+            hist[itr, 1] = psnr_val
+
+            if (itr + 1) % 5 == 0:
+                # mse = np.mean(np.sum((y-A(v,Phi))**2,axis=(0,1)))
+                end_time = time.time()
+                # Error = %2.2f,
+                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB," 
+                      " time = %3.1fs."
+                      % (itr + 1, residualx, psnr_val, end_time - begin_time))
+                      #% (ni + 1, psnr(v, X_ori), end_time - begin_time))
+
+        return self.operator_inv(v),hist
