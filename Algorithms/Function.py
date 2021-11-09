@@ -245,6 +245,10 @@ class Algorithms:
 
     def ADMM(self, rho, gamma, lamnda, max_itr):
 
+
+        s=0
+
+
         y = self.measurements()
 
         print('---------ADMM method---------- \n')

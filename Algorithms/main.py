@@ -8,7 +8,7 @@ x = np.load('data/data.npy')
 maxiter = 100
 
 # Select the Algorithm
-case = 3 # opt: 0,1,2
+case = 1 # opt: 0,1,2
 #----------------- FISTA --------------------
 if case == 0:
     H = 0.75
