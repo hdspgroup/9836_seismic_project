@@ -12,6 +12,10 @@ import time
 
 
 def dct2():
+    '''
+    This is a Discrete Cosine Transform for 2D signals
+    (completar con una descripcion detallada en ingles)
+    '''
     def dct2_function(x):
         return scipy.fft.dct(scipy.fft.dct(x.T).T)
     return  dct2_function
@@ -64,7 +68,7 @@ def PSNR(original, compressed):
 class Algorithms:
     def __init__(self, x, H, operator_dir, operator_inv):
 
-        # ------- change the dimention of the inputs image --------
+        # ------- change the dimension of the inputs image --------
         m, n = x.shape
         m = int(2 ** (np.ceil(np.log2(m)) - 1))
         n = int(2 ** (np.ceil(np.log2(n)) - 1))
@@ -106,6 +110,12 @@ class Algorithms:
         self.A = Operator(self.H, self.m, self.n, self.operator_dir, self.operator_inv)
 
     def measurements(self):
+        '''
+        Operator measurement models the subsampled acquisition process given a
+        sampling matrix H
+        :return: measures Y
+        '''
+
         return self.H * np.squeeze(self.x.reshape(-1))
 
     def FISTA(self, lamnda, mu, max_itr):

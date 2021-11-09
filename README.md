@@ -6,4 +6,7 @@ First install some dependencies:
 
 ```
 python -m pip install numpy
+python -m pip install matplotlib
+python -m pip install scikit-image
+python -m pip install scipy
 ```
