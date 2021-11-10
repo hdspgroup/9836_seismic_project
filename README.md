@@ -1,3 +1,7 @@
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+
+
+
 # Compressive seismic acquisition project
 
 This is the repository for the Seismic project No 9836 funded by MINCIENCIAS-ANH.
@@ -11,7 +15,7 @@ python -m pip install scikit-image
 python -m pip install scipy
 ```
 
-Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+#LICENSE 
 
 This work is licensed under a
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
