@@ -1,5 +1,5 @@
 # Compressive seismic acquisition project
-
+[![Spanish](https://img.shields.io/badge/translation-ES-red)](es/)
 This is the repository for the Seismic project No 9836 funded by MINCIENCIAS-ANH.
 
 First install some dependencies:
