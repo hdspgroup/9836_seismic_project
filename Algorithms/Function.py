@@ -113,7 +113,7 @@ class Algorithms:
         '''
         Operator measurement models the subsampled acquisition process given a
         sampling matrix H
-        :return: measures Y
+        :return: measures Y = H@x
         '''
 
         return self.H * np.squeeze(self.x.reshape(-1))
