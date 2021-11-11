@@ -80,8 +80,8 @@ class Algorithms:
     Input:  
           x               The image to be sampled
           H:              The sensing matrix or the trace position to be deleted
-          operator_dir :  The name of the sparsity direct transofrm or a function with the transform
-          operator_inv :  The name of the sparsity inverse transofrm or a function with the inverse transform
+          operator_dir :  The name of the sparsity direct transform or a function with the transform
+          operator_inv :  The name of the sparsity inverse transform or a function with the inverse transform
     '''
     def __init__(self, x, H, operator_dir, operator_inv):
 
@@ -143,7 +143,7 @@ class Algorithms:
        Implemented by Jorge Bacca, Nov 2021, (jorge.bacca1@correo.uis.edu.co)
     
     Input:  
-          self            They have the varibles of the Algorithm class, such as H,y, sparisty basis.
+          self            They have the variables of the Algorithm class, such as H,y, sparsity basis.
           lamnda:         Is the sparsity regularizer
           mu :            Is the step-descent of the algorithm
           max_itr :       Is the maximum number of iterations
