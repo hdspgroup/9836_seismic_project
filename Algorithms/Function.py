@@ -19,6 +19,7 @@ import time
 def dct2():
     '''
     This is a Discrete Cosine Transform for 2D signals
+    Karen added this comment :)
     '''
     def dct2_function(x):
         return scipy.fft.dct(scipy.fft.dct(x.T).T)
