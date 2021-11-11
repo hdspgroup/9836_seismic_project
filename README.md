@@ -14,6 +14,13 @@ python -m pip install matplotlib
 python -m pip install scikit-image
 python -m pip install scipy
 ```
+# Reconstruction algorithms
+
+Summary - algorithms 
+
+# Graphic User Interface
+
+Summary about the GUI
 
 # License
 
