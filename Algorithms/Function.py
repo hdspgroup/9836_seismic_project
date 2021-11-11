@@ -7,6 +7,11 @@ import inspect
 import scipy.sparse.linalg as ln
 from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
                                  denoise_wavelet, estimate_sigma)
+
+'''
+    This is a Discrete Cosine Transform for 2D signals
+'''
+
 import time
 # from skimage.measure import (compare_psnr, compare_ssim)
 
@@ -49,6 +54,9 @@ class Operator:
 
 # -------------------------------------------------------------------------
 def soft_threshold(x,t):
+  '''
+    This is implementation of a sof-thresholding operator
+    '''
     tmp = (np.abs(x)-t)
     tmp = (tmp+np.abs(tmp))/2
     y   = np.sign(x)*tmp
@@ -65,6 +73,15 @@ def PSNR(original, compressed):
 
 
 class Algorithms:
+  '''
+    This is the main class of Function, which contain the optimization algorithms
+    
+    Input:  
+          x               The image to be sampled
+          H:              The sensing matrix or the trace position to be deleted
+          operator_dir :  The name of the sparsity direct transofrm or a function with the transform
+          operator_inv :  The name of the sparsity inverse transofrm or a function with the inverse transform
+    '''
     def __init__(self, x, H, operator_dir, operator_inv):
 
         # ------- change the dimension of the inputs image --------
@@ -118,6 +135,18 @@ class Algorithms:
         return self.H * np.squeeze(self.x.reshape(-1))
 
     def FISTA(self, lamnda, mu, max_itr):
+      
+        '''
+       This is the python implementation of the FISTA (A Fast Iterative Shrinkage-Thresholding Algorithm ) 
+       Beck, A., & Teboulle, M. (2009). A fast iterative shrinkage-thresholding algorithm for linear inverse problems. SIAM journal on imaging sciences, 2(1), 183-202.
+       Implemented by Jorge Bacca, Nov 2021, (jorge.bacca1@correo.uis.edu.co)
+    
+    Input:  
+          self            They have the varibles of the Algorithm class, such as H,y, sparisty basis.
+          lamnda:         Is the sparsity regularizer
+          mu :            Is the step-descent of the algorithm
+          max_itr :       Is the maximum number of iterations
+    '''
 
         y = self.measurements()
 
