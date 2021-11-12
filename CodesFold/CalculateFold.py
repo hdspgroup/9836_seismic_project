@@ -167,7 +167,7 @@ midpoints = gpd.GeoDataFrame({'geometry': midpoint_list,
 ##except:
 #    # This will work regardless.
 #ax=midpoints.plot()
-midpoints.plot()
+midpoints.plot(column='offset',colormap='jet')
 plt.grid()
 plt.show()
 
@@ -200,7 +200,7 @@ def bin_the_midpoints(bins, midpoints):
     reindexed = b.reset_index().rename(columns={'index':'bins_index'})
     joined = gpd.tools.sjoin(reindexed, m)
     bin_stats = joined.groupby('bins_index')['offset']\
-                      .agg({'fold': len, 'min_offset': np.min})
+        .agg({'fold': len, 'offset': np.min})
     return gpd.GeoDataFrame(b.join(bin_stats))
 
 #bin_stats = bin_the_midpoints(bins, midpoints)
