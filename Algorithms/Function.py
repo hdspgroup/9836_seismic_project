@@ -55,7 +55,7 @@ class Operator:
 
 # -------------------------------------------------------------------------
 def soft_threshold(x,t):
-  '''
+    '''
     This is implementation of a sof-thresholding operator
     '''
     tmp = (np.abs(x)-t)
@@ -74,7 +74,7 @@ def PSNR(original, compressed):
 
 
 class Algorithms:
-  '''
+    '''
     This is the main class of Function, which contain the optimization algorithms
     
     Input:  
