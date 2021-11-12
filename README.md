@@ -4,7 +4,7 @@
 
 # COmpressive Seismic Acquisition Design (COSAD) project
 
-All needed dependencies, if it is possible, some conda enviroment. @all
+All needed dependencies, if it is possible, some conda environment. @all
 
 This is the repository for the Seismic project No 9836 funded by MINCIENCIAS-ANH.
 
