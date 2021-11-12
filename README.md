@@ -2,7 +2,7 @@
 
 
 
-# Compressive seismic acquisition project
+# COmpressive Seismic Acquisition Design (COSAD) project
 
 This is the repository for the Seismic project No 9836 funded by MINCIENCIAS-ANH.
 
