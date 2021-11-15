@@ -7,6 +7,7 @@ import inspect
 import scipy.sparse.linalg as ln
 from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
                                  denoise_wavelet, estimate_sigma)
+import time
 
 def random_sampling(x,sr):
   ''' Random Sampling
@@ -36,6 +37,7 @@ def random_sampling(x,sr):
 def dct2():
     '''
     This is a Discrete Cosine Transform for 2D signals
+    Karen added this comment :)
     '''
     def dct2_function(x):
         return (scipy.fft.dct(scipy.fft.dct(x).T)).T
@@ -76,6 +78,9 @@ class Operator:
 
 # -------------------------------------------------------------------------
 def soft_threshold(x,t):
+    '''
+    This is implementation of a sof-thresholding operator
+    '''
     tmp = (np.abs(x)-t)
     tmp = (tmp+np.abs(tmp))/2
     y   = np.sign(x)*tmp
@@ -92,6 +97,15 @@ def PSNR(original, compressed):
 
 
 class Algorithms:
+    '''
+    This is the main class of Function, which contain the optimization algorithms
+
+    Input:
+          x               The image to be sampled
+          H:              The sensing matrix or the trace position to be deleted
+          operator_dir :  The name of the sparsity direct transform or a function with the transform
+          operator_inv :  The name of the sparsity inverse transform or a function with the inverse transform
+    '''
     def __init__(self, x, H, operator_dir, operator_inv):
 
         # ------- change the dimension of the inputs image --------
@@ -153,7 +167,7 @@ class Algorithms:
         '''
         Operator measurement models the subsampled acquisition process given a
         sampling matrix H
-        :return: measures Y
+        :return: measures Y = H@x
         '''
 
         return self.H * np.squeeze(self.x.T.reshape(-1))
@@ -163,6 +177,18 @@ class Algorithms:
 
     def FISTA(self, lmb, mu, max_itr):
 
+
+        '''
+       This is the python implementation of the FISTA (A Fast Iterative Shrinkage-Thresholding Algorithm )
+       Beck, A., & Teboulle, M. (2009). A fast iterative shrinkage-thresholding algorithm for linear inverse problems. SIAM journal on imaging sciences, 2(1), 183-202.
+       Implemented by Jorge Bacca, Nov 2021, (jorge.bacca1@correo.uis.edu.co)
+
+    Input:
+          self            They have the variables of the Algorithm class, such as H,y, sparsity basis.
+          lmb:            Is the sparsity regularizer
+          mu :            Is the step-descent of the algorithm
+          max_itr :       Is the maximum number of iterations
+    '''
 
         y = self.measurements()
 
@@ -285,3 +311,67 @@ class Algorithms:
             print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1],".3f"), 'dB \n')
 
         return self.operator_inv(x), hist
+
+    def ADMM(self, rho, gamma, lamnda, max_itr):
+
+
+        s=0
+
+
+        y = self.measurements()
+
+        print('---------ADMM method---------- \n')
+
+        hist = np.zeros((max_itr + 1, 2))
+        dim = self.x.shape
+        x = np.zeros(dim)
+
+        begin_time = time.time()
+
+        residualx = 1
+        tol = 1e-3
+
+        v = x.ravel()
+        u = x.ravel()
+
+        print('itr \t ||x-xold|| \t PSNR \n')
+        itr = 0
+
+        HtY = self.A.transpose(y)
+
+        while (itr < max_itr ): #& residualx <= tol):
+            x_old = x
+
+            # F-update
+            temp = HtY.ravel() + np.sqrt(rho)*(v-u)
+            x = ln.cgs(self.A, temp, x0=None, tol=1e-05, maxiter=20)
+
+            # Proximal
+            vtilde = x + u
+            v = soft_threshold(vtilde, lamnda/rho)
+
+            # Update langrangian multiplier
+            u = u + (x - v)
+
+            # update rho
+            rho = rho * gamma
+
+            itr+=1
+
+            residualx = np.linalg.norm(x - x_old)  / np.linalg.norm(x)
+
+            x = np.reshape(x, [self.m, self.n])
+            psnr_val = PSNR(self.operator_inv(x), x_old)
+            hist[itr, 0] = residualx
+            hist[itr, 1] = psnr_val
+
+            if (itr + 1) % 5 == 0:
+                # mse = np.mean(np.sum((y-A(v,Phi))**2,axis=(0,1)))
+                end_time = time.time()
+                # Error = %2.2f,
+                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB," 
+                      " time = %3.1fs."
+                      % (itr + 1, residualx, psnr_val, end_time - begin_time))
+                      #% (ni + 1, psnr(v, X_ori), end_time - begin_time))
+
+        return self.operator_inv(v),hist
