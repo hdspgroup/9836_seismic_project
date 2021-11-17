@@ -20,7 +20,7 @@ Real data from the Stratton 3D Survey, a small land 3D data set from South Texas
 
 The stratigraphic interval involved was the Oligocene Frio Formation - a thick, fluvially deposited sand-shale sequence that has been a prolific gas producer in Stratton Field. For a detailed study of the Stratton Field, refer to: https://www.searchanddiscovery.com/pdfz/documents/geophysical/hardage/images/hardage01.pdf.html
 
-![alt text](https://github.com/[carlosh93]/[9836_seismic_project]/blob/[/Algorithms/data/]/Stratton_Field_Seismic.jpg?raw=true)
+![alt text](https://github.com/[carlosh93]/[9836_seismic_project]/blob/[/Algorithms/data/]/Stratton_Field_Seismic.JPG?raw=true)
 
 # **`data.npy`**
 Synthetic dataset composed of 40 shots with 970 ms in-depth and 3.15 km of horizontal length. For seismic traces reconstruction, it was selected shot #20 and cropped to 800 and 100 samples in time and traces, respectively. For further information refer to https://github.com/PyLops/curvelops/blob/main/examples/Demo_Seismic_Regularization.ipynb.
