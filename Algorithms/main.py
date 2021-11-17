@@ -75,12 +75,12 @@ fig.suptitle('Results from the ' + case + ' Algorithm')
 
 
 axs[0, 0].imshow(x, cmap='seismic', aspect='auto')
-axs[0, 0].set_title('Real data')
+axs[0, 0].set_title('Reference')
 
 ytemp = y_rand.copy()
 ytemp[:, H_elim] = None
 axs[1, 0].imshow(ytemp, cmap='seismic', aspect='auto')
-axs[1, 0].set_title('Incomplete')
+axs[1, 0].set_title('Measurements')
 
 # axs[1, 0].sharex(axs[0, 0])
 metric = PSNR(x[:, H_elim],x_result[:, H_elim])
