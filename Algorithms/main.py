@@ -72,10 +72,14 @@ x = Alg.x
 fig, axs = plt.subplots(2, 2,dpi=150)
 fig.suptitle('Results from the ' + case + ' Algorithm')
 
+
+
 axs[0, 0].imshow(x, cmap='seismic', aspect='auto')
 axs[0, 0].set_title('Real data')
 
-axs[1, 0].imshow(y_rand, cmap='seismic', aspect='auto')
+ytemp = y_rand.copy()
+ytemp[:, H_elim] = None
+axs[1, 0].imshow(ytemp, cmap='seismic', aspect='auto')
 axs[1, 0].set_title('Incomplete')
 
 # axs[1, 0].sharex(axs[0, 0])
@@ -84,7 +88,7 @@ metric_ssim = ssim(x[:, H_elim],x_result[:, H_elim])
 axs[0, 1].imshow(x_result, cmap='seismic', aspect='auto')
 axs[0, 1].set_title('Reconstructed (PSNR:' + str("{:.1f})".format(metric)))
 print(metric_ssim)
-index = 1
+index = 5
 axs[1, 1].plot(x[:, H_elim[index]], 'r', label='Reference')
 axs[1, 1].plot(x_result [:, H_elim[index]], 'b', label='Recovered')
 axs[1, 1].legend(loc='best')
