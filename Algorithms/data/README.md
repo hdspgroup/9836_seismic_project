@@ -46,6 +46,8 @@ This data was built by the SEG Advanced Modeling Program (SEAM) during its secon
 
 In the Foothills 3D survey, shot lines run in the strike direction (along the Y-axis); the receiver lines run in the dip direction (along the X-axis). The first shot is located at position (X,Y)=(500,500). The inline shot spacing (spacing in Y) is 25 m. The crossline spacing (spacing in X between shot lines) is 250 m. There are 55 lines and 461 shots per line, for a total of 25,355 shots. The sources cover a rectangular 13.5 x 11.5 km patch, which is more or less centered in the model, leaving a border approximately 500 m wide around the edges.
 
+![Alt text](Seam_Phase_Model.JPG?raw=true)
+
 # **`syn3D_cross-spread2.npy`**
 Synthetic cross-spread seismic data modeled using finite differences with `devito` package (for further information refer to https://github.com/devitocodes/devito). The simulated geological conditions were continuous and parallel layers with increasing velocity in depth. The main geological structure is an anticline with hydrocarbon accumulation on its core, which causes velocity anomalies. The total length of the seismic design is 1010 m horizontally and 1000 ms in depth.
 
