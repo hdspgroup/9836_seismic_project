@@ -58,3 +58,5 @@ Synthetic cross-spread seismic data modeled using finite differences with `devit
 * Number of shots (`ns`) = `15`
 * Time interval (`dt`) = `0.000905` ms
 * Trace interval (`dx`) = `10` m
+
+![Alt text](Devito_Model.JPG?raw=true)
