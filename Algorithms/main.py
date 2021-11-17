@@ -6,7 +6,7 @@ from skimage.metrics import structural_similarity as ssim
 
 import scipy
 #----------------- --------------------
-x = np.load('data/data.npy')
+x = np.load('../data/data.npy')
 x = x.T
 maxiter = 1000
 
