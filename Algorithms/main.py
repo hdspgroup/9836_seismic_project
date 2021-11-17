@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.io
 from Function import *
+from skimage.metrics import structural_similarity as ssim
+
 import scipy
 #----------------- --------------------
 x = np.load('data/data.npy')
@@ -77,13 +79,14 @@ axs[1, 0].imshow(y_rand, cmap='seismic', aspect='auto')
 axs[1, 0].set_title('Incomplete')
 
 # axs[1, 0].sharex(axs[0, 0])
-
+metric = PSNR(x[:, H_elim],x_result[:, H_elim])
+metric_ssim = ssim(x[:, H_elim],x_result[:, H_elim])
 axs[0, 1].imshow(x_result, cmap='seismic', aspect='auto')
-axs[0, 1].set_title('Reconstructed (PSNR:' + str("{:.1f})".format(hist[maxiter,1])))
-
-index = 5
-axs[1, 1].plot(x [H_elim[index], :], 'r', label='Reference')
-axs[1, 1].plot(x_result [H_elim[index], :], 'b', label='Recovered')
+axs[0, 1].set_title('Reconstructed (PSNR:' + str("{:.1f})".format(metric)))
+print(metric_ssim)
+index = 1
+axs[1, 1].plot(x[:, H_elim[index]], 'r', label='Reference')
+axs[1, 1].plot(x_result [:, H_elim[index]], 'b', label='Recovered')
 axs[1, 1].legend(loc='best')
 plt.title('Trace ' + str("{:.0f}".format(H_elim[index])))
 
