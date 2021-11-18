@@ -23,7 +23,7 @@ H = pattern_index
 ---------------- RECOVERY ALGORITHM -----------------
 Select the Algorithm: FISTA , GAP , TWIST , ADMM
 '''
-case = 'TWIST'
+case = 'FISTA'
 #----------------- FISTA ------------------------------
 if case == 'FISTA':
     Alg = Algorithms(x, H , 'DCT2D', 'IDCT2D')
