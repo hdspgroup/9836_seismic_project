@@ -18,7 +18,7 @@ Real data from the Stratton 3D Survey, a small land 3D data set from South Texas
 * Time interval (`dt`) = `0.003` ms
 * Trace interval (`dx`) = `25` m
 
-The stratigraphic interval involved was the Oligocene Frio Formation - a thick, fluvially deposited sand-shale sequence that has been a prolific gas producer in Stratton Field. For a detailed study of the Stratton Field, refers to: https://www.searchanddiscovery.com/pdfz/documents/geophysical/hardage/images/hardage01.pdf.html
+The reservoir interval involved was the Oligocene Frio Formation - a thick, fluvially deposited sand-shale sequence that has been a prolific gas producer in Stratton Field. Due to stratigraphic complexity, this dataset represent a challenge for shot reconstruction. For a detailed study of the Stratton Field, refers to: https://www.searchanddiscovery.com/pdfz/documents/geophysical/hardage/images/hardage01.pdf.html
 
 <img src="Stratton_Field_Seismic.JPG" alt="Your image title" width="600"/>
 
@@ -34,7 +34,7 @@ Synthetic dataset composed of 40 shots with 970 ms in-depth and 3.15 km of horiz
 * Trace interval (`dx`) = `5` m
 
 # **`spii15s.npy`**
-This data was built by the SEG Advanced Modeling Program (SEAM) during its second project, called "SEAM Phase II–Land Seismic Challenges". The Foothills models are focused on mountainous regions with sharp topography at the surface and compressive fold and thrust tectonics at depth. For further information refers to https://drive.google.com/file/d/12274Q1JupEP5g7jdEb_m_KQCgMunPuNA/view.
+This data was built by the SEG Advanced Modeling Program (SEAM) during its second project, called "SEAM Phase II–Land Seismic Challenges". The Foothills models are focused on mountainous regions with sharp topography at the surface and compressive fold and thrust tectonics at depth, which makes this dataset a challenge for shot reconstruction. For further information refers to https://drive.google.com/file/d/12274Q1JupEP5g7jdEb_m_KQCgMunPuNA/view.
 
 **Seismic adquisition parameters:**
 
@@ -49,7 +49,7 @@ In the Foothills 3D survey, shot lines run in the strike direction (along the Y-
 <img src="Seam_Phase_Model.JPG" alt="Your image title" width="700"/>
 
 # **`syn3D_cross-spread2.npy`**
-Synthetic cross-spread seismic data modeled using finite differences with `devito` package (for further information refers to https://github.com/devitocodes/devito). The simulated geological conditions were continuous and parallel layers with increasing velocity in depth. The main geological structure is an anticline with hydrocarbon accumulation on its core, which causes velocity anomalies. The total length of the seismic design is 1010 m horizontally and 1000 ms in depth.
+Synthetic cross-spread seismic data modeled using finite differences with `devito` package (for further information refers to https://github.com/devitocodes/devito). The simulated geological conditions were continuous and parallel layers with increasing velocity in depth. The main geological structure is an anticline with hydrocarbon accumulation on its core, which causes velocity anomalies and high-amplitude reflection events. The total length of the seismic design is 1010 m horizontally and 1000 ms in depth.
 
 **Seismic adquisition parameters:**
 
