@@ -70,7 +70,7 @@ Synthetic cross-spread seismic data modeled using finite differences with `devit
 * Time interval (`dt`) = `0.000905` ms
 * Trace interval (`dx`) = `10` m
 
-https://github.com/carlosh93/9836_seismic_project/blob/652f805a3acf3176a32dbd4966bedbb70ef9545a/data/README.md
+[More information about datasets is available here.](https://github.com/carlosh93/9836_seismic_project/blob/652f805a3acf3176a32dbd4966bedbb70ef9545a/data/README.md)
 
 # Survey Binning acquisition
 
