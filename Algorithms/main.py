@@ -8,6 +8,7 @@ import scipy
 #----------------- --------------------
 x = np.load('../data/data.npy')
 x = x.T
+x = x / np.abs(x).max()
 maxiter = 1000
 
 
@@ -22,7 +23,7 @@ H = pattern_index
 ---------------- RECOVERY ALGORITHM -----------------
 Select the Algorithm: FISTA , GAP , TWIST , ADMM
 '''
-case = 'FISTA'
+case = 'GAP'
 #----------------- FISTA ------------------------------
 if case == 'FISTA':
     Alg = Algorithms(x, H , 'DCT2D', 'IDCT2D')
@@ -67,7 +68,7 @@ pattern_rand_b2 = np.asarray(pattern_rand, dtype=bool) == 0
 H_elim = temp[pattern_rand_b2]
 
 
-x = Alg.x
+# x = Alg.x
 
 fig, axs = plt.subplots(2, 2,dpi=150)
 fig.suptitle('Results from the ' + case + ' Algorithm')
