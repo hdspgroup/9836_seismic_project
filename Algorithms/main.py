@@ -9,7 +9,7 @@ import scipy
 x = np.load('../data/data.npy')
 x = x.T
 x = x / np.abs(x).max()
-maxiter = 1000
+maxiter = 500
 
 
 '''
@@ -23,7 +23,7 @@ H = pattern_index
 ---------------- RECOVERY ALGORITHM -----------------
 Select the Algorithm: FISTA , GAP , TWIST , ADMM
 '''
-case = 'GAP'
+case = 'TWIST'
 #----------------- FISTA ------------------------------
 if case == 'FISTA':
     Alg = Algorithms(x, H , 'DCT2D', 'IDCT2D')
@@ -87,7 +87,7 @@ axs[1, 0].set_title('Measurements')
 metric = PSNR(x[:, H_elim],x_result[:, H_elim])
 metric_ssim = ssim(x[:, H_elim],x_result[:, H_elim])
 axs[0, 1].imshow(x_result, cmap='seismic', aspect='auto')
-axs[0, 1].set_title('Reconstructed (PSNR:' + str("{:.1f})".format(metric)))
+axs[0, 1].set_title(f'Reconstructed \n PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}' )
 print(metric_ssim)
 index = 5
 axs[1, 1].plot(x[:, H_elim[index]], 'r', label='Reference')
