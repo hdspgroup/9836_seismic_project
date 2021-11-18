@@ -19,7 +19,7 @@ python -m pip install scipy
 
 # **Seismic Data**
 
-There are four datasets availables:
+There are four available datasets:
 
 * `cube4.npy`
 * `data.npy`
@@ -69,6 +69,8 @@ Synthetic cross-spread seismic data modeled using finite differences with `devit
 * Number of shots (`ns`) = `15`
 * Time interval (`dt`) = `0.000905` ms
 * Trace interval (`dx`) = `10` m
+
+https://github.com/carlosh93/9836_seismic_project/blob/652f805a3acf3176a32dbd4966bedbb70ef9545a/data/README.md
 
 # Survey Binning acquisition
 
