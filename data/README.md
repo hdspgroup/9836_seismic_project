@@ -44,7 +44,7 @@ This data was built by the SEG Advanced Modeling Program (SEAM) during its secon
 * Time interval (`dt`) = `0.004` ms
 * Trace interval (`dx`) = `12.5` m
 
-In the Foothills 3D survey, shot lines run in the strike direction (along the Y-axis); the receiver lines run in the dip direction (along the X-axis). The first shot is located at position (X,Y)=(500,500). The inline shot spacing (spacing in Y) is 25 m. The crossline spacing (spacing in X between shot lines) is 250 m. There are 55 lines and 461 shots per line, for a total of 25,355 shots. The sources cover a rectangular 13.5 x 11.5 km patch, which is more or less centered in the model, leaving a border approximately 500 m wide around the edges.
+In the Foothills 3D survey, shot lines run in the strike direction (along the Y-axis); the receiver lines run in the dip direction (along the X-axis). The first shot is located at position (X,Y)=(500,500). The inline shot spacing (spacing in Y) is 25 m. The crossline spacing (spacing in X between shot lines) is 250 m. There are 55 lines and 461 shots per line, for a total of 25,355 shots. The sources cover a rectangular 13.5 x 11.5 km patch, which is more or less centered in the model, leaving a border approximately 500 m wide around the edges. To acess the data, please contact the SEG SEAM Phase II project manager, Michael Oristaglio `oristaglioml@gmail.com`.
 
 ![Alt text](Seam_Phase_Model.JPG?raw=true)
 
