@@ -82,7 +82,16 @@ Summary - algorithms. All needed documentation, including references and so on. 
 
 # Graphic User Interface
 
-Summary about the GUI, screenshots, and some breif description @Hinojosa
+The main resources for constructing the GUI are placed in the `gui` folder. To run the GUI, first make sure you have installed the
+required packages with:
+
+`pip install -r requirements.txt`
+
+Then, run the `main_window.py` script as:
+
+`pip install -r requirements.txt`
+
+<!--Summary about the GUI, screenshots, and some breif description @Hinojosa-->
 
 # License
 
