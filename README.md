@@ -89,7 +89,7 @@ required packages with:
 
 Then, run the `main_window.py` script as:
 
-`pip install -r requirements.txt`
+`python main_window.py`
 
 <!--Summary about the GUI, screenshots, and some breif description @Hinojosa-->
 
