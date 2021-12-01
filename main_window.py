@@ -20,8 +20,9 @@ from skimage.metrics import mean_squared_error
 import math
 
 from Algorithms.Function import *
+from Algorithms import Function
 import scipy
-
+help(Function.soft_threshold)
 
 class Ui_MainWindow(object):
 

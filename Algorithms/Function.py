@@ -280,8 +280,6 @@ class Algorithms:
     Mathematically, the reconstruction problem is defined as an
     optimization problem with the form:
 
-    .. math::
-        \underset{x}{\text{arg min}} \| g - HDx \|_2^2 + \lambda\| x \|_1
 
     where H is the sensing matrix, D is a transformation basis and
     x are the relative coefficients in the transformed domain.
@@ -322,7 +320,6 @@ class Algorithms:
         Applies a Time to Walking Independently After Stroke (TwIST)
         algorithm to solve the optimization problem.
     '''
-
     def __init__(self, x, H, operator_dir, operator_inv):
         '''
         Parameters
