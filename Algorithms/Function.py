@@ -41,27 +41,100 @@ def random_sampling(x, sr):
 
 def dct2():
     '''
-    This is a Discrete Cosine Transform for 2D signals
-    Karen added this comment :)
-    '''
+    Returns a function to compute the Discrete Cosine
+    Transform (DCT) for 2D signals.
 
+    The DCT is a transform similar to the Discrete Fourier
+    Transform, but using only real numbers. The DCT express
+    a finite sequence of points in terms of cosine functions
+    oscillating at different frequencies.
+
+    The 1D DCT is computed as:
+
+    .. math::
+        y_{k} = 2\sum_{n=0}^{N-1} x_{n}\cos\left( \frac{\pi k (2n + 1)}{2N} \right)
+
+    To compute the 2D transform, the 1D transform is applied
+    to the rows and the columns of the input matrix.
+    '''
     def dct2_function(x):
         return (scipy.fft.dct(scipy.fft.dct(x).T)).T
 
     return dct2_function
 
-
 def idct2():
-    ''' Inverse operator of the 2D discrete cosine transform'''
+    '''
+    Returns a function to compute the Inverse of the Discrete
+    Cosine Transform (IDCT) for 2D signals.
 
+    Formally, the Discrete Fourier Transform in a linear function
+    that maps a real vector to another real vector of the same
+    dimension. As the transform is a linear function, then
+    invertible, it is possible to define an inverse function that
+    allows to recover the original signal from the transformed
+    values.
+
+    The 1D IDCT is computed as:
+
+    .. math::
+        x_{k} = \frac{y_0}{2N} + \frac{1}{N}\sum_{n=1}^{N-1}y_{n}\cos\left( \frac{\pi (2k+1) n}{2N} \right)
+
+    To compute the 2D transform, the 1D transform is applied
+    to the rows and the columns of the input matrix.
+    '''
     def idct2_function(x):
         return (scipy.fft.idct(scipy.fft.idct(x).T)).T
 
     return idct2_function
 
-
 class Operator:
+    '''
+    A class to represent the matrix operators used in the
+    forward model of the seismic reconstruction problem.
+
+    Attributes
+    ----------
+    H : array-like
+        The sensing matrix. A matrix with the positions of the
+        missing elements.
+    m : int
+        The first dimension of the input data in a 2D form.
+    n : int
+        The second dimension of the input data in a 2D form.
+    operator_dir : function
+        This function applies a 2D transform to promote the
+        sparsity of the signal in certain base of representation.
+    operator_inv : function
+        This function applies the inverse transform of the
+        `operator_dir` function.
+
+    Methods
+    -------
+    transpose(x)
+        This method multiplies the input vector with the transpose
+        of the operator.
+    direct(x)
+        This method multiplies the input vector with the equivalent
+        of the operator for the model.
+    '''
     def __init__(self, H, m, n, operator_dir, operator_inv):
+        '''
+        Parameters
+        ----------
+        H : array-like
+            The sensing matrix. A matrix with the positions of the
+            missing elements.
+        m : int
+            The first dimension of the input data in a 2D form.
+        n : int
+            The second dimension of the input data in a 2D form.
+        operator_dir : function
+            This function applies a 2D transform to promote the
+            sparsity of the signal in certain base of representation.
+        operator_inv : function
+            This function applies the inverse transform of the
+            `operator_dir` function.
+        '''
         self.H = H
         self.m = m
         self.n = n
@@ -69,6 +142,29 @@ class Operator:
         self.operator_inv = operator_inv
 
     def transpose(self, x):  # y = D'H' * x
+        '''
+        Applies the equivalent of the matricial transpose
+        operator to the input vector.
+
+        Mathematically is defined as
+
+        .. math::
+            y = D^T H^T x
+
+        where H is the sensing matrix and D the transformation
+        basis.
+
+        Parameters
+        ----------
+        x : array-like
+            An array to apply the operator.
+
+        Returns
+        -------
+        y : array-like
+            The traspose operation applied to the input
+            vector.
+        '''
         Ht = self.H.transpose()
         y = Ht * np.squeeze(x.T.reshape(-1))  # H' * x
 
@@ -79,6 +175,29 @@ class Operator:
         return y
 
     def direct(self, x):  # y = H * D * x
+        '''
+        Applies the equivalent of the matricial direct
+        operator to the input vector.
+
+        Mathematically is defined as
+
+        .. math::
+            y = H D x
+
+        where H is the sensing matrix and D the transformation
+        basis.
+
+        Parameters
+        ----------
+        x : array-like
+            An array to apply the operator.
+
+        Returns
+        -------
+        y : array-like
+            The traspose operation applied to the input
+            vector.
+        '''
         x = np.reshape(x, [self.m, self.n], order='F')  # ordenar
 
         theta = self.operator_inv(x)  # D * x
@@ -87,19 +206,64 @@ class Operator:
 
         return y
 
-
 # -------------------------------------------------------------------------
 def soft_threshold(x, t):
     '''
-    This is implementation of a sof-thresholding operator
+    The Soft thresholding is a wavelet shrinkage operator.
+
+    This operator is used in the area of compressive as the close
+    solution of the proximal operator for the L1 norm.
+
+    Parameters
+    ----------
+    x : array-like
+        An array to apply the shrinkage operator.
+    t : float
+        The threshold value to compute the operator.
+
+    Returns
+    -------
+    y : array-like
+        The solution of the solf thresholding operator for the
+        input array and threshold value.
     '''
     tmp = (np.abs(x) - t)
     tmp = (tmp + np.abs(tmp)) / 2
     y = np.sign(x) * tmp
     return y
 
-
 def PSNR(original, compressed):
+    '''
+    The Peak Signal-to-Noise Ratio (PSNR) is an engineering term for
+    the ratio between the maximum power of a signal and the power of the
+    corrupting noise that affects the fidelity.
+
+    This metrics is usually used to quantify the reconstruction quality
+    for images and videos subject to a compression process.
+
+    Mathematically, this term is defined as:
+
+    .. math::
+        PSNR = 10\log\left( \frac{MAX_I^2}{MSE} \right)
+
+    Where:
+
+    .. math::
+        MSE = \frac{1}{mn} \sum_{i=0}^{m-1} \sum_{j=0}^{n-1}[ I(i,j) - K(i,j) ]^2
+
+    Parameters
+    ----------
+    original   : array-like
+                 The original signal to compare.
+    compressed : array-like
+                 The reconstructed signal.
+
+    Returns
+    -------
+    psnr : float
+           The solution of the solf thresholding operator for the
+           input array and threshold value.
+    '''
     mse = np.mean((original - compressed) ** 2)
     if (mse == 0):  # MSE is zero means no noise is present in the signal .
         # Therefore PSNR have no importance.
@@ -108,19 +272,73 @@ def PSNR(original, compressed):
     psnr = 20 * np.log10(max_pixel / np.sqrt(mse))
     return psnr
 
-
 class Algorithms:
     '''
-    This is the main class of Function, which contain the optimization algorithms
+    A class that contains different algorithms solutions to solve the
+    seismic data reconstruction problem.
 
-    Input:
-          x               The image to be sampled
-          H:              The sensing matrix or the trace position to be deleted
-          operator_dir :  The name of the sparsity direct transform or a function with the transform
-          operator_inv :  The name of the sparsity inverse transform or a function with the inverse transform
+    Mathematically, the reconstruction problem is defined as an
+    optimization problem with the form:
+
+    .. math::
+        \underset{x}{\text{arg min}} \| g - HDx \|_2^2 + \lambda\| x \|_1
+
+    where H is the sensing matrix, D is a transformation basis and
+    x are the relative coefficients in the transformed domain.
+
+    Attributes
+    ----------
+    x : array-like
+        An 2D input image. The array is resized to the closest
+        dimensions with the form 2^n.
+    m : int
+        The first dimension of the input data x in a 2D form.
+    n : int
+        The second dimension of the input data in a 2D form.
+    H : array-like
+        The sensing matrix. A matrix with the positions of the
+        missing elements.
+    operator_dir : function
+        This function applies a 2D transform to promote the
+        sparsity of the signal in certain base of representation.
+        It could be a function or a string with the name of a
+        predefined transform. Actually the only predefined transform
+        is DCT and is used with the string 'DCT2D'.
+    operator_inv : function
+        This function applies the inverse transform of the
+        `operator_dir` function.
+        It could be a function or a string with the name of a
+        predefined transform. Actually the only predefined transform
+        is DCT and is used with the string 'IDCT2D'.
+
+    Methods
+    -------
+    FISTA(lmb, mu, max_itr)
+        Applies a Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)
+        to solve the optimization problem.
+    GAP(lmb, max_itr)
+        Applies a GAP Algorithm to solve the optimization problem.
+    TwIST(lmb, alpha, beta, max_itr)
+        Applies a Time to Walking Independently After Stroke (TwIST)
+        algorithm to solve the optimization problem.
     '''
 
     def __init__(self, x, H, operator_dir, operator_inv):
+        '''
+        Parameters
+        ----------
+        x : array-like
+            An 2D input image.
+        H : array-like
+            The sensing matrix. A matrix with the positions of the
+            missing elements.
+        operator_dir : function
+            This function applies a 2D transform to promote the
+            sparsity of the signal in certain base of representation.
+        operator_inv : function
+            This function applies the inverse transform of the
+            `operator_dir` function.
+        '''
 
         # ------- change the dimension of the inputs image --------
         m, n = x.shape
@@ -180,7 +398,10 @@ class Algorithms:
         '''
         Operator measurement models the subsampled acquisition process given a
         sampling matrix H
-        :return: measures Y = H@x
+
+        Returns
+        -------
+        measures : Y = H@x
         '''
 
         return self.H * np.squeeze(self.x.T.reshape(-1))
@@ -188,18 +409,30 @@ class Algorithms:
     # ---------------------------------------------FISTA----------------------------------------
 
     def FISTA(self, lmb, mu, max_itr):
-
         '''
-       This is the python implementation of the FISTA (A Fast Iterative Shrinkage-Thresholding Algorithm )
-       Beck, A., & Teboulle, M. (2009). A fast iterative shrinkage-thresholding algorithm for linear inverse problems. SIAM journal on imaging sciences, 2(1), 183-202.
-       Implemented by Jorge Bacca, Nov 2021, (jorge.bacca1@correo.uis.edu.co)
+        This is the python implementation of the FISTA (A Fast Iterative Shrinkage-Thresholding Algorithm )
+        Beck, A., & Teboulle, M. (2009). A fast iterative shrinkage-thresholding algorithm for linear
+        inverse problems. SIAM journal on imaging sciences, 2(1), 183-202.
+        This one of the most well-known first-order optimization scheme in the literature, as it achieves
+        the worst-case \mathbf{\mathit{O}}(1/k^{2}) optimal convergence rate in terms of objective function value.
 
-    Input:
-          self            They have the variables of the Algorithm class, such as H,y, sparsity basis.
-          lmb:            Is the sparsity regularizer
-          mu :            Is the step-descent of the algorithm
-          max_itr :       Is the maximum number of iterations
-    '''
+        The FISTA is computed as:
+
+        .. math::
+              t_{k}=\frac{1+\sqrt{4t^{2}_{k-1}}}{2}
+              a_{k}=\frac{t_{k-1}-1}{t_{k}}
+              y_{k}=x_{k}+a_{k}(x_{k}-x_{k-1})
+              x_{k+1}=prox_{\gamma R}(y_{k}-\gamma \bigtriangledown F(y_{k}))
+
+        Input:
+            self:       They have the variables of the Algorithm class, such as H,y, sparsity basis.
+            lmb:        float
+                        The sparsity regularizer
+            mu :        type
+                        The step-descent of the algorithm
+            max_itr :   int
+                        The maximum number of iterations
+        '''
 
         y = self.measurements()
 
@@ -222,7 +455,6 @@ class Algorithms:
 
             # proximal
             x = soft_threshold(z, lmb)
-
             q = 0.5 * (1 + np.sqrt(1 + 4 * (q_old ** 2)))
             s = x + ((q_old - 1) / (q)) * (x - x_old)
             itr = itr + 1
@@ -240,7 +472,26 @@ class Algorithms:
 
     # ---------------------------------------------GAP----------------------------------------
     def GAP(self, lmb, max_itr):
+        '''
+        Let \Phi \in \mathbb{R}^{r\times x}  with r < n be given and fixed, and z \in \mathbb{R}^{n}
+        be an arbitrary S-sparse vector, which has at most S < r nonzero elements.
+        Reconstruction of z from y = \Phi z is a problem that centers around the theory and practice
+        of compressive sensing. The GAP algorithm extends classical alternating projection to the case in
+        which projections are performed between convex sets that undergo a systematic sequence of changes.
 
+        .. math::
+                w_{t} = \theta_{t-1} + \Phi^{T}(\Phi\Phi^{T})(y - \Phi\theta_{t-1})
+
+        The algorithm  can be interrupted anytime to return a valid solution and resumed subsequently to
+        improve the  solution.
+
+        Parameters
+        ----------
+        lmb :    float
+                 The threshold value to compute the operator.
+        max_itr : int
+                  Maximum number of iterations
+        '''
         y = self.measurements()
 
         print('---------GAP method---------- \n')
@@ -279,7 +530,30 @@ class Algorithms:
 
     # ----------------TWIST----------------------------
     def TwIST(self, lmb, alpha, beta, max_itr):
+        '''
+        Stationary Two-Step Iterative Shrinkage/Thresholding (TWIST) for solving \mathbf{Ax=b}.
+        Consider the linear system \mathbf{Ax=b}, with \mathbf{A} positive definite;
+        define a so-called splitting of \mathbf{A} as \mathbf{A=C-R}, such that \mathbf{C}
+        is positive definite and easy to invert. TWIST is defined as:
 
+        .. math::
+              \mathbf{x_{1}}=\mathbf{\Gamma_{\lambda}({x_{0})}}
+              \mathbf{x_{t+1}}=(1-\alpha)\mathbf{x_{1}}+(\alpha-\beta)\mathbf{x_{t}}+\beta\mathbf{\Gamma_{\lambda}({x_{t})}}
+
+        for t\geq 1, where \mathbf{x_{0}} is the initial vector, and \alpha, \beta,
+        are the parameters of the algorithm.
+
+        Parameters
+        ----------
+        lmb :   float
+                The threshold value to compute the operator.
+        alpha : float
+                Convergence parameter
+        beta :  float
+                Convergence parameter
+        max_itr : int
+                Maximum number of iterations
+        '''
         y = self.measurements()
 
         print('---------TwIST method---------- \n')
