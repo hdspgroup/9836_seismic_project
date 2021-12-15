@@ -611,37 +611,45 @@ class Algorithms:
         residualx = 1
         tol = 1e-3
 
-        v = x.ravel()
-        u = x.ravel()
-
+        v = np.zeros(dim)
+        u = np.zeros(dim)
         print('itr \t ||x-xold|| \t PSNR \n')
         itr = 0
 
-        HtY = self.A.transpose(y)
+        Ht = self.H.transpose()
+        HtY = Ht * np.squeeze(y.T.reshape(-1))  # H' * x
+        HtY = np.reshape(HtY, [self.m, self.n], order='F')
+
+        HTH = self.H.transpose()*self.H
+        I_d = scipy.sparse.eye(HTH.shape[0])
+
+        import matplotlib.pyplot as plt
 
         while (itr < max_itr):  # & residualx <= tol):
             x_old = x
 
             # F-update
-            temp = HtY.ravel() + np.sqrt(rho) * (v - u)
-            x = ln.cgs(self.A, temp, x0=None, tol=1e-05, maxiter=20)
+            Inve = HTH + rho * I_d
+            b = scipy.sparse.find(Inve)
+            val = 1 / b [2]
+            Inve = csr_matrix((val, (b [0], b [1])), shape=Inve.shape)
+
+            x = HtY + rho*self.operator_dir(v-u)
+            x = Inve*(x.T.reshape(-1))
+            x = np.reshape(x, [self.m, self.n], order='F')
 
             # Proximal
-            vtilde = x + u
+            vtilde = self.operator_inv(x) + u
             v = soft_threshold(vtilde, lamnda / rho)
-
             # Update langrangian multiplier
-            u = u + (x - v)
+            u = vtilde - v
 
             # update rho
             rho = rho * gamma
-
             itr += 1
-
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
 
-            x = np.reshape(x, [self.m, self.n])
-            psnr_val = PSNR(self.operator_inv(x), x_old)
+            psnr_val = PSNR(x, x_old)
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
 
@@ -655,4 +663,4 @@ class Algorithms:
                       % (itr + 1, residualx, psnr_val, end_time - begin_time))
                 # % (ni + 1, psnr(v, X_ori), end_time - begin_time))
 
-        return self.operator_inv(v), hist
+        return x, hist

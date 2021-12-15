@@ -23,7 +23,7 @@ H = pattern_index
 ---------------- RECOVERY ALGORITHM -----------------
 Select the Algorithm: FISTA , GAP , TWIST , ADMM
 '''
-case = 'FISTA'
+case = 'ADMM'
 #----------------- FISTA ------------------------------
 if case == 'FISTA':
     Alg = Algorithms(x, H , 'DCT2D', 'IDCT2D')
@@ -54,9 +54,9 @@ if case == 'ADMM':
     # step_size = 1e-2
     # weight  = 0.5
     # eta = 1e-1
-    rho = 0.5
+    rho = 1
     gamma = 1
-    lmb = 0.0078
+    lmb = 5e-4
 
     x_result, hist = Alg.ADMM(rho, gamma, lmb, maxiter)
 # --------------------------------
