@@ -649,7 +649,8 @@ class Algorithms:
             itr += 1
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
 
-            psnr_val = PSNR(x, x_old)
+            #psnr_val = PSNR(x, x_old)
+            psnr_val = PSNR(self.x, x) # the metric should be between the orig, and the estimated.
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
 
