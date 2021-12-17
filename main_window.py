@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QFileDialog, QDesktopWidget
 from pathlib import Path
 import gui.resources.res
 from about_window import Ui_AboutWindow
+from results_window import UI_Results_Window
 import numpy as np
 from gui.alerts import *
 
@@ -22,7 +23,8 @@ import math
 from Algorithms.Function import *
 from Algorithms import Function
 import scipy
-help(Function.soft_threshold)
+# help(Function.soft_threshold)
+
 
 class Ui_MainWindow(object):
 
@@ -173,8 +175,18 @@ class Ui_MainWindow(object):
         icon.addPixmap(QtGui.QPixmap(":/info_icon/info_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionAcerca_de.setIcon(icon)
         self.actionAcerca_de.setObjectName("actionAcerca_de")
+
+        self.actionshow_results = QtWidgets.QAction(MainWindow)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/info_icon/noun-checked-results.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionshow_results.setIcon(icon1)
+        self.actionshow_results.setObjectName("actionshow_results")
+
         self.toolBar.addAction(self.actionAcerca_de)
+        self.toolBar.addAction(self.actionshow_results)
+
         self.actionAcerca_de.triggered.connect(self.show_about_window)
+        self.actionshow_results.triggered.connect(self.show_results_window)
         self.loadDataBtn.clicked.connect(self.browseFiles)
         self.onlydouble = QtGui.QDoubleValidator(decimals=10)
 
@@ -200,6 +212,12 @@ class Ui_MainWindow(object):
         self.ui_about_window = Ui_AboutWindow()
         self.ui_about_window.setupUi(self.about_window)
         self.about_window.show()
+
+    def show_results_window(self):
+        self.show_results_window = QtWidgets.QWidget()
+        self.ui_results_window = UI_Results_Window()
+        self.ui_results_window.setupUi(self.show_results_window)
+        self.show_results_window.show()
 
     def on_algorithm_changed(self, value):
         self.update_parameters_info(value)
@@ -301,7 +319,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Proyecto 9836"))
         self.groupBox.setTitle(_translate("MainWindow", "Entradas"))
         self.label.setText(_translate("MainWindow", "Dato Sísmico"))
         self.loadDataBtn.setText(_translate("MainWindow", "Cargar"))
@@ -323,6 +341,8 @@ class Ui_MainWindow(object):
         self.actionAcerca_de.setText(_translate("MainWindow", "Acerca de"))
         self.actionAcerca_de.setToolTip(
             _translate("MainWindow", "<html><head/><body><p>Acerca de este proyecto</p></body></html>"))
+        self.actionshow_results.setText(_translate("MainWindow", "show results"))
+        self.actionshow_results.setToolTip(_translate("MainWindow", "Ver y generar reportes de resultados"))
 
     def run(self):
         # checks
@@ -357,6 +377,7 @@ class Ui_MainWindow(object):
 
             # save sampling data
             self.sampling_dict = {
+                "x_ori": x,
                 "sr_rand": sr_rand,
                 "y_rand": y_rand,
                 "pattern_rand": pattern_rand,

@@ -299,6 +299,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionAcerca_de"/>
+   <addaction name="actionshow_results"/>
   </widget>
   <action name="actionAcerca_de">
    <property name="icon">
@@ -310,6 +311,18 @@
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Acerca de este proyecto&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionshow_results">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/info_icon/noun-checked-results.png</normaloff>:/info_icon/noun-checked-results.png</iconset>
+   </property>
+   <property name="text">
+    <string>show results</string>
+   </property>
+   <property name="toolTip">
+    <string>Ver y generar reportes de resultados</string>
    </property>
   </action>
  </widget>

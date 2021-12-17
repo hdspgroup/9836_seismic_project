@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="info_icon">
     <file>info_icon.png</file>
+    <file>noun-checked-results.png</file>
   </qresource>
 </RCC>
