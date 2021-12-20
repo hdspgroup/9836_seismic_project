@@ -6,8 +6,14 @@ from skimage.metrics import structural_similarity as ssim
 
 import scipy
 #----------------- --------------------
-x = np.load('../data/data.npy')
-x = x.T
+# x = np.load('../data/data.npy')
+data_name = 'spii15s.npy'
+x = np.load('../data/'+data_name)
+if len(x.shape) > 2:
+    x = x[:, :, int(x.shape[-1]/2)]
+
+if data_name == 'data.npy':
+    x = x.T
 x = x / np.abs(x).max()
 maxiter = 500
 
