@@ -21,7 +21,7 @@ maxiter = 500
 '''
 ---------------  SAMPLING --------------------
 '''
-sr_rand = 0.5 # 1-compression
+sr_rand = 0.3 # 1-compression
 y_rand, pattern_rand, pattern_index= random_sampling(x,sr_rand)
 H = pattern_index
 
@@ -29,7 +29,7 @@ H = pattern_index
 ---------------- RECOVERY ALGORITHM -----------------
 Select the Algorithm: FISTA , GAP , TWIST , ADMM
 '''
-case = 'ADMM'
+case = 'FISTA'
 #----------------- FISTA ------------------------------
 if case == 'FISTA':
     Alg = Algorithms(x, H , 'DCT2D', 'IDCT2D')

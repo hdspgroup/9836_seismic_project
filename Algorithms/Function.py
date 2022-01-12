@@ -595,7 +595,39 @@ class Algorithms:
         return self.operator_inv(x), hist
 
     def ADMM(self, rho, gamma, lamnda, max_itr):
+        '''
+        The alternating direction method of multipliers (ADMM) is an algorithm that solves convex optimization problems
+        by using a divide and conquer strategy, breaking the problem into small pieces which are easier to handle.
+        The standard optimization formulation problem for the ADMM algorithm is defined as:
 
+        .. math::
+            \underset{\mathbf{x,z}}{\text{min }} \left\{ f(\mathbf{x}) + g(\mathbf{z}) \right\} \\
+            \text{subject to } \mathbf{Ax + Bz = c}
+
+        where f and g are closed, proper and convex functions. To simplify the algorithm usually is preferred that the g
+        function has a closet solution for the proximal operator.
+
+        In the seismic reconstruction problem, the optimization problem associated could be defined as:
+
+        .. math::
+            \underset{\mathbf{x,v}}{\text{min }} \left\{ \frac{1}{2}\| \mathbf{y - H\Phi x} \|_2^2 + \lambda\|\mathbf{v}\|_1
+        \right\} \\
+            \text{subject to } \mathbf{x = v}
+
+        where the first term of the cost function is a data fidelity term of the partially observed data, and the second
+        term promotes the smoothness of the coefficients of the recovered signal in a representation base.
+
+        Parameters
+        ----------
+        rho :   float
+                The weight for the dual problem term.
+        gamma :   float
+                A relaxation coefficient for the dual problem parameter.
+        lamnda :   float
+                The threshold value to compute the operator.
+        max_itr : int
+                Maximum number of iterations
+        '''
         s = 0
 
         y = self.measurements()
