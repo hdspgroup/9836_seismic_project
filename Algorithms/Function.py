@@ -15,10 +15,17 @@ ee = EventEmitter()
 
 
 def random_sampling(x, sr):
-    ''' Random Sampling
-  x : full data
-  sr: subsampling factor
-  '''
+    '''
+    Random sampling is a part of the sampling technique in which each sample has an equal probability of being chosen.
+    A sample chosen randomly is meant to be an unbiased representation of the total population.
+
+    Attributes
+    ----------
+    x : array-like
+        full data to apply the random sampling method
+    sr: float
+        subsampling factor
+    '''
     dim = x.shape
     batch = 1  # dim[0]
     M = dim[0]
