@@ -64,10 +64,12 @@ def dct2():
     To compute the 2D transform, the 1D transform is applied
     to the rows and the columns of the input matrix.
     '''
+
     def dct2_function(x):
         return (scipy.fft.dct(scipy.fft.dct(x).T)).T
 
     return dct2_function
+
 
 def idct2():
     '''
@@ -89,10 +91,12 @@ def idct2():
     To compute the 2D transform, the 1D transform is applied
     to the rows and the columns of the input matrix.
     '''
+
     def idct2_function(x):
         return (scipy.fft.idct(scipy.fft.idct(x).T)).T
 
     return idct2_function
+
 
 class Operator:
     '''
@@ -124,6 +128,7 @@ class Operator:
         This method multiplies the input vector with the equivalent
         of the operator for the model.
     '''
+
     def __init__(self, H, m, n, operator_dir, operator_inv):
         '''
         Parameters
@@ -213,6 +218,7 @@ class Operator:
 
         return y
 
+
 # -------------------------------------------------------------------------
 def soft_threshold(x, t):
     '''
@@ -238,6 +244,7 @@ def soft_threshold(x, t):
     tmp = (tmp + np.abs(tmp)) / 2
     y = np.sign(x) * tmp
     return y
+
 
 def PSNR(original, compressed):
     '''
@@ -278,6 +285,7 @@ def PSNR(original, compressed):
     max_pixel = np.max(original)
     psnr = 20 * np.log10(max_pixel / np.sqrt(mse))
     return psnr
+
 
 class Algorithms:
     '''
@@ -327,6 +335,7 @@ class Algorithms:
         Applies a Time to Walking Independently After Stroke (TwIST)
         algorithm to solve the optimization problem.
     '''
+
     def __init__(self, x, H, operator_dir, operator_inv):
         '''
         Parameters
@@ -343,7 +352,6 @@ class Algorithms:
             This function applies the inverse transform of the
             `operator_dir` function.
         '''
-
         # ------- change the dimension of the inputs image --------
         m, n = x.shape
         # m = int(2 ** (np.ceil(np.log2(m)) - 1))
@@ -437,17 +445,18 @@ class Algorithms:
             max_itr :   int
                         The maximum number of iterations
         '''
+        # ee = EventEmitter()
 
         y = self.measurements()
 
-        print('FISTA: \n')
+        # print('FISTA: \n')
 
         dim = self.x.shape
         x = np.zeros(dim)
         q = 1
         s = x
         hist = np.zeros((max_itr + 1, 2))
-        print('itr \t ||x-xold|| \t PSNR \n')
+        # print('itr \t ||x-xold|| \t PSNR \n')
         itr = 0
         while (itr < max_itr):
             x_old = x
@@ -469,10 +478,11 @@ class Algorithms:
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
-            ee.emit("algorithm_update", itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f"))
-            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
 
-        return self.operator_inv(s), hist
+            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f")
+
+        yield self.operator_inv(s), hist
 
     # ---------------------------------------------GAP----------------------------------------
     def GAP(self, lmb, max_itr):
@@ -527,10 +537,11 @@ class Algorithms:
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
-            ee.emit("algorithm_update", itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f"))
-            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
 
-        return self.operator_inv(x), hist
+            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f")
+
+        yield self.operator_inv(x), hist
 
     # ----------------TWIST----------------------------
     def TwIST(self, lmb, alpha, beta, max_itr):
@@ -596,10 +607,11 @@ class Algorithms:
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
-            ee.emit("algorithm_update", itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f"))
-            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
 
-        return self.operator_inv(x), hist
+            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f")
+
+        yield self.operator_inv(x), hist
 
     def ADMM(self, rho, gamma, lamnda, max_itr):
         # '''
@@ -658,7 +670,7 @@ class Algorithms:
         HtY = Ht * np.squeeze(y.T.reshape(-1))  # H' * x
         HtY = np.reshape(HtY, [self.m, self.n], order='F')
 
-        HTH = self.H.transpose()*self.H
+        HTH = self.H.transpose() * self.H
         I_d = scipy.sparse.eye(HTH.shape[0])
 
         import matplotlib.pyplot as plt
@@ -669,11 +681,11 @@ class Algorithms:
             # F-update
             Inve = HTH + rho * I_d
             b = scipy.sparse.find(Inve)
-            val = 1 / b [2]
-            Inve = csr_matrix((val, (b [0], b [1])), shape=Inve.shape)
+            val = 1 / b[2]
+            Inve = csr_matrix((val, (b[0], b[1])), shape=Inve.shape)
 
-            x = HtY + rho*self.operator_dir(v-u)
-            x = Inve*(x.T.reshape(-1))
+            x = HtY + rho * self.operator_dir(v - u)
+            x = Inve * (x.T.reshape(-1))
             x = np.reshape(x, [self.m, self.n], order='F')
 
             # Proximal
@@ -687,8 +699,8 @@ class Algorithms:
             itr += 1
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
 
-            #psnr_val = PSNR(x, x_old)
-            psnr_val = PSNR(self.x, x) # the metric should be between the orig, and the estimated.
+            # psnr_val = PSNR(x, x_old)
+            psnr_val = PSNR(self.x, x)  # the metric should be between the orig, and the estimated.
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
 
@@ -696,10 +708,10 @@ class Algorithms:
                 # mse = np.mean(np.sum((y-A(v,Phi))**2,axis=(0,1)))
                 end_time = time.time()
                 # Error = %2.2f,
-                ee.emit("algorithm_update", itr, residualx, psnr_val)
-                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB,"
-                      " time = %3.1fs."
-                      % (itr + 1, residualx, psnr_val, end_time - begin_time))
+                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB, time = %3.1fs." % (
+                itr + 1, residualx, psnr_val, end_time - begin_time))
                 # % (ni + 1, psnr(v, X_ori), end_time - begin_time))
 
-        return x, hist
+                yield itr, residualx, psnr_val
+
+        yield x, hist
