@@ -418,6 +418,45 @@ class Algorithms:
 
         return self.H * np.squeeze(self.x.T.reshape(-1))
 
+    def get_results(self, alg_name, **parameters):
+        '''
+        This function allows to get the final results of the implemented algorithms
+        in this class.
+
+        This is due to algorithms functions works as generators, where each iteration
+        returns the current output info of the algorithm and the last iteration
+        returns the desired output of the function.
+
+        Parameters
+        ----------
+        alg_name :    str
+                      The name of the algorithm to solve.
+        max_itr :     int
+                      The maximum number of iteration for the algorithm.
+        parameters :  dict
+                      Parameters of the selected algorithm to solve.
+
+        Returns
+        -------
+        x_results : recovery results of the selected algorithm.
+        hist      : history of the selected algorithm.
+        '''
+        if alg_name == 'FISTA':
+            alg = self.FISTA
+        elif alg_name == 'GAP':
+            alg = self.GAP
+        elif alg_name == 'TwIST':
+            alg = self.GAP
+        elif alg_name == 'ADMM':
+            alg = self.ADMM
+        else:
+            raise 'The algorithm entered was not found.'
+
+        results = [output for i, output in enumerate(alg(**parameters)) if parameters["max_itr"] == i][0]
+        x_result, hist = results
+
+        return x_result, hist
+
     # ---------------------------------------------FISTA----------------------------------------
 
     def FISTA(self, lmb, mu, max_itr):
@@ -613,7 +652,7 @@ class Algorithms:
 
         yield self.operator_inv(x), hist
 
-    def ADMM(self, rho, gamma, lamnda, max_itr):
+    def ADMM(self, rho, gamma, lmb, max_itr):
         # '''
         # The alternating direction method of multipliers (ADMM) is an algorithm that solves convex optimization problems
         # by using a divide and conquer strategy, breaking the problem into small pieces which are easier to handle.
@@ -690,7 +729,7 @@ class Algorithms:
 
             # Proximal
             vtilde = self.operator_inv(x) + u
-            v = soft_threshold(vtilde, lamnda / rho)
+            v = soft_threshold(vtilde, lmb / rho)
             # Update langrangian multiplier
             u = vtilde - v
 
@@ -709,7 +748,7 @@ class Algorithms:
                 end_time = time.time()
                 # Error = %2.2f,
                 print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB, time = %3.1fs." % (
-                itr + 1, residualx, psnr_val, end_time - begin_time))
+                    itr + 1, residualx, psnr_val, end_time - begin_time))
                 # % (ni + 1, psnr(v, X_ori), end_time - begin_time))
 
                 yield itr, residualx, psnr_val
