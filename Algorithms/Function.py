@@ -446,7 +446,7 @@ class Algorithms:
         elif alg_name == 'GAP':
             alg = self.GAP
         elif alg_name == 'TwIST':
-            alg = self.GAP
+            alg = self.TwIST
         elif alg_name == 'ADMM':
             alg = self.ADMM
         else:
@@ -751,6 +751,6 @@ class Algorithms:
                     itr + 1, residualx, psnr_val, end_time - begin_time))
                 # % (ni + 1, psnr(v, X_ori), end_time - begin_time))
 
-                yield itr, residualx, psnr_val
+            yield itr, residualx, psnr_val
 
         yield x, hist

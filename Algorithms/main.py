@@ -16,7 +16,7 @@ if len(x.shape) > 2:
 if data_name == 'data.npy':
     x = x.T
 x = x / np.abs(x).max()
-max_itr = 100
+max_itr = 500
 
 '''
 ---------------  SAMPLING --------------------

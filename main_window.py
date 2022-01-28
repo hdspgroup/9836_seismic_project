@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QFileDialog, QDesktopWidget
 from pathlib import Path
 import gui.resources.res
 from about_window import Ui_AboutWindow
-from results_window import UI_Results_Window
+from results_window import UIResultsWindow
 import numpy as np
 from gui.alerts import *
 
@@ -28,7 +28,7 @@ import scipy
 # help(Function.soft_threshold)
 
 
-class Ui_MainWindow(object):
+class UiMainWindow(QtWidgets.QMainWindow):
 
     def setupUi(self, MainWindow):
         self.logger = ''
@@ -190,6 +190,10 @@ class Ui_MainWindow(object):
         self.AboutAction.setIcon(icon)
         self.AboutAction.setObjectName("AboutAction")
 
+        self.current_directory = ''
+
+        # actions
+
         self.showResultsAction = QtWidgets.QAction(MainWindow)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/info_icon/noun-checked-results.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -202,7 +206,6 @@ class Ui_MainWindow(object):
         self.AboutAction.triggered.connect(self.show_about_window)
         self.showResultsAction.triggered.connect(self.show_results_window)
         self.loadPushButton.clicked.connect(self.browseFiles)
-        self.active_folder = ''
         self.onlydouble = QtGui.QDoubleValidator(decimals=10)
 
         self.onlyInt = QtGui.QIntValidator()
@@ -215,11 +218,20 @@ class Ui_MainWindow(object):
         self.textEdit.setReadOnly(True)
 
         self.algorithmComboBox.currentTextChanged.connect(self.on_algorithm_changed)
-
+        self.currentAlgorithmName = ''
         self.update_parameters_info(self.algorithmComboBox.currentText())
 
     def browseFiles(self):
-        self.fname = QFileDialog.getOpenFileName(self.MainWindow, 'Open File', filter='numpy file (*.npy)')
+        kwargs = {}
+        if 'SNAP' in os.environ:
+            kwargs['options'] = QFileDialog.DontUseNativeDialog
+        self.fname = QFileDialog.getOpenFileName(self.MainWindow, 'Open File', self.current_directory,
+                                                 filter='numpy file (*.npy)', **kwargs)
+
+        if self.fname[0] == '':
+            return
+
+        self.current_directory = self.fname[0]
         self.lineEdit.setText(self.fname[0].split("/")[-1].strip("/.npy"))
 
     def show_about_window(self):
@@ -230,7 +242,7 @@ class Ui_MainWindow(object):
 
     def show_results_window(self):
         self.show_results_window = QtWidgets.QWidget()
-        self.ui_results_window = UI_Results_Window()
+        self.ui_results_window = UIResultsWindow()
         self.ui_results_window.setupUi(self.show_results_window)
         self.show_results_window.show()
 
@@ -348,7 +360,7 @@ class Ui_MainWindow(object):
         # self.algorithmComboBox.setItemText(3, _translate("MainWindow", "ADMM")) # not working
         self.paramsGroupBox.setTitle(_translate("MainWindow", "Parámetros"))
         self.param0Label.setText(_translate("MainWindow", "Max Iter"))
-        self.param0LineEdit.setText(_translate("MainWindow", "10"))
+        self.param0LineEdit.setText(_translate("MainWindow", "100"))
         self.param0LineEdit.setValidator(self.onlyInt)
         self.param1Label.setText(_translate("MainWindow", "Muestreo en X"))
         self.param2Label.setText(_translate("MainWindow", "Muestreo en Y"))
@@ -397,7 +409,7 @@ class Ui_MainWindow(object):
             H0 = np.tile(pattern_rand.reshape(1, -1), (x.shape[0], 1))
 
             # save sampling data
-            self.sampling_dict = {
+            sampling_dict = {
                 "x_ori": x,
                 "sr_rand": sr_rand,
                 "y_rand": y_rand,
@@ -406,6 +418,8 @@ class Ui_MainWindow(object):
                 "H": H,
                 "H0": H0
             }
+            self.sampling_dict = np.array(list(sampling_dict.items()))
+
             ''' ---------- Visualization of SAMPLING----------
             '''
             '''
@@ -471,6 +485,7 @@ class Ui_MainWindow(object):
                 self.progressBar.setValue(0)
                 return
             # elif self.algorithmComboBox.currentText() == ""
+            self.currentAlgorithmName = self.algorithmComboBox.currentText()
 
             self.worker = Worker(func, parameters, self.maxiter)
 
@@ -519,30 +534,9 @@ class Ui_MainWindow(object):
         save_path = pwd + "/Results"
         Path(save_path).mkdir(parents=True, exist_ok=True)
         filepath = save_path + "/" + self.saveAsLineEdit.text() + ".npz"
-        np.savez(filepath, x_result=res_dict['result'], hist=res_dict['hist'], sampling=self.sampling_dict)
+        np.savez(filepath, x_result=res_dict['result'], hist=res_dict['hist'], sampling=self.sampling_dict,
+                 alg_name=self.currentAlgorithmName)
         print("Results saved [Ok]")
-
-
-# class Worker(QtCore.QObject):
-#     finished = QtCore.pyqtSignal(dict)
-#     progress = QtCore.pyqtSignal(int, str, str)
-#
-#     def __init__(self, function, parameters):
-#         super().__init__()
-#         self.function = function
-#         self.parameters = parameters
-#
-#     def run(self):
-#         ee.progress = self.progress
-#
-#         @ee.on("algorithm_update")
-#         def handler(iter, err, psnr):
-#             ee.progress.emit(iter, err, psnr)
-#
-#         # Alg.FISTA(tau, mu, self.maxiter)
-#         x_result, hist = self.function(**self.parameters)
-#
-#         self.finished.emit({'result': x_result, 'hist': hist})
 
 
 class Worker(QtCore.QObject):
@@ -574,7 +568,7 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    ui = UiMainWindow()
     ui.setupUi(MainWindow)
 
     qtRectangle = MainWindow.frameGeometry()
