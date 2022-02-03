@@ -15,10 +15,17 @@ ee = EventEmitter()
 
 
 def random_sampling(x, sr):
-    ''' Random Sampling
-  x : full data
-  sr: subsampling factor
-  '''
+    '''
+    Random sampling is a part of the sampling technique in which each sample has an equal probability of being chosen.
+    A sample chosen randomly is meant to be an unbiased representation of the total population.
+
+    Attributes
+    ----------
+    x : array-like
+        full data to apply the random sampling method
+    sr: float
+        subsampling factor
+    '''
     dim = x.shape
     batch = 1  # dim[0]
     M = dim[0]
@@ -57,10 +64,12 @@ def dct2():
     To compute the 2D transform, the 1D transform is applied
     to the rows and the columns of the input matrix.
     '''
+
     def dct2_function(x):
         return (scipy.fft.dct(scipy.fft.dct(x).T)).T
 
     return dct2_function
+
 
 def idct2():
     '''
@@ -82,10 +91,12 @@ def idct2():
     To compute the 2D transform, the 1D transform is applied
     to the rows and the columns of the input matrix.
     '''
+
     def idct2_function(x):
         return (scipy.fft.idct(scipy.fft.idct(x).T)).T
 
     return idct2_function
+
 
 class Operator:
     '''
@@ -117,6 +128,7 @@ class Operator:
         This method multiplies the input vector with the equivalent
         of the operator for the model.
     '''
+
     def __init__(self, H, m, n, operator_dir, operator_inv):
         '''
         Parameters
@@ -206,6 +218,7 @@ class Operator:
 
         return y
 
+
 # -------------------------------------------------------------------------
 def soft_threshold(x, t):
     '''
@@ -231,6 +244,7 @@ def soft_threshold(x, t):
     tmp = (tmp + np.abs(tmp)) / 2
     y = np.sign(x) * tmp
     return y
+
 
 def PSNR(original, compressed):
     '''
@@ -271,6 +285,7 @@ def PSNR(original, compressed):
     max_pixel = np.max(original)
     psnr = 20 * np.log10(max_pixel / np.sqrt(mse))
     return psnr
+
 
 class Algorithms:
     '''
@@ -320,6 +335,7 @@ class Algorithms:
         Applies a Time to Walking Independently After Stroke (TwIST)
         algorithm to solve the optimization problem.
     '''
+
     def __init__(self, x, H, operator_dir, operator_inv):
         '''
         Parameters
@@ -336,7 +352,6 @@ class Algorithms:
             This function applies the inverse transform of the
             `operator_dir` function.
         '''
-
         # ------- change the dimension of the inputs image --------
         m, n = x.shape
         # m = int(2 ** (np.ceil(np.log2(m)) - 1))
@@ -403,11 +418,50 @@ class Algorithms:
 
         return self.H * np.squeeze(self.x.T.reshape(-1))
 
+    def get_results(self, alg_name, **parameters):
+        '''
+        This function allows to get the final results of the implemented algorithms
+        in this class.
+
+        This is due to algorithms functions works as generators, where each iteration
+        returns the current output info of the algorithm and the last iteration
+        returns the desired output of the function.
+
+        Parameters
+        ----------
+        alg_name :    str
+                      The name of the algorithm to solve.
+        max_itr :     int
+                      The maximum number of iteration for the algorithm.
+        parameters :  dict
+                      Parameters of the selected algorithm to solve.
+
+        Returns
+        -------
+        x_results : recovery results of the selected algorithm.
+        hist      : history of the selected algorithm.
+        '''
+        if alg_name == 'FISTA':
+            alg = self.FISTA
+        elif alg_name == 'GAP':
+            alg = self.GAP
+        elif alg_name == 'TwIST':
+            alg = self.TwIST
+        elif alg_name == 'ADMM':
+            alg = self.ADMM
+        else:
+            raise 'The algorithm entered was not found.'
+
+        results = [output for i, output in enumerate(alg(**parameters)) if parameters["max_itr"] == i][0]
+        x_result, hist = results
+
+        return x_result, hist
+
     # ---------------------------------------------FISTA----------------------------------------
 
     def FISTA(self, lmb, mu, max_itr):
         '''
-        This is the python implementation of the FISTA (A Fast Iterative Shrinkage-Thresholding Algorithm )
+        This is the python implementation of the FISTA (A Fast Iterative Shrinkage-Thresholding Algorithm)
         Beck, A., & Teboulle, M. (2009). A fast iterative shrinkage-thresholding algorithm for linear
         inverse problems. SIAM journal on imaging sciences, 2(1), 183-202.
         This one of the most well-known first-order optimization scheme in the literature, as it achieves
@@ -430,17 +484,18 @@ class Algorithms:
             max_itr :   int
                         The maximum number of iterations
         '''
+        # ee = EventEmitter()
 
         y = self.measurements()
 
-        print(' FISTA: \n')
+        # print('FISTA: \n')
 
         dim = self.x.shape
         x = np.zeros(dim)
         q = 1
         s = x
         hist = np.zeros((max_itr + 1, 2))
-        print('itr \t ||x-xold|| \t PSNR \n')
+        # print('itr \t ||x-xold|| \t PSNR \n')
         itr = 0
         while (itr < max_itr):
             x_old = x
@@ -462,10 +517,11 @@ class Algorithms:
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
-            ee.emit("algorithm_update", itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f"))
-            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
 
-        return self.operator_inv(s), hist
+            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f")
+
+        yield self.operator_inv(s), hist
 
     # ---------------------------------------------GAP----------------------------------------
     def GAP(self, lmb, max_itr):
@@ -520,10 +576,11 @@ class Algorithms:
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
-            ee.emit("algorithm_update", itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f"))
-            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
 
-        return self.operator_inv(x), hist
+            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f")
+
+        yield self.operator_inv(x), hist
 
     # ----------------TWIST----------------------------
     def TwIST(self, lmb, alpha, beta, max_itr):
@@ -589,13 +646,45 @@ class Algorithms:
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
-            ee.emit("algorithm_update", itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f"))
+
             print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f")
 
-        return self.operator_inv(x), hist
+        yield self.operator_inv(x), hist
 
-    def ADMM(self, rho, gamma, lamnda, max_itr):
-
+    def ADMM(self, rho, gamma, lmb, max_itr):
+        # '''
+        # The alternating direction method of multipliers (ADMM) is an algorithm that solves convex optimization problems
+        # by using a divide and conquer strategy, breaking the problem into small pieces which are easier to handle.
+        # The standard optimization formulation problem for the ADMM algorithm is defined as:
+        #
+        # .. math::
+        #     \underset{\mathbf{x,z}}{\text{min }} \left\{ f(\mathbf{x}) + g(\mathbf{z}) \right\} \\
+        #     \text{subject to} \mathbf{Ax + Bz = c}
+        #
+        # where f and g are closed, proper and convex functions. To simplify the algorithm usually is preferred that the g
+        # function has a closet solution for the proximal operator.
+        #
+        # In the seismic reconstruction problem, the optimization problem associated could be defined as:
+        #
+        # .. math::
+        #     \underset{\mathbf{x,v}}{\text{min }} \left\{ \frac{1}{2}\| \mathbf{y - H\Phi x} \|_2^2 + \lambda\|\mathbf{v}\|_1\right\} \\
+        #     \text{subject to } \mathbf{x = v}
+        #
+        # where the first term of the cost function is a data fidelity term of the partially observed data, and the second
+        # term promotes the smoothness of the coefficients of the recovered signal in a representation base.
+        #
+        # Parameters
+        # ----------
+        # rho :   float
+        #         The weight for the dual problem term.
+        # gamma :   float
+        #         A relaxation coefficient for the dual problem parameter.
+        # lamnda :   float
+        #         The threshold value to compute the operator.
+        # max_itr : int
+        #         Maximum number of iterations
+        # '''
         s = 0
 
         y = self.measurements()
@@ -620,7 +709,7 @@ class Algorithms:
         HtY = Ht * np.squeeze(y.T.reshape(-1))  # H' * x
         HtY = np.reshape(HtY, [self.m, self.n], order='F')
 
-        HTH = self.H.transpose()*self.H
+        HTH = self.H.transpose() * self.H
         I_d = scipy.sparse.eye(HTH.shape[0])
 
         import matplotlib.pyplot as plt
@@ -631,16 +720,16 @@ class Algorithms:
             # F-update
             Inve = HTH + rho * I_d
             b = scipy.sparse.find(Inve)
-            val = 1 / b [2]
-            Inve = csr_matrix((val, (b [0], b [1])), shape=Inve.shape)
+            val = 1 / b[2]
+            Inve = csr_matrix((val, (b[0], b[1])), shape=Inve.shape)
 
-            x = HtY + rho*self.operator_dir(v-u)
-            x = Inve*(x.T.reshape(-1))
+            x = HtY + rho * self.operator_dir(v - u)
+            x = Inve * (x.T.reshape(-1))
             x = np.reshape(x, [self.m, self.n], order='F')
 
             # Proximal
             vtilde = self.operator_inv(x) + u
-            v = soft_threshold(vtilde, lamnda / rho)
+            v = soft_threshold(vtilde, lmb / rho)
             # Update langrangian multiplier
             u = vtilde - v
 
@@ -649,8 +738,8 @@ class Algorithms:
             itr += 1
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
 
-            #psnr_val = PSNR(x, x_old)
-            psnr_val = PSNR(self.x, x) # the metric should be between the orig, and the estimated.
+            # psnr_val = PSNR(x, x_old)
+            psnr_val = PSNR(self.x, x)  # the metric should be between the orig, and the estimated.
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
 
@@ -658,10 +747,10 @@ class Algorithms:
                 # mse = np.mean(np.sum((y-A(v,Phi))**2,axis=(0,1)))
                 end_time = time.time()
                 # Error = %2.2f,
-                ee.emit("algorithm_update", itr, residualx, psnr_val)
-                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB,"
-                      " time = %3.1fs."
-                      % (itr + 1, residualx, psnr_val, end_time - begin_time))
+                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB, time = %3.1fs." % (
+                    itr + 1, residualx, psnr_val, end_time - begin_time))
                 # % (ni + 1, psnr(v, X_ori), end_time - begin_time))
 
-        return x, hist
+            yield itr, residualx, psnr_val
+
+        yield x, hist
