@@ -33,42 +33,35 @@ def run_alg(data_name, case='ADMM', maxiter=500, sr_rand=0.5):
     Select the Algorithm: FISTA , GAP , TWIST , ADMM
     '''
     for s in range(x.shape[1]):
-        # ----------------- FISTA ------------------------------
+        Alg = Algorithms(x[:, s, :], H, 'DCT2D', 'IDCT2D')
+        parameters = {}
         if case == 'FISTA':
-            Alg = Algorithms(x[:, s, :], H, 'DCT2D', 'IDCT2D')
-            tau = 0.1
-            mu = 0.3
-            x_result, hist = Alg.FISTA(tau, mu, maxiter)
+            parameters = {'max_itr': maxiter,
+                          'lmb': 0.1,
+                          'mu': 0.3
+                          }
 
-        # ------------------GAP--------------
-        if case == 'GAP':
-            Alg = Algorithms(x[:, s, :], H, 'DCT2D', 'IDCT2D')
-            tau = 1e-0
-            x_result, hist = Alg.GAP(tau, maxiter)  # inputs: tau, maxiter
+        elif case == 'GAP':
+            parameters = {'max_itr': maxiter,
+                          'lmb': 1e-0
+                          }
 
-        # ------------------TwIST--------------
-        if case == 'TWIST':
-            Alg = Algorithms(x[:, s, :], H, 'DCT2D', 'IDCT2D')
-            # default parameters
-            alpha = 1.2
-            beta = 1.998
-            tau = 0.5
+        elif case == 'TwIST':
+            parameters = {'max_itr': maxiter,
+                          'lmb': 0.5,
+                          'alpha': 1.2,
+                          'beta': 1.998
+                          }
 
-            x_result, hist = Alg.TwIST(tau, alpha, beta, maxiter)
+        elif case == 'ADMM':
+            parameters = {'max_itr': maxiter,
+                          'lmb': 5e-4,
+                          'rho': 1,
+                          'gamma': 1
+                          }
 
-        # --------------- ADMM -----------------
-        if case == 'ADMM':
-            Alg = Algorithms(x[:, s, :], H, 'DCT2D', 'IDCT2D')
-            # default parameters
-            # step_size = 1e-2
-            # weight  = 0.5
-            # eta = 1e-1
-            rho = 1
-            gamma = 1
-            lmb = 5e-4
-
-            x_result, hist = Alg.ADMM(rho, gamma, lmb, maxiter)
-            full_result[:, s, :] = x_result
+        x_result, hist = Alg.get_results(case, **parameters)
+        full_result[:, s, :] = x_result
 
     np.savez("arrays/" + data_name.split(".")[0] + "_Alg_" + case + "_maxIters_" + str(maxiter)
              + "_srRand_" + str(sr_rand) + ".npz",
@@ -151,22 +144,22 @@ if __name__ == '__main__':
     if not os.path.exists("arrays"):
         os.makedirs("arrays", True)
     data_n = 'cube4.npy'
-    run_alg(data_name=data_n, case='ADMM', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='FISTA', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='GAP', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='TWIST', maxiter=500, sr_rand=0.5)
+    # run_alg(data_name=data_n, case='ADMM', maxiter=500, sr_rand=0.5)
+    # run_alg(data_name=data_n, case='FISTA', maxiter=500, sr_rand=0.5)
+    # run_alg(data_name=data_n, case='GAP', maxiter=500, sr_rand=0.5)
+    run_alg(data_name=data_n, case='TwIST', maxiter=500, sr_rand=0.5)
 
     data_n = 'spii15s.npy'
     run_alg(data_name=data_n, case='ADMM', maxiter=500, sr_rand=0.5)
     run_alg(data_name=data_n, case='FISTA', maxiter=500, sr_rand=0.5)
     run_alg(data_name=data_n, case='GAP', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='TWIST', maxiter=500, sr_rand=0.5)
+    run_alg(data_name=data_n, case='TwIST', maxiter=500, sr_rand=0.5)
 
     data_n = 'syn3D_cross-spread2.npy'
     run_alg(data_name=data_n, case='ADMM', maxiter=500, sr_rand=0.5)
     run_alg(data_name=data_n, case='FISTA', maxiter=500, sr_rand=0.5)
     run_alg(data_name=data_n, case='GAP', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='TWIST', maxiter=500, sr_rand=0.5)
+    run_alg(data_name=data_n, case='TwIST', maxiter=500, sr_rand=0.5)
 
     # files = np.load("arrays/cube4_Alg_ADMM.npz")
     # plot_results(files['x'], files['full_result'], files['pattern_rand'], files['case'])
