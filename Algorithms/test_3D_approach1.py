@@ -147,19 +147,19 @@ if __name__ == '__main__':
     # run_alg(data_name=data_n, case='ADMM', maxiter=500, sr_rand=0.5)
     # run_alg(data_name=data_n, case='FISTA', maxiter=500, sr_rand=0.5)
     # run_alg(data_name=data_n, case='GAP', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='TwIST', maxiter=500, sr_rand=0.5)
+    # run_alg(data_name=data_n, case='TwIST', maxiter=500, sr_rand=0.5)
+    #
+    # data_n = 'spii15s.npy'
+    # run_alg(data_name=data_n, case='ADMM', maxiter=500, sr_rand=0.5)
+    # run_alg(data_name=data_n, case='FISTA', maxiter=500, sr_rand=0.5)
+    # run_alg(data_name=data_n, case='GAP', maxiter=500, sr_rand=0.5)
+    # run_alg(data_name=data_n, case='TwIST', maxiter=500, sr_rand=0.5)
+    #
+    # data_n = 'syn3D_cross-spread2.npy'
+    # run_alg(data_name=data_n, case='ADMM', maxiter=500, sr_rand=0.5)
+    # run_alg(data_name=data_n, case='FISTA', maxiter=500, sr_rand=0.5)
+    # run_alg(data_name=data_n, case='GAP', maxiter=500, sr_rand=0.5)
+    # run_alg(data_name=data_n, case='TwIST', maxiter=500, sr_rand=0.5)
 
-    data_n = 'spii15s.npy'
-    run_alg(data_name=data_n, case='ADMM', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='FISTA', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='GAP', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='TwIST', maxiter=500, sr_rand=0.5)
-
-    data_n = 'syn3D_cross-spread2.npy'
-    run_alg(data_name=data_n, case='ADMM', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='FISTA', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='GAP', maxiter=500, sr_rand=0.5)
-    run_alg(data_name=data_n, case='TwIST', maxiter=500, sr_rand=0.5)
-
-    # files = np.load("arrays/cube4_Alg_ADMM.npz")
-    # plot_results(files['x'], files['full_result'], files['pattern_rand'], files['case'])
+    files = np.load("arrays/cube4_Alg_GAP_maxIters_500_srRand_0.5.npz")
+    plot_results(files['x'], files['full_result'], files['pattern_rand'], files['case'])
