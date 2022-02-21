@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_AboutWindow(object):
+class UIAboutWindow(object):
     def setupUi(self, Form):
         Form.setObjectName("Acerca_de")
         Form.resize(598, 450)

@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>icons/save.png</file>
+    <file>icons/info.png</file>
+    <file>icons/report.png</file>
+    <file>icons/view.png</file>
+  </qresource>
+</RCC>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>349</width>
-    <height>632</height>
+    <width>414</width>
+    <height>777</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,6 +77,17 @@
              <string>Algoritmo 3</string>
             </property>
            </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCommandLinkButton" name="viewEquationQCommButton">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>:/icons/view.png</normaloff>:/icons/view.png</iconset>
+           </property>
           </widget>
          </item>
          <item>
@@ -159,6 +170,166 @@
          </item>
          <item>
           <widget class="QLineEdit" name="lineEdit_6"/>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="samplingGroupBox">
+      <property name="title">
+       <string>Submuestreo</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <layout class="QHBoxLayout" name="samplingHLayout">
+         <item>
+          <layout class="QVBoxLayout" name="compresVLayout">
+           <item>
+            <widget class="QLabel" name="compresLabel">
+             <property name="text">
+              <string>Nivel de compresión</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="compresSpinBox">
+             <property name="maximum">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="sampTypeVLayout">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <item>
+            <widget class="QLabel" name="sampTypeLabel">
+             <property name="text">
+              <string>Tipo</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="sampTypeComboBox">
+             <item>
+              <property name="text">
+               <string>Aleatorio</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Uniforme</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Jitter</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Lista</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="seedHLayout">
+         <item>
+          <spacer name="seedHSpacer1">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="jitterComboBox">
+           <item>
+            <property name="text">
+             <string>Aleatorio</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Uniforme</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="seedRadioButton">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="text">
+            <string>Usar semilla</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="seedLabel">
+           <property name="text">
+            <string>Valor</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="seedSpinBox">
+           <property name="suffix">
+            <string/>
+           </property>
+           <property name="prefix">
+            <string/>
+           </property>
+           <property name="minimum">
+            <number>-999</number>
+           </property>
+           <property name="maximum">
+            <number>999</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="seedHSpacer2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="elementHLayout">
+         <item>
+          <widget class="QLabel" name="elementLabel">
+           <property name="text">
+            <string>Elementos</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="elementLineEdit"/>
          </item>
         </layout>
        </item>
@@ -278,7 +449,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="enabled">
     <bool>true</bool>
@@ -303,8 +473,8 @@
   </widget>
   <action name="actionAcerca_de">
    <property name="icon">
-    <iconset resource="resources/res.qrc">
-     <normaloff>:/info_icon/info_icon.png</normaloff>:/info_icon/info_icon.png</iconset>
+    <iconset>
+     <normaloff>:/icons/info.png</normaloff>:/icons/info.png</iconset>
    </property>
    <property name="text">
     <string>Acerca de</string>
@@ -315,8 +485,8 @@
   </action>
   <action name="actionshow_results">
    <property name="icon">
-    <iconset resource="resources/res.qrc">
-     <normaloff>:/info_icon/noun-checked-results.png</normaloff>:/info_icon/noun-checked-results.png</iconset>
+    <iconset>
+     <normaloff>:/icons/report.png</normaloff>:/icons/report.png</iconset>
    </property>
    <property name="text">
     <string>show results</string>

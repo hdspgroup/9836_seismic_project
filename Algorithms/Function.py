@@ -14,6 +14,169 @@ from pymitter import EventEmitter
 ee = EventEmitter()
 
 
+class Sampling:
+    '''
+    Sampling techniques for seismic data.
+
+    Attributes
+    ----------
+    x : array-like
+        full data to apply the random sampling method
+    '''
+    def __init__(self, x):
+        self.x = x
+
+    def random_sampling(self, compression_ratio):
+        '''
+        Inputs:
+        x : full data
+        compression_ratio: compression ratio for subsampling
+
+        Outputs:
+        sampling_dict : dictionary that contains all information about sample
+                        and its compression
+        '''
+        M, N = self.x.shape
+
+        # sampling
+        tasa_compression = int(compression_ratio * N)
+        pattern_vec = np.ones((N,))
+
+        ss = np.random.permutation(list(range(1, N - 1)))
+        pattern_vec[ss[0:tasa_compression]] = 0
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = self.x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": self.x,
+            "sr_rand": compression_ratio,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
+
+    def uniform_sampling(self, compression_ratio):
+        '''
+        Inputs:
+        x : full data
+        compression_ratio: compression ratio for subsampling
+
+        Outputs:
+        sampling_dict : dictionary that contains all information about sample
+                        and its compression
+        '''
+        M, N = self.x.shape
+        pattern_vec = np.ones((N,), dtype=int)
+        n_col_rmv = np.round(N * compression_ratio)
+        x_distance = np.round(N / n_col_rmv)
+
+        i = 0
+        while i * int(x_distance) < N:
+            pattern_vec[i * int(x_distance)] = 0
+            i = i + 1
+
+        # Sampling pattern
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = self.x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": self.x,
+            "sr_rand": compression_ratio,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
+
+    def jitter_sampling(self, n_bloque, compression_ratio):
+        # https://slim.gatech.edu/Publications/Public/Journals/Geophysics/2008/hennenfent08GEOsdw/paper_html/node14.html
+        '''
+        Inputs:
+        x : full data
+        n_bloque: number of splited blocks in the full data for subsampling
+        compression_ratio: compression ratio for subsampling
+
+        Outputs:
+        sampling_dict : dictionary that contains all information about sample
+                        and its compression
+        '''
+        M, N = self.x.shape
+
+        n = np.int(np.floor(N / n_bloque))
+        t_n = np.int(n * compression_ratio)
+        vec_total = []
+
+        for ii in range(n_bloque):
+            complete = np.ones((n,))
+            rand_block = np.random.permutation(list(range(1, n - 1)))
+            if ii == n_bloque - 1 and n_bloque % 2 == 0 and t_n == 3:
+                complete[rand_block[:t_n+1]] = 0
+            else:
+                complete[rand_block[:t_n]] = 0
+            vec_total.append(complete)
+
+        vectorize_pattern = np.array(vec_total).reshape(-1)
+        pattern_vec = np.ones((N,))
+        pattern_vec[:len(vectorize_pattern)] = vectorize_pattern
+
+        # Sampling pattern
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = self.x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": self.x,
+            "sr_rand": compression_ratio,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
+
+    def list_sampling(self, lista):
+        M, N = self.x.shape
+
+
+        # sampling
+        pattern_vec = np.ones((N,))
+        pattern_vec[np.array(lista)] = 0
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = self.x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": self.x,
+            "lista": lista,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
+
+
 def random_sampling(x, sr):
     '''
     Random sampling is a part of the sampling technique in which each sample has an equal probability of being chosen.
@@ -31,7 +194,7 @@ def random_sampling(x, sr):
     M = dim[0]
     N = dim[1]
     # L = dim[3]
-
+    # sampling
     tasa_compression = int(sr * N)
     pattern_vec = np.ones((N,))
 
@@ -416,6 +579,7 @@ class Algorithms:
         measures : Y = H@x
         '''
 
+        print(f'H.shape={self.H.shape}')
         return self.H * np.squeeze(self.x.T.reshape(-1))
 
     def get_results(self, alg_name, **parameters):
@@ -680,7 +844,7 @@ class Algorithms:
         #         The weight for the dual problem term.
         # gamma :   float
         #         A relaxation coefficient for the dual problem parameter.
-        # lamnda :   float
+        # lmb :   float
         #         The threshold value to compute the operator.
         # max_itr : int
         #         Maximum number of iterations
@@ -751,6 +915,6 @@ class Algorithms:
                     itr + 1, residualx, psnr_val, end_time - begin_time))
                 # % (ni + 1, psnr(v, X_ori), end_time - begin_time))
 
-            yield itr, residualx, psnr_val
+            yield itr, format(residualx, ".4e"), format(psnr_val, ".3f")
 
         yield x, hist

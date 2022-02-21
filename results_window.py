@@ -29,6 +29,8 @@ class MplCanvas(FigureCanvasQTAgg):
 
     def update_figure(self, data):
         try:
+            self.figure.clear()
+
             x_result = data['x_result']
             sampling = {item[0]: item[1] for item in data['sampling']}
 
@@ -40,36 +42,37 @@ class MplCanvas(FigureCanvasQTAgg):
             pattern_rand_b2 = np.asarray(pattern_rand, dtype=bool) == 0
             H_elim = temp[pattern_rand_b2]
 
-            self.figure.suptitle('Results from the ' + str(data['alg_name']) + ' Algorithm')
+            case = str(data['alg_name'])
+            self.figure.suptitle(f'Resultos del algoritmo {case}')
             axs = self.figure.subplots(2, 2)
 
             axs[0, 0].imshow(x, cmap='seismic', aspect='auto')
-            axs[0, 0].set_title('Reference')
+            axs[0, 0].set_title('Referencia')
 
             ytemp = y_rand.copy()
             ytemp[:, H_elim] = None
             axs[1, 0].imshow(ytemp, cmap='seismic', aspect='auto')
-            axs[1, 0].set_title('Measurements')
+            axs[1, 0].set_title('Medidas')
 
             # axs[1, 0].sharex(axs[0, 0])
             metric = PSNR(x[:, H_elim], x_result[:, H_elim])
-            metric_ssim = ssim(x[:, H_elim], x_result[:, H_elim])
+            metric_ssim = ssim(x[:, H_elim], x_result[:, H_elim], win_size=3)
             axs[0, 1].imshow(x_result, cmap='seismic', aspect='auto')
-            axs[0, 1].set_title(f'Reconstructed \n PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+            axs[0, 1].set_title(f'Reconstruido \n PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
 
             index = 5
-            axs[1, 1].plot(x[:, H_elim[index]], 'r', label='Reference')
-            axs[1, 1].plot(x_result[:, H_elim[index]], 'b', label='Recovered')
+            axs[1, 1].plot(x[:, H_elim[index]], 'r', label='Referencia')
+            axs[1, 1].plot(x_result[:, H_elim[index]], 'b', label='Recuperado')
             axs[1, 1].legend(loc='best')
-            axs[1, 1].set_title('Trace ' + str("{:.0f}".format(H_elim[index])))
+            axs[1, 1].set_title('Traza ' + str("{:.0f}".format(H_elim[index])))
 
             self.draw()
+
         except BaseException as err:
             msg = f"Unexpected {err=}, {type(err)=}"
             showCritical("Ocurrió un error inesperado al procesar el dato sísmico. Por favor, intente nuevamente o "
                          "utilice un dato diferente.", details=msg)
             return
-
 
 
 class UIResultsWindow(QtWidgets.QMainWindow):
