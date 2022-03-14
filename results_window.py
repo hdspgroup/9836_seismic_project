@@ -50,7 +50,7 @@ class MplCanvas(FigureCanvasQTAgg):
             axs[0, 0].set_title('Referencia')
 
             ytemp = y_rand.copy()
-            ytemp[:, H_elim] = None
+            ytemp[:, H_elim] = 0
             axs[1, 0].imshow(ytemp, cmap='seismic', aspect='auto')
             axs[1, 0].set_title('Medidas')
 

@@ -58,6 +58,7 @@ class MplCanvas(FigureCanvasQTAgg):
             self.axes_1.plot(self.iteracion, self.error, color=color)
             self.axes_1.tick_params(axis='y', labelcolor=color, length=10)
             self.axes_1.yaxis.set_major_locator(MaxNLocator(7))
+            self.axes_1.invert_yaxis()
 
             color = 'tab:blue'
             self.axes_2.set_ylabel('psnr', color=color)
@@ -548,7 +549,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
             self.compressLabel.setVisible(True)
             self.compressSpinBox.setVisible(True)
 
-            self.compressSpinBox.setMinimum(1)
+            self.compressSpinBox.setMinimum(7)
             self.compressSpinBox.setMaximum(99)
 
         elif sampling == 'uniforme':
@@ -608,7 +609,8 @@ class UiMainWindow(QtWidgets.QMainWindow):
             showWarning("Para iniciar, debe cargar el dato sísmico dando click al boton 'Cargar'")
             return
 
-        self.check_params_algorithm(self.algorithmComboBox.currentText())
+        algorithm_case = self.algorithmComboBox.currentText().upper()
+        self.check_params_algorithm(algorithm_case)
 
         if self.saveAsLineEdit.text().strip() == '':
             showWarning("Por favor seleccione un nombre de archivo para guardar los resultados del algoritmo.")
@@ -644,7 +646,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
 
             elif self.samplingTypeComboBox.currentText().lower() == 'lista':
                 try:
-                    lista = [int(number) for number in self.elementLineEdit.text().split(',')]
+                    lista = [int(number) for number in self.elementLineEdit.text().replace(' ', '').split(',')]
 
                     if len(lista) < 7:
                         showWarning("La cantidad mínima de elementos debe ser 7.")
@@ -660,6 +662,11 @@ class UiMainWindow(QtWidgets.QMainWindow):
                                     f"ingresado en la lista de elementos ({np.max(lista)}).\n"
                                     "Por favor verifique la lista.")
                         return
+
+                    if any(number < 0 for number in lista):
+                        showWarning("No ingrese elementos menores que cero a la lista de elementos.")
+                        return
+
 
                 except:
                     showWarning("Expresión invalida en los elementos de la lista.\n"
@@ -695,20 +702,20 @@ class UiMainWindow(QtWidgets.QMainWindow):
 
             Alg = Algorithms(x, H, 'DCT2D', 'IDCT2D')  # Assuming using DCT2D ad IDCT2D for all algorithms
 
-            if self.algorithmComboBox.currentText() == "FISTA":
+            if algorithm_case == "FISTA":
                 parameters = {
                     "lmb": float(self.param1LineEdit.text()),  # Tau
                     "mu": float(self.param2LineEdit.text()),  # Mu
                     "max_itr": self.maxiter
                 }
                 func = Alg.FISTA
-            elif self.algorithmComboBox.currentText() == "GAP":
+            elif algorithm_case == "GAP":
                 parameters = {
                     "lmb": float(self.param1LineEdit.text()),  # Tau
                     "max_itr": self.maxiter
                 }
                 func = Alg.GAP
-            elif self.algorithmComboBox.currentText() == "TWIST":
+            elif algorithm_case == "TWIST":
                 parameters = {
                     "lmb": float(self.param1LineEdit.text()),  # Tau
                     "alpha": float(self.param2LineEdit.text()),  # Alpha
@@ -716,7 +723,7 @@ class UiMainWindow(QtWidgets.QMainWindow):
                     "max_itr": self.maxiter
                 }
                 func = Alg.TwIST
-            elif self.algorithmComboBox.currentText() == "ADMM":
+            elif algorithm_case == "ADMM":
                 parameters = {
                     "rho": float(self.param1LineEdit.text()),  # Rho
                     "gamma": float(self.param2LineEdit.text()),  # Gamma

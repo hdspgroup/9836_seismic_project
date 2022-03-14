@@ -1,6 +1,10 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/main.png</file>
+    <file>icons/settings-1.png</file>
+    <file>icons/stop.png</file>
     <file>icons/save.png</file>
+    <file>icons/settings.png</file>
     <file>icons/info.png</file>
     <file>icons/report.png</file>
     <file>icons/view.png</file>
