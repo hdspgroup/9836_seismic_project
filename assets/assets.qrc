@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/tuning.png</file>
     <file>icons/main.png</file>
     <file>icons/settings-1.png</file>
     <file>icons/stop.png</file>
@@ -8,5 +9,38 @@
     <file>icons/info.png</file>
     <file>icons/report.png</file>
     <file>icons/view.png</file>
+  </qresource>
+  <qresource prefix="parameters">
+    <file>parameters/alpha_end.png</file>
+    <file>parameters/alpha_init.png</file>
+    <file>parameters/alpha_list.png</file>
+    <file>parameters/beta_end.png</file>
+    <file>parameters/beta_init.png</file>
+    <file>parameters/beta_list.png</file>
+    <file>parameters/gamma_end.png</file>
+    <file>parameters/gamma_init.png</file>
+    <file>parameters/gamma_list.png</file>
+    <file>parameters/lambda_end.png</file>
+    <file>parameters/lambda_init.png</file>
+    <file>parameters/lambda_list.png</file>
+    <file>parameters/mu_end.png</file>
+    <file>parameters/mu_init.png</file>
+    <file>parameters/mu_list.png</file>
+    <file>parameters/rho_end.png</file>
+    <file>parameters/rho_init.png</file>
+    <file>parameters/rho_list.png</file>
+  </qresource>
+  <qresource prefix="equations">
+    <file>equations/gap.png</file>
+    <file>equations/twist.png</file>
+    <file>equations/admm.png</file>
+    <file>equations/fista.png</file>
+    <file>equations/gamma.png</file>
+    <file>equations/lambda.png</file>
+    <file>equations/beta.png</file>
+    <file>equations/gamma.png</file>
+    <file>equations/lambda.png</file>
+    <file>equations/mu.png</file>
+    <file>equations/rho.png</file>
   </qresource>
 </RCC>

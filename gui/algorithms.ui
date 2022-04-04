@@ -1,0 +1,837 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>557</width>
+    <height>873</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Configuración de algoritmos</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>9</y>
+      <width>501</width>
+      <height>72</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Opciones generales</string>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="maxiterLabel_2">
+         <property name="text">
+          <string>Max iter</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="maxiterSpinBox_2">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="paramTuningLabel">
+         <property name="text">
+          <string>Parámetrización</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="paramTuningComboBox">
+         <item>
+          <property name="text">
+           <string>Intervalo</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Lista</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="paramValuesLabel">
+         <property name="text">
+          <string>Valores</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="paramValuesSpinBox">
+         <property name="suffix">
+          <string/>
+         </property>
+         <property name="prefix">
+          <string/>
+         </property>
+         <property name="minimum">
+          <number>2</number>
+         </property>
+         <property name="maximum">
+          <number>999</number>
+         </property>
+         <property name="stepType">
+          <enum>QAbstractSpinBox::DefaultStepType</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>87</y>
+      <width>427</width>
+      <height>454</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="fistaTab">
+     <attribute name="title">
+      <string>FISTA</string>
+     </attribute>
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="10,0,0">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../assets/assets.qrc">:/equations/equations/fista.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="lambdaInitLabel">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_init.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lambdaInitLineEdit"/>
+        </item>
+        <item>
+         <spacer name="lambdaParamSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>160</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="lambdaEndLabel">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_end.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lambdaEndLineEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="muInitLabel">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/mu_init.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="muInitLineEdit"/>
+        </item>
+        <item>
+         <spacer name="muParamSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>160</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="muEndLabel">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/mu_end.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="muEndLineEdit"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="gapTab">
+     <attribute name="title">
+      <string>GAP</string>
+     </attribute>
+     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="50,0">
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../assets/assets.qrc">:/equations/equations/gap.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QLabel" name="param1Label_5">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_init.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param1LineEdit_5"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_9">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>160</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="param2Label_5">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_end.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param2LineEdit_5"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="twistTab">
+     <attribute name="title">
+      <string>TwIST</string>
+     </attribute>
+     <layout class="QVBoxLayout" name="verticalLayout_4" stretch="50,0,0,0">
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../assets/assets.qrc">:/equations/equations/twist.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <item>
+         <widget class="QLabel" name="param1Label_7">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_init.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param1LineEdit_7"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_12">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>160</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="param2Label_7">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_end.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param2LineEdit_7"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <item>
+         <widget class="QLabel" name="param1Label_6">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/alpha_init.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param1LineEdit_6"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_10">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>160</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="param2Label_6">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/alpha_end.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param2LineEdit_6"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QLabel" name="param1Label_4">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/beta_init.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param1LineEdit_4"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_11">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>160</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="param2Label_4">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/beta_end.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param2LineEdit_4"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="admmTab">
+     <attribute name="title">
+      <string>ADMM</string>
+     </attribute>
+     <layout class="QVBoxLayout" name="verticalLayout_5" stretch="10,0,0,0">
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../assets/assets.qrc">:/equations/equations/admm.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_14">
+        <item>
+         <widget class="QLabel" name="rhoInitLabel">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/rho_init.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="rhoInitLineEdit"/>
+        </item>
+        <item>
+         <spacer name="rhoParamSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>160</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="rhoEndLabel">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/rho_end.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="rhoEndLineEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_11">
+        <item>
+         <widget class="QLabel" name="param1Label_8">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/gamma_init.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param1LineEdit_8"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_14">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>160</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="param2Label_8">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/gamma_end.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param2LineEdit_8"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <item>
+         <widget class="QLabel" name="param1Label_9">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_init.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param1LineEdit_9"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_13">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>160</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="param2Label_9">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_end.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="param2LineEdit_9"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>760</y>
+      <width>391</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLabel" name="param1Label_11">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_init.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="param1LineEdit_11"/>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_16">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>160</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="param2Label_11">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_end.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="param2LineEdit_11"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>800</y>
+      <width>411</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_9">
+     <item>
+      <widget class="QLabel" name="param1Label_12">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../assets/assets.qrc">:/parameters/parameters/mu_init.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="param1LineEdit_12"/>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_17">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>160</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="param2Label_12">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../assets/assets.qrc">:/parameters/parameters/mu_end.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="param2LineEdit_12"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="Line" name="samplingHLine">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>740</y>
+      <width>335</width>
+      <height>3</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>670</y>
+      <width>331</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_13">
+     <item>
+      <widget class="QLabel" name="paramTuningLabel_2">
+       <property name="text">
+        <string>Parámetrización</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="paramTuningComboBox_2">
+       <item>
+        <property name="text">
+         <string>Intervalo</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Lista</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="paramValuesLabel_2">
+       <property name="text">
+        <string>Valores</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="paramValuesSpinBox_2">
+       <property name="suffix">
+        <string/>
+       </property>
+       <property name="prefix">
+        <string/>
+       </property>
+       <property name="minimum">
+        <number>2</number>
+       </property>
+       <property name="maximum">
+        <number>999</number>
+       </property>
+       <property name="stepType">
+        <enum>QAbstractSpinBox::DefaultStepType</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="startPushButton">
+       <property name="text">
+        <string>Finalizar</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../assets/assets.qrc"/>
+ </resources>
+ <connections/>
+</ui>

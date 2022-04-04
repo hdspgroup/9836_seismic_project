@@ -11,42 +11,36 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class UIEquationWindow(object):
-    def setupUi(self, UIEquationWindow, case):
-        UIEquationWindow.setObjectName("Algoritmo")
-        UIEquationWindow.resize(520, 234)
-        self.equationGroupBox = QtWidgets.QGroupBox(UIEquationWindow)
-        self.equationGroupBox.setGeometry(QtCore.QRect(10, 10, 501, 211))
+class UIEquationWindow(QtWidgets.QWidget):
+    def setupUi(self, case):
+        self.setObjectName("Algoritmo")
+        self.setObjectName("EquationDialog")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.equationGroupBox = QtWidgets.QGroupBox(self)
         self.equationGroupBox.setObjectName("equationGroupBox")
-        self.scrollArea = QtWidgets.QScrollArea(self.equationGroupBox)
-        self.scrollArea.setGeometry(QtCore.QRect(0, 20, 501, 191))
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setObjectName("scrollArea")
-        self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 499, 189))
-        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.equation = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-        self.equation.setGeometry(QtCore.QRect(10, 10, 471, 171))
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.equationGroupBox)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.equation = QtWidgets.QLabel(self.equationGroupBox)
         self.equation.setText("")
-        # self.equation.setPixmap(QtGui.QPixmap("assets/equations/fista.png"))
-        self.update_equation(case)
-        self.equation.setScaledContents(True)
+        self.equation.setPixmap(QtGui.QPixmap("../assets/equations/fista.png"))
+        self.equation.setScaledContents(False)
         self.equation.setObjectName("equation")
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.horizontalLayout_2.addWidget(self.equation)
+        self.horizontalLayout.addWidget(self.equationGroupBox)
+        self.update_equation(case)
 
-        self.retranslateUi(UIEquationWindow, case)
-        QtCore.QMetaObject.connectSlotsByName(UIEquationWindow)
+        self.retranslateUi(case)
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, UIEquationWindow, case):
+    def retranslateUi(self, case):
         _translate = QtCore.QCoreApplication.translate
-        UIEquationWindow.setWindowTitle(_translate("UIEquationWindow", f"Algoritmo {case}"))
+        self.setWindowTitle(_translate("UIEquationWindow", f"Algoritmo {case}"))
         self.equationGroupBox.setTitle(_translate("UIEquationWindow", "Algoritmo y parámetros"))
 
     def update_equation(self, case):
-        if case == 'FISTA':
-            self.equation.setPixmap(QtGui.QPixmap("assets/equations/fista.png"))
-        else:
-            self.equation.setPixmap(QtGui.QPixmap("assets/equations/fista.png"))
+        self.equation.setPixmap(QtGui.QPixmap(f'assets/equations/{case.lower()}.png'))
+        self.resize(10, 10)
 
 
 if __name__ == "__main__":
