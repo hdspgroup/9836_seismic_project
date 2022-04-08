@@ -33,7 +33,7 @@ def run_alg(data_name, case='ADMM', maxiter=500, sr_rand=0.5):
     Select the Algorithm: FISTA , GAP , TWIST , ADMM
     '''
     for s in range(x.shape[1]):
-        Alg = Algorithms(x[:, s, :], H, 'DCT2D', 'IDCT2D')
+        Alg = Algorithms(x[:, 1:3, :], H, 'DCT2D', 'IDCT2D')
         parameters = {}
         if case == 'FISTA':
             parameters = {'max_itr': maxiter,
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     if not os.path.exists("arrays"):
         os.makedirs("arrays", True)
     data_n = 'cube4.npy'
-    # run_alg(data_name=data_n, case='ADMM', maxiter=500, sr_rand=0.5)
+    run_alg(data_name=data_n, case='ADMM', maxiter=500, sr_rand=0.5)
     # run_alg(data_name=data_n, case='FISTA', maxiter=500, sr_rand=0.5)
     # run_alg(data_name=data_n, case='GAP', maxiter=500, sr_rand=0.5)
     # run_alg(data_name=data_n, case='TwIST', maxiter=500, sr_rand=0.5)
