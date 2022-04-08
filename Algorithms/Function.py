@@ -11,20 +11,226 @@ import time
 from pymitter import EventEmitter
 
 # Need to use this (EventEmitter) for comunication with the GUI, please don't remove it, I used this trough the code
+from gui.alerts import showWarning, showCritical
+
 ee = EventEmitter()
 
 
+class Sampling:
+    '''
+    Sampling techniques for seismic data.
+    '''
+
+    def apply_sampling(self, x, mode, n_bloques, lista, seed, compression_ratio):
+        if mode == 'aleatorio':
+            return self.random_sampling(x, seed, compression_ratio)
+        elif mode == 'uniforme':
+            return self.uniform_sampling(x, compression_ratio)
+        elif mode == 'jitter':
+            return self.jitter_sampling(x, n_bloques, compression_ratio)
+        else:  # mode == lista
+            try:
+                lista = [int(number) for number in lista.text().replace(' ', '').split(',')]
+
+                if len(lista) < 7:
+                    showWarning("La cantidad mínima de elementos debe ser 7.")
+                    return
+
+                if len(np.unique(lista)) < 7:
+                    showWarning("La cantidad mínima de elementos repetidos debe ser 7.\n"
+                                "Preferiblemente no ingrese números repetidos.")
+                    return
+
+                if x.shape[1] <= np.max(lista):
+                    showWarning(f"El número de columnas de la muestra ({x.shape[1]}) es inferior al mayor número "
+                                f"ingresado en la lista de elementos ({np.max(lista)}).\n"
+                                "Por favor verifique la lista.")
+                    return
+
+                if any(number < 0 for number in lista):
+                    showWarning("No ingrese elementos menores que cero a la lista de elementos.")
+                    return
+
+
+            except:
+                showWarning("Expresión invalida en los elementos de la lista.\n"
+                            "Verifique que ingreso correctamente los datos.")
+                return
+            return self.list_sampling(x, lista)
+
+    def random_sampling(self, x, seed, compression_ratio):
+        '''
+        Inputs:
+        x : full data
+        seed: seed for random sampling
+        compression_ratio: compression ratio for subsampling
+
+        Outputs:
+        sampling_dict : dictionary that contains all information about sample
+                        and its compression
+        '''
+        M, N = x.shape
+
+        # sampling
+        tasa_compression = int(compression_ratio * N)
+        pattern_vec = np.ones((N,))
+
+        if seed is not None:
+            np.random.seed(seed)
+
+        ss = np.random.permutation(list(range(1, N - 1)))
+        pattern_vec[ss[0:tasa_compression]] = 0
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": x,
+            "sr_rand": compression_ratio,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
+
+    def uniform_sampling(self, x, compression_ratio):
+        '''
+        Inputs:
+        x : full data
+        compression_ratio: compression ratio for subsampling
+
+        Outputs:
+        sampling_dict : dictionary that contains all information about sample
+                        and its compression
+        '''
+        M, N = x.shape
+        pattern_vec = np.ones((N,), dtype=int)
+        n_col_rmv = np.round(N * compression_ratio)
+        x_distance = np.round(N / n_col_rmv)
+
+        i = 0
+        while i * int(x_distance) < N:
+            pattern_vec[i * int(x_distance)] = 0
+            i = i + 1
+
+        # Sampling pattern
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": x,
+            "sr_rand": compression_ratio,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
+
+    def jitter_sampling(self, x, n_bloques, compression_ratio):
+        # https://slim.gatech.edu/Publications/Public/Journals/Geophysics/2008/hennenfent08GEOsdw/paper_html/node14.html
+        '''
+        Inputs:
+        x : full data
+        n_bloques: number of splited blocks in the full data for subsampling
+        compression_ratio: compression ratio for subsampling
+
+        Outputs:
+        sampling_dict : dictionary that contains all information about sample
+                        and its compression
+        '''
+        M, N = x.shape
+
+        n = np.int(np.floor(N / n_bloques))
+        t_n = np.int(n * compression_ratio)
+        vec_total = []
+
+        for ii in range(n_bloques):
+            complete = np.ones((n,))
+            rand_block = np.random.permutation(list(range(1, n - 1)))
+            if ii == n_bloques - 1 and n_bloques % 2 == 0 and t_n == 3:
+                complete[rand_block[:t_n + 1]] = 0
+            else:
+                complete[rand_block[:t_n]] = 0
+            vec_total.append(complete)
+
+        vectorize_pattern = np.array(vec_total).reshape(-1)
+        pattern_vec = np.ones((N,))
+        pattern_vec[:len(vectorize_pattern)] = vectorize_pattern
+
+        # Sampling pattern
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": x,
+            "sr_rand": compression_ratio,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
+
+    def list_sampling(self, x, lista):
+        M, N = x.shape
+
+        # sampling
+
+        pattern_vec = np.ones((N,))
+        pattern_vec[np.array(lista)] = 0
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": x,
+            "lista": lista,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
+
+
 def random_sampling(x, sr):
-    ''' Random Sampling
-  x : full data
-  sr: subsampling factor
-  '''
+    '''
+    Random sampling is a part of the sampling technique in which each sample has an equal probability of being chosen.
+    A sample chosen randomly is meant to be an unbiased representation of the total population.
+
+    Attributes
+    ----------
+    x : array-like
+        full data to apply the random sampling method
+    sr: float
+        subsampling factor
+    '''
     dim = x.shape
     batch = 1  # dim[0]
     M = dim[0]
     N = dim[1]
     # L = dim[3]
-
+    # sampling
     tasa_compression = int(sr * N)
     pattern_vec = np.ones((N,))
 
@@ -57,10 +263,12 @@ def dct2():
     To compute the 2D transform, the 1D transform is applied
     to the rows and the columns of the input matrix.
     '''
+
     def dct2_function(x):
         return (scipy.fft.dct(scipy.fft.dct(x).T)).T
 
     return dct2_function
+
 
 def idct2():
     '''
@@ -82,10 +290,12 @@ def idct2():
     To compute the 2D transform, the 1D transform is applied
     to the rows and the columns of the input matrix.
     '''
+
     def idct2_function(x):
         return (scipy.fft.idct(scipy.fft.idct(x).T)).T
 
     return idct2_function
+
 
 class Operator:
     '''
@@ -117,6 +327,7 @@ class Operator:
         This method multiplies the input vector with the equivalent
         of the operator for the model.
     '''
+
     def __init__(self, H, m, n, operator_dir, operator_inv):
         '''
         Parameters
@@ -206,6 +417,7 @@ class Operator:
 
         return y
 
+
 # -------------------------------------------------------------------------
 def soft_threshold(x, t):
     '''
@@ -231,6 +443,7 @@ def soft_threshold(x, t):
     tmp = (tmp + np.abs(tmp)) / 2
     y = np.sign(x) * tmp
     return y
+
 
 def PSNR(original, compressed):
     '''
@@ -271,6 +484,7 @@ def PSNR(original, compressed):
     max_pixel = np.max(original)
     psnr = 20 * np.log10(max_pixel / np.sqrt(mse))
     return psnr
+
 
 class Algorithms:
     '''
@@ -320,6 +534,7 @@ class Algorithms:
         Applies a Time to Walking Independently After Stroke (TwIST)
         algorithm to solve the optimization problem.
     '''
+
     def __init__(self, x, H, operator_dir, operator_inv):
         '''
         Parameters
@@ -336,7 +551,6 @@ class Algorithms:
             This function applies the inverse transform of the
             `operator_dir` function.
         '''
-
         # ------- change the dimension of the inputs image --------
         m, n = x.shape
         # m = int(2 ** (np.ceil(np.log2(m)) - 1))
@@ -376,13 +590,13 @@ class Algorithms:
 
         # ---------- Load or create the basis function  ---------
 
-        if (inspect.isfunction(operator_dir)):
+        if inspect.isfunction(operator_dir):
             self.operator_dir = operator_dir
         else:
             if operator_dir == 'DCT2D':
                 self.operator_dir = dct2()
 
-        if (inspect.isfunction(operator_inv)):
+        if inspect.isfunction(operator_inv):
             self.operator_inv = operator_inv
         else:
             if operator_inv == 'IDCT2D':
@@ -401,13 +615,86 @@ class Algorithms:
         measures : Y = H@x
         '''
 
+        print(f'H.shape={self.H.shape}')
         return self.H * np.squeeze(self.x.T.reshape(-1))
+
+    def get_results(self, alg_name, **parameters):
+        '''
+        This function allows to get the final results of the implemented algorithms
+        in this class.
+
+        This is due to algorithms functions works as generators, where each iteration
+        returns the current output info of the algorithm and the last iteration
+        returns the desired output of the function.
+
+        Parameters
+        ----------
+        alg_name :    str
+                      The name of the algorithm to solve.
+        max_itr :     int
+                      The maximum number of iteration for the algorithm.
+        parameters :  dict
+                      Parameters of the selected algorithm to solve.
+
+        Returns
+        -------
+        x_results : recovery results of the selected algorithm.
+        hist      : history of the selected algorithm.
+        '''
+        if alg_name == 'FISTA':
+            alg = self.FISTA
+        elif alg_name == 'GAP':
+            alg = self.GAP
+        elif alg_name == 'TwIST':
+            alg = self.TwIST
+        elif alg_name == 'ADMM':
+            alg = self.ADMM
+        else:
+            raise 'The algorithm entered was not found.'
+
+        results = [output for i, output in enumerate(alg(**parameters)) if parameters["max_itr"] == i][0]
+        x_result, hist = results
+
+        return x_result, hist
+
+    def get_algorithm(self, algorithm_case, maxiter, **params):
+        if algorithm_case == "fista":
+            parameters = {"lmb": float(params['param1']),  # Tau
+                          "mu": float(params['param2']),  # Mu
+                          "max_itr": maxiter}
+            func = self.FISTA
+
+        elif algorithm_case == "gap":
+            parameters = {"lmb": float(params['param1']),  # Tau
+                          "max_itr": maxiter}
+            func = self.GAP
+
+        elif algorithm_case == "twist":
+            parameters = {"lmb": float(params['param1']),  # Tau
+                          "alpha": float(params['param2']),  # Alpha
+                          "beta": float(params['param3']),  # Beta
+                          "max_itr": maxiter}
+            func = self.TwIST
+
+        elif algorithm_case == "admm":
+            parameters = {"rho": float(params['param1']),  # Rho
+                          "gamma": float(params['param2']),  # Gamma
+                          "lmb": float(params['param3']),  # Lambda
+                          "max_itr": maxiter}
+            func = self.ADMM
+
+        else:
+            showCritical(
+                "No se encontró el algoritmo. Por favor intente nuevamente o utilice un algoritmo diferente.")
+            return
+
+        return func, parameters
 
     # ---------------------------------------------FISTA----------------------------------------
 
     def FISTA(self, lmb, mu, max_itr):
         '''
-        This is the python implementation of the FISTA (A Fast Iterative Shrinkage-Thresholding Algorithm )
+        This is the python implementation of the FISTA (A Fast Iterative Shrinkage-Thresholding Algorithm)
         Beck, A., & Teboulle, M. (2009). A fast iterative shrinkage-thresholding algorithm for linear
         inverse problems. SIAM journal on imaging sciences, 2(1), 183-202.
         This one of the most well-known first-order optimization scheme in the literature, as it achieves
@@ -430,17 +717,18 @@ class Algorithms:
             max_itr :   int
                         The maximum number of iterations
         '''
+        # ee = EventEmitter()
 
         y = self.measurements()
 
-        print(' FISTA: \n')
+        # print('FISTA: \n')
 
         dim = self.x.shape
         x = np.zeros(dim)
         q = 1
         s = x
         hist = np.zeros((max_itr + 1, 2))
-        print('itr \t ||x-xold|| \t PSNR \n')
+        # print('itr \t ||x-xold|| \t PSNR \n')
         itr = 0
         while (itr < max_itr):
             x_old = x
@@ -462,10 +750,12 @@ class Algorithms:
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
-            ee.emit("algorithm_update", itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f"))
-            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
 
-        return self.operator_inv(s), hist
+            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".2e"), format(hist[itr, 1], ".3f"), dict(result=self.operator_inv(s),
+                                                                                      hist=hist)
+
+        yield self.operator_inv(s), hist
 
     # ---------------------------------------------GAP----------------------------------------
     def GAP(self, lmb, max_itr):
@@ -481,6 +771,8 @@ class Algorithms:
 
         The algorithm  can be interrupted anytime to return a valid solution and resumed subsequently to
         improve the  solution.
+
+        https://arxiv.org/pdf/1511.03890.pdf
 
         Parameters
         ----------
@@ -520,10 +812,12 @@ class Algorithms:
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
-            ee.emit("algorithm_update", itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f"))
-            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
 
-        return self.operator_inv(x), hist
+            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".2e"), format(hist[itr, 1], ".3f"), dict(result=self.operator_inv(x),
+                                                                                      hist=hist)
+
+        yield self.operator_inv(x), hist
 
     # ----------------TWIST----------------------------
     def TwIST(self, lmb, alpha, beta, max_itr):
@@ -584,18 +878,50 @@ class Algorithms:
             itr = itr + 1
 
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
-
             psnr_val = PSNR(self.operator_inv(x), self.x)
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
-            ee.emit("algorithm_update", itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f"))
-            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
 
-        return self.operator_inv(x), hist
+            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".2e"), format(hist[itr, 1], ".3f"), dict(result=self.operator_inv(x),
+                                                                                      hist=hist)
 
-    def ADMM(self, rho, gamma, lamnda, max_itr):
+        yield self.operator_inv(x), hist
 
+    def ADMM(self, rho, gamma, lmb, max_itr):
+        # '''
+        # The alternating direction method of multipliers (ADMM) is an algorithm that solves convex optimization problems
+        # by using a divide and conquer strategy, breaking the problem into small pieces which are easier to handle.
+        # The standard optimization formulation problem for the ADMM algorithm is defined as:
+        #
+        # .. math::
+        #     \underset{\mathbf{x,z}}{\text{min }} \left\{ f(\mathbf{x}) + g(\mathbf{z}) \right\} \\
+        #     \text{subject to} \mathbf{Ax + Bz = c}
+        #
+        # where f and g are closed, proper and convex functions. To simplify the algorithm usually is preferred that the g
+        # function has a closet solution for the proximal operator.
+        #
+        # In the seismic reconstruction problem, the optimization problem associated could be defined as:
+        #
+        # .. math::
+        #     \underset{\mathbf{x,v}}{\text{min }} \left\{ \frac{1}{2}\| \mathbf{y - H\Phi x} \|_2^2 + \lambda\|\mathbf{v}\|_1\right\} \\
+        #     \text{subject to } \mathbf{x = v}
+        #
+        # where the first term of the cost function is a data fidelity term of the partially observed data, and the second
+        # term promotes the smoothness of the coefficients of the recovered signal in a representation base.
+        #
+        # Parameters
+        # ----------
+        # rho :   float
+        #         The weight for the dual problem term.
+        # gamma :   float
+        #         A relaxation coefficient for the dual problem parameter.
+        # lmb :   float
+        #         The threshold value to compute the operator.
+        # max_itr : int
+        #         Maximum number of iterations
+        # '''
         s = 0
 
         y = self.measurements()
@@ -620,7 +946,7 @@ class Algorithms:
         HtY = Ht * np.squeeze(y.T.reshape(-1))  # H' * x
         HtY = np.reshape(HtY, [self.m, self.n], order='F')
 
-        HTH = self.H.transpose()*self.H
+        HTH = self.H.transpose() * self.H
         I_d = scipy.sparse.eye(HTH.shape[0])
 
         import matplotlib.pyplot as plt
@@ -631,16 +957,16 @@ class Algorithms:
             # F-update
             Inve = HTH + rho * I_d
             b = scipy.sparse.find(Inve)
-            val = 1 / b [2]
-            Inve = csr_matrix((val, (b [0], b [1])), shape=Inve.shape)
+            val = 1 / b[2]
+            Inve = csr_matrix((val, (b[0], b[1])), shape=Inve.shape)
 
-            x = HtY + rho*self.operator_dir(v-u)
-            x = Inve*(x.T.reshape(-1))
+            x = HtY + rho * self.operator_dir(v - u)
+            x = Inve * (x.T.reshape(-1))
             x = np.reshape(x, [self.m, self.n], order='F')
 
             # Proximal
             vtilde = self.operator_inv(x) + u
-            v = soft_threshold(vtilde, lamnda / rho)
+            v = soft_threshold(vtilde, lmb / rho)
             # Update langrangian multiplier
             u = vtilde - v
 
@@ -649,8 +975,8 @@ class Algorithms:
             itr += 1
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
 
-            #psnr_val = PSNR(x, x_old)
-            psnr_val = PSNR(self.x, x) # the metric should be between the orig, and the estimated.
+            # psnr_val = PSNR(x, x_old)
+            psnr_val = PSNR(self.x, x)  # the metric should be between the orig, and the estimated.
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
 
@@ -658,10 +984,10 @@ class Algorithms:
                 # mse = np.mean(np.sum((y-A(v,Phi))**2,axis=(0,1)))
                 end_time = time.time()
                 # Error = %2.2f,
-                ee.emit("algorithm_update", itr, residualx, psnr_val)
-                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB,"
-                      " time = %3.1fs."
-                      % (itr + 1, residualx, psnr_val, end_time - begin_time))
+                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB, time = %3.1fs." % (
+                    itr + 1, residualx, psnr_val, end_time - begin_time))
                 # % (ni + 1, psnr(v, X_ori), end_time - begin_time))
 
-        return x, hist
+            yield itr, format(residualx, ".2e"), format(psnr_val, ".3f"), dict(result=x, hist=hist)
+
+        yield x, hist

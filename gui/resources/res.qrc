@@ -1,5 +1,7 @@
 <RCC>
-  <qresource prefix="info_icon">
-    <file>info_icon.png</file>
+  <qresource prefix="icons">
+    <file>info.png</file>
+    <file>report.png</file>
+    <file>view.png</file>
   </qresource>
 </RCC>
