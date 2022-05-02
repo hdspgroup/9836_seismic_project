@@ -56,32 +56,32 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.setMinimumSize(1100, 870)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
-        self.centralWidgetHLayout = QtWidgets.QHBoxLayout(self.centralwidget)
-        self.centralWidgetHLayout.setObjectName("centralWidgetHLayout")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.mainLayout = QtWidgets.QVBoxLayout()
         self.mainLayout.setObjectName("mainLayout")
         self.inputGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.inputGroupBox.setObjectName("inputGroupBox")
-        self.inputGroupBoxVLayout = QtWidgets.QVBoxLayout(self.inputGroupBox)
-        self.inputGroupBoxVLayout.setObjectName("inputGroupBoxVLayout")
+        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.inputGroupBox)
+        self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.dataTreeWidget = QtWidgets.QTreeWidget(self.inputGroupBox)
         self.dataTreeWidget.setObjectName("dataTreeWidget")
-        self.inputGroupBoxVLayout.addWidget(self.dataTreeWidget)
-        self.inputHLayout = QtWidgets.QHBoxLayout()
-        self.inputHLayout.setObjectName("inputHLayout")
+        self.verticalLayout_7.addWidget(self.dataTreeWidget)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem = QtWidgets.QSpacerItem(13, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.inputHLayout.addItem(spacerItem)
+        self.horizontalLayout.addItem(spacerItem)
         self.loadPushButton = QtWidgets.QPushButton(self.inputGroupBox)
         self.loadPushButton.setObjectName("loadPushButton")
-        self.inputHLayout.addWidget(self.loadPushButton)
+        self.horizontalLayout.addWidget(self.loadPushButton)
         spacerItem1 = QtWidgets.QSpacerItem(13, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.inputHLayout.addItem(spacerItem1)
-        self.inputGroupBoxVLayout.addLayout(self.inputHLayout)
+        self.horizontalLayout.addItem(spacerItem1)
+        self.verticalLayout_7.addLayout(self.horizontalLayout)
         self.mainLayout.addWidget(self.inputGroupBox)
         self.algorithmGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.algorithmGroupBox.setObjectName("algorithmGroupBox")
-        self.algorithmGroupVLayout = QtWidgets.QVBoxLayout(self.algorithmGroupBox)
-        self.algorithmGroupVLayout.setObjectName("algorithmGroupVLayout")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.algorithmGroupBox)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.algorithmHLayout = QtWidgets.QHBoxLayout()
         self.algorithmHLayout.setObjectName("algorithmHLayout")
         self.algorithmComboBox = QtWidgets.QComboBox(self.algorithmGroupBox)
@@ -100,6 +100,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.algorithmPushButton.setIcon(icon)
         self.algorithmPushButton.setObjectName("algorithmPushButton")
         self.algorithmHLayout.addWidget(self.algorithmPushButton)
+        spacerItem2 = QtWidgets.QSpacerItem(13, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.algorithmHLayout.addItem(spacerItem2)
         self.maxiterLabel = QtWidgets.QLabel(self.algorithmGroupBox)
         self.maxiterLabel.setObjectName("maxiterLabel")
         self.algorithmHLayout.addWidget(self.maxiterLabel)
@@ -109,8 +111,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.maxiterSpinBox.setProperty("value", 100)
         self.maxiterSpinBox.setObjectName("maxiterSpinBox")
         self.algorithmHLayout.addWidget(self.maxiterSpinBox)
-        self.algorithmHLayout.setStretch(0, 5)
-        self.algorithmGroupVLayout.addLayout(self.algorithmHLayout)
+        self.verticalLayout_2.addLayout(self.algorithmHLayout)
         self.paramsHLayout = QtWidgets.QHBoxLayout()
         self.paramsHLayout.setObjectName("paramsHLayout")
         self.param1Label = QtWidgets.QLabel(self.algorithmGroupBox)
@@ -148,124 +149,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param3LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
         self.param3LineEdit.setObjectName("param3LineEdit")
         self.paramsHLayout.addWidget(self.param3LineEdit)
-        self.algorithmGroupVLayout.addLayout(self.paramsHLayout)
+        self.verticalLayout_2.addLayout(self.paramsHLayout)
         self.mainLayout.addWidget(self.algorithmGroupBox)
-
-        self.tuningGroupBox = QtWidgets.QGroupBox(self.centralwidget)
-        self.tuningGroupBox.setObjectName("tuningGroupBox")
-        self.tuningGroupBoxVLayout = QtWidgets.QVBoxLayout(self.tuningGroupBox)
-        self.tuningGroupBoxVLayout.setObjectName("tuningGroupBoxVLayout")
-        self.paramHLayout = QtWidgets.QHBoxLayout()
-        self.paramHLayout.setObjectName("paramHLayout")
-        self.paramTuningLabel = QtWidgets.QLabel(self.tuningGroupBox)
-        self.paramTuningLabel.setObjectName("paramTuningLabel")
-        self.paramHLayout.addWidget(self.paramTuningLabel)
-        self.paramTuningComboBox = QtWidgets.QComboBox(self.tuningGroupBox)
-        self.paramTuningComboBox.setObjectName("paramTuningComboBox")
-        self.paramTuningComboBox.addItem("")
-        self.paramTuningComboBox.addItem("")
-        self.paramHLayout.addWidget(self.paramTuningComboBox)
-        self.paramLabel = QtWidgets.QLabel(self.tuningGroupBox)
-        self.paramLabel.setObjectName("paramLabel")
-        self.paramHLayout.addWidget(self.paramLabel)
-        self.paramComboBox = QtWidgets.QComboBox(self.tuningGroupBox)
-        self.paramComboBox.setObjectName("paramComboBox")
-        self.paramComboBox.addItem("")
-        self.paramComboBox.addItem("")
-        self.paramComboBox.addItem("")
-        self.paramHLayout.addWidget(self.paramComboBox)
-        self.paramHLayout.setStretch(1, 4)
-        self.tuningGroupBoxVLayout.addLayout(self.paramHLayout)
-        self.paramValueHLayout = QtWidgets.QHBoxLayout()
-        self.paramValueHLayout.setObjectName("paramValueHLayout")
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.paramValueHLayout.addItem(spacerItem2)
-        self.paramValuesLabel = QtWidgets.QLabel(self.tuningGroupBox)
-        self.paramValuesLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.paramValuesLabel.setObjectName("paramValuesLabel")
-        self.paramValueHLayout.addWidget(self.paramValuesLabel)
-        self.paramValuesSpinBox = QtWidgets.QSpinBox(self.tuningGroupBox)
-        self.paramValuesSpinBox.setSuffix("")
-        self.paramValuesSpinBox.setPrefix("")
-        self.paramValuesSpinBox.setMinimum(2)
-        self.paramValuesSpinBox.setMaximum(999)
-        self.paramValuesSpinBox.setObjectName("paramValuesSpinBox")
-        self.paramValueHLayout.addWidget(self.paramValuesSpinBox)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.paramValueHLayout.addItem(spacerItem3)
-        self.paramValueHLayout.setStretch(0, 1)
-        self.paramValueHLayout.setStretch(1, 1)
-        self.paramValueHLayout.setStretch(2, 1)
-        self.paramValueHLayout.setStretch(3, 1)
-        self.tuningGroupBoxVLayout.addLayout(self.paramValueHLayout)
-        self.algorithmHLine = QtWidgets.QFrame(self.tuningGroupBox)
-        self.algorithmHLine.setFrameShape(QtWidgets.QFrame.HLine)
-        self.algorithmHLine.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.algorithmHLine.setObjectName("algorithmHLine")
-        self.tuningGroupBoxVLayout.addWidget(self.algorithmHLine)
-        self.param1HLayout = QtWidgets.QHBoxLayout()
-        self.param1HLayout.setObjectName("param1HLayout")
-        self.param1InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
-        self.param1InitLabel.setText("")
-        self.param1InitLabel.setPixmap(QtGui.QPixmap("assets/parameters/lambda_init.png"))
-        self.param1InitLabel.setObjectName("param1InitLabel")
-        self.param1HLayout.addWidget(self.param1InitLabel)
-        self.param1InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
-        self.param1InitLineEdit.setObjectName("param1InitLineEdit")
-        self.param1HLayout.addWidget(self.param1InitLineEdit)
-        self.param1EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
-        self.param1EndLabel.setText("")
-        self.param1EndLabel.setPixmap(QtGui.QPixmap("assets/parameters/lambda_end.png"))
-        self.param1EndLabel.setObjectName("param1EndLabel")
-        self.param1HLayout.addWidget(self.param1EndLabel)
-        self.param1EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
-        self.param1EndLineEdit.setObjectName("param1EndLineEdit")
-        self.param1HLayout.addWidget(self.param1EndLineEdit)
-        self.tuningGroupBoxVLayout.addLayout(self.param1HLayout)
-        self.param2HLayout = QtWidgets.QHBoxLayout()
-        self.param2HLayout.setObjectName("param2HLayout")
-        self.param2InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
-        self.param2InitLabel.setText("")
-        self.param2InitLabel.setPixmap(QtGui.QPixmap("assets/parameters/mu_init.png"))
-        self.param2InitLabel.setObjectName("param2InitLabel")
-        self.param2HLayout.addWidget(self.param2InitLabel)
-        self.param2InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
-        self.param2InitLineEdit.setObjectName("param2InitLineEdit")
-        self.param2HLayout.addWidget(self.param2InitLineEdit)
-        self.param2EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
-        self.param2EndLabel.setText("")
-        self.param2EndLabel.setPixmap(QtGui.QPixmap("assets/parameters/mu_end.png"))
-        self.param2EndLabel.setObjectName("param2EndLabel")
-        self.param2HLayout.addWidget(self.param2EndLabel)
-        self.param2EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
-        self.param2EndLineEdit.setObjectName("param2EndLineEdit")
-        self.param2HLayout.addWidget(self.param2EndLineEdit)
-        self.tuningGroupBoxVLayout.addLayout(self.param2HLayout)
-        self.param3HLayout = QtWidgets.QHBoxLayout()
-        self.param3HLayout.setObjectName("param3HLayout")
-        self.param3InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
-        self.param3InitLabel.setText("")
-        self.param3InitLabel.setPixmap(QtGui.QPixmap("assets/parameters/rho_init.png"))
-        self.param3InitLabel.setObjectName("param3InitLabel")
-        self.param3HLayout.addWidget(self.param3InitLabel)
-        self.param3InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
-        self.param3InitLineEdit.setObjectName("param3InitLineEdit")
-        self.param3HLayout.addWidget(self.param3InitLineEdit)
-        self.param3EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
-        self.param3EndLabel.setText("")
-        self.param3EndLabel.setPixmap(QtGui.QPixmap("assets/parameters/rho_end.png"))
-        self.param3EndLabel.setObjectName("param3EndLabel")
-        self.param3HLayout.addWidget(self.param3EndLabel)
-        self.param3EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
-        self.param3EndLineEdit.setObjectName("param3EndLineEdit")
-        self.param3HLayout.addWidget(self.param3EndLineEdit)
-        self.tuningGroupBoxVLayout.addLayout(self.param3HLayout)
-        self.mainLayout.addWidget(self.tuningGroupBox)
-
         self.samplingGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.samplingGroupBox.setObjectName("samplingGroupBox")
-        self.samplingGroupBoxVLayout = QtWidgets.QVBoxLayout(self.samplingGroupBox)
-        self.samplingGroupBoxVLayout.setObjectName("samplingGroupBoxVLayout")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.samplingGroupBox)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.samplingHLayout = QtWidgets.QHBoxLayout()
         self.samplingHLayout.setObjectName("samplingHLayout")
         self.samplingTypeLabel = QtWidgets.QLabel(self.samplingGroupBox)
@@ -278,6 +167,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.samplingTypeComboBox.addItem("")
         self.samplingTypeComboBox.addItem("")
         self.samplingHLayout.addWidget(self.samplingTypeComboBox)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.samplingHLayout.addItem(spacerItem3)
         self.compressLabel = QtWidgets.QLabel(self.samplingGroupBox)
         self.compressLabel.setObjectName("compressLabel")
         self.samplingHLayout.addWidget(self.compressLabel)
@@ -288,14 +179,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.compressSpinBox.setProperty("value", 50)
         self.compressSpinBox.setObjectName("compressSpinBox")
         self.samplingHLayout.addWidget(self.compressSpinBox)
-        self.samplingHLayout.setStretch(1, 4)
-        self.samplingHLayout.setStretch(3, 2)
-        self.samplingGroupBoxVLayout.addLayout(self.samplingHLayout)
+        self.verticalLayout_3.addLayout(self.samplingHLayout)
         self.samplingHLine = QtWidgets.QFrame(self.samplingGroupBox)
         self.samplingHLine.setFrameShape(QtWidgets.QFrame.HLine)
         self.samplingHLine.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.samplingHLine.setObjectName("samplingHLine")
-        self.samplingGroupBoxVLayout.addWidget(self.samplingHLine)
+        self.verticalLayout_3.addWidget(self.samplingHLine)
         self.elementHLayout = QtWidgets.QHBoxLayout()
         self.elementHLayout.setObjectName("elementHLayout")
         self.elementLabel = QtWidgets.QLabel(self.samplingGroupBox)
@@ -304,7 +193,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.elementLineEdit = QtWidgets.QLineEdit(self.samplingGroupBox)
         self.elementLineEdit.setObjectName("elementLineEdit")
         self.elementHLayout.addWidget(self.elementLineEdit)
-        self.samplingGroupBoxVLayout.addLayout(self.elementHLayout)
+        self.verticalLayout_3.addLayout(self.elementHLayout)
         self.jitterHLayout = QtWidgets.QHBoxLayout()
         self.jitterHLayout.setObjectName("jitterHLayout")
         self.jitterBlockLabel = QtWidgets.QLabel(self.samplingGroupBox)
@@ -318,8 +207,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.jitterBlockSpinBox.setObjectName("jitterBlockSpinBox")
         self.jitterHLayout.addWidget(self.jitterBlockSpinBox)
         self.jitterTypeLabel = QtWidgets.QLabel(self.samplingGroupBox)
-        self.jitterTypeLabel.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.jitterTypeLabel.setWordWrap(False)
         self.jitterTypeLabel.setObjectName("jitterTypeLabel")
         self.jitterHLayout.addWidget(self.jitterTypeLabel)
         self.jitterComboBox = QtWidgets.QComboBox(self.samplingGroupBox)
@@ -327,8 +214,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.jitterComboBox.addItem("")
         self.jitterComboBox.addItem("")
         self.jitterHLayout.addWidget(self.jitterComboBox)
-        self.jitterHLayout.setStretch(3, 1)
-        self.samplingGroupBoxVLayout.addLayout(self.jitterHLayout)
+        self.verticalLayout_3.addLayout(self.jitterHLayout)
         self.sdHLayout = QtWidgets.QHBoxLayout()
         self.sdHLayout.setObjectName("sdHLayout")
         self.spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -353,12 +239,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.sdHLayout.addLayout(self.seedHLayout)
         self.spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.sdHLayout.addItem(self.spacerItem5)
-        self.samplingGroupBoxVLayout.addLayout(self.sdHLayout)
+        self.verticalLayout_3.addLayout(self.sdHLayout)
         self.mainLayout.addWidget(self.samplingGroupBox)
         self.runGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.runGroupBox.setObjectName("runGroupBox")
-        self.runGroupBoxVLayout = QtWidgets.QVBoxLayout(self.runGroupBox)
-        self.runGroupBoxVLayout.setObjectName("runGroupBoxVLayout")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.runGroupBox)
+        self.verticalLayout.setObjectName("verticalLayout")
         self.saveAsHLayout = QtWidgets.QHBoxLayout()
         self.saveAsHLayout.setObjectName("saveAsHLayout")
         self.saveAsLabel = QtWidgets.QLabel(self.runGroupBox)
@@ -374,153 +260,126 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.saveAsPushButton.setIcon(icon1)
         self.saveAsPushButton.setObjectName("saveAsPushButton")
         self.saveAsHLayout.addWidget(self.saveAsPushButton)
-        self.runGroupBoxVLayout.addLayout(self.saveAsHLayout)
-        self.startHLayout = QtWidgets.QHBoxLayout()
-        self.startHLayout.setSpacing(6)
-        self.startHLayout.setObjectName("startHLayout")
+        self.verticalLayout.addLayout(self.saveAsHLayout)
         self.experimentProgressBar = QtWidgets.QProgressBar(self.runGroupBox)
         self.experimentProgressBar.setProperty("value", 0)
         self.experimentProgressBar.setObjectName("experimentProgressBar")
-        self.startHLayout.addWidget(self.experimentProgressBar)
+        self.verticalLayout.addWidget(self.experimentProgressBar)
+        self.startHLayout = QtWidgets.QHBoxLayout()
+        self.startHLayout.setObjectName("startHLayout")
+        spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.startHLayout.addItem(spacerItem6)
         self.startPushButton = QtWidgets.QPushButton(self.runGroupBox)
-        self.startPushButton.setText("")
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("assets/icons/run.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.startPushButton.setIcon(icon2)
         self.startPushButton.setObjectName("startPushButton")
         self.startHLayout.addWidget(self.startPushButton)
-        self.runGroupBoxVLayout.addLayout(self.startHLayout)
-        self.mainLayout.addWidget(self.runGroupBox)
-        self.resultGroupBox = QtWidgets.QGroupBox(self.centralwidget)
-        self.resultGroupBox.setObjectName("resultGroupBox")
-        self.resultGroupBoxHLayout = QtWidgets.QVBoxLayout(self.resultGroupBox)
-        self.resultGroupBoxHLayout.setObjectName("resultGroupBoxHLayout")
-        self.resultHLayout = QtWidgets.QHBoxLayout()
-        self.resultHLayout.setObjectName("resultHLayout")
-        spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.resultHLayout.addItem(spacerItem6)
-        self.resultLabel = QtWidgets.QLabel(self.resultGroupBox)
-        self.resultLabel.setObjectName("resultLabel")
-        self.resultHLayout.addWidget(self.resultLabel)
-        self.resultPushButton = QtWidgets.QPushButton(self.resultGroupBox)
-        self.resultPushButton.setAutoFillBackground(False)
-        self.resultPushButton.setText("")
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("assets/icons/report.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.resultPushButton.setIcon(icon3)
-        self.resultPushButton.setAutoDefault(False)
-        self.resultPushButton.setDefault(False)
-        self.resultPushButton.setFlat(False)
-        self.resultPushButton.setObjectName("resultPushButton")
-        self.resultHLayout.addWidget(self.resultPushButton)
         spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.resultHLayout.addItem(spacerItem7)
-        self.resultHLayout.setStretch(0, 1)
-        self.resultHLayout.setStretch(1, 1)
-        self.resultHLayout.setStretch(2, 1)
-        self.resultHLayout.setStretch(3, 1)
-        self.resultGroupBoxHLayout.addLayout(self.resultHLayout)
-        self.mainLayout.addWidget(self.resultGroupBox)
-        self.centralWidgetHLayout.addLayout(self.mainLayout)
-        self.experimentsVLayout = QtWidgets.QVBoxLayout()
-        self.experimentsVLayout.setObjectName("experimentsVLayout")
+        self.startHLayout.addItem(spacerItem7)
+        self.verticalLayout.addLayout(self.startHLayout)
+        self.mainLayout.addWidget(self.runGroupBox)
+        self.line = QtWidgets.QFrame(self.centralwidget)
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.mainLayout.addWidget(self.line)
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem8)
+        self.viewLabel = QtWidgets.QLabel(self.centralwidget)
+        self.viewLabel.setObjectName("viewLabel")
+        self.horizontalLayout_4.addWidget(self.viewLabel)
+        self.viewPushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.viewPushButton.setAutoFillBackground(False)
+        self.viewPushButton.setText("")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap("assets/icons/report.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.viewPushButton.setIcon(icon2)
+        self.viewPushButton.setAutoDefault(False)
+        self.viewPushButton.setDefault(False)
+        self.viewPushButton.setFlat(False)
+        self.viewPushButton.setObjectName("viewPushButton")
+        self.horizontalLayout_4.addWidget(self.viewPushButton)
+        spacerItem9 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem9)
+        self.mainLayout.addLayout(self.horizontalLayout_4)
+        self.horizontalLayout_2.addLayout(self.mainLayout)
         self.resultsToolBox = QtWidgets.QToolBox(self.centralwidget)
         self.resultsToolBox.setObjectName("resultsToolBox")
         self.performancePage = QtWidgets.QWidget()
-        self.performancePage.setGeometry(QtCore.QRect(0, 0, 1098, 390))
+        self.performancePage.setGeometry(QtCore.QRect(0, 0, 1027, 804))
         self.performancePage.setObjectName("performancePage")
-        self.performancePageVLayout = QtWidgets.QVBoxLayout(self.performancePage)
-        self.performancePageVLayout.setObjectName("performancePageVLayout")
+        self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.performancePage)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.performanceTabWidget = QtWidgets.QTabWidget(self.performancePage)
         self.performanceTabWidget.setObjectName("performanceTabWidget")
         self.expPerformanceTab1 = QtWidgets.QWidget()
         self.expPerformanceTab1.setObjectName("expPerformanceTab1")
-        self.expPerformanceTab1HLayout = QtWidgets.QHBoxLayout(self.expPerformanceTab1)
-        self.expPerformanceTab1HLayout.setObjectName("expPerformanceTab1HLayout")
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.expPerformanceTab1)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.graphicPerformanceWidget = QtWidgets.QWidget(self.expPerformanceTab1)
         self.graphicPerformanceWidget.setObjectName("graphicPerformanceWidget")
-        self.graphicPerformanceWidgetVLayout = QtWidgets.QVBoxLayout(self.graphicPerformanceWidget)
-        self.graphicPerformanceWidgetVLayout.setContentsMargins(0, 0, 0, 0)
-        self.graphicPerformanceWidgetVLayout.setSpacing(0)
-        self.graphicPerformanceWidgetVLayout.setObjectName("graphicPerformanceWidgetVLayout")
+        self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.graphicPerformanceWidget)
+        self.verticalLayout_11.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_11.setSpacing(0)
+        self.verticalLayout_11.setObjectName("verticalLayout_11")
         self.graphicPerformanceVLayout = QtWidgets.QVBoxLayout()
         self.graphicPerformanceVLayout.setSpacing(0)
         self.graphicPerformanceVLayout.setObjectName("graphicPerformanceVLayout")
-        self.graphicPerformanceWidgetVLayout.addLayout(self.graphicPerformanceVLayout)
-        self.expPerformanceTab1HLayout.addWidget(self.graphicPerformanceWidget)
-        self.expPerformanceTab1HLayout.setStretch(0, 9)
+        self.verticalLayout_11.addLayout(self.graphicPerformanceVLayout)
+        self.horizontalLayout_3.addWidget(self.graphicPerformanceWidget)
+        self.horizontalLayout_3.setStretch(0, 9)
         self.performanceTabWidget.addTab(self.expPerformanceTab1, "")
-        self.performancePageVLayout.addWidget(self.performanceTabWidget)
+        self.verticalLayout_5.addWidget(self.performanceTabWidget)
         self.resultsToolBox.addItem(self.performancePage, "")
         self.reportPage = QtWidgets.QWidget()
-        self.reportPage.setGeometry(QtCore.QRect(0, 0, 1098, 390))
+        self.reportPage.setGeometry(QtCore.QRect(0, 0, 1027, 804))
         self.reportPage.setObjectName("reportPage")
-        self.reportPageVLayout = QtWidgets.QVBoxLayout(self.reportPage)
-        self.reportPageVLayout.setObjectName("reportPageVLayout")
+        self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.reportPage)
+        self.verticalLayout_9.setObjectName("verticalLayout_9")
         self.reportTabWidget = QtWidgets.QTabWidget(self.reportPage)
         self.reportTabWidget.setObjectName("reportTabWidget")
         self.expReportTab1 = QtWidgets.QWidget()
         self.expReportTab1.setObjectName("expReportTab1")
-        self.expReportTab1VLayout = QtWidgets.QVBoxLayout(self.expReportTab1)
-        self.expReportTab1VLayout.setObjectName("expReportTab1VLayout")
+        self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.expReportTab1)
+        self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.graphicReportWidget = QtWidgets.QWidget(self.expReportTab1)
         self.graphicReportWidget.setObjectName("graphicReportWidget")
-        self.graphicReportWidgetVLayout = QtWidgets.QVBoxLayout(self.graphicReportWidget)
-        self.graphicReportWidgetVLayout.setContentsMargins(0, 0, 0, 0)
-        self.graphicReportWidgetVLayout.setSpacing(0)
-        self.graphicReportWidgetVLayout.setObjectName("graphicReportWidgetVLayout")
+        self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.graphicReportWidget)
+        self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_12.setSpacing(0)
+        self.verticalLayout_12.setObjectName("verticalLayout_12")
         self.graphicReportVLayout = QtWidgets.QVBoxLayout()
         self.graphicReportVLayout.setObjectName("graphicReportVLayout")
-        self.graphicReportWidgetVLayout.addLayout(self.graphicReportVLayout)
-        self.expReportTab1VLayout.addWidget(self.graphicReportWidget)
+        self.verticalLayout_12.addLayout(self.graphicReportVLayout)
+        self.verticalLayout_6.addWidget(self.graphicReportWidget)
         self.reportTabWidget.addTab(self.expReportTab1, "")
-        self.reportPageVLayout.addWidget(self.reportTabWidget)
+        self.verticalLayout_9.addWidget(self.reportTabWidget)
         self.resultsToolBox.addItem(self.reportPage, "")
-        self.experimentsVLayout.addWidget(self.resultsToolBox)
-        self.tuningTabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tuningTabWidget.setObjectName("tuningTabWidget")
-        self.expTuningReportTab1 = QtWidgets.QWidget()
-        self.expTuningReportTab1.setObjectName("expTuningReportTab1")
-        self.expTuningReportTab1VLayout = QtWidgets.QVBoxLayout(self.expTuningReportTab1)
-        self.expTuningReportTab1VLayout.setObjectName("expTuningReportTab1VLayout")
-        self.graphicTuningReportWidget = QtWidgets.QWidget(self.expTuningReportTab1)
-        self.graphicTuningReportWidget.setObjectName("graphicTuningReportWidget")
-        self.graphicTuningReportWidgetVLayout = QtWidgets.QVBoxLayout(self.graphicTuningReportWidget)
-        self.graphicTuningReportWidgetVLayout.setContentsMargins(0, 0, 0, 0)
-        self.graphicTuningReportWidgetVLayout.setSpacing(0)
-        self.graphicTuningReportWidgetVLayout.setObjectName("graphicTuningReportWidgetVLayout")
-        self.graphicTuningReportVLayout = QtWidgets.QVBoxLayout()
-        self.graphicTuningReportVLayout.setObjectName("graphicTuningReportVLayout")
-        self.graphicTuningReportWidgetVLayout.addLayout(self.graphicTuningReportVLayout)
-        self.expTuningReportTab1VLayout.addWidget(self.graphicTuningReportWidget)
-        self.tuningTabWidget.addTab(self.expTuningReportTab1, "")
-        self.experimentsVLayout.addWidget(self.tuningTabWidget)
-        self.centralWidgetHLayout.addLayout(self.experimentsVLayout)
-        self.centralWidgetHLayout.setStretch(0, 2)
-        self.centralWidgetHLayout.setStretch(1, 18)
+        self.horizontalLayout_2.addWidget(self.resultsToolBox)
+        self.horizontalLayout_2.setStretch(0, 1)
+        self.horizontalLayout_2.setStretch(1, 10)
         self.setCentralWidget(self.centralwidget)
         self.toolBar = QtWidgets.QToolBar(self)
         self.toolBar.setObjectName("toolBar")
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.aboutOfAction = QtWidgets.QAction(self)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("assets/icons/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.aboutOfAction.setIcon(icon4)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap("assets/icons/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.aboutOfAction.setIcon(icon3)
         self.aboutOfAction.setObjectName("aboutOfAction")
         self.reportAction = QtWidgets.QAction(self)
-        self.reportAction.setIcon(icon3)
+        self.reportAction.setIcon(icon2)
         self.reportAction.setObjectName("reportAction")
         self.mainAction = QtWidgets.QAction(self)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap("assets/icons/main.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.mainAction.setIcon(icon5)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap("assets/icons/main.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.mainAction.setIcon(icon4)
         self.mainAction.setObjectName("mainAction")
         self.tuningAction = QtWidgets.QAction(self)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap("assets/icons/tuning.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.tuningAction.setIcon(icon6)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap("assets/icons/tuning.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.tuningAction.setIcon(icon5)
         self.tuningAction.setObjectName("tuningAction")
-        self.toolBar.addAction(self.mainAction)
         self.toolBar.addAction(self.tuningAction)
         self.toolBar.addAction(self.aboutOfAction)
 
@@ -536,15 +395,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.init_visible_widgets()
 
     def init_visible_widgets(self):
-        self.inputGroupBox.setMinimumWidth(300)
+        self.inputGroupBox.setMinimumWidth(305)
         self.inputGroupBox.setMaximumWidth(300)
         self.algorithmGroupBox.setMaximumWidth(300)
         self.samplingGroupBox.setMaximumWidth(300)
         self.runGroupBox.setMaximumWidth(300)
 
         self.set_visible_algorithm(self.algorithmComboBox.currentText())
-        self.tuningGroupBox.setVisible(False)
-        self.tuningTabWidget.setVisible(False)
 
         self.elementLabel.setVisible(False)
         self.elementLineEdit.setVisible(False)
@@ -554,34 +411,23 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.jitterBlockSpinBox.setVisible(False)
 
     def init_actions(self):
-        self.global_variables = dict(tab_mode='main', view_mode='normal', algorithm_name='')
-        # Tab mode ['main', 'tuning']
-        # View mode ['normal', 'report']
+        self.tab_mode = 'main'  # main, report
+        self.algorithm_name = ''
+        self.main_directory = ''
+        self.experiment_directory = ''
+        self.report_directory = ''
+        self.tuning_directory = ''
 
-        self.directories = dict(main=dict(uploaded='', temp_saved='', saved='', report=''),
-                                tuning=dict(uploaded='', temp_saved='', saved='', report=''))
-        self.state = dict(main=dict(progress=dict(iteration=[], error=[], psnr=[])))
-
-
-        # self.tab_mode = 'main'  # main, report
-        # self.algorithm_name = ''
-        # self.main_directory = ''
-        # self.experiment_directory = ''
-        # self.report_directory = ''
-        # self.tuning_directory = ''
-        #
-        # self.iteracion = []
-        # self.error = []
-        # self.psnr = []
+        self.iteracion = []
+        self.error = []
+        self.psnr = []
 
         self.onlydouble = QtGui.QDoubleValidator(decimals=10)
         self.onlyInt = QtGui.QIntValidator()
         self.experimentProgressBar.setValue(0)
 
         # tab
-        # self.tuningAction.triggered.connect(self.show_tuning_window)
-        self.mainAction.triggered.connect(self.set_main)
-        self.tuningAction.triggered.connect(self.set_tuning)
+        self.tuningAction.triggered.connect(self.show_tuning_window)
         self.aboutOfAction.triggered.connect(self.show_about_window)
 
         # algorithms
@@ -596,7 +442,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.saveAsPushButton.clicked.connect(self.save_files)
         self.saveAsLineEdit.editingFinished.connect(self.save_as_text_changed)
         self.startPushButton.clicked.connect(self.start_experiment)
-        self.resultPushButton.clicked.connect(self.set_view)
+        self.viewPushButton.clicked.connect(self.set_view)
 
         self.seedCheckBox.stateChanged.connect(self.activate_seed)
 
@@ -626,8 +472,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         beta_icon = f'assets/equations/beta.png'
         gamma_icon = f'assets/equations/gamma.png'
 
-        view_directory = self.global_variables['view_mode']
-        main_visible = True if view_directory == 'normal' else False
+        main_visible = True if self.tab_mode == 'main' else False
 
         self.param1Label.setVisible(main_visible)
         self.param1LineEdit.setVisible(main_visible)
@@ -680,25 +525,22 @@ class UIMainWindow(QtWidgets.QMainWindow):
         if 'SNAP' in os.environ:
             kwargs['options'] = QtWidgets.QFileDialog.DontUseNativeDialog
 
-        uploaded_directory = self.directories[self.global_variables['tab_mode']]['uploaded']
-        view_directory = self.global_variables['view_mode']
-
-        if view_directory == 'normal':
+        if self.tab_mode == 'main':
             message = 'Abrir dato sísmico'
             file_type = 'npy'
         else:  # 'report'
             message = 'Abrir datos sísmicos reconstruidos'
             file_type = 'npz'
 
-        self.data_fname = QtWidgets.QFileDialog.getOpenFileName(self, message, uploaded_directory,
+        self.data_fname = QtWidgets.QFileDialog.getOpenFileName(self, message, self.main_directory,
                                                                 filter=f'numpy file (*.{file_type})', **kwargs)
 
         if self.data_fname[0] == '':
             return
 
-        if view_directory == 'normal':
-            uploaded_directory = self.data_fname[0]
-            self.update_data_tree(uploaded_directory)
+        if self.tab_mode == 'main':
+            self.main_directory = self.data_fname[0]
+            self.update_data_tree(self.main_directory)
         else:
             self.report_directory = self.data_fname[0]
 
@@ -718,20 +560,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
         if 'SNAP' in os.environ:
             kwargs['options'] = QFileDialog.DontUseNativeDialog
 
-        directories = self.directories[self.global_variables['tab_mode']]
-        temp_saved_directory = directories['temp_saved']
-        if temp_saved_directory == '':
-            temp_saved_directory = directories['uploaded']
-
-        save_name = QFileDialog.getSaveFileName(self, 'Guardar reconstrucciones', temp_saved_directory,
+        save_name = QFileDialog.getSaveFileName(self, 'Guardar reconstrucciones', self.main_directory,
                                                 filter=f'numpy file (*.npz)', **kwargs)
         if save_name[0] == '':
+            self.saveAsLineEdit.setText('')
             return
 
         save_name = f'{save_name[0]}.npz' if not 'npz' in save_name[0] else save_name[0]
 
         self.saveAsLineEdit.setText(save_name)
-        directories['temp_saved'] = save_name
+        self.experiment_directory = save_name
 
     def update_data_tree(self, directory):
         if directory == '':
@@ -771,67 +609,52 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.ui_about_window.setupUi(self.about_window)
         self.about_window.show()
 
-    def set_main(self):
-        self.global_variables['tab_mode'] = 'main'
-        self.tuningGroupBox.setVisible(False)
-        self.resultsToolBox.setVisible(True)
-        self.tuningTabWidget.setVisible(False)
-
-    def set_tuning(self):
-        self.global_variables['tab_mode'] = 'tuning'
-        self.tuningGroupBox.setVisible(True if self.global_variables['view_mode'] == 'normal' else False)
-        self.resultsToolBox.setVisible(False)
-        self.tuningTabWidget.setVisible(True)
-
-
     def set_view(self):
         icon = QtGui.QIcon()
-        if self.global_variables['view_mode'] == 'normal':
-            self.global_variables['view_mode'] = 'report'
+        if self.tab_mode == 'main':
             self.set_report_view()
+            self.tab_mode = 'report'
             icon.addPixmap(QtGui.QPixmap("assets/icons/seismic.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.resultLabel.setText('Realizar experimentos')
+            self.viewLabel.setText('Realizar experimentos')
 
         else:
-            self.global_variables['view_mode'] = 'normal'
             self.set_main_view()
+            self.tab_mode = 'main'
             icon.addPixmap(QtGui.QPixmap("assets/icons/report.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.resultLabel.setText('Ver resultados')
+            self.viewLabel.setText('Ver resultados')
 
-        self.resultPushButton.setIcon(icon)
+        self.viewPushButton.setIcon(icon)
 
     def set_main_view(self):
         self.set_visible_algorithm(self.algorithmComboBox.currentText())
 
         self.algorithmGroupBox.setVisible(True)
-        self.tuningGroupBox.setVisible(True)
         self.samplingGroupBox.setVisible(True)
         self.runGroupBox.setVisible(True)
 
         _translate = QtCore.QCoreApplication.translate
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))
 
-        if self.directories[self.global_variables['tab_mode']]['report'] != '':
+        if self.report_directory != '':
             self.performanceGraphic.update_figure()
             self.reportGraphic.update_figure()
 
-        self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
-        self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
+        self.saveAsLineEdit.setText(self.experiment_directory)
+        self.update_data_tree(self.main_directory)
 
     def set_report_view(self):
         self.algorithmGroupBox.setVisible(False)
-        self.tuningGroupBox.setVisible(False)
         self.samplingGroupBox.setVisible(False)
         self.runGroupBox.setVisible(False)
 
         _translate = QtCore.QCoreApplication.translate
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos reconstruidos"))
 
-        if self.directories[self.global_variables['tab_mode']]['report'] != '':
+        if self.report_directory != '':
             self.performanceGraphic.update_figure()
             self.reportGraphic.update_figure()
 
-        self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
+        self.update_data_tree(self.report_directory)
 
     def show_tuning_window(self):
         self.ui_tuning_window = UITuningWindow()
@@ -1007,26 +830,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.algorithmComboBox.setItemText(2, _translate("mainWindow", "TwIST"))
         self.algorithmComboBox.setItemText(3, _translate("mainWindow", "ADMM"))
         self.algorithmPushButton.setToolTip(_translate("mainWindow", "Ver ecuación"))
-        self.maxiterLabel.setText(_translate("mainWindow", "Máxima iteración"))
+        self.maxiterLabel.setText(_translate("mainWindow", "Max iter"))
         self.param1LineEdit.setText(_translate("mainWindow", "0.1"))
         self.param2LineEdit.setText(_translate("mainWindow", "0.3"))
         self.param3LineEdit.setText(_translate("mainWindow", "1"))
-        self.tuningGroupBox.setTitle(_translate("mainWindow", "Ajuste de parámetros"))
-        self.paramTuningLabel.setText(_translate("mainWindow", "Tipo"))
-        self.paramTuningComboBox.setItemText(0, _translate("mainWindow", "Intervalo"))
-        self.paramTuningComboBox.setItemText(1, _translate("mainWindow", "Lista"))
-        self.paramLabel.setText(_translate("mainWindow", "Parámetro"))
-        self.paramComboBox.setCurrentText(_translate("mainWindow", "param1"))
-        self.paramComboBox.setItemText(0, _translate("mainWindow", "param1"))
-        self.paramComboBox.setItemText(1, _translate("mainWindow", "param2"))
-        self.paramComboBox.setItemText(2, _translate("mainWindow", "param3"))
-        self.paramValuesLabel.setText(_translate("mainWindow", "Valores"))
-        self.param1InitLineEdit.setText(_translate("mainWindow", "0.1"))
-        self.param1EndLineEdit.setText(_translate("mainWindow", "1.0"))
-        self.param2InitLineEdit.setText(_translate("mainWindow", "0.1"))
-        self.param2EndLineEdit.setText(_translate("mainWindow", "1.0"))
-        self.param3InitLineEdit.setText(_translate("mainWindow", "0.1"))
-        self.param3EndLineEdit.setText(_translate("mainWindow", "1.0"))
         self.samplingGroupBox.setTitle(_translate("mainWindow", "Submuestreo"))
         self.samplingTypeLabel.setText(_translate("mainWindow", "Tipo"))
         self.samplingTypeComboBox.setItemText(0, _translate("mainWindow", "Aleatorio"))
@@ -1036,7 +843,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.compressLabel.setText(_translate("mainWindow", "Compresión"))
         self.compressSpinBox.setSuffix(_translate("mainWindow", "%"))
         self.elementLabel.setText(_translate("mainWindow", "Elementos"))
-        self.jitterBlockLabel.setText(_translate("mainWindow", "Número de bloques"))
+        self.jitterBlockLabel.setText(_translate("mainWindow", "Bloques"))
         self.jitterTypeLabel.setText(_translate("mainWindow", "Tipo"))
         self.jitterComboBox.setItemText(0, _translate("mainWindow", "Aleatorio"))
         self.jitterComboBox.setItemText(1, _translate("mainWindow", "Uniforme"))
@@ -1044,22 +851,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.seedLabel.setText(_translate("mainWindow", "Valor"))
         self.runGroupBox.setTitle(_translate("mainWindow", "Experimentos"))
         self.saveAsLabel.setText(_translate("mainWindow", "Guardar como"))
-        self.resultGroupBox.setTitle(_translate("mainWindow", "Resultados"))
-        self.resultLabel.setText(_translate("mainWindow", "Visualización"))
-        self.performanceTabWidget.setTabText(self.performanceTabWidget.indexOf(self.expPerformanceTab1),
-                                             _translate("mainWindow", "Experimento"))
-        self.resultsToolBox.setItemText(self.resultsToolBox.indexOf(self.performancePage),
-                                        _translate("mainWindow", "Rendimiento"))
-        self.reportTabWidget.setTabText(self.reportTabWidget.indexOf(self.expReportTab1),
-                                        _translate("mainWindow", "Experimento"))
-        self.resultsToolBox.setItemText(self.resultsToolBox.indexOf(self.reportPage),
-                                        _translate("mainWindow", "Reporte"))
-        self.tuningTabWidget.setTabText(self.tuningTabWidget.indexOf(self.expTuningReportTab1),
-                                        _translate("mainWindow", "Experimento"))
+        self.startPushButton.setText(_translate("mainWindow", "Iniciar"))
+        self.viewLabel.setText(_translate("mainWindow", "Ver resultados"))
+        self.performanceTabWidget.setTabText(self.performanceTabWidget.indexOf(self.expPerformanceTab1), _translate("mainWindow", "Experimento"))
+        self.resultsToolBox.setItemText(self.resultsToolBox.indexOf(self.performancePage), _translate("mainWindow", "Rendimiento"))
+        self.reportTabWidget.setTabText(self.reportTabWidget.indexOf(self.expReportTab1), _translate("mainWindow", "Experimento"))
+        self.resultsToolBox.setItemText(self.resultsToolBox.indexOf(self.reportPage), _translate("mainWindow", "Reporte"))
         self.toolBar.setWindowTitle(_translate("mainWindow", "toolBar"))
         self.aboutOfAction.setText(_translate("mainWindow", "about"))
-        self.aboutOfAction.setToolTip(
-            _translate("mainWindow", "<html><head/><body><p>Acerca de este proyecto</p></body></html>"))
+        self.aboutOfAction.setToolTip(_translate("mainWindow", "<html><head/><body><p>Acerca de este proyecto</p></body></html>"))
         self.reportAction.setText(_translate("mainWindow", "report"))
         self.reportAction.setToolTip(_translate("mainWindow", "Visualización de resultados"))
         self.mainAction.setText(_translate("mainWindow", "main"))

@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/run.png</file>
     <file>icons/tuning.png</file>
     <file>icons/main.png</file>
     <file>icons/settings-1.png</file>
