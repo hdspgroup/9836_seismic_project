@@ -690,9 +690,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.directories[self.global_variables['tab_mode']]['uploaded'] = self.data_fname[0]
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
         else:
-            self.report_directory = self.data_fname[0]
+            self.directories[self.global_variables['tab_mode']]['report'] = self.data_fname[0]
 
-            data = np.load(self.report_directory, allow_pickle=True)
+            data = np.load(self.data_fname[0], allow_pickle=True)
             performance_data = {item[0]: item[1] for item in data['performance_data']}
 
             self.performanceGraphic.update_values(**performance_data)
@@ -701,7 +701,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.reportGraphic.update_report(data)
             self.reportGraphic.update_figure()
 
-            self.update_data_tree(self.report_directory)
+            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
     def save_files(self):
         kwargs = {}
@@ -767,7 +767,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.resultsToolBox.setVisible(True)
         self.tuningTabWidget.setVisible(False)
 
-        self.set_view()
+        self.set_result_view()
 
     def set_tuning(self):
         self.global_variables['tab_mode'] = 'tuning'
@@ -775,7 +775,19 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.resultsToolBox.setVisible(False)
         self.tuningTabWidget.setVisible(True)
 
-        self.set_view()
+        self.set_result_view()
+
+    def set_result_view(self):
+        if self.directories[self.global_variables['tab_mode']]['report'] != '':
+            self.performanceGraphic.update_figure()
+            self.reportGraphic.update_figure()
+
+        if self.global_variables['view_mode'] == 'normal':
+            self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
+            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
+
+        else:
+            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
     def set_view(self):
         icon = QtGui.QIcon()
@@ -804,12 +816,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))
 
-        if self.directories[self.global_variables['tab_mode']]['report'] != '':
-            self.performanceGraphic.update_figure()
-            self.reportGraphic.update_figure()
-
-        self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
-        self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
+        self.set_result_view()
 
     def set_report_view(self):
         self.algorithmGroupBox.setVisible(False)
@@ -820,11 +827,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos reconstruidos"))
 
-        if self.directories[self.global_variables['tab_mode']]['report'] != '':
-            self.performanceGraphic.update_figure()
-            self.reportGraphic.update_figure()
-
-        self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
+        self.set_result_view()
 
     def show_tuning_window(self):
         self.ui_tuning_window = UITuningWindow()
