@@ -562,18 +562,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
                                 tuning=dict(uploaded='', temp_saved='', saved='', report=''))
         self.state = dict(main=dict(progress=dict(iteration=[], error=[], psnr=[])))
 
-
-        # self.tab_mode = 'main'  # main, report
-        # self.algorithm_name = ''
-        # self.main_directory = ''
-        # self.experiment_directory = ''
-        # self.report_directory = ''
-        # self.tuning_directory = ''
-        #
-        # self.iteracion = []
-        # self.error = []
-        # self.psnr = []
-
         self.onlydouble = QtGui.QDoubleValidator(decimals=10)
         self.onlyInt = QtGui.QIntValidator()
         self.experimentProgressBar.setValue(0)
@@ -680,8 +668,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
         if 'SNAP' in os.environ:
             kwargs['options'] = QtWidgets.QFileDialog.DontUseNativeDialog
 
-        uploaded_directory = self.directories[self.global_variables['tab_mode']]['uploaded']
         view_directory = self.global_variables['view_mode']
+
+        uploaded_directory = self.directories[self.global_variables['tab_mode']][
+            view_directory if view_directory == 'report' else 'uploaded']
 
         if view_directory == 'normal':
             message = 'Abrir dato sísmico'
@@ -697,8 +687,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
             return
 
         if view_directory == 'normal':
-            uploaded_directory = self.data_fname[0]
-            self.update_data_tree(uploaded_directory)
+            self.directories[self.global_variables['tab_mode']]['uploaded'] = self.data_fname[0]
+            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
         else:
             self.report_directory = self.data_fname[0]
 
@@ -731,7 +721,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         save_name = f'{save_name[0]}.npz' if not 'npz' in save_name[0] else save_name[0]
 
         self.saveAsLineEdit.setText(save_name)
-        directories['temp_saved'] = save_name
+        self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name
 
     def update_data_tree(self, directory):
         if directory == '':
@@ -763,7 +753,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             save_name = f'{save_name}.npz'
 
         self.saveAsLineEdit.setText(save_name)
-        self.experiment_directory = save_name
+        self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name
 
     def show_about_window(self):
         self.about_window = QtWidgets.QWidget()
@@ -777,12 +767,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.resultsToolBox.setVisible(True)
         self.tuningTabWidget.setVisible(False)
 
+        self.set_view()
+
     def set_tuning(self):
         self.global_variables['tab_mode'] = 'tuning'
         self.tuningGroupBox.setVisible(True if self.global_variables['view_mode'] == 'normal' else False)
         self.resultsToolBox.setVisible(False)
         self.tuningTabWidget.setVisible(True)
 
+        self.set_view()
 
     def set_view(self):
         icon = QtGui.QIcon()
@@ -804,7 +797,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.set_visible_algorithm(self.algorithmComboBox.currentText())
 
         self.algorithmGroupBox.setVisible(True)
-        self.tuningGroupBox.setVisible(True)
+        self.tuningGroupBox.setVisible(True if self.global_variables['tab_mode'] == 'tuning' else False)
         self.samplingGroupBox.setVisible(True)
         self.runGroupBox.setVisible(True)
 
@@ -886,27 +879,33 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def start_experiment(self):
 
-        if self.main_directory == '':
+        uploaded_directory = self.directories[self.global_variables['tab_mode']]['uploaded']
+        if uploaded_directory == '':
             showWarning("Para iniciar, debe cargar el dato sísmico dando click al boton 'Cargar'")
             return
 
-        if self.experiment_directory == '':
+        if self.directories[self.global_variables['tab_mode']]['temp_saved'] == '':
             showWarning("Por favor seleccione un nombre de archivo para guardar los resultados del algoritmo.")
             return
 
         try:
-            # I took this values from ipynb notebook
-            self.experimentProgressBar.setValue(0)
+            self.state[self.global_variables['tab_mode']]['progress']['iteration'] = []
+            self.state[self.global_variables['tab_mode']]['progress']['error'] = []
+            self.state[self.global_variables['tab_mode']]['progress']['psnr'] = []
 
-            self.iteracion = []
-            self.error = []
-            self.psnr = []
+            self.experimentProgressBar.setValue(0)
 
             # seismic data
 
             self.maxiter = int(self.maxiterSpinBox.text())
-            seismic_data = np.load(self.main_directory)
-            seismic_data = seismic_data.T / np.max(np.abs(seismic_data))
+            seismic_data = np.load(uploaded_directory)
+
+            if seismic_data.ndim > 2:
+                seismic_data = seismic_data[..., int(seismic_data.shape[-1] / 2)]
+            else:
+                seismic_data = seismic_data.T
+
+            seismic_data = seismic_data / np.max(np.abs(seismic_data))
 
             # sampling
 
@@ -966,12 +965,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
         err = float(err)
         psnr = float(psnr)
 
-        self.iteracion.append(iter_val)
-        self.error.append(err)
-        self.psnr.append(psnr)
+        iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration']
+        error_list = self.state[self.global_variables['tab_mode']]['progress']['error']
+        psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr']
+
+        iteration_list.append(iter_val)
+        error_list.append(err)
+        psnr_list.append(psnr)
 
         if iter_val % (self.maxiter // 10) == 0 or iter_val == self.maxiter:
-            self.performanceGraphic.update_values(self.iteracion, self.error, self.psnr)
+            self.performanceGraphic.update_values(iteration_list, error_list, psnr_list)
             self.performanceGraphic.update_figure()
 
             self.reportGraphic.update_report(
@@ -982,8 +985,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def save_experiment(self, res_dict):
         performance_data = np.array(list(self.performanceGraphic.performance_data.items()), dtype=object)
 
-        self.report_directory = self.experiment_directory
-        np.savez(self.report_directory, x_result=res_dict['result'], hist=res_dict['hist'], sampling=self.sampling_dict,
+        temp_saved = self.directories[self.global_variables['tab_mode']]['temp_saved']
+        self.directories[self.global_variables['tab_mode']]['saved'] = temp_saved
+        self.directories[self.global_variables['tab_mode']]['report'] = temp_saved
+        np.savez(self.directories[self.global_variables['tab_mode']]['saved'],
+                 x_result=res_dict['result'], hist=res_dict['hist'], sampling=self.sampling_dict,
                  algorithm_name=self.algorithm_name, performance_data=performance_data)
         print("Results saved [Ok]")
 
