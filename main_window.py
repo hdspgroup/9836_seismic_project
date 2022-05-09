@@ -575,6 +575,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # algorithms
 
         self.algorithmComboBox.currentTextChanged.connect(self.on_algorithm_changed)
+        self.paramTuningComboBox.currentTextChanged.connect(self.on_param_tuning_changed)
         self.algorithmPushButton.clicked.connect(self.show_equation_window)
         self.samplingTypeComboBox.currentTextChanged.connect(self.on_sampling_changed)
 
@@ -1025,10 +1026,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.paramTuningComboBox.setItemText(0, _translate("mainWindow", "Intervalo"))
         self.paramTuningComboBox.setItemText(1, _translate("mainWindow", "Lista"))
         self.paramLabel.setText(_translate("mainWindow", "Parámetro"))
-        self.paramComboBox.setCurrentText(_translate("mainWindow", "param1"))
-        self.paramComboBox.setItemText(0, _translate("mainWindow", "param1"))
-        self.paramComboBox.setItemText(1, _translate("mainWindow", "param2"))
-        self.paramComboBox.setItemText(2, _translate("mainWindow", "param3"))
+        self.paramComboBox.setCurrentText(_translate("mainWindow", ""))
+        self.paramComboBox.setItemText(0, _translate("mainWindow", ""))
+        self.paramComboBox.setItemText(1, _translate("mainWindow", ""))
+        self.paramComboBox.setItemText(2, _translate("mainWindow", ""))
         self.paramValuesLabel.setText(_translate("mainWindow", "Valores"))
         self.param1InitLineEdit.setText(_translate("mainWindow", "0.1"))
         self.param1EndLineEdit.setText(_translate("mainWindow", "1.0"))
