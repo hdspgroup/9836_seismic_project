@@ -174,6 +174,17 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.paramComboBox.addItem("")
         self.paramComboBox.addItem("")
         self.paramHLayout.addWidget(self.paramComboBox)
+        self.paramValuesLabel = QtWidgets.QLabel(self.tuningGroupBox)
+        self.paramValuesLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.paramValuesLabel.setObjectName("paramValuesLabel")
+        self.paramHLayout.addWidget(self.paramValuesLabel)
+        self.paramValuesSpinBox = QtWidgets.QSpinBox(self.tuningGroupBox)
+        self.paramValuesSpinBox.setSuffix("")
+        self.paramValuesSpinBox.setPrefix("")
+        self.paramValuesSpinBox.setMinimum(2)
+        self.paramValuesSpinBox.setMaximum(999)
+        self.paramValuesSpinBox.setObjectName("paramValuesSpinBox")
+        self.paramHLayout.addWidget(self.paramValuesSpinBox)
         self.paramHLayout.setStretch(1, 4)
         self.tuningGroupBoxVLayout.addLayout(self.paramHLayout)
         self.paramValueHLayout = QtWidgets.QHBoxLayout()
@@ -562,6 +573,33 @@ class UIMainWindow(QtWidgets.QMainWindow):
                                 tuning=dict(uploaded='', temp_saved='', saved='', report=''))
         self.state = dict(main=dict(progress=dict(iteration=[], error=[], psnr=[])))
 
+        self.icons_path = 'assets/parameters'
+
+        lmb = 'lambda'
+        mu = 'mu'
+        rho = 'rho'
+        alpha = 'alpha'
+        beta = 'beta'
+        gamma = 'gamma'
+
+        self.param_type = ['init', 'end', 'list']
+
+        self.params = dict(fista=[[lmb, 0.1, 0.5], [mu, 0.3, 0.7]],
+                           gap=[[mu, 1.0, 1.5]],
+                           twist=[[lmb, 0.9, 1.5], [alpha, 1.2, 1.7], [beta, 1.998, 2.3]],
+                           admm=[[rho, 0.5, 1.5], [gamma, 1.0, 1.7], [lmb, 0.0078, 0.009]])
+
+        self.main_params = [[self.param1Label, self.param1LineEdit],
+                            [self.param2Label, self.param2LineEdit],
+                            [self.param3Label, self.param3LineEdit]]
+
+        self.tuning_params = [[self.param1InitLabel, self.param1InitLineEdit,
+                               self.param1EndLabel, self.param1EndLineEdit],
+                              [self.param2InitLabel, self.param2InitLineEdit,
+                               self.param2EndLabel, self.param2EndLineEdit],
+                              [self.param3InitLabel, self.param3InitLineEdit,
+                               self.param3EndLabel, self.param3EndLineEdit]]
+
         self.onlydouble = QtGui.QDoubleValidator(decimals=10)
         self.onlyInt = QtGui.QIntValidator()
         self.experimentProgressBar.setValue(0)
@@ -608,61 +646,57 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def set_visible_algorithm(self, algorithm):
         algorithm = algorithm.lower()
 
-        lambda_icon = f'assets/equations/lambda.png'
-        mu_icon = f'assets/equations/mu.png'
-        rho_icon = f'assets/equations/rho.png'
-        alpha_icon = f'assets/equations/alpha.png'
-        beta_icon = f'assets/equations/beta.png'
-        gamma_icon = f'assets/equations/gamma.png'
+        if self.global_variables['tab_mode'] == 'main':
 
-        view_directory = self.global_variables['view_mode']
-        main_visible = True if view_directory == 'normal' else False
+            for i in range(3):
+                label = self.main_params[i][0]
+                line_edit = self.main_params[i][1]
 
-        self.param1Label.setVisible(main_visible)
-        self.param1LineEdit.setVisible(main_visible)
-        self.param2Label.setVisible(main_visible)
-        self.param2LineEdit.setVisible(main_visible)
-        self.param3Label.setVisible(main_visible)
-        self.param3LineEdit.setVisible(main_visible)
+                if i < len(self.params[algorithm]):
+                    icon_path = f'{self.icons_path}/{self.params[algorithm][i][0]}.png'  # _{param_type[0]}.png'
+                    value = str(self.params[algorithm][i][1])
 
-        if algorithm == "fista":
-            self.param1Label.setPixmap(QtGui.QPixmap(lambda_icon))
-            self.param2Label.setPixmap(QtGui.QPixmap(mu_icon))
-            self.param1LineEdit.setText(str(0.1))
-            self.param2LineEdit.setText(str(0.3))
-            self.param3Label.setVisible(False)
-            self.param3LineEdit.setVisible(False)
+                    label.setPixmap(QtGui.QPixmap(icon_path))
+                    line_edit.setText(value)
 
-        elif algorithm == "gap":
-            self.param1Label.setPixmap(QtGui.QPixmap(lambda_icon))
-            self.param1LineEdit.setText(str(1.0))
-            self.param2Label.setVisible(False)
-            self.param2LineEdit.setVisible(False)
-            self.param3Label.setVisible(False)
-            self.param3LineEdit.setVisible(False)
+                    label.setVisible(True)
+                    line_edit.setVisible(True)
 
-        elif algorithm == "twist":
-            self.param1Label.setPixmap(QtGui.QPixmap(lambda_icon))
-            self.param2Label.setPixmap(QtGui.QPixmap(alpha_icon))
-            self.param3Label.setPixmap(QtGui.QPixmap(beta_icon))
-            self.param1LineEdit.setText(str(0.9))
-            self.param2LineEdit.setText(str(1.2))
-            self.param3LineEdit.setText(str(1.998))
+                else:
+                    label.setVisible(False)
+                    line_edit.setVisible(False)
 
-        elif algorithm == "admm":
-            self.param1Label.setPixmap(QtGui.QPixmap(rho_icon))
-            self.param2Label.setPixmap(QtGui.QPixmap(gamma_icon))
-            self.param3Label.setPixmap(QtGui.QPixmap(lambda_icon))
-            self.param1LineEdit.setText(str(0.5))
-            self.param2LineEdit.setText(str(1.0))
-            self.param3LineEdit.setText(str(0.0078))
+            self.param1LineEdit.setValidator(self.onlydouble)
+            self.param2LineEdit.setValidator(self.onlydouble)
+            self.param3LineEdit.setValidator(self.onlydouble)
 
         else:
-            raise Exception("Invalid Algorithm Name")
+            # self.tuning_params
 
-        self.param1LineEdit.setValidator(self.onlydouble)
-        self.param2LineEdit.setValidator(self.onlydouble)
-        self.param3LineEdit.setValidator(self.onlydouble)
+            for i in range(3):
+                label_init = self.main_params[i][0]
+                line_edit_init = self.main_params[i][1]
+                label_end = self.main_params[i][2]
+                line_edit_end = self.main_params[i][3]
+
+                if i < len(self.params[algorithm]):
+                    icon_path_init = f'{self.icons_path}/{self.params[algorithm][i][0]}_{self.param_type[1]}.png'
+
+                    value_init = str(self.params[algorithm][i][1])
+                    value_end = str(self.params[algorithm][i][2])
+
+                    label_init.setPixmap(QtGui.QPixmap(icon_path))
+                    label_end.setPixmap(QtGui.QPixmap(icon_path))
+
+                    line_edit_init.setText(value_init)
+                    line_edit_end.setText(value_end)
+
+                    label_init.setVisible(True)
+                    line_edit_init.setVisible(True)
+
+                else:
+                    label.setVisible(False)
+                    line_edit.setVisible(False)
 
     def load_files(self):
         kwargs = {}

@@ -14,7 +14,7 @@
    <string>9836 Proyecto de Sísmica</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="centralWidgetHLayout" stretch="2,18">
+   <layout class="QHBoxLayout" name="centralWidgetHLayout" stretch="3,30">
     <item>
      <layout class="QVBoxLayout" name="mainLayout" stretch="0,0,0,0,0,0">
       <item>
@@ -238,7 +238,7 @@
         </property>
         <layout class="QVBoxLayout" name="tuningGroupBoxVLayout">
          <item>
-          <layout class="QHBoxLayout" name="paramHLayout" stretch="0,4,0,0">
+          <layout class="QHBoxLayout" name="paramHLayout" stretch="0,4,0,0,0,0">
            <item>
             <widget class="QLabel" name="paramTuningLabel">
              <property name="text">
@@ -289,23 +289,6 @@
              </item>
             </widget>
            </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="paramValueHLayout" stretch="1,1,1,1">
-           <item>
-            <spacer name="paramHSpacer1">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
            <item>
             <widget class="QLabel" name="paramValuesLabel">
              <property name="text">
@@ -331,19 +314,6 @@
               <number>999</number>
              </property>
             </widget>
-           </item>
-           <item>
-            <spacer name="paramHSpacer2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </item>
@@ -828,7 +798,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1098</width>
+           <width>1052</width>
            <height>390</height>
           </rect>
          </property>
@@ -885,7 +855,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1098</width>
+           <width>1052</width>
            <height>390</height>
           </rect>
          </property>
