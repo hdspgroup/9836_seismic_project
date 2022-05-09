@@ -768,6 +768,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.resultsToolBox.setVisible(True)
         self.tuningTabWidget.setVisible(False)
 
+        # self.param1Label.setVisible(True)
+        # self.param1LineEdit.setVisible(True)
+        # self.param2Label.setVisible(True)
+        # self.param2LineEdit.setVisible(True)
+        # self.param3Label.setVisible(True)
+        # self.param3LineEdit.setVisible(True)
+
+        self.set_visible_algorithm(self.algorithmComboBox.currentText())
+
         self.set_result_view()
 
     def set_tuning(self):
@@ -775,6 +784,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.tuningGroupBox.setVisible(True if self.global_variables['view_mode'] == 'normal' else False)
         self.resultsToolBox.setVisible(False)
         self.tuningTabWidget.setVisible(True)
+
+        self.param1Label.setVisible(False)
+        self.param1LineEdit.setVisible(False)
+        self.param2Label.setVisible(False)
+        self.param2LineEdit.setVisible(False)
+        self.param3Label.setVisible(False)
+        self.param3LineEdit.setVisible(False)
 
         self.set_result_view()
 
@@ -881,64 +897,97 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.spacerItem4.changeSize(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
             self.spacerItem5.changeSize(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
 
-    def start_experiment(self):
+    def verify_parameters(self, uploaded_directory):
+        if self.global_variables['tab_mode'] == 'main':
+            if uploaded_directory == '':
+                showWarning("Para iniciar, debe cargar el dato sísmico dando click al boton 'Cargar'")
+                return
 
-        uploaded_directory = self.directories[self.global_variables['tab_mode']]['uploaded']
-        if uploaded_directory == '':
-            showWarning("Para iniciar, debe cargar el dato sísmico dando click al boton 'Cargar'")
-            return
+            if self.directories[self.global_variables['tab_mode']]['temp_saved'] == '':
+                showWarning("Por favor seleccione un nombre de archivo para guardar los resultados del algoritmo.")
+                return
 
-        if self.directories[self.global_variables['tab_mode']]['temp_saved'] == '':
-            showWarning("Por favor seleccione un nombre de archivo para guardar los resultados del algoritmo.")
-            return
+        else:
+            pass
 
-        try:
+    def update_variables(self):
+        self.experimentProgressBar.setValue(0)
+
+        if self.global_variables['tab_mode'] == 'main':
             self.state[self.global_variables['tab_mode']]['progress']['iteration'] = []
             self.state[self.global_variables['tab_mode']]['progress']['error'] = []
             self.state[self.global_variables['tab_mode']]['progress']['psnr'] = []
 
-            self.experimentProgressBar.setValue(0)
+        else:
+            pass
 
-            # seismic data
+        self.maxiter = int(self.maxiterSpinBox.text())
 
-            self.maxiter = int(self.maxiterSpinBox.text())
-            seismic_data = np.load(uploaded_directory)
+    def load_seismic_data(self, uploaded_directory):
+        seismic_data = np.load(uploaded_directory)
 
-            if seismic_data.ndim > 2:
-                seismic_data = seismic_data[..., int(seismic_data.shape[-1] / 2)]
-            else:
-                seismic_data = seismic_data.T
+        if seismic_data.ndim > 2:
+            seismic_data = seismic_data[..., int(seismic_data.shape[-1] / 2)]
+        else:  # only for data.npy
+            seismic_data = seismic_data.T
 
-            seismic_data = seismic_data / np.max(np.abs(seismic_data))
+        seismic_data = seismic_data / np.max(np.abs(seismic_data))
 
-            # sampling
+        return seismic_data
 
+    def load_parameters(self, seismic_data):
+        seed = None
+        if self.seedCheckBox.checkState():
+            seed = int(self.seedSpinBox.text())
+
+        compresson_ratio = float(self.compressSpinBox.text().split('%')[0]) / 100
+
+        H = None
+        if self.global_variables['tab_mode'] == 'main':
             mode = self.samplingTypeComboBox.currentText().lower()
-            n_bloque = int(self.jitterBlockSpinBox.text())
+            jitter_blocks = int(self.jitterBlockSpinBox.text())
             lista = self.elementLineEdit
 
-            seed = None
-            if self.seedCheckBox.checkState():
-                seed = int(self.seedSpinBox.text())
-
-            compresson_ratio = float(self.compressSpinBox.text().split('%')[0]) / 100
-            self.sampling_dict, H = self.sampling.apply_sampling(seismic_data, mode, n_bloque, lista, seed,
+            self.sampling_dict, H = self.sampling.apply_sampling(seismic_data, mode, jitter_blocks, lista, seed,
                                                                  compresson_ratio)
 
-            # Algorithm
+        else:
+            pass
 
-            self.algorithm_name = self.algorithmComboBox.currentText().lower()
+        return H
+
+    def load_algorithm(self, seismic_data, H):
+        self.algorithm_name = self.algorithmComboBox.currentText().lower()
+
+        if self.global_variables['tab_mode'] == 'main':
             params = dict(param1=self.param1LineEdit.text(),
                           param2=self.param2LineEdit.text(),
                           param3=self.param3LineEdit.text())
 
             Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')  # Assuming using DCT2D ad IDCT2D for all algorithms
-            func, parameters = Alg.get_algorithm(self.algorithm_name, self.maxiter, **params)
+            algorithm, parameters = Alg.get_algorithm(self.algorithm_name, self.maxiter, **params)
+
+        else:
+            pass
+
+        # update worker behaviour
+        self.worker = Worker(algorithm, parameters, self.maxiter)
+        return algorithm, parameters
+
+    def start_experiment(self):
+
+        uploaded_directory = self.directories[self.global_variables['tab_mode']]['uploaded']
+        self.verify_parameters(uploaded_directory)
+
+        try:
+            self.update_variables()
+            seismic_data = self.load_seismic_data(uploaded_directory)
+            H = self.load_parameters(seismic_data)
+            self.load_algorithm(seismic_data, H)
 
             # run experiment in a thread
 
             self.thread = QtCore.QThread()
-            self.worker = Worker(func, parameters, self.maxiter)
             self.worker.moveToThread(self.thread)
 
             self.thread.started.connect(self.worker.run)
