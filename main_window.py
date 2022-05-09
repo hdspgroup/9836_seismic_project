@@ -562,18 +562,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
                                 tuning=dict(uploaded='', temp_saved='', saved='', report=''))
         self.state = dict(main=dict(progress=dict(iteration=[], error=[], psnr=[])))
 
-
-        # self.tab_mode = 'main'  # main, report
-        # self.algorithm_name = ''
-        # self.main_directory = ''
-        # self.experiment_directory = ''
-        # self.report_directory = ''
-        # self.tuning_directory = ''
-        #
-        # self.iteracion = []
-        # self.error = []
-        # self.psnr = []
-
         self.onlydouble = QtGui.QDoubleValidator(decimals=10)
         self.onlyInt = QtGui.QIntValidator()
         self.experimentProgressBar.setValue(0)
@@ -587,6 +575,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # algorithms
 
         self.algorithmComboBox.currentTextChanged.connect(self.on_algorithm_changed)
+        self.paramTuningComboBox.currentTextChanged.connect(self.on_param_tuning_changed)
         self.algorithmPushButton.clicked.connect(self.show_equation_window)
         self.samplingTypeComboBox.currentTextChanged.connect(self.on_sampling_changed)
 
@@ -680,8 +669,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
         if 'SNAP' in os.environ:
             kwargs['options'] = QtWidgets.QFileDialog.DontUseNativeDialog
 
-        uploaded_directory = self.directories[self.global_variables['tab_mode']]['uploaded']
         view_directory = self.global_variables['view_mode']
+
+        uploaded_directory = self.directories[self.global_variables['tab_mode']][
+            view_directory if view_directory == 'report' else 'uploaded']
 
         if view_directory == 'normal':
             message = 'Abrir dato sísmico'
@@ -697,12 +688,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
             return
 
         if view_directory == 'normal':
-            uploaded_directory = self.data_fname[0]
-            self.update_data_tree(uploaded_directory)
+            self.directories[self.global_variables['tab_mode']]['uploaded'] = self.data_fname[0]
+            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
         else:
-            self.report_directory = self.data_fname[0]
+            self.directories[self.global_variables['tab_mode']]['report'] = self.data_fname[0]
 
-            data = np.load(self.report_directory, allow_pickle=True)
+            data = np.load(self.data_fname[0], allow_pickle=True)
             performance_data = {item[0]: item[1] for item in data['performance_data']}
 
             self.performanceGraphic.update_values(**performance_data)
@@ -711,7 +702,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.reportGraphic.update_report(data)
             self.reportGraphic.update_figure()
 
-            self.update_data_tree(self.report_directory)
+            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
     def save_files(self):
         kwargs = {}
@@ -731,7 +722,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         save_name = f'{save_name[0]}.npz' if not 'npz' in save_name[0] else save_name[0]
 
         self.saveAsLineEdit.setText(save_name)
-        directories['temp_saved'] = save_name
+        self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name
 
     def update_data_tree(self, directory):
         if directory == '':
@@ -763,7 +754,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             save_name = f'{save_name}.npz'
 
         self.saveAsLineEdit.setText(save_name)
-        self.experiment_directory = save_name
+        self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name
 
     def show_about_window(self):
         self.about_window = QtWidgets.QWidget()
@@ -777,12 +768,43 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.resultsToolBox.setVisible(True)
         self.tuningTabWidget.setVisible(False)
 
+        # self.param1Label.setVisible(True)
+        # self.param1LineEdit.setVisible(True)
+        # self.param2Label.setVisible(True)
+        # self.param2LineEdit.setVisible(True)
+        # self.param3Label.setVisible(True)
+        # self.param3LineEdit.setVisible(True)
+
+        self.set_visible_algorithm(self.algorithmComboBox.currentText())
+
+        self.set_result_view()
+
     def set_tuning(self):
         self.global_variables['tab_mode'] = 'tuning'
         self.tuningGroupBox.setVisible(True if self.global_variables['view_mode'] == 'normal' else False)
         self.resultsToolBox.setVisible(False)
         self.tuningTabWidget.setVisible(True)
 
+        self.param1Label.setVisible(False)
+        self.param1LineEdit.setVisible(False)
+        self.param2Label.setVisible(False)
+        self.param2LineEdit.setVisible(False)
+        self.param3Label.setVisible(False)
+        self.param3LineEdit.setVisible(False)
+
+        self.set_result_view()
+
+    def set_result_view(self):
+        if self.directories[self.global_variables['tab_mode']]['report'] != '':
+            self.performanceGraphic.update_figure()
+            self.reportGraphic.update_figure()
+
+        if self.global_variables['view_mode'] == 'normal':
+            self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
+            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
+
+        else:
+            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
     def set_view(self):
         icon = QtGui.QIcon()
@@ -804,19 +826,14 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.set_visible_algorithm(self.algorithmComboBox.currentText())
 
         self.algorithmGroupBox.setVisible(True)
-        self.tuningGroupBox.setVisible(True)
+        self.tuningGroupBox.setVisible(True if self.global_variables['tab_mode'] == 'tuning' else False)
         self.samplingGroupBox.setVisible(True)
         self.runGroupBox.setVisible(True)
 
         _translate = QtCore.QCoreApplication.translate
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))
 
-        if self.directories[self.global_variables['tab_mode']]['report'] != '':
-            self.performanceGraphic.update_figure()
-            self.reportGraphic.update_figure()
-
-        self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
-        self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
+        self.set_result_view()
 
     def set_report_view(self):
         self.algorithmGroupBox.setVisible(False)
@@ -827,11 +844,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos reconstruidos"))
 
-        if self.directories[self.global_variables['tab_mode']]['report'] != '':
-            self.performanceGraphic.update_figure()
-            self.reportGraphic.update_figure()
-
-        self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
+        self.set_result_view()
 
     def show_tuning_window(self):
         self.ui_tuning_window = UITuningWindow()
@@ -884,58 +897,97 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.spacerItem4.changeSize(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
             self.spacerItem5.changeSize(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
 
-    def start_experiment(self):
+    def verify_parameters(self, uploaded_directory):
+        if self.global_variables['tab_mode'] == 'main':
+            if uploaded_directory == '':
+                showWarning("Para iniciar, debe cargar el dato sísmico dando click al boton 'Cargar'")
+                return
 
-        if self.main_directory == '':
-            showWarning("Para iniciar, debe cargar el dato sísmico dando click al boton 'Cargar'")
-            return
+            if self.directories[self.global_variables['tab_mode']]['temp_saved'] == '':
+                showWarning("Por favor seleccione un nombre de archivo para guardar los resultados del algoritmo.")
+                return
 
-        if self.experiment_directory == '':
-            showWarning("Por favor seleccione un nombre de archivo para guardar los resultados del algoritmo.")
-            return
+        else:
+            pass
 
-        try:
-            # I took this values from ipynb notebook
-            self.experimentProgressBar.setValue(0)
+    def update_variables(self):
+        self.experimentProgressBar.setValue(0)
 
-            self.iteracion = []
-            self.error = []
-            self.psnr = []
+        if self.global_variables['tab_mode'] == 'main':
+            self.state[self.global_variables['tab_mode']]['progress']['iteration'] = []
+            self.state[self.global_variables['tab_mode']]['progress']['error'] = []
+            self.state[self.global_variables['tab_mode']]['progress']['psnr'] = []
 
-            # seismic data
+        else:
+            pass
 
-            self.maxiter = int(self.maxiterSpinBox.text())
-            seismic_data = np.load(self.main_directory)
-            seismic_data = seismic_data.T / np.max(np.abs(seismic_data))
+        self.maxiter = int(self.maxiterSpinBox.text())
 
-            # sampling
+    def load_seismic_data(self, uploaded_directory):
+        seismic_data = np.load(uploaded_directory)
 
+        if seismic_data.ndim > 2:
+            seismic_data = seismic_data[..., int(seismic_data.shape[-1] / 2)]
+        else:  # only for data.npy
+            seismic_data = seismic_data.T
+
+        seismic_data = seismic_data / np.max(np.abs(seismic_data))
+
+        return seismic_data
+
+    def load_parameters(self, seismic_data):
+        seed = None
+        if self.seedCheckBox.checkState():
+            seed = int(self.seedSpinBox.text())
+
+        compresson_ratio = float(self.compressSpinBox.text().split('%')[0]) / 100
+
+        H = None
+        if self.global_variables['tab_mode'] == 'main':
             mode = self.samplingTypeComboBox.currentText().lower()
-            n_bloque = int(self.jitterBlockSpinBox.text())
+            jitter_blocks = int(self.jitterBlockSpinBox.text())
             lista = self.elementLineEdit
 
-            seed = None
-            if self.seedCheckBox.checkState():
-                seed = int(self.seedSpinBox.text())
-
-            compresson_ratio = float(self.compressSpinBox.text().split('%')[0]) / 100
-            self.sampling_dict, H = self.sampling.apply_sampling(seismic_data, mode, n_bloque, lista, seed,
+            self.sampling_dict, H = self.sampling.apply_sampling(seismic_data, mode, jitter_blocks, lista, seed,
                                                                  compresson_ratio)
 
-            # Algorithm
+        else:
+            pass
 
-            self.algorithm_name = self.algorithmComboBox.currentText().lower()
+        return H
+
+    def load_algorithm(self, seismic_data, H):
+        self.algorithm_name = self.algorithmComboBox.currentText().lower()
+
+        if self.global_variables['tab_mode'] == 'main':
             params = dict(param1=self.param1LineEdit.text(),
                           param2=self.param2LineEdit.text(),
                           param3=self.param3LineEdit.text())
 
             Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')  # Assuming using DCT2D ad IDCT2D for all algorithms
-            func, parameters = Alg.get_algorithm(self.algorithm_name, self.maxiter, **params)
+            algorithm, parameters = Alg.get_algorithm(self.algorithm_name, self.maxiter, **params)
+
+        else:
+            pass
+
+        # update worker behaviour
+        self.worker = Worker(algorithm, parameters, self.maxiter)
+        return algorithm, parameters
+
+    def start_experiment(self):
+
+        uploaded_directory = self.directories[self.global_variables['tab_mode']]['uploaded']
+        self.verify_parameters(uploaded_directory)
+
+        try:
+            self.update_variables()
+            seismic_data = self.load_seismic_data(uploaded_directory)
+            H = self.load_parameters(seismic_data)
+            self.load_algorithm(seismic_data, H)
 
             # run experiment in a thread
 
             self.thread = QtCore.QThread()
-            self.worker = Worker(func, parameters, self.maxiter)
             self.worker.moveToThread(self.thread)
 
             self.thread.started.connect(self.worker.run)
@@ -966,12 +1018,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
         err = float(err)
         psnr = float(psnr)
 
-        self.iteracion.append(iter_val)
-        self.error.append(err)
-        self.psnr.append(psnr)
+        iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration']
+        error_list = self.state[self.global_variables['tab_mode']]['progress']['error']
+        psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr']
+
+        iteration_list.append(iter_val)
+        error_list.append(err)
+        psnr_list.append(psnr)
 
         if iter_val % (self.maxiter // 10) == 0 or iter_val == self.maxiter:
-            self.performanceGraphic.update_values(self.iteracion, self.error, self.psnr)
+            self.performanceGraphic.update_values(iteration_list, error_list, psnr_list)
             self.performanceGraphic.update_figure()
 
             self.reportGraphic.update_report(
@@ -982,8 +1038,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def save_experiment(self, res_dict):
         performance_data = np.array(list(self.performanceGraphic.performance_data.items()), dtype=object)
 
-        self.report_directory = self.experiment_directory
-        np.savez(self.report_directory, x_result=res_dict['result'], hist=res_dict['hist'], sampling=self.sampling_dict,
+        temp_saved = self.directories[self.global_variables['tab_mode']]['temp_saved']
+        self.directories[self.global_variables['tab_mode']]['saved'] = temp_saved
+        self.directories[self.global_variables['tab_mode']]['report'] = temp_saved
+        np.savez(self.directories[self.global_variables['tab_mode']]['saved'],
+                 x_result=res_dict['result'], hist=res_dict['hist'], sampling=self.sampling_dict,
                  algorithm_name=self.algorithm_name, performance_data=performance_data)
         print("Results saved [Ok]")
 
@@ -1016,10 +1075,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.paramTuningComboBox.setItemText(0, _translate("mainWindow", "Intervalo"))
         self.paramTuningComboBox.setItemText(1, _translate("mainWindow", "Lista"))
         self.paramLabel.setText(_translate("mainWindow", "Parámetro"))
-        self.paramComboBox.setCurrentText(_translate("mainWindow", "param1"))
-        self.paramComboBox.setItemText(0, _translate("mainWindow", "param1"))
-        self.paramComboBox.setItemText(1, _translate("mainWindow", "param2"))
-        self.paramComboBox.setItemText(2, _translate("mainWindow", "param3"))
+        self.paramComboBox.setCurrentText(_translate("mainWindow", ""))
+        self.paramComboBox.setItemText(0, _translate("mainWindow", ""))
+        self.paramComboBox.setItemText(1, _translate("mainWindow", ""))
+        self.paramComboBox.setItemText(2, _translate("mainWindow", ""))
         self.paramValuesLabel.setText(_translate("mainWindow", "Valores"))
         self.param1InitLineEdit.setText(_translate("mainWindow", "0.1"))
         self.param1EndLineEdit.setText(_translate("mainWindow", "1.0"))
