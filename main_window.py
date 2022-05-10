@@ -553,7 +553,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.samplingGroupBox.setMaximumWidth(300)
         self.runGroupBox.setMaximumWidth(300)
 
-        self.set_visible_algorithm(self.algorithmComboBox.currentText())
+        algorithm = self.algorithmComboBox.currentText().lower()
+        self.update_main_visible_algorithms(algorithm)
+        self.update_tuning_visible_algorithms(algorithm)
+
         self.tuningGroupBox.setVisible(False)
         self.tuningTabWidget.setVisible(False)
 
@@ -643,60 +646,69 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.graphicReportVLayout.addWidget(self.graphicToolbar)
         self.graphicReportVLayout.addWidget(self.reportGraphic)
 
+    def update_main_visible_algorithms(self, algorithm):
+        for i in range(3):
+            label = self.main_params[i][0]
+            line_edit = self.main_params[i][1]
+
+            if i < len(self.params[algorithm]):
+                icon_path = f'{self.icons_path}/{self.params[algorithm][i][0]}.png'  # _{param_type[0]}.png'
+                value = str(self.params[algorithm][i][1])
+
+                label.setPixmap(QtGui.QPixmap(icon_path))
+                line_edit.setText(value)
+
+                label.setVisible(True)
+                line_edit.setVisible(True)
+
+            else:
+                label.setVisible(False)
+                line_edit.setVisible(False)
+
+            line_edit.setValidator(self.onlydouble)
+
+    def update_tuning_visible_algorithms(self, algorithm):
+        for i in range(3):
+            label_init = self.tuning_params[i][0]
+            line_edit_init = self.tuning_params[i][1]
+            label_end = self.tuning_params[i][2]
+            line_edit_end = self.tuning_params[i][3]
+
+            if i < len(self.params[algorithm]):
+                icon_path_init = f'{self.icons_path}/{self.params[algorithm][i][0]}_{self.param_type[0]}.png'
+                icon_path_end = f'{self.icons_path}/{self.params[algorithm][i][0]}_{self.param_type[1]}.png'
+
+                value_init = str(self.params[algorithm][i][1])
+                value_end = str(self.params[algorithm][i][2])
+
+                label_init.setPixmap(QtGui.QPixmap(icon_path_init))
+                label_end.setPixmap(QtGui.QPixmap(icon_path_end))
+
+                line_edit_init.setText(value_init)
+                line_edit_end.setText(value_end)
+
+                label_init.setVisible(True)
+                line_edit_init.setVisible(True)
+                label_end.setVisible(True)
+                line_edit_end.setVisible(True)
+
+            else:
+                label_init.setVisible(False)
+                line_edit_init.setVisible(False)
+                label_end.setVisible(False)
+                line_edit_end.setVisible(False)
+
+            line_edit_init.setValidator(self.onlydouble)
+            line_edit_end.setValidator(self.onlydouble)
+
     def set_visible_algorithm(self, algorithm):
         algorithm = algorithm.lower()
 
         if self.global_variables['tab_mode'] == 'main':
-
-            for i in range(3):
-                label = self.main_params[i][0]
-                line_edit = self.main_params[i][1]
-
-                if i < len(self.params[algorithm]):
-                    icon_path = f'{self.icons_path}/{self.params[algorithm][i][0]}.png'  # _{param_type[0]}.png'
-                    value = str(self.params[algorithm][i][1])
-
-                    label.setPixmap(QtGui.QPixmap(icon_path))
-                    line_edit.setText(value)
-
-                    label.setVisible(True)
-                    line_edit.setVisible(True)
-
-                else:
-                    label.setVisible(False)
-                    line_edit.setVisible(False)
-
-            self.param1LineEdit.setValidator(self.onlydouble)
-            self.param2LineEdit.setValidator(self.onlydouble)
-            self.param3LineEdit.setValidator(self.onlydouble)
+            self.update_main_visible_algorithms(algorithm)
 
         else:
-            # self.tuning_params
-
-            for i in range(3):
-                label_init = self.main_params[i][0]
-                line_edit_init = self.main_params[i][1]
-                label_end = self.main_params[i][2]
-                line_edit_end = self.main_params[i][3]
-
-                if i < len(self.params[algorithm]):
-                    icon_path_init = f'{self.icons_path}/{self.params[algorithm][i][0]}_{self.param_type[1]}.png'
-
-                    value_init = str(self.params[algorithm][i][1])
-                    value_end = str(self.params[algorithm][i][2])
-
-                    label_init.setPixmap(QtGui.QPixmap(icon_path))
-                    label_end.setPixmap(QtGui.QPixmap(icon_path))
-
-                    line_edit_init.setText(value_init)
-                    line_edit_end.setText(value_end)
-
-                    label_init.setVisible(True)
-                    line_edit_init.setVisible(True)
-
-                else:
-                    label.setVisible(False)
-                    line_edit.setVisible(False)
+            self.update_tuning_visible_algorithms(algorithm)
 
     def load_files(self):
         kwargs = {}
@@ -895,7 +907,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def on_param_tuning_changed(self, value):
         pass
-        # self.set_visible_algorithm(self.algorithmComboBox.currentText(), value.lower())
+        self.set_visible_algorithm(self.algorithmComboBox.currentText())
 
     def activate_seed(self, activate):
         self.seedSpinBox.setEnabled(activate)
