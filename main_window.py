@@ -534,12 +534,14 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.runGroupBox.setMaximumWidth(width)
 
         algorithm = self.algorithmComboBox.currentText().lower()
-        value = self.paramTuningComboBox.currentText().lower()
+        tuning_type = self.paramTuningComboBox.currentText().lower()
+
         self.update_main_visible_algorithms(algorithm)
-        self.update_tuning_visible_algorithms(algorithm, value)
+        self.update_tuning_visible_algorithms(algorithm, tuning_type)
 
         self.tuningGroupBox.setVisible(False)
         self.tuningTabWidget.setVisible(False)
+        self.paramComboBox.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.elementLabel.setVisible(False)
         self.elementLineEdit.setVisible(False)
@@ -598,6 +600,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.algorithmComboBox.currentTextChanged.connect(self.on_algorithm_changed)
         self.paramTuningComboBox.currentTextChanged.connect(self.on_param_tuning_changed)
+        self.paramComboBox.currentTextChanged.connect(self.on_param_changed)
         self.algorithmPushButton.clicked.connect(self.show_equation_window)
         self.samplingTypeComboBox.currentTextChanged.connect(self.on_sampling_changed)
 
@@ -645,8 +648,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             line_edit.setValidator(self.onlydouble)
 
-    def update_tuning_visible_algorithms(self, algorithm, value):
-        self.paramComboBox.clear()
+    def update_tuning_visible_param(self, param):
+        algorithm = self.algorithmComboBox.currentText().lower()
+        tuning_type = self.paramTuningComboBox.currentText().lower()
+        self.update_tuning_visible_algorithms(algorithm, tuning_type)
+
+    def update_tuning_visible_algorithms(self, algorithm, tuning_type):
 
         for i in range(3):
             label_init = self.tuning_params[i][0]
@@ -664,16 +671,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 value_init = str(self.params[algorithm][i][1])
                 value_end = str(self.params[algorithm][i][2])
 
-                label_init.setPixmap(QtGui.QPixmap(icon_path_init if value == 'intervalo' else icon_path_list))
+                label_init.setPixmap(QtGui.QPixmap(icon_path_init if tuning_type == 'intervalo' else icon_path_list))
                 label_end.setPixmap(QtGui.QPixmap(icon_path_end))
 
                 line_edit_init.setText(value_init)
                 line_edit_end.setText(value_end)
 
-                self.paramComboBox.addItem("")
-                self.paramComboBox.setItemIcon(i, QtGui.QIcon(f'{icon_path}.png'))
-
-            comparison2 = True if value == 'intervalo' else False
+            comparison2 = True if tuning_type == 'intervalo' else False
 
             label_init.setVisible(True if comparison1 else False)
             line_edit_init.setVisible(True if comparison1 else False)
@@ -683,6 +687,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
             line_edit_init.setValidator(self.onlydouble)
             line_edit_end.setValidator(self.onlydouble)
 
+            if i == self.paramComboBox.currentIndex():
+                label_init.setPixmap(QtGui.QPixmap(icon_path))
+                label_end.setVisible(False)
+                line_edit_end.setVisible(False)
+
     def set_visible_algorithm(self, algorithm):
         algorithm = algorithm.lower()
 
@@ -690,8 +699,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.update_main_visible_algorithms(algorithm)
 
         else:
-            value = self.paramTuningComboBox.currentText().lower()
-            self.update_tuning_visible_algorithms(algorithm, value)
+            tuning_param = self.paramTuningComboBox.currentText().lower()
+            self.update_tuning_visible_algorithms(algorithm, tuning_param)
 
     def load_files(self):
         kwargs = {}
@@ -879,11 +888,24 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.ui_equation_window.show()
 
     def on_algorithm_changed(self, value):
+        algorithm = self.algorithmComboBox.currentText().lower()
+
+        count = 0
+        for i in range(3):
+            if i < len(self.params[algorithm]):
+                icon_path = f'{self.icons_path}/{self.params[algorithm][i][0]}'
+                self.paramComboBox.setItemIcon(i, QtGui.QIcon(f'{icon_path}.png'))
+                count += 1
+
+        self.paramComboBox.setMaxVisibleItems(count)
         self.set_visible_algorithm(value.lower())
 
     def on_param_tuning_changed(self, value):
-        pass
-        self.update_tuning_visible_algorithms(self.algorithmComboBox.currentText().lower(), value.lower())
+        algorithm = self.algorithmComboBox.currentText().lower()
+        self.update_tuning_visible_algorithms(algorithm, value.lower())
+
+    def on_param_changed(self, value):
+        self.update_tuning_visible_param(value.lower())
 
     def activate_seed(self, activate):
         self.seedSpinBox.setEnabled(activate)
