@@ -613,7 +613,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.saveAsPushButton.clicked.connect(self.save_files)
         self.saveAsLineEdit.editingFinished.connect(self.save_as_text_changed)
         self.startPushButton.clicked.connect(self.start_experiment)
-        self.resultPushButton.clicked.connect(self.set_view)
+        self.resultPushButton.clicked.connect(self.show_results)
 
         self.seedCheckBox.stateChanged.connect(self.activate_seed)
 
@@ -702,6 +702,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.update_main_visible_algorithms(algorithm)
 
         else:
+            count = 0
+            for i in range(3):
+                if i < len(self.params[algorithm]):
+                    icon_path = f'{self.icons_path}/{self.params[algorithm][i][0]}'
+                    self.paramComboBox.setItemIcon(i, QtGui.QIcon(f'{icon_path}.png'))
+                    count += 1
+
+            self.paramComboBox.setMaxVisibleItems(count)
+
             tuning_param = self.paramTuningComboBox.currentText().lower()
             self.update_tuning_visible_algorithms(algorithm, tuning_param)
 
@@ -840,7 +849,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         else:
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
-    def set_view(self):
+    def show_results(self):
         icon = QtGui.QIcon()
         if self.global_variables['view_mode'] == 'normal':
             self.global_variables['view_mode'] = 'report'
@@ -886,16 +895,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.ui_tuning_window.show()
 
     def algorithm_changed(self, value):
-        algorithm = self.algorithmComboBox.currentText().lower()
-
-        count = 0
-        for i in range(3):
-            if i < len(self.params[algorithm]):
-                icon_path = f'{self.icons_path}/{self.params[algorithm][i][0]}'
-                self.paramComboBox.setItemIcon(i, QtGui.QIcon(f'{icon_path}.png'))
-                count += 1
-
-        self.paramComboBox.setMaxVisibleItems(count)
         self.set_visible_algorithm(value.lower())
 
     def algorithm_equation_clicked(self):
