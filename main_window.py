@@ -591,17 +591,20 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.experimentProgressBar.setValue(0)
 
         # tab
-        # self.tuningAction.triggered.connect(self.show_tuning_window)
-        self.mainAction.triggered.connect(self.set_main)
-        self.tuningAction.triggered.connect(self.set_tuning)
-        self.aboutOfAction.triggered.connect(self.show_about_window)
+        self.mainAction.triggered.connect(self.show_main)
+        self.tuningAction.triggered.connect(self.show_tuning)
+        self.aboutOfAction.triggered.connect(self.show_about_of)
 
         # algorithms
 
-        self.algorithmComboBox.currentTextChanged.connect(self.on_algorithm_changed)
-        self.paramTuningComboBox.currentTextChanged.connect(self.on_param_tuning_changed)
-        self.paramComboBox.currentTextChanged.connect(self.on_param_changed)
-        self.algorithmPushButton.clicked.connect(self.show_equation_window)
+        self.algorithmComboBox.currentTextChanged.connect(self.algorithm_changed)
+        self.algorithmPushButton.clicked.connect(self.algorithm_equation_clicked)
+
+        # tuning
+        self.paramTuningComboBox.currentTextChanged.connect(self.param_tuning_changed)
+        self.paramComboBox.currentTextChanged.connect(self.param_changed)
+
+        # sampling
         self.samplingTypeComboBox.currentTextChanged.connect(self.on_sampling_changed)
 
         # buttons
@@ -794,23 +797,22 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.saveAsLineEdit.setText(save_name)
         self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name
 
-    def show_about_window(self):
+    def show_about_of(self):
         self.about_window = QtWidgets.QWidget()
         self.ui_about_window = UIAboutWindow()
         self.ui_about_window.setupUi(self.about_window)
         self.about_window.show()
 
-    def set_main(self):
+    def show_main(self):
         self.global_variables['tab_mode'] = 'main'
         self.tuningGroupBox.setVisible(False)
         self.resultsToolBox.setVisible(True)
         self.tuningTabWidget.setVisible(False)
 
         self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
-
         self.set_result_view()
 
-    def set_tuning(self):
+    def show_tuning(self):
         self.global_variables['tab_mode'] = 'tuning'
         self.tuningGroupBox.setVisible(True if self.global_variables['view_mode'] == 'normal' else False)
         self.resultsToolBox.setVisible(False)
@@ -823,6 +825,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param3Label.setVisible(False)
         self.param3LineEdit.setVisible(False)
 
+        self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
         self.set_result_view()
 
     def set_result_view(self):
@@ -882,12 +885,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.ui_tuning_window.setupUi()
         self.ui_tuning_window.show()
 
-    def show_equation_window(self):
-        self.ui_equation_window = UIEquationWindow()
-        self.ui_equation_window.setupUi(self.algorithmComboBox.currentText())
-        self.ui_equation_window.show()
-
-    def on_algorithm_changed(self, value):
+    def algorithm_changed(self, value):
         algorithm = self.algorithmComboBox.currentText().lower()
 
         count = 0
@@ -900,11 +898,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.paramComboBox.setMaxVisibleItems(count)
         self.set_visible_algorithm(value.lower())
 
-    def on_param_tuning_changed(self, value):
+    def algorithm_equation_clicked(self):
+        self.ui_equation_window = UIEquationWindow()
+        self.ui_equation_window.setupUi(self.algorithmComboBox.currentText())
+        self.ui_equation_window.show()
+
+    def param_tuning_changed(self, value):
         algorithm = self.algorithmComboBox.currentText().lower()
         self.update_tuning_visible_algorithms(algorithm, value.lower())
 
-    def on_param_changed(self, value):
+    def param_changed(self, value):
         self.update_tuning_visible_param(value.lower())
 
     def activate_seed(self, activate):
