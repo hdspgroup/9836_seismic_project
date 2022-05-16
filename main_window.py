@@ -570,10 +570,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.param_type = ['init', 'end', 'list']
 
+        # self.params = dict(fista=[[lmb, 0.1, 0.5], [mu, 0.3, 0.7]],
+        #                    gap=[[mu, 1.0, 1.5]],
+        #                    twist=[[lmb, 0.9, 1.5], [alpha, 1.2, 1.7], [beta, 1.998, 2.3]],
+        #                    admm=[[rho, 0.5, 1.5], [gamma, 1.0, 1.7], [lmb, 0.0078, 0.009]])
+
         self.params = dict(fista=[[lmb, 0.1, 0.5], [mu, 0.3, 0.7]],
                            gap=[[mu, 1.0, 1.5]],
-                           twist=[[lmb, 0.9, 1.5], [alpha, 1.2, 1.7], [beta, 1.998, 2.3]],
-                           admm=[[rho, 0.5, 1.5], [gamma, 1.0, 1.7], [lmb, 0.0078, 0.009]])
+                           twist=[[[lmb, alpha], 0.9, 1.5], [[alpha, beta], 1.2, 1.7], [[beta, lmb], 1.998, 2.3]],
+                           admm=[[[rho, gamma], 0.5, 1.5], [[gamma, lmb], 1.0, 1.7], [[lmb, rho], 0.0078, 0.009]])
 
         self.main_params = [[self.param1Label, self.param1LineEdit],
                             [self.param2Label, self.param2LineEdit],
@@ -640,14 +645,21 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             comparison = i < len(self.params[algorithm])
             if comparison:
-                icon_path = f'{self.icons_path}/{self.params[algorithm][i][0]}.png'  # _{param_type[0]}.png'
+                param_names = self.params[algorithm][i][0]
+                if algorithm in ['fista', 'gap']:
+                    icon_path = f'{self.icons_path}/{param_names}.png'  # _{param_type[0]}.png'
+                else:
+                    icon_path = f'{self.icons_path}/{param_names[0]}.png'
+
                 value = str(self.params[algorithm][i][1])
 
                 label.setPixmap(QtGui.QPixmap(icon_path))
                 line_edit.setText(value)
 
-            label.setVisible(True if comparison else False)
-            line_edit.setVisible(True if comparison else False)
+            comparison1 = True if comparison else False
+
+            label.setVisible(comparison1)
+            line_edit.setVisible(comparison1)
 
             line_edit.setValidator(self.onlydouble)
 
@@ -666,7 +678,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             comparison1 = i < len(self.params[algorithm])
             if comparison1:
-                icon_path = f'{self.icons_path}/{self.params[algorithm][i][0]}'
+                param_names = self.params[algorithm][i][0]
+                if algorithm in ['fista', 'gap']:
+                    icon_path = f'{self.icons_path}/{param_names}'
+                else:
+                    icon_path = f'{self.icons_path}/{param_names[0]}'
+
+                # icon_path = f'{self.icons_path}/{self.params[algorithm][i][0]}'
                 icon_path_init = f'{icon_path}_{self.param_type[0]}.png'
                 icon_path_end = f'{icon_path}_{self.param_type[1]}.png'
                 icon_path_list = f'{icon_path}_{self.param_type[2]}.png'
@@ -682,18 +700,31 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             comparison2 = True if tuning_type == 'intervalo' else False
 
-            label_init.setVisible(True if comparison1 else False)
-            line_edit_init.setVisible(True if comparison1 else False)
-            label_end.setVisible(True if comparison1 and comparison2 else False)
-            line_edit_end.setVisible(True if comparison1 and comparison2 else False)
+            comparison3 = True if comparison1 else False
+            comparison4 = True if comparison1 and comparison2 else False
+
+            label_init.setVisible(comparison3)
+            line_edit_init.setVisible(comparison3)
+
+            label_end.setVisible(comparison4)
+            line_edit_end.setVisible(comparison4)
 
             line_edit_init.setValidator(self.onlydouble)
             line_edit_end.setValidator(self.onlydouble)
 
-            if i == self.paramComboBox.currentIndex():
-                label_init.setPixmap(QtGui.QPixmap(icon_path))
-                label_end.setVisible(False)
-                line_edit_end.setVisible(False)
+            if algorithm in ['fista', 'gap']:
+                if i == self.paramComboBox.currentIndex():
+                    label_init.setPixmap(QtGui.QPixmap(icon_path))
+                    label_end.setVisible(False)
+                    line_edit_end.setVisible(False)
+
+            else:
+                index = {0: [0, 1], 1: [1, 2], 2: [0, 2]}
+
+                if i in index[self.paramComboBox.currentIndex()]:
+                    label_init.setPixmap(QtGui.QPixmap(icon_path))
+                    label_end.setVisible(False)
+                    line_edit_end.setVisible(False)
 
     def set_visible_algorithm(self, algorithm):
         algorithm = algorithm.lower()
@@ -705,8 +736,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
             count = 0
             for i in range(3):
                 if i < len(self.params[algorithm]):
-                    icon_path = f'{self.icons_path}/{self.params[algorithm][i][0]}'
-                    self.paramComboBox.setItemIcon(i, QtGui.QIcon(f'{icon_path}.png'))
+                    param_names = self.params[algorithm][i][0]
+                    if algorithm in ['fista', 'gap']:
+                        icon_path = f'{self.icons_path}/{param_names}.png'  # _{param_type[0]}.png'
+                    else:
+                        icon_path = f'{self.icons_path}/{param_names[0]}_{param_names[1]}.png'
+
+                    self.paramComboBox.setItemIcon(i, QtGui.QIcon(icon_path))
                     count += 1
 
             self.paramComboBox.setMaxVisibleItems(count)
