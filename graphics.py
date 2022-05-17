@@ -137,7 +137,7 @@ class TuningGraphic(FigureCanvasQTAgg):
             params.remove('psnr')
 
             for key in self.fixed_params.keys():
-                params.remove(key)
+                params.remove('lmb' if key == 'lambda' else key)
 
             if self.algorithm == 'gap':
                 xlabel = f'{params[0]}'

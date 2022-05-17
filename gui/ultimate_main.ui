@@ -238,7 +238,7 @@
         </property>
         <layout class="QVBoxLayout" name="tuningGroupBoxVLayout">
          <item>
-          <layout class="QHBoxLayout" name="paramHLayout" stretch="0,4,0,0,0,0">
+          <layout class="QHBoxLayout" name="paramHLayout" stretch="0,4,0,0">
            <item>
             <widget class="QLabel" name="paramTuningLabel">
              <property name="text">
@@ -285,6 +285,37 @@
              <item>
               <property name="text">
                <string>param3</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Escala</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBox">
+             <item>
+              <property name="text">
+               <string>Normal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Logarítmica</string>
               </property>
              </item>
             </widget>
@@ -798,7 +829,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1052</width>
+           <width>1098</width>
            <height>390</height>
           </rect>
          </property>
@@ -855,7 +886,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1052</width>
+           <width>1098</width>
            <height>390</height>
           </rect>
          </property>
