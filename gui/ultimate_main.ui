@@ -292,7 +292,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
+          <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4,2,2">
            <property name="spacing">
             <number>6</number>
            </property>

@@ -274,7 +274,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.samplingHLayout.addWidget(self.compressLabel)
         self.compressSpinBox = QtWidgets.QSpinBox(self.samplingGroupBox)
         self.compressSpinBox.setPrefix("")
-        self.compressSpinBox.setMinimum(1)
+        self.compressSpinBox.setMinimum(7)
         self.compressSpinBox.setMaximum(99)
         self.compressSpinBox.setProperty("value", 50)
         self.compressSpinBox.setObjectName("compressSpinBox")
@@ -720,8 +720,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
             label_end.setVisible(comparison4)
             line_edit_end.setVisible(comparison4)
 
-            line_edit_init.setValidator(self.onlydouble)
-            line_edit_end.setValidator(self.onlydouble)
+            line_edit_init.setValidator(self.onlydouble if tuning_type == 'intervalo' else None)
+            line_edit_end.setValidator(self.onlydouble if tuning_type == 'intervalo' else None)
 
             if algorithm in ['fista', 'gap']:
                 if i == self.paramComboBox.currentIndex():
@@ -951,6 +951,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.ui_equation_window.show()
 
     def param_tuning_changed(self, value):
+        self.paramValuesLabel.setVisible(True if value.lower() == 'intervalo' else False)
+        self.paramValuesSpinBox.setVisible(True if value.lower() == 'intervalo' else False)
+
         algorithm = self.algorithmComboBox.currentText().lower()
         self.update_tuning_visible_algorithms(algorithm, value.lower())
 
@@ -1199,7 +1202,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.experimentProgressBar.setValue(0)
             return
 
-    def report_main_progress(self, iter, err, psnr, **kwargs):
+    def report_main_progress(self, iter, err, psnr, res_dict):
         self.experimentProgressBar.setValue(int((iter / self.maxiter) * 100))
 
         # update figure
@@ -1218,7 +1221,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.performanceGraphic.update_values(iteration_list, error_list, psnr_list)
             self.performanceGraphic.update_figure()
 
-            res_dict = kwargs['res_dict']
             self.reportGraphic.update_report(
                 dict(x_result=res_dict['result'], hist=res_dict['hist'], sampling=self.sampling_dict,
                      algorithm_name=self.algorithm_name))
