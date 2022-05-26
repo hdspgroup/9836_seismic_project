@@ -147,15 +147,16 @@ class TuningGraphic(FigureCanvasQTAgg):
                 if params[i] == 'lmb':
                     params[i] = 'lambda'
 
-            for key in self.fixed_params.keys():
-                params.remove(key)
-
             if self.algorithm == 'gap':
                 xlabel = f'$\\{params[0]}$'
             else:
+                for key in self.fixed_params.keys():
+                    params.remove(key)
+
+                hspace = r'\,\,\,'
                 xlabel = f'$\\{params[0]}$ | Valores fijos: $'
                 for key, value in self.fixed_params.items():
-                    xlabel += f'\\{key}={np.round(value, 4)} '
+                    xlabel += f'\\{key}={np.round(value, 4)} {hspace}'
                 xlabel += '$'
 
             self.figure.suptitle(f'Algoritmo {self.algorithm}. Ajuste de parámetros.')

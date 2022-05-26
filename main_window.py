@@ -791,14 +791,25 @@ class UIMainWindow(QtWidgets.QMainWindow):
         else:
             self.directories[self.global_variables['tab_mode']]['report'] = self.data_fname[0]
 
-            data = np.load(self.data_fname[0], allow_pickle=True)
-            performance_data = {item[0]: item[1] for item in data['performance_data']}
+            if self.global_variables['tab_mode'] == 'main':
 
-            self.performanceGraphic.update_values(**performance_data)
-            self.performanceGraphic.update_figure()
+                data = np.load(self.data_fname[0], allow_pickle=True)
+                performance_data = {item[0]: item[1] for item in data['performance_data']}
 
-            self.reconstructionGraphic.update_report(data)
-            self.reconstructionGraphic.update_figure()
+                self.performanceGraphic.update_values(**performance_data)
+                self.performanceGraphic.update_figure()
+
+                self.reconstructionGraphic.update_report(data)
+                self.reconstructionGraphic.update_figure()
+
+            else:
+                data = np.load(self.data_fname[0], allow_pickle=True)
+                self.algorithm_name = str(data['algorithm']).lower()
+                self.tuning_data = pd.DataFrame({item[0]: item[1] for item in data['tuning_data']})
+                self.fixed_params = {item[0]: item[1] for item in data['fixed_params']}
+
+                self.tuningGraphic.update_tuning(self.algorithm_name, self.tuning_data, self.fixed_params)
+                self.tuningGraphic.update_figure()
 
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
@@ -886,9 +897,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.set_result_view()
 
     def set_result_view(self):
-        if self.directories[self.global_variables['tab_mode']]['report'] != '':
-            self.performanceGraphic.update_figure()
-            self.reconstructionGraphic.update_figure()
+        mode = self.global_variables['tab_mode']
+        if self.directories[mode]['report'] != '':
+            if mode == 'main':
+                self.performanceGraphic.update_figure()
+                self.reconstructionGraphic.update_figure()
+            else:
+                self.tuningGraphic.update_figure()
 
         if self.global_variables['view_mode'] == 'normal':
             self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
@@ -1064,6 +1079,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         else:
             self.state[self.global_variables['tab_mode']]['progress']['total_runs'] = 0
+            self.state[self.global_variables['tab_mode']]['progress']['fixed_params'] = {}
 
         self.maxiter = int(self.maxiterSpinBox.text())
 
@@ -1103,7 +1119,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
         tuning_type = self.paramTuningComboBox.currentText().lower()
         fixed_param = self.paramComboBox.currentIndex()
 
-        algorithms, parameters = [], []
         if self.global_variables['tab_mode'] == 'main':
             params = dict(param1=self.param1LineEdit.text(),
                           param2=self.param2LineEdit.text(),
@@ -1118,6 +1133,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         else:
             param_list = []
             parameters = []
+            fixed_params = {0: [0, 1], 1: [1, 2], 2: [0, 2]}
 
             num_params = len(self.params[self.algorithm_name])
             for i in range(num_params):
@@ -1126,26 +1142,56 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 number_end = self.tuning_params[i][3].text()
 
                 i_diff = i != fixed_param
+                i_diff1 = i not in fixed_params[fixed_param]
                 if tuning_type == 'intervalo':
-                    if i_diff:
-                        param_list.append(list(np.linspace(float(number_init), float(number_end),
-                                                           int(self.paramValuesSpinBox.text()))))
+                    if self.algorithm_name in ['twist', 'admm']:
+                        if i_diff1:
+                            param_list.append(list(np.linspace(float(number_init), float(number_end),
+                                                               int(self.paramValuesSpinBox.text()))))
+
+                        else:
+                            aux_index = fixed_params[fixed_param].index(i)
+                            aux_fixed_param = {
+                                self.params[self.algorithm_name][fixed_param][0][aux_index]: float(number_init)}
+                            self.state[self.global_variables['tab_mode']]['progress']['fixed_params'].update(
+                                aux_fixed_param)
+                            param_list.append([float(number_init)])
 
                     else:
-                        self.state[self.global_variables['tab_mode']]['progress']['fixed_params'] = \
-                            {self.params[self.algorithm_name][i][0]: float(number_init)}
-                        param_list.append([float(number_init)])
+                        if i_diff:
+                            param_list.append(list(np.linspace(float(number_init), float(number_end),
+                                                               int(self.paramValuesSpinBox.text()))))
+
+                        else:
+                            aux_fixed_param = {self.params[self.algorithm_name][i][0]: float(number_init)}
+                            self.state[self.global_variables['tab_mode']]['progress']['fixed_params'] = aux_fixed_param
+                            param_list.append([float(number_init)])
 
                 if tuning_type == 'lista':
-                    if i_diff:
-                        lista = [float(number) for number in number_init.replace(' ', '').split(',')]
-                        lista.sort()
-                        param_list.append(lista)
+                    if self.algorithm_name in ['twist', 'admm']:
+                        if i_diff1:
+                            lista = [float(number) for number in number_init.replace(' ', '').split(',')]
+                            lista.sort()
+                            param_list.append(lista)
+
+                        else:
+                            aux_index = fixed_params[fixed_param].index(i)
+                            aux_fixed_param = {
+                                self.params[self.algorithm_name][fixed_param][0][aux_index]: float(number_init)}
+                            self.state[self.global_variables['tab_mode']]['progress']['fixed_params'].update(
+                                aux_fixed_param)
+                            param_list.append([float(number_init)])
 
                     else:
-                        self.state[self.global_variables['tab_mode']]['progress']['fixed_params'] = \
-                            {self.params[self.algorithm_name][i][0]: float(number_init)}
-                        param_list.append([float(number_init)])
+                        if i_diff:
+                            lista = [float(number) for number in number_init.replace(' ', '').split(',')]
+                            lista.sort()
+                            param_list.append(lista)
+
+                        else:
+                            aux_fixed_param = {self.params[self.algorithm_name][i][0]: float(number_init)}
+                            self.state[self.global_variables['tab_mode']]['progress']['fixed_params'] = aux_fixed_param
+                            param_list.append([float(number_init)])
 
             func = None
             param_arg_names = ['param1', 'param2', 'param3']
@@ -1174,7 +1220,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.update_variables()
             seismic_data = self.load_seismic_data(uploaded_directory)
             H = self.load_parameters(seismic_data)
-            self.load_algorithm(seismic_data, H)  ###
+            self.load_algorithm(seismic_data, H)
 
             # run experiment in a thread
 
@@ -1297,7 +1343,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.paramTuningLabel.setText(_translate("mainWindow", "Tipo"))
         self.paramTuningComboBox.setItemText(0, _translate("mainWindow", "Intervalo"))
         self.paramTuningComboBox.setItemText(1, _translate("mainWindow", "Lista"))
-        self.paramLabel.setText(_translate("mainWindow", "Parámetro"))
+        self.paramLabel.setText(_translate("mainWindow", "Fijado"))
         self.paramComboBox.setCurrentText(_translate("mainWindow", ""))
         self.paramComboBox.setItemText(0, _translate("mainWindow", ""))
         self.paramComboBox.setItemText(1, _translate("mainWindow", ""))
