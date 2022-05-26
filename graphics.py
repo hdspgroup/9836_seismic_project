@@ -10,6 +10,7 @@ from matplotlib.ticker import MaxNLocator
 from Algorithms.Function import PSNR
 from gui.alerts import showCritical
 
+
 class PerformanceGraphic(FigureCanvasQTAgg):
     def __init__(self):
         self.performance_data = dict(iteracion=[], error=[], psnr=[])
@@ -56,12 +57,12 @@ class PerformanceGraphic(FigureCanvasQTAgg):
             return
 
 
-class ReportGraphic(FigureCanvasQTAgg):
+class ReconstructionGraphic(FigureCanvasQTAgg):
     def __init__(self):
         self.report_data = None
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.05, right=0.95, bottom=0.05, top=0.90)
-        super(ReportGraphic, self).__init__(self.figure)
+        super(ReconstructionGraphic, self).__init__(self.figure)
 
     def update_report(self, report_data):
         self.report_data = report_data
@@ -89,22 +90,27 @@ class ReportGraphic(FigureCanvasQTAgg):
             axs[0, 0].set_title('Referencia')
 
             ytemp = y_rand.copy()
-            ytemp[:, H_elim] = 0
+            condition = H_elim.size == 0
+            if condition:
+                ytemp[:, H_elim] = 0
             axs[1, 0].imshow(ytemp, cmap='seismic', aspect='auto')
             axs[1, 0].set_title('Medidas')
 
             # axs[1, 0].sharex(axs[0, 0])
             # metric = PSNR(x[:, H_elim], x_result[:, H_elim])
             metric = PSNR(x, x_result)
-            metric_ssim = ssim(x[:, H_elim], x_result[:, H_elim], win_size=3)
+            aux_x = x if condition else x[:, H_elim]
+            aux_x_result = x_result if condition else x_result[:, H_elim]
+            metric_ssim = ssim(aux_x, aux_x_result, win_size=3)
             axs[0, 1].imshow(x_result, cmap='seismic', aspect='auto')
             axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
 
             index = 5
-            axs[1, 1].plot(x[:, H_elim[index]], 'r', label='Referencia')
-            axs[1, 1].plot(x_result[:, H_elim[index]], 'b', label='Recuperado')
+            aux_H_elim = index if condition else H_elim[index]
+            axs[1, 1].plot(x[:, aux_H_elim], 'r', label='Referencia')
+            axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
             axs[1, 1].legend(loc='best')
-            axs[1, 1].set_title('Traza ' + str("{:.0f}".format(H_elim[index])))
+            axs[1, 1].set_title('Traza ' + str("{:.0f}".format(aux_H_elim)))
 
             self.draw()
 
@@ -113,6 +119,7 @@ class ReportGraphic(FigureCanvasQTAgg):
             showCritical("Ocurrió un error inesperado al procesar el dato sísmico. Por favor, intente nuevamente o "
                          "utilice un dato diferente.", details=msg)
             return
+
 
 class TuningGraphic(FigureCanvasQTAgg):
     def __init__(self):
@@ -136,15 +143,21 @@ class TuningGraphic(FigureCanvasQTAgg):
             params.remove('error')
             params.remove('psnr')
 
-            for key in self.fixed_params.keys():
-                params.remove(key)
+            for i in range(len(params)):
+                if params[i] == 'lmb':
+                    params[i] = 'lambda'
 
             if self.algorithm == 'gap':
-                xlabel = f'{params[0]}'
+                xlabel = f'$\\{params[0]}$'
             else:
-                xlabel = f'{params[0]} | Valores fijos: '
+                for key in self.fixed_params.keys():
+                    params.remove(key)
+
+                hspace = r'\,\,\,'
+                xlabel = f'$\\{params[0]}$ | Valores fijos: $'
                 for key, value in self.fixed_params.items():
-                    xlabel += f'{key}={np.round(value, 4)} '
+                    xlabel += f'\\{key}={np.round(value, 4)} {hspace}'
+                xlabel += '$'
 
             self.figure.suptitle(f'Algoritmo {self.algorithm}. Ajuste de parámetros.')
             axes_1 = self.figure.add_subplot(111)
@@ -156,7 +169,8 @@ class TuningGraphic(FigureCanvasQTAgg):
             graphic = axes_1.plot
             if len(self.tuning_data['error']) == 1:
                 graphic = axes_1.scatter
-            graphic(self.tuning_data[params[0]], self.tuning_data['error'], color=color)
+            graphic(self.tuning_data['lmb' if params[0] == 'lambda' else params[0]], self.tuning_data['error'],
+                    color=color)
             axes_1.tick_params(axis='y', labelcolor=color, length=5)
             axes_1.yaxis.set_major_locator(MaxNLocator(8))
 
@@ -165,7 +179,8 @@ class TuningGraphic(FigureCanvasQTAgg):
             graphic = axes_2.plot
             if len(self.tuning_data['psnr']) == 1:
                 graphic = axes_2.scatter
-            graphic(self.tuning_data[params[0]], self.tuning_data['psnr'], color=color)
+            graphic(self.tuning_data['lmb' if params[0] == 'lambda' else params[0]], self.tuning_data['psnr'],
+                    color=color)
             axes_2.tick_params(axis='y', labelcolor=color, length=5)
             axes_2.yaxis.set_major_locator(MaxNLocator(8))
 
