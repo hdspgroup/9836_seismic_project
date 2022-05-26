@@ -19,7 +19,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from Algorithms.Function import Sampling, Algorithms
 from about_window import UIAboutWindow
 from equation_window import UIEquationWindow
-from graphics import PerformanceGraphic, ReportGraphic, TuningGraphic
+from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic
 from gui.alerts import showWarning, showCritical
 from workers import Worker, TuningWorker
 from tuning_window import UITuningWindow
@@ -580,7 +580,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         #                    admm=[[rho, 0.5, 1.5], [gamma, 1.0, 1.7], [lmb, 0.0078, 0.009]])
 
         self.params = dict(fista=[[lmb, 0.1, 0.5], [mu, 0.3, 0.7]],
-                           gap=[[mu, 1.0, 1.5]],
+                           gap=[[lmb, 1.0, 1.5]],
                            twist=[[[lmb, alpha], 0.9, 1.5], [[alpha, beta], 1.2, 1.7], [[beta, lmb], 1.998, 2.3]],
                            admm=[[[rho, gamma], 0.5, 1.5], [[gamma, lmb], 1.0, 1.7], [[lmb, rho], 0.0078, 0.009]])
 
@@ -638,10 +638,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         # report graphic
 
-        self.reportGraphic = ReportGraphic()
-        self.reportToolbar = NavigationToolbar(self.reportGraphic, self)
+        self.reconstructionGraphic = ReconstructionGraphic()
+        self.reportToolbar = NavigationToolbar(self.reconstructionGraphic, self)
         self.graphicReportVLayout.addWidget(self.reportToolbar)
-        self.graphicReportVLayout.addWidget(self.reportGraphic)
+        self.graphicReportVLayout.addWidget(self.reconstructionGraphic)
 
         # report graphic
 
@@ -797,8 +797,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.performanceGraphic.update_values(**performance_data)
             self.performanceGraphic.update_figure()
 
-            self.reportGraphic.update_report(data)
-            self.reportGraphic.update_figure()
+            self.reconstructionGraphic.update_report(data)
+            self.reconstructionGraphic.update_figure()
 
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
@@ -888,7 +888,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def set_result_view(self):
         if self.directories[self.global_variables['tab_mode']]['report'] != '':
             self.performanceGraphic.update_figure()
-            self.reportGraphic.update_figure()
+            self.reconstructionGraphic.update_figure()
 
         if self.global_variables['view_mode'] == 'normal':
             self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
@@ -1090,8 +1090,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
         jitter_blocks = int(self.jitterBlockSpinBox.text())
         lista = self.elementLineEdit
 
-        self.sampling_dict, H = self.sampling.apply_sampling(seismic_data, mode, jitter_blocks, lista, seed,
-                                                             compresson_ratio)
+        try:
+            self.sampling_dict, H = self.sampling.apply_sampling(seismic_data, mode, jitter_blocks, lista, seed,
+                                                                 compresson_ratio)
+        except:
+            return
 
         return H
 
@@ -1221,10 +1224,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.performanceGraphic.update_values(iteration_list, error_list, psnr_list)
             self.performanceGraphic.update_figure()
 
-            self.reportGraphic.update_report(
+            self.reconstructionGraphic.update_report(
                 dict(x_result=res_dict['result'], hist=res_dict['hist'], sampling=self.sampling_dict,
                      algorithm_name=self.algorithm_name))
-            self.reportGraphic.update_figure()
+            self.reconstructionGraphic.update_figure()
 
     def save_main_experiment(self, res_dict):
         performance_data = np.array(list(self.performanceGraphic.performance_data.items()), dtype=object)
