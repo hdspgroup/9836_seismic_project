@@ -1,0 +1,1006 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>mainWindow</class>
+ <widget class="QMainWindow" name="mainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1412</width>
+    <height>943</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>9836 Proyecto de Sísmica</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,8">
+    <item>
+     <layout class="QVBoxLayout" name="mainLayout" stretch="0,0,0,0,0,0">
+      <item>
+       <widget class="QGroupBox" name="inputGroupBox">
+        <property name="title">
+         <string>Datos sísmicos</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <widget class="QTreeWidget" name="dataTreeWidget">
+           <column>
+            <property name="text">
+             <string>Datos actuales</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <spacer name="loadHSpacer1">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>13</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="loadPushButton">
+             <property name="text">
+              <string>Cargar</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="loadHSpacer2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>13</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="algorithmGroupBox">
+        <property name="title">
+         <string>Algoritmos</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QHBoxLayout" name="algorithmHLayout" stretch="5,0,0,0">
+           <item>
+            <widget class="QComboBox" name="algorithmComboBox">
+             <item>
+              <property name="text">
+               <string>FISTA</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>GAP</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TwIST</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>ADMM</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="algorithmPushButton">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="toolTip">
+              <string>Ver ecuación</string>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../assets/assets.qrc">
+               <normaloff>:/icons/icons/view.png</normaloff>:/icons/icons/view.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="maxiterLabel">
+             <property name="text">
+              <string>Máxima iteración</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="maxiterSpinBox">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>9999</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="paramsHLayout">
+           <item>
+            <widget class="QLabel" name="param1Label">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="textFormat">
+              <enum>Qt::AutoText</enum>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/equations/equations/lambda.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+             <property name="margin">
+              <number>0</number>
+             </property>
+             <property name="indent">
+              <number>-1</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param1LineEdit">
+             <property name="text">
+              <string>0.1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="param2Label">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/equations/equations/mu.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param2LineEdit">
+             <property name="text">
+              <string>0.3</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="param3Label">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/equations/equations/rho.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param3LineEdit">
+             <property name="text">
+              <string>1</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="tuningGroupBox">
+        <property name="title">
+         <string>Ajuste de parámetros</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <layout class="QHBoxLayout" name="paramHLayout" stretch="0,4,0,0">
+           <item>
+            <widget class="QLabel" name="paramTuningLabel">
+             <property name="text">
+              <string>Tipo</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="paramTuningComboBox">
+             <item>
+              <property name="text">
+               <string>Intervalo</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Lista</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="paramLabel">
+             <property name="text">
+              <string>Parámetro</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="paramComboBox">
+             <property name="currentText">
+              <string>param1</string>
+             </property>
+             <item>
+              <property name="text">
+               <string>param1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>param2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>param3</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="paramValueHLayout" stretch="1,1,1,1">
+           <item>
+            <spacer name="paramHSpacer1">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="paramValuesLabel">
+             <property name="text">
+              <string>Valores</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="paramValuesSpinBox">
+             <property name="suffix">
+              <string/>
+             </property>
+             <property name="prefix">
+              <string/>
+             </property>
+             <property name="minimum">
+              <number>2</number>
+             </property>
+             <property name="maximum">
+              <number>999</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="paramHSpacer2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="algorithmHLine">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="param1HLayout">
+           <item>
+            <widget class="QLabel" name="param1InitLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_init.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param1InitLineEdit">
+             <property name="text">
+              <string>0.1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="param1EndLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_end.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param1EndLineEdit">
+             <property name="text">
+              <string>1.0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="param2HLayout">
+           <item>
+            <widget class="QLabel" name="param2InitLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/mu_init.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param2InitLineEdit">
+             <property name="text">
+              <string>0.1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="param2EndLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/mu_end.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param2EndLineEdit">
+             <property name="text">
+              <string>1.0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="param3HLayout">
+           <item>
+            <widget class="QLabel" name="param3InitLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/rho_init.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param3InitLineEdit">
+             <property name="text">
+              <string>0.1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="param3EndLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/rho_end.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param3EndLineEdit">
+             <property name="text">
+              <string>1.0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="samplingGroupBox">
+        <property name="title">
+         <string>Submuestreo</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QHBoxLayout" name="samplingHLayout" stretch="0,4,0,2">
+           <item>
+            <widget class="QLabel" name="samplingTypeLabel">
+             <property name="text">
+              <string>Tipo</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="samplingTypeComboBox">
+             <item>
+              <property name="text">
+               <string>Aleatorio</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Uniforme</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Jitter</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Lista</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="compressLabel">
+             <property name="text">
+              <string>Compresión</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="compressSpinBox">
+             <property name="suffix">
+              <string>%</string>
+             </property>
+             <property name="prefix">
+              <string/>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>99</number>
+             </property>
+             <property name="value">
+              <number>50</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="samplingHLine">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="elementHLayout">
+           <item>
+            <widget class="QLabel" name="elementLabel">
+             <property name="text">
+              <string>Elementos</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="elementLineEdit"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="jitterHLayout" stretch="0,0,0,1">
+           <item>
+            <widget class="QLabel" name="jitterBlockLabel">
+             <property name="text">
+              <string>Número de bloques</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="jitterBlockSpinBox">
+             <property name="suffix">
+              <string/>
+             </property>
+             <property name="prefix">
+              <string/>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>999</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="jitterTypeLabel">
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Tipo</string>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="jitterComboBox">
+             <item>
+              <property name="text">
+               <string>Aleatorio</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Uniforme</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="sdHLayout">
+           <item>
+            <spacer name="seedHSpacer1">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="seedHLayout">
+             <item>
+              <widget class="QCheckBox" name="seedCheckBox">
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="text">
+                <string>Usar semilla</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="seedLabel">
+               <property name="text">
+                <string>Valor</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="seedSpinBox">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="suffix">
+                <string/>
+               </property>
+               <property name="prefix">
+                <string/>
+               </property>
+               <property name="minimum">
+                <number>-999</number>
+               </property>
+               <property name="maximum">
+                <number>999</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="seedHSpacer2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="runGroupBox">
+        <property name="title">
+         <string>Experimentos</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QHBoxLayout" name="saveAsHLayout">
+           <item>
+            <widget class="QLabel" name="saveAsLabel">
+             <property name="text">
+              <string>Guardar como</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="saveAsLineEdit"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="saveAsPushButton">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../assets/assets.qrc">
+               <normaloff>:/icons/icons/save.png</normaloff>:/icons/icons/save.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="startHLayout" stretch="0,0">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QProgressBar" name="experimentProgressBar">
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="startPushButton">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../assets/assets.qrc">
+               <normaloff>:/icons/icons/run.png</normaloff>:/icons/icons/run.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="resultGroupBox">
+        <property name="title">
+         <string>Resultados</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_10">
+         <item>
+          <layout class="QHBoxLayout" name="resultHLayout" stretch="1,1,1,1">
+           <item>
+            <spacer name="resultHSpacer1">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="resultLabel">
+             <property name="text">
+              <string>Visualización</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="resultPushButton">
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../assets/assets.qrc">
+               <normaloff>:/icons/icons/report.png</normaloff>:/icons/icons/report.png</iconset>
+             </property>
+             <property name="autoDefault">
+              <bool>false</bool>
+             </property>
+             <property name="default">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="resultHSpacer2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QToolBox" name="resultsToolBox">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="performancePage">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1100</width>
+         <height>837</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Rendimiento</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QTabWidget" name="performanceTabWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="expPerformanceTab1">
+           <attribute name="title">
+            <string>Experimento</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="9">
+            <item>
+             <widget class="QWidget" name="graphicPerformanceWidget" native="true">
+              <layout class="QVBoxLayout" name="verticalLayout_11">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <layout class="QVBoxLayout" name="graphicPerformanceVLayout">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="reportPage">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1100</width>
+         <height>837</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Reporte</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_9">
+        <item>
+         <widget class="QTabWidget" name="reportTabWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="expReportTab1">
+           <attribute name="title">
+            <string>Experimento</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_6" stretch="0">
+            <item>
+             <widget class="QWidget" name="graphicReportWidget" native="true">
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <layout class="QVBoxLayout" name="graphicReportVLayout"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="mainAction"/>
+   <addaction name="tuningAction"/>
+   <addaction name="aboutOfAction"/>
+  </widget>
+  <action name="aboutOfAction">
+   <property name="icon">
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/icons/icons/info.png</normaloff>:/icons/icons/info.png</iconset>
+   </property>
+   <property name="text">
+    <string>about</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Acerca de este proyecto&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="reportAction">
+   <property name="icon">
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/icons/icons/report.png</normaloff>:/icons/icons/report.png</iconset>
+   </property>
+   <property name="text">
+    <string>report</string>
+   </property>
+   <property name="toolTip">
+    <string>Visualización de resultados</string>
+   </property>
+  </action>
+  <action name="mainAction">
+   <property name="icon">
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/icons/icons/main.png</normaloff>:/icons/icons/main.png</iconset>
+   </property>
+   <property name="text">
+    <string>main</string>
+   </property>
+   <property name="toolTip">
+    <string>Ir al menú principal</string>
+   </property>
+  </action>
+  <action name="tuningAction">
+   <property name="icon">
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/icons/icons/tuning.png</normaloff>:/icons/icons/tuning.png</iconset>
+   </property>
+   <property name="text">
+    <string>tuning</string>
+   </property>
+   <property name="toolTip">
+    <string>Ajuste de parámetros</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../assets/assets.qrc"/>
+  <include location="../../../../../.designer/assets/assets.qrc"/>
+ </resources>
+ <connections/>
+</ui>

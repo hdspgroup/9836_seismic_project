@@ -11,7 +11,206 @@ import time
 from pymitter import EventEmitter
 
 # Need to use this (EventEmitter) for comunication with the GUI, please don't remove it, I used this trough the code
+from gui.alerts import showWarning, showCritical
+
 ee = EventEmitter()
+
+
+class Sampling:
+    '''
+    Sampling techniques for seismic data.
+    '''
+
+    def apply_sampling(self, x, mode, n_bloques, lista, seed, compression_ratio):
+        if mode == 'aleatorio':
+            return self.random_sampling(x, seed, compression_ratio)
+        elif mode == 'uniforme':
+            return self.uniform_sampling(x, compression_ratio)
+        elif mode == 'jitter':
+            return self.jitter_sampling(x, n_bloques, compression_ratio)
+        else:  # mode == lista
+            try:
+                lista = [int(number) for number in lista.text().replace(' ', '').split(',')]
+
+                if len(lista) < 7:
+                    showWarning("La cantidad mínima de elementos debe ser 7.")
+                    return
+
+                if len(np.unique(lista)) < 7:
+                    showWarning("La cantidad mínima de elementos repetidos debe ser 7.\n"
+                                "Preferiblemente no ingrese números repetidos.")
+                    return
+
+                if x.shape[1] <= np.max(lista):
+                    showWarning(f"El número de columnas de la muestra ({x.shape[1]}) es inferior al mayor número "
+                                f"ingresado en la lista de elementos ({np.max(lista)}).\n"
+                                "Por favor verifique la lista.")
+                    return
+
+                if any(number < 0 for number in lista):
+                    showWarning("No ingrese elementos menores que cero a la lista de elementos.")
+                    return
+
+
+            except:
+                showWarning("Expresión invalida en los elementos de la lista.\n"
+                            "Verifique que ingreso correctamente los datos.")
+                return
+            return self.list_sampling(x, lista)
+
+    def random_sampling(self, x, seed, compression_ratio):
+        '''
+        Inputs:
+        x : full data
+        seed: seed for random sampling
+        compression_ratio: compression ratio for subsampling
+
+        Outputs:
+        sampling_dict : dictionary that contains all information about sample
+                        and its compression
+        '''
+        M, N = x.shape
+
+        # sampling
+        tasa_compression = int(compression_ratio * N)
+        pattern_vec = np.ones((N,))
+
+        if seed is not None:
+            np.random.seed(seed)
+
+        ss = np.random.permutation(list(range(1, N - 1)))
+        pattern_vec[ss[0:tasa_compression]] = 0
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": x,
+            "sr_rand": compression_ratio,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
+
+    def uniform_sampling(self, x, compression_ratio):
+        '''
+        Inputs:
+        x : full data
+        compression_ratio: compression ratio for subsampling
+
+        Outputs:
+        sampling_dict : dictionary that contains all information about sample
+                        and its compression
+        '''
+        M, N = x.shape
+        pattern_vec = np.ones((N,), dtype=int)
+        n_col_rmv = np.round(N * compression_ratio)
+        x_distance = np.round(N / n_col_rmv)
+
+        i = 0
+        while i * int(x_distance) < N:
+            pattern_vec[i * int(x_distance)] = 0
+            i = i + 1
+
+        # Sampling pattern
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": x,
+            "sr_rand": compression_ratio,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
+
+    def jitter_sampling(self, x, n_bloques, compression_ratio):
+        # https://slim.gatech.edu/Publications/Public/Journals/Geophysics/2008/hennenfent08GEOsdw/paper_html/node14.html
+        '''
+        Inputs:
+        x : full data
+        n_bloques: number of splited blocks in the full data for subsampling
+        compression_ratio: compression ratio for subsampling
+
+        Outputs:
+        sampling_dict : dictionary that contains all information about sample
+                        and its compression
+        '''
+        M, N = x.shape
+
+        n = np.int(np.floor(N / n_bloques))
+        t_n = np.int(n * compression_ratio)
+        vec_total = []
+
+        for ii in range(n_bloques):
+            complete = np.ones((n,))
+            rand_block = np.random.permutation(list(range(1, n - 1)))
+            if ii == n_bloques - 1 and n_bloques % 2 == 0 and t_n == 3:
+                complete[rand_block[:t_n + 1]] = 0
+            else:
+                complete[rand_block[:t_n]] = 0
+            vec_total.append(complete)
+
+        vectorize_pattern = np.array(vec_total).reshape(-1)
+        pattern_vec = np.ones((N,))
+        pattern_vec[:len(vectorize_pattern)] = vectorize_pattern
+
+        # Sampling pattern
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": x,
+            "sr_rand": compression_ratio,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
+
+    def list_sampling(self, x, lista):
+        M, N = x.shape
+
+        # sampling
+
+        pattern_vec = np.ones((N,))
+        pattern_vec[np.array(lista)] = 0
+        H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+
+        out = x * H0
+        pattern_bool = np.asarray(pattern_vec, dtype=bool)
+        H = pattern_bool
+
+        sampling_dict = {
+            "x_ori": x,
+            "lista": lista,
+            "y_rand": out,
+            "pattern_rand": pattern_vec,
+            "pattern_index": pattern_bool,
+            "H": H,
+            "H0": H0
+        }
+
+        return np.array(list(sampling_dict.items())), H
 
 
 def random_sampling(x, sr):
@@ -31,7 +230,7 @@ def random_sampling(x, sr):
     M = dim[0]
     N = dim[1]
     # L = dim[3]
-
+    # sampling
     tasa_compression = int(sr * N)
     pattern_vec = np.ones((N,))
 
@@ -391,13 +590,13 @@ class Algorithms:
 
         # ---------- Load or create the basis function  ---------
 
-        if (inspect.isfunction(operator_dir)):
+        if inspect.isfunction(operator_dir):
             self.operator_dir = operator_dir
         else:
             if operator_dir == 'DCT2D':
                 self.operator_dir = dct2()
 
-        if (inspect.isfunction(operator_inv)):
+        if inspect.isfunction(operator_inv):
             self.operator_inv = operator_inv
         else:
             if operator_inv == 'IDCT2D':
@@ -416,6 +615,7 @@ class Algorithms:
         measures : Y = H@x
         '''
 
+        print(f'H.shape={self.H.shape}')
         return self.H * np.squeeze(self.x.T.reshape(-1))
 
     def get_results(self, alg_name, **parameters):
@@ -456,6 +656,39 @@ class Algorithms:
         x_result, hist = results
 
         return x_result, hist
+
+    def get_algorithm(self, algorithm_case, maxiter, **params):
+        if algorithm_case == "fista":
+            parameters = {"lmb": float(params['param1']),  # Tau
+                          "mu": float(params['param2']),  # Mu
+                          "max_itr": maxiter}
+            func = self.FISTA
+
+        elif algorithm_case == "gap":
+            parameters = {"lmb": float(params['param1']),  # Tau
+                          "max_itr": maxiter}
+            func = self.GAP
+
+        elif algorithm_case == "twist":
+            parameters = {"lmb": float(params['param1']),  # Tau
+                          "alpha": float(params['param2']),  # Alpha
+                          "beta": float(params['param3']),  # Beta
+                          "max_itr": maxiter}
+            func = self.TwIST
+
+        elif algorithm_case == "admm":
+            parameters = {"rho": float(params['param1']),  # Rho
+                          "gamma": float(params['param2']),  # Gamma
+                          "lmb": float(params['param3']),  # Lambda
+                          "max_itr": maxiter}
+            func = self.ADMM
+
+        else:
+            showCritical(
+                "No se encontró el algoritmo. Por favor intente nuevamente o utilice un algoritmo diferente.")
+            return
+
+        return func, parameters
 
     # ---------------------------------------------FISTA----------------------------------------
 
@@ -518,8 +751,9 @@ class Algorithms:
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
 
-            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
-            yield itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f")
+            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".2e"), format(hist[itr, 1], ".3f"), dict(result=self.operator_inv(s),
+                                                                                      hist=hist)
 
         yield self.operator_inv(s), hist
 
@@ -537,6 +771,8 @@ class Algorithms:
 
         The algorithm  can be interrupted anytime to return a valid solution and resumed subsequently to
         improve the  solution.
+
+        https://arxiv.org/pdf/1511.03890.pdf
 
         Parameters
         ----------
@@ -577,8 +813,9 @@ class Algorithms:
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
 
-            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
-            yield itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f")
+            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".2e"), format(hist[itr, 1], ".3f"), dict(result=self.operator_inv(x),
+                                                                                      hist=hist)
 
         yield self.operator_inv(x), hist
 
@@ -641,14 +878,14 @@ class Algorithms:
             itr = itr + 1
 
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
-
             psnr_val = PSNR(self.operator_inv(x), self.x)
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
 
-            print(itr, '\t Error:', format(hist[itr, 0], ".4e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
-            yield itr, format(hist[itr, 0], ".4e"), format(hist[itr, 1], ".3f")
+            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB \n')
+            yield itr, format(hist[itr, 0], ".2e"), format(hist[itr, 1], ".3f"), dict(result=self.operator_inv(x),
+                                                                                      hist=hist)
 
         yield self.operator_inv(x), hist
 
@@ -680,7 +917,7 @@ class Algorithms:
         #         The weight for the dual problem term.
         # gamma :   float
         #         A relaxation coefficient for the dual problem parameter.
-        # lamnda :   float
+        # lmb :   float
         #         The threshold value to compute the operator.
         # max_itr : int
         #         Maximum number of iterations
@@ -751,6 +988,6 @@ class Algorithms:
                     itr + 1, residualx, psnr_val, end_time - begin_time))
                 # % (ni + 1, psnr(v, X_ori), end_time - begin_time))
 
-            yield itr, residualx, psnr_val
+            yield itr, format(residualx, ".2e"), format(psnr_val, ".3f"), dict(result=x, hist=hist)
 
         yield x, hist
