@@ -8,7 +8,7 @@ import scipy
 
 # ----------------- --------------------
 # x = np.load('../data/data.npy')
-data_name = 'spii15s.npy'
+data_name = 'data.npy'
 x = np.load('../data/' + data_name)
 if len(x.shape) > 2:
     x = x[:, :, int(x.shape[-1] / 2)]
@@ -16,12 +16,13 @@ if len(x.shape) > 2:
 if data_name == 'data.npy':
     x = x.T
 x = x / np.abs(x).max()
-max_itr = 500
+max_itr = 100
 
 '''
 ---------------  SAMPLING --------------------
 '''
-sr_rand = 0.3  # 1-compression
+sr_rand = 0.5  # 1-compression
+np.random.seed(0)
 y_rand, pattern_rand, pattern_index = random_sampling(x, sr_rand)
 H = pattern_index
 
@@ -29,7 +30,7 @@ H = pattern_index
 ---------------- RECOVERY ALGORITHM -----------------
 Select the Algorithm: FISTA , GAP , TWIST , ADMM
 '''
-case = 'FISTA'
+case = 'ADMM'
 alg = Algorithms(x, H, 'DCT2D', 'IDCT2D')
 
 parameters = {}
@@ -83,7 +84,7 @@ axs[1, 0].set_title('Measurements')
 metric = PSNR(x[:, H_elim], x_result[:, H_elim])
 metric_ssim = ssim(x[:, H_elim], x_result[:, H_elim])
 axs[0, 1].imshow(x_result, cmap='seismic', aspect='auto')
-axs[0, 1].set_title(f'Reconstructed \n PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+axs[0, 1].set_title(f'Reconstructed \n PSNR: {metric:0.3f} dB, SSIM:{metric_ssim:0.3f}')
 print(metric_ssim)
 index = 5
 axs[1, 1].plot(x[:, H_elim[index]], 'r', label='Reference')

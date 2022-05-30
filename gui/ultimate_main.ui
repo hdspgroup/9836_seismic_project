@@ -238,7 +238,7 @@
         </property>
         <layout class="QVBoxLayout" name="tuningGroupBoxVLayout">
          <item>
-          <layout class="QHBoxLayout" name="paramHLayout" stretch="0,4,0,0">
+          <layout class="QHBoxLayout" name="paramTypeHLayout" stretch="0,4,0,0">
            <item>
             <widget class="QLabel" name="paramTuningLabel">
              <property name="text">
@@ -292,7 +292,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4,2,2">
+          <layout class="QHBoxLayout" name="paramValueHLayout" stretch="1,4,2,2">
            <property name="spacing">
             <number>6</number>
            </property>
@@ -300,17 +300,17 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="label">
+            <widget class="QLabel" name="scaleLabel">
              <property name="text">
               <string>Escala</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboBox">
+            <widget class="QComboBox" name="scaleComboBox">
              <item>
               <property name="text">
-               <string>Normal</string>
+               <string>Lineal</string>
               </property>
              </item>
              <item>
