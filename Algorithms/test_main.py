@@ -31,7 +31,7 @@ H = pattern_index
 ---------------- RECOVERY ALGORITHM -----------------
 Select the Algorithm: FISTA , GAP , TWIST , ADMM
 '''
-case = 'FISTA'
+case = 'TwIST'
 alg = Algorithms(x, H, 'DCT2D', 'IDCT2D')
 
 parameters = {}
@@ -48,7 +48,7 @@ elif case == 'GAP':
 
 elif case == 'TwIST':
     parameters = {'max_itr': max_itr,
-                  'lmb': 0.5,
+                  'lmb': 0.9,
                   'alpha': 1.2,
                   'beta': 1.998
                   }
@@ -98,7 +98,7 @@ plt.show()
 
 # performance
 
-iteracion = np.linspace(1, len(hist), len(hist))
+iteracion = np.linspace(1, len(hist) - 1, len(hist) - 1)
 
 fig = plt.figure()
 axes_1 = fig.add_subplot(111)
@@ -107,13 +107,13 @@ axes_2 = axes_1.twinx()
 color = 'tab:red'
 axes_1.set_xlabel('iteraciones')
 axes_1.set_ylabel('ssim', color=color)
-axes_1.plot(iteracion, hist[:, 2], color=color)
+axes_1.plot(iteracion, hist[1:, 2], color=color)
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
 axes_1.yaxis.set_major_locator(MaxNLocator(8))
 
 color = 'tab:blue'
 axes_2.set_ylabel('psnr', color=color)
-axes_2.plot(iteracion, hist[:, 1], color=color)
+axes_2.plot(iteracion, hist[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
 axes_2.yaxis.set_major_locator(MaxNLocator(8))
 

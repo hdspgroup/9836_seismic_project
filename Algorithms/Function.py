@@ -214,7 +214,7 @@ class Sampling:
         return np.array(list(sampling_dict.items())), H
 
 
-def random_sampling(x, sr):
+def random_sampling(x, sr, seed):
     '''
     Random sampling is a part of the sampling technique in which each sample has an equal probability of being chosen.
     A sample chosen randomly is meant to be an unbiased representation of the total population.
@@ -234,6 +234,9 @@ def random_sampling(x, sr):
     # sampling
     tasa_compression = int(sr * N)
     pattern_vec = np.ones((N,))
+
+    if seed is not None:
+        np.random.seed(seed)
 
     ss = np.random.permutation(list(range(1, N - 1)))
     pattern_vec[ss[0:tasa_compression]] = 0

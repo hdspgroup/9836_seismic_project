@@ -92,16 +92,16 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
             axs[0, 0].set_title('Referencia')
 
             ytemp = y_rand.copy()
-            condition = H_elim.size == 0
+            condition = H_elim.size > 0
             if condition:
-                ytemp[:, H_elim] = 0
+                ytemp[:, H_elim] = None
             axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
             axs[1, 0].set_title('Medidas')
 
             # axs[1, 0].sharex(axs[0, 0])
             # metric = PSNR(x[:, H_elim], x_result[:, H_elim])
-            aux_x = x if condition else x[:, H_elim]
-            aux_x_result = x_result if condition else x_result[:, H_elim]
+            aux_x = x[:, H_elim] if condition else x
+            aux_x_result = x_result[:, H_elim] if condition else x_result
             metric = PSNR(aux_x, aux_x_result)
             metric_ssim = ssim(aux_x, aux_x_result)
             axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
