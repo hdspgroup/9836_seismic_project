@@ -15,7 +15,7 @@ class PerformanceGraphic(FigureCanvasQTAgg):
     def __init__(self):
         self.performance_data = dict(iteracion=[], error=[], psnr=[])
         self.figure = plt.figure()
-        plt.subplots_adjust(left=0.07, right=0.93, bottom=0.08, top=0.92)
+        plt.subplots_adjust(left=0.1, right=0.9, bottom=0.08, top=0.92)
         super(PerformanceGraphic, self).__init__(self.figure)
 
     def update_values(self, iteracion, error, psnr, ssim):
@@ -42,13 +42,19 @@ class PerformanceGraphic(FigureCanvasQTAgg):
             axes_1.set_ylabel('ssim', color=color)
             axes_1.plot(iteracion, ssim, color=color)
             axes_1.tick_params(axis='y', labelcolor=color, length=5)
-            axes_1.yaxis.set_major_locator(MaxNLocator(8))
+            # axes_1.yaxis.set_major_locator(MaxNLocator(8))
+            axes_1.grid(axis='both', linestyle='--')
+
+            axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
             color = 'tab:blue'
             axes_2.set_ylabel('psnr', color=color)
             axes_2.plot(iteracion, psnr, color=color)
             axes_2.tick_params(axis='y', labelcolor=color, length=5)
-            axes_2.yaxis.set_major_locator(MaxNLocator(8))
+            # axes_2.yaxis.set_major_locator(MaxNLocator(8))
+            axes_2.grid(axis='both', linestyle='--')
+
+            axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 
             self.draw()
 
@@ -113,6 +119,7 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
             axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
             axs[1, 1].legend(loc='best')
             axs[1, 1].set_title('Traza ' + str("{:.0f}".format(aux_H_elim)))
+            axs[1, 1].grid(axis='both', linestyle='--')
 
             self.draw()
 
@@ -176,6 +183,9 @@ class TuningGraphic(FigureCanvasQTAgg):
             axes_1.tick_params(axis='y', labelcolor=color, length=5)
             axes_1.yaxis.set_major_locator(MaxNLocator(8))
             axes_1.set_xscale('linear' if self.current_scale == 'lineal' else 'log')
+            axes_1.grid(axis='both', which="both", linestyle='--')
+
+            axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
             color = 'tab:blue'
             axes_2.set_ylabel('psnr', color=color)
@@ -187,6 +197,9 @@ class TuningGraphic(FigureCanvasQTAgg):
             axes_2.tick_params(axis='y', labelcolor=color, length=5)
             axes_2.yaxis.set_major_locator(MaxNLocator(8))
             axes_2.set_xscale('linear' if self.current_scale == 'lineal' else 'log')
+            axes_2.grid(axis='both', which="both", linestyle='--')
+
+            axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 
             self.draw()
 

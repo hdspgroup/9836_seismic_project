@@ -37,10 +37,10 @@ case = 'ADMM'
 alg = Algorithms(x, H, 'DCT2D', 'IDCT2D')
 
 # Prueba con el algoritmo GAP
-lmbs = np.logspace(1.0, 2.2, 15)
+lmbs = np.logspace(np.log10(10), np.log10(200), 15)
 
 # Prueba con el algoritmo ADMM
-rhos = np.logspace(-3, 1.5, 15)
+rhos = np.logspace(np.log10(0.001), np.log10(50), 15)
 
 parameters = {}
 performances = []
@@ -53,7 +53,7 @@ if case == 'GAP':
                       }
 
         x_result, hist = alg.get_results(case, **parameters)
-        performances.append(np.concatenate([lmb[0], hist[-1, :]]))
+        performances.append(np.concatenate([lmb, hist[-1, :]]))
 
         print(f'Experimento {num_run}')
 
@@ -86,6 +86,9 @@ axes_1.plot(performances[:, 0], performances[:, -1], '--o', color=color)
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
 axes_1.yaxis.set_major_locator(MaxNLocator(8))
 axes_1.set_xscale('log')
+axes_1.grid(axis='both', which="both", linestyle='--')
+
+axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 color = 'tab:blue'
 axes_2.set_ylabel('ssim', color=color)
@@ -93,6 +96,9 @@ axes_2.plot(performances[:, 0], performances[:, -2], '--o', color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
 axes_2.yaxis.set_major_locator(MaxNLocator(8))
 axes_2.set_xscale('log')
+axes_2.grid(axis='both', which="both", linestyle='--')
+
+axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 
 # =#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
 

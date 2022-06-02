@@ -1146,12 +1146,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 i_comparison = i == fixed_param
                 if tuning_type == 'intervalo':
                     if i_comparison:
-                        scale = np.linspace if self.current_scale == 'lineal' else np.logspace
+                        scale = np.linspace
+                        if self.current_scale != 'lineal':
+                            scale = np.logspace
+                            number_init, number_end = np.log10(float(number_init)), np.log10(float(number_end))
+
                         param_list.append(list(scale(float(number_init), float(number_end),
                                                      int(self.paramValuesSpinBox.text()))))
 
                     else:
-                        num_init = float(number_init) if self.current_scale == 'lineal' else 10 ** float(number_init)
+                        num_init = float(number_init)
                         aux_fixed_param = {self.params[self.algorithm_name][i][0]: num_init}
                         self.state[self.global_variables['tab_mode']]['progress']['fixed_params'].update(
                             aux_fixed_param)
@@ -1159,14 +1163,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
                 if tuning_type == 'lista':
                     if i_comparison:
-                        lista = [(float(number) if self.current_scale == 'lineal' else 10 ** float(number)) for number
-                                 in number_init.replace(' ', '').split(',')]
+                        lista = [float(number) for number in number_init.replace(' ', '').split(',')]
                         lista.sort()
 
                         param_list.append(lista)
 
                     else:
-                        num_init = float(number_init) if self.current_scale == 'lineal' else 10 ** float(number_init)
+                        num_init = float(number_init)
                         aux_fixed_param = {self.params[self.algorithm_name][i][0]: num_init}
                         self.state[self.global_variables['tab_mode']]['progress']['fixed_params'].update(
                             aux_fixed_param)
