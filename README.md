@@ -1,6 +1,6 @@
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 ![fund](https://img.shields.io/badge/Fundby-Minciencias--ANH-red)
-![coverage](https://img.shields.io/badge/status-10%25-yellowgreen)
+![coverage](https://img.shields.io/badge/status-30%25-yellowgreen)
 
 # COmpressive Seismic Acquisition Design (COSAD) project
 
