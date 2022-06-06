@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>1412</width>
-    <height>947</height>
+    <height>943</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>9836 Proyecto de Sísmica</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="centralWidgetHLayout" stretch="3,30">
+   <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,8">
     <item>
      <layout class="QVBoxLayout" name="mainLayout" stretch="0,0,0,0,0,0">
       <item>
@@ -22,7 +22,7 @@
         <property name="title">
          <string>Datos sísmicos</string>
         </property>
-        <layout class="QVBoxLayout" name="inputGroupBoxVLayout">
+        <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
           <widget class="QTreeWidget" name="dataTreeWidget">
            <column>
@@ -33,7 +33,7 @@
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="inputHLayout">
+          <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
             <spacer name="loadHSpacer1">
              <property name="orientation">
@@ -77,7 +77,7 @@
         <property name="title">
          <string>Algoritmos</string>
         </property>
-        <layout class="QVBoxLayout" name="algorithmGroupVLayout">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
           <layout class="QHBoxLayout" name="algorithmHLayout" stretch="5,0,0,0">
            <item>
@@ -157,7 +157,7 @@
               <enum>Qt::AutoText</enum>
              </property>
              <property name="pixmap">
-              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda.png</pixmap>
+              <pixmap resource="../assets/assets.qrc">:/equations/equations/lambda.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
@@ -195,7 +195,7 @@
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/mu.png</pixmap>
+              <pixmap resource="../assets/assets.qrc">:/equations/equations/mu.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
@@ -215,7 +215,7 @@
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/rho.png</pixmap>
+              <pixmap resource="../assets/assets.qrc">:/equations/equations/rho.png</pixmap>
              </property>
             </widget>
            </item>
@@ -236,9 +236,9 @@
         <property name="title">
          <string>Ajuste de parámetros</string>
         </property>
-        <layout class="QVBoxLayout" name="tuningGroupBoxVLayout">
+        <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
-          <layout class="QHBoxLayout" name="paramTypeHLayout" stretch="0,4,0,0">
+          <layout class="QHBoxLayout" name="paramHLayout" stretch="0,4,0,0">
            <item>
             <widget class="QLabel" name="paramTuningLabel">
              <property name="text">
@@ -292,33 +292,19 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="paramValueHLayout" stretch="1,4,2,2">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
+          <layout class="QHBoxLayout" name="paramValueHLayout" stretch="1,1,1,1">
            <item>
-            <widget class="QLabel" name="scaleLabel">
-             <property name="text">
-              <string>Escala</string>
+            <spacer name="paramHSpacer1">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="scaleComboBox">
-             <item>
-              <property name="text">
-               <string>Lineal</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Logarítmica</string>
-              </property>
-             </item>
-            </widget>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
            <item>
             <widget class="QLabel" name="paramValuesLabel">
@@ -345,6 +331,19 @@
               <number>999</number>
              </property>
             </widget>
+           </item>
+           <item>
+            <spacer name="paramHSpacer2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </item>
@@ -477,7 +476,7 @@
         <property name="title">
          <string>Submuestreo</string>
         </property>
-        <layout class="QVBoxLayout" name="samplingGroupBoxVLayout">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
           <layout class="QHBoxLayout" name="samplingHLayout" stretch="0,4,0,2">
            <item>
@@ -692,7 +691,7 @@
         <property name="title">
          <string>Experimentos</string>
         </property>
-        <layout class="QVBoxLayout" name="runGroupBoxVLayout">
+        <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <layout class="QHBoxLayout" name="saveAsHLayout">
            <item>
@@ -751,7 +750,7 @@
         <property name="title">
          <string>Resultados</string>
         </property>
-        <layout class="QVBoxLayout" name="resultGroupBoxHLayout">
+        <layout class="QVBoxLayout" name="verticalLayout_10">
          <item>
           <layout class="QHBoxLayout" name="resultHLayout" stretch="1,1,1,1">
            <item>
@@ -818,163 +817,121 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="experimentsVLayout">
-      <item>
-       <widget class="QToolBox" name="resultsToolBox">
-        <property name="currentIndex">
-         <number>1</number>
-        </property>
-        <widget class="QWidget" name="performancePage">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>1098</width>
-           <height>390</height>
-          </rect>
-         </property>
-         <attribute name="label">
-          <string>Rendimiento</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="performancePageVLayout">
-          <item>
-           <widget class="QTabWidget" name="performanceTabWidget">
-            <property name="currentIndex">
-             <number>0</number>
-            </property>
-            <widget class="QWidget" name="expPerformanceTab1">
-             <attribute name="title">
-              <string>Experimento</string>
-             </attribute>
-             <layout class="QHBoxLayout" name="expPerformanceTab1HLayout" stretch="9">
-              <item>
-               <widget class="QWidget" name="graphicPerformanceWidget" native="true">
-                <layout class="QVBoxLayout" name="graphicPerformanceWidgetVLayout">
+     <widget class="QToolBox" name="resultsToolBox">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="performancePage">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1100</width>
+         <height>837</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Rendimiento</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QTabWidget" name="performanceTabWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="expPerformanceTab1">
+           <attribute name="title">
+            <string>Experimento</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="9">
+            <item>
+             <widget class="QWidget" name="graphicPerformanceWidget" native="true">
+              <layout class="QVBoxLayout" name="verticalLayout_11">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <layout class="QVBoxLayout" name="graphicPerformanceVLayout">
                  <property name="spacing">
                   <number>0</number>
                  </property>
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <layout class="QVBoxLayout" name="graphicPerformanceVLayout">
-                   <property name="spacing">
-                    <number>0</number>
-                   </property>
-                  </layout>
-                 </item>
                 </layout>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="reportPage">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>1098</width>
-           <height>390</height>
-          </rect>
-         </property>
-         <attribute name="label">
-          <string>Reporte</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="reportPageVLayout">
-          <item>
-           <widget class="QTabWidget" name="reportTabWidget">
-            <property name="currentIndex">
-             <number>0</number>
-            </property>
-            <widget class="QWidget" name="expReportTab1">
-             <attribute name="title">
-              <string>Experimento</string>
-             </attribute>
-             <layout class="QVBoxLayout" name="expReportTab1VLayout" stretch="0">
-              <item>
-               <widget class="QWidget" name="graphicReportWidget" native="true">
-                <layout class="QVBoxLayout" name="graphicReportWidgetVLayout">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <layout class="QVBoxLayout" name="graphicReportVLayout"/>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </widget>
-      </item>
-      <item>
-       <widget class="QTabWidget" name="tuningTabWidget">
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <widget class="QWidget" name="expTuningReportTab1">
-         <attribute name="title">
-          <string>Experimento</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="expTuningReportTab1VLayout" stretch="0">
-          <item>
-           <widget class="QWidget" name="graphicTuningReportWidget" native="true">
-            <layout class="QVBoxLayout" name="graphicTuningReportWidgetVLayout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <layout class="QVBoxLayout" name="graphicTuningReportVLayout"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </widget>
-      </item>
-     </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="reportPage">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1100</width>
+         <height>837</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Reporte</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_9">
+        <item>
+         <widget class="QTabWidget" name="reportTabWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="expReportTab1">
+           <attribute name="title">
+            <string>Experimento</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_6" stretch="0">
+            <item>
+             <widget class="QWidget" name="graphicReportWidget" native="true">
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <layout class="QVBoxLayout" name="graphicReportVLayout"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -1043,6 +1000,7 @@
  </widget>
  <resources>
   <include location="../assets/assets.qrc"/>
+  <include location="../../../../../.designer/assets/assets.qrc"/>
  </resources>
  <connections/>
 </ui>

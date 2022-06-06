@@ -18,7 +18,7 @@ if len(x.shape) > 2:
 if data_name == 'data.npy':
     x = x.T
 x = x / np.abs(x).max()
-max_itr = 500
+max_itr = 100
 
 '''
 ---------------  SAMPLING --------------------
@@ -31,14 +31,14 @@ H = pattern_index
 ---------------- RECOVERY ALGORITHM -----------------
 Select the Algorithm: FISTA , GAP , TWIST , ADMM
 '''
-case = 'FISTA'
+case = 'TwIST'
 alg = Algorithms(x, H, 'DCT2D', 'IDCT2D')
 
 parameters = {}
 if case == 'FISTA':
     parameters = {'max_itr': max_itr,
-                  'lmb': 0.1,
-                  'mu': 0.3
+                  'lmb': 2.91,
+                  'mu': 0.39
                   }
 
 elif case == 'GAP':
@@ -48,7 +48,7 @@ elif case == 'GAP':
 
 elif case == 'TwIST':
     parameters = {'max_itr': max_itr,
-                  'lmb': 0.5,
+                  'lmb': 0.9,
                   'alpha': 1.2,
                   'beta': 1.998
                   }
@@ -92,13 +92,14 @@ axs[1, 1].plot(x[:, H_elim[index]], 'r', label='Reference')
 axs[1, 1].plot(x_result[:, H_elim[index]], 'b', label='Recovered')
 axs[1, 1].legend(loc='best')
 plt.title('Trace ' + str("{:.0f}".format(H_elim[index])))
+axs[1, 1].grid(axis='both', linestyle='--')
 
 fig.tight_layout()
 plt.show()
 
 # performance
 
-iteracion = np.linspace(1, len(hist), len(hist))
+iteracion = np.linspace(1, len(hist) - 1, len(hist) - 1)
 
 fig = plt.figure()
 axes_1 = fig.add_subplot(111)
@@ -107,14 +108,20 @@ axes_2 = axes_1.twinx()
 color = 'tab:red'
 axes_1.set_xlabel('iteraciones')
 axes_1.set_ylabel('ssim', color=color)
-axes_1.plot(iteracion, hist[:, 2], color=color)
+axes_1.plot(iteracion, hist[1:, 2], color=color)
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
 axes_1.yaxis.set_major_locator(MaxNLocator(8))
+axes_1.grid(axis='both', which="both", linestyle='--')
+
+axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 color = 'tab:blue'
 axes_2.set_ylabel('psnr', color=color)
-axes_2.plot(iteracion, hist[:, 1], color=color)
+axes_2.plot(iteracion, hist[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
 axes_2.yaxis.set_major_locator(MaxNLocator(8))
+axes_2.grid(axis='both', which="both", linestyle='--')
+
+axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 
 plt.show()

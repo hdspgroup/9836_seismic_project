@@ -10,23 +10,26 @@ from matplotlib.ticker import MaxNLocator
 from Algorithms.Function import PSNR
 from gui.alerts import showCritical
 
+
 class PerformanceGraphic(FigureCanvasQTAgg):
     def __init__(self):
         self.performance_data = dict(iteracion=[], error=[], psnr=[])
         self.figure = plt.figure()
-        plt.subplots_adjust(left=0.07, right=0.93, bottom=0.08, top=0.92)
+        plt.subplots_adjust(left=0.1, right=0.9, bottom=0.08, top=0.92)
         super(PerformanceGraphic, self).__init__(self.figure)
 
-    def update_values(self, iteracion, error, psnr):
+    def update_values(self, iteracion, error, psnr, ssim):
         self.performance_data['iteracion'] = iteracion
         self.performance_data['error'] = error
         self.performance_data['psnr'] = psnr
+        self.performance_data['ssim'] = ssim
 
     def update_figure(self):
         try:
             iteracion = self.performance_data['iteracion']
             error = self.performance_data['error']
             psnr = self.performance_data['psnr']
+            ssim = self.performance_data['ssim']
 
             self.figure.clear()
             self.figure.suptitle(f'Resultados del experimento')
@@ -36,16 +39,22 @@ class PerformanceGraphic(FigureCanvasQTAgg):
 
             color = 'tab:red'
             axes_1.set_xlabel('iteraciones')
-            axes_1.set_ylabel('error', color=color)
-            axes_1.plot(iteracion, error, color=color)
+            axes_1.set_ylabel('ssim', color=color)
+            axes_1.plot(iteracion, ssim, color=color)
             axes_1.tick_params(axis='y', labelcolor=color, length=5)
-            axes_1.yaxis.set_major_locator(MaxNLocator(8))
+            # axes_1.yaxis.set_major_locator(MaxNLocator(8))
+            axes_1.grid(axis='both', linestyle='--')
+
+            axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
             color = 'tab:blue'
             axes_2.set_ylabel('psnr', color=color)
             axes_2.plot(iteracion, psnr, color=color)
             axes_2.tick_params(axis='y', labelcolor=color, length=5)
-            axes_2.yaxis.set_major_locator(MaxNLocator(8))
+            # axes_2.yaxis.set_major_locator(MaxNLocator(8))
+            axes_2.grid(axis='both', linestyle='--')
+
+            axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 
             self.draw()
 
@@ -56,12 +65,12 @@ class PerformanceGraphic(FigureCanvasQTAgg):
             return
 
 
-class ReportGraphic(FigureCanvasQTAgg):
+class ReconstructionGraphic(FigureCanvasQTAgg):
     def __init__(self):
         self.report_data = None
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.05, right=0.95, bottom=0.05, top=0.90)
-        super(ReportGraphic, self).__init__(self.figure)
+        super(ReconstructionGraphic, self).__init__(self.figure)
 
     def update_report(self, report_data):
         self.report_data = report_data
@@ -85,26 +94,32 @@ class ReportGraphic(FigureCanvasQTAgg):
             self.figure.suptitle(f'Resultos del algoritmo {case}')
             axs = self.figure.subplots(2, 2)
 
-            axs[0, 0].imshow(x, cmap='seismic', aspect='auto')
+            axs[0, 0].imshow(x, cmap='gray', aspect='auto')
             axs[0, 0].set_title('Referencia')
 
             ytemp = y_rand.copy()
-            ytemp[:, H_elim] = 0
-            axs[1, 0].imshow(ytemp, cmap='seismic', aspect='auto')
+            condition = H_elim.size > 0
+            if condition:
+                ytemp[:, H_elim] = None
+            axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
             axs[1, 0].set_title('Medidas')
 
             # axs[1, 0].sharex(axs[0, 0])
             # metric = PSNR(x[:, H_elim], x_result[:, H_elim])
-            metric = PSNR(x, x_result)
-            metric_ssim = ssim(x[:, H_elim], x_result[:, H_elim], win_size=3)
-            axs[0, 1].imshow(x_result, cmap='seismic', aspect='auto')
+            aux_x = x[:, H_elim] if condition else x
+            aux_x_result = x_result[:, H_elim] if condition else x_result
+            metric = PSNR(aux_x, aux_x_result)
+            metric_ssim = ssim(aux_x, aux_x_result)
+            axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
             axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
 
             index = 5
-            axs[1, 1].plot(x[:, H_elim[index]], 'r', label='Referencia')
-            axs[1, 1].plot(x_result[:, H_elim[index]], 'b', label='Recuperado')
+            aux_H_elim = index if condition else H_elim[index]
+            axs[1, 1].plot(x[:, aux_H_elim], 'r', label='Referencia')
+            axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
             axs[1, 1].legend(loc='best')
-            axs[1, 1].set_title('Traza ' + str("{:.0f}".format(H_elim[index])))
+            axs[1, 1].set_title('Traza ' + str("{:.0f}".format(aux_H_elim)))
+            axs[1, 1].grid(axis='both', linestyle='--')
 
             self.draw()
 
@@ -114,19 +129,21 @@ class ReportGraphic(FigureCanvasQTAgg):
                          "utilice un dato diferente.", details=msg)
             return
 
+
 class TuningGraphic(FigureCanvasQTAgg):
     def __init__(self):
         self.algorithm = None
         self.tuning_data = None
         self.fixed_params = None
         self.figure = plt.figure()
-        # plt.subplots_adjust(left=0.05, right=0.95, bottom=0.05, top=0.90)
+        plt.subplots_adjust(left=0.1, right=0.9, bottom=0.1, top=0.90)
         super(TuningGraphic, self).__init__(self.figure)
 
-    def update_tuning(self, algorithm, tuning_data, fixed_params):
+    def update_tuning(self, algorithm, tuning_data, fixed_params, current_scale):
         self.algorithm = algorithm
         self.tuning_data = tuning_data
         self.fixed_params = fixed_params
+        self.current_scale = current_scale
 
     def update_figure(self):
         try:
@@ -135,39 +152,54 @@ class TuningGraphic(FigureCanvasQTAgg):
             params = list(self.tuning_data.keys())
             params.remove('error')
             params.remove('psnr')
+            params.remove('ssim')
 
-            for key in self.fixed_params.keys():
-                params.remove(key)
+            params = [param.replace('lmb', 'lambda') for param in params]  # replace lmb by lambda if it exists
 
-            if self.algorithm == 'gap':
-                xlabel = f'{params[0]}'
+            if self.algorithm == 'gap':     # build x label for the graphics
+                xlabel = f'$\\{params[0]}$'
             else:
-                xlabel = f'{params[0]} | Valores fijos: '
-                for key, value in self.fixed_params.items():
-                    xlabel += f'{key}={np.round(value, 4)} '
+                for key in self.fixed_params.keys():
+                    params.remove(key)
 
-            self.figure.suptitle(f'Algoritmo {self.algorithm}. Ajuste de parámetros.')
+                hspace = r'\,\,\,'
+                xlabel = f'$\\{params[0]}$ | Valores fijos: $'
+                for key, value in self.fixed_params.items():
+                    xlabel += f'\\{key}={np.round(value, 4)} {hspace}'
+                xlabel += '$'
+
+            self.figure.suptitle(f'Algoritmo {self.algorithm} - Ajuste de parámetros - Escala {self.current_scale}')
             axes_1 = self.figure.add_subplot(111)
             axes_2 = axes_1.twinx()
 
             color = 'tab:red'
             axes_1.set_xlabel(xlabel)
-            axes_1.set_ylabel('error', color=color)
+            axes_1.set_ylabel('ssim', color=color)
             graphic = axes_1.plot
-            if len(self.tuning_data['error']) == 1:
+            if len(self.tuning_data['ssim']) == 1:
                 graphic = axes_1.scatter
-            graphic(self.tuning_data[params[0]], self.tuning_data['error'], color=color)
+            graphic(self.tuning_data['lmb' if params[0] == 'lambda' else params[0]], self.tuning_data['ssim'],
+                    '--o' if len(self.tuning_data) > 1 else None, color=color)
             axes_1.tick_params(axis='y', labelcolor=color, length=5)
             axes_1.yaxis.set_major_locator(MaxNLocator(8))
+            axes_1.set_xscale('linear' if self.current_scale == 'lineal' else 'log')
+            axes_1.grid(axis='both', which="both", linestyle='--')
+
+            axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
             color = 'tab:blue'
             axes_2.set_ylabel('psnr', color=color)
             graphic = axes_2.plot
             if len(self.tuning_data['psnr']) == 1:
                 graphic = axes_2.scatter
-            graphic(self.tuning_data[params[0]], self.tuning_data['psnr'], color=color)
+            graphic(self.tuning_data['lmb' if params[0] == 'lambda' else params[0]], self.tuning_data['psnr'],
+                    '--o' if len(self.tuning_data) > 1 else None, color=color)
             axes_2.tick_params(axis='y', labelcolor=color, length=5)
             axes_2.yaxis.set_major_locator(MaxNLocator(8))
+            axes_2.set_xscale('linear' if self.current_scale == 'lineal' else 'log')
+            axes_2.grid(axis='both', which="both", linestyle='--')
+
+            axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 
             self.draw()
 
