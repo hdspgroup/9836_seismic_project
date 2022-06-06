@@ -8,82 +8,80 @@ import time
 import cv2
 import matplotlib
 from skimage.metrics import structural_similarity as ssim
+import cv2
+import tensorly as tl
+import numpy as np
+from numba import jit
+from line_profiler import LineProfiler
+from tqdm import tqdm
 
 
-def ten2mat(tensor, mode):
-    return np.reshape(np.moveaxis(tensor, mode, 0), (tensor.shape[mode], -1), order='F')
+def shrinkage(X, t):
+    U, Sig, VT = np.linalg.svd(X,full_matrices=False)
+    Temp = np.zeros((U.shape[1], VT.shape[0]))
+    for i in range(len(Sig)):
+        Temp[i, i] = Sig[i]
+    Sig = Temp
+
+    Sigt = Sig
+    imSize = Sigt.shape
+
+    for i in range(imSize[0]):
+        Sigt[i, i] = np.max(Sigt[i, i] - t, 0)
+
+    temp = np.dot(U, Sigt)
+    T = np.dot(temp, VT)
+    return T
 
 
-def mat2ten(mat, tensor_size, mode):
-    index = list()
-    index.append(mode)
-    for i in range(tensor_size.shape[0]):
-        if i != mode:
-            index.append(i)
-    return np.moveaxis(np.reshape(mat, list(tensor_size[index]), order='F'), 0, mode)
+# @jit(nopython=True)
+def ReplaceInd(X, known, Image):
+    # imSize = Image.shape
+
+    X[known[0], known[1], :] = Image[known[0], known[1], :]
+    # for i in range(len(known)):
+    #     in1 = int(np.ceil(known[i] / imSize[1]) - 1)
+    #     in2 = int(imSize[0] - known[i] % imSize[1] - 1)
+    #     X[in1, in2, :] = Image[in1, in2, :]
+    return X
 
 
-def supergradient(s_hat, lambda0, theta):
-    """Supergradient of the Geman function."""
-    return (lambda0 * theta / (s_hat + theta) ** 2)
+def HaLRTC(Image, X, mask):
+    res = []
+    known = np.where(mask == 0)
+    imSize = Image.shape
+    # test = np.zeros(Image.shape)
+    # test = ReplaceInd(test, known, Image)
+    a = abs(np.random.rand(3, 1))
+    a = a / np.sum(a)
+    p = 1e-6
+    K = 50
+    ArrSize = np.array(imSize)
+    ArrSize = np.append(ArrSize, 3)
+    Mi = np.zeros(ArrSize)
+    Yi = np.zeros(ArrSize)
 
+    for k in range(K):
+        # compute Mi tensors(Step1)
+        for i in range(ArrSize[3]):
+            temp1 = shrinkage(tl.unfold(X, mode=i) + tl.unfold(np.squeeze(Yi[:, :, :, i]), mode=i) / p, a[i] / p)
+            temp = tl.fold(temp1, i, imSize)
+            Mi[:, :, :, i] = temp
+        # Update X(Step2)
+        X = np.sum(Mi - Yi / p, ArrSize[3]) / ArrSize[3]
+        X = ReplaceInd(X, known, Image)
+        # Update Yi tensors (Step 3)
+        for i in range(ArrSize[3]):
+            Yi[:, :, :, i] = np.squeeze(Yi[:, :, :, i]) - p * (np.squeeze(Mi[:, :, :, i]) - X)
+        # Modify rho to help convergence(Step 4)
+        p = 1.2 * p
+    return X
 
-def GLTC_Geman(dense_tensor, sparse_tensor, alpha, beta, rho, theta, maxiter):
-    """Main function of the GLTC-Geman."""
-    dim0 = sparse_tensor.ndim
-    dim1, dim2, dim3 = sparse_tensor.shape
-    dim = np.array([dim1, dim2, dim3])
-    binary_tensor = np.zeros((dim1, dim2, dim3))
-    binary_tensor[np.where(sparse_tensor != 0)] = 1
-    tensor_hat = sparse_tensor.copy()
-
-    X = np.zeros((dim1, dim2, dim3, dim0))  # \boldsymbol{\mathcal{X}} (n1*n2*3*d)
-    Z = np.zeros((dim1, dim2, dim3, dim0))  # \boldsymbol{\mathcal{Z}} (n1*n2*3*d)
-    T = np.zeros((dim1, dim2, dim3, dim0))  # \boldsymbol{\mathcal{T}} (n1*n2*3*d)
-    for k in range(dim0):
-        X[:, :, :, k] = tensor_hat
-        Z[:, :, :, k] = tensor_hat
-
-    D1 = np.zeros((dim1 - 1, dim1))  # (n1-1)-by-n1 adjacent smoothness matrix
-    for i in range(dim1 - 1):
-        D1[i, i] = -1
-        D1[i, i + 1] = 1
-    D2 = np.zeros((dim2 - 1, dim2))  # (n2-1)-by-n2 adjacent smoothness matrix
-    for i in range(dim2 - 1):
-        D2[i, i] = -1
-        D2[i, i + 1] = 1
-
-    w = []
-    for k in range(dim0):
-        u, s, v = np.linalg.svd(ten2mat(Z[:, :, :, k], k), full_matrices=0)
-        w.append(np.zeros(len(s)))
-        for i in range(len(np.where(s > 0)[0])):
-            w[k][i] = supergradient(s[i], alpha, theta)
-
-    for iters in range(maxiter):
-        for k in range(dim0):
-            u, s, v = np.linalg.svd(ten2mat(X[:, :, :, k] + T[:, :, :, k] / rho, k), full_matrices=0)
-            for i in range(len(np.where(w[k] > 0)[0])):
-                s[i] = max(s[i] - w[k][i] / rho, 0)
-            Z[:, :, :, k] = mat2ten(np.matmul(np.matmul(u, np.diag(s)), v), dim, k)
-            var = ten2mat(rho * Z[:, :, :, k] - T[:, :, :, k], k)
-            if k == 0:
-                var0 = mat2ten(np.matmul(inv(beta * np.matmul(D1.T, D1) + rho * np.eye(dim1)), var), dim, k)
-            elif k == 1:
-                var0 = mat2ten(np.matmul(inv(beta * np.matmul(D2.T, D2) + rho * np.eye(dim2)), var), dim, k)
-            else:
-                var0 = Z[:, :, :, k] - T[:, :, :, k] / rho
-            X[:, :, :, k] = np.multiply(1 - binary_tensor, var0) + sparse_tensor
-
-            uz, sz, vz = np.linalg.svd(ten2mat(Z[:, :, :, k], k), full_matrices=0)
-            for i in range(len(np.where(sz > 0)[0])):
-                w[k][i] = supergradient(sz[i], alpha, theta)
-        tensor_hat = np.mean(X, axis=3)
-        for k in range(dim0):
-            T[:, :, :, k] = T[:, :, :, k] + rho * (X[:, :, :, k] - Z[:, :, :, k])
-            X[:, :, :, k] = tensor_hat.copy()
-
-    return tensor_hat
+#
+# def fuc():
+#     Image, X, known, a, Mi, Yi, imSize, ArrSize, p, K = init()
+#
+#     return X
 
 
 def plot_results(x, x_result, pattern_rand, case):
@@ -154,7 +152,7 @@ if __name__ == '__main__':
     data_name = 'syn3D_cross-spread2.npy'
 
     r = []
-    for exp in range(10):
+    for exp in range(5):
         x = np.load('../data/' + data_name)
 
         if data_name == 'data.npy':
@@ -167,6 +165,8 @@ if __name__ == '__main__':
         sr_rand = 0.5  # 1-compression
         y_rand, pattern_rand, pattern_index = random_sampling(x[:, int(x.shape[1] / 2), :], sr_rand)
         H = pattern_index
+        # x -= x.min()
+        # x /= x.max()
         y = x.copy()
         y[..., pattern_rand == 0] = 0
         x = np.transpose(x, [0, 2, 1])
@@ -186,9 +186,23 @@ if __name__ == '__main__':
             if t.strip().count('0') > t_m:
                 t_m = t.strip().count('0')
         aux_s = np.zeros(x.shape[-1])
-        for i in range(1, x.shape[-1] - 1):
-            tmp = cv2.inpaint(x[:, :, [i - 1, i, i + 1]], mask[..., 0], t_m+1, flags=paint_method)
-            output[..., [i - 1, i, i + 1]] = tmp
+        imShape = x.shape
+        x = np.reshape(x, [imShape[0] * imShape[1], imShape[2]])
+        mask = np.reshape(mask, [imShape[0] * imShape[1], imShape[2]])
+        output = cv2.inpaint(x, mask, t_m + 1, flags=paint_method)
+        output = np.reshape(output, [imShape[0], imShape[1], imShape[2]])
+        x = np.reshape(x, [imShape[0], imShape[1], imShape[2]])
+        mask = np.reshape(mask, [imShape[0], imShape[1], imShape[2]])
+        for i in tqdm(range(1, x.shape[-1] - 1)):
+            # tmp = HaLRTC(x[:, :, [i - 1, i, i + 1]], y[:, :, [i - 1, i, i + 1]], mask[..., 0])
+            tmp = cv2.inpaint(x[:, :, [i - 1, i, i + 1]], mask[..., 0], t_m + 1, flags=paint_method)
+
+            # output[..., i] = np.mean(tmp, axis=2)
+            aux = output[..., [i - 1, i, i + 1]]
+            aux = (tmp.astype('float32') + aux.astype('float32'))/2
+
+            output[..., [i - 1, i, i + 1]] = aux = aux.astype('uint8') # cv2.medianBlur(aux, 3)
+            # output[..., i] = np.mean(tmp, axis=2)
             # aux_s[[i - 1, i, i + 1]] += 1
         # output /= aux_s
         output = np.transpose(output, [0, 2, 1])
@@ -204,12 +218,11 @@ if __name__ == '__main__':
         # x = np.transpose(x, [0, 2, 1])
         # x = np.repeat(x[:, :, np.newaxis], 3, axis=2)
         # y = np.repeat(y[:, :, np.newaxis], 3, axis=2)
-
+        '''
         print("Starting Algorithm")
         start = time.time()
         image_hat = GLTC_Geman(x, y, alpha, beta, rho, theta, maxiter)
-
-        '''
+    
         # image_hat = GLTC(x, y, alpha, beta, rho, maxiter)
         end = time.time()
         print(f"Duration: {end - start}")

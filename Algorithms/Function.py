@@ -214,7 +214,7 @@ class Sampling:
         return np.array(list(sampling_dict.items())), H
 
 
-def random_sampling(x, sr, seed):
+def random_sampling(x, sr, seed=None):
     '''
     Random sampling is a part of the sampling technique in which each sample has an equal probability of being chosen.
     A sample chosen randomly is meant to be an unbiased representation of the total population.
