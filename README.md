@@ -1,23 +1,54 @@
-[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
-![fund](https://img.shields.io/badge/Fundby-Minciencias--ANH-red)
-![coverage](https://img.shields.io/badge/status-30%25-yellowgreen)
-
 # COmpressive Seismic Acquisition Design (COSAD) project
 
-All needed dependencies, if it is possible, some conda environment. @all
+---
 
-This is the repository for the Seismic project No 9836 funded by MINCIENCIAS-ANH.
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+![fund](https://img.shields.io/badge/Fundby-Minciencias--ANH-red)
+![coverage](https://img.shields.io/badge/status-40%25-yellowgreen)
 
-First install some dependencies:
+Esta herramienta software hace parte del proyecto 9836 - "Nuevas tecnologías computacionales para el diseño de sistemas de adquisición sísmica 3D terrestre con muestreo compresivo para la reducción de costos económicos e impactos ambientales en la exploración de hidrocarburos en cuencas terrestres colombianas" adscrito a la Convocatoria para la financiación de proyectos de investigación en geociencias para el sector de hidrocarburos, desarrollado por la alianza, Universidad Industrial de Santander (UIS), ECOPETROL y la Asociación Colombiana de Geólogos y Geofísicos del Petróleo (ACGGP). Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarburos (ANH). Los derechos sobre este software están reservados a las entidades aportantes.
+
+## **Inicio rápido**
+
+Esta es una guía para instalar las dependencias necesarias para poder ejecutar la aplicación de forma correcta.
+
+### **Prerequisitos**
+
+1. Instalar anaconda.
+2. Crear entorno virtual en anaconda. 
+3. Instalar Pycharm.
+4. Instalar dependencias en el entorno virtual creado.
+5. Correr `main_window.py` con el entorno virtual creado.
+
+De acuerdo al sistema operativo las anteriores instrucciones se deben cumplir de distintas formas, para obtener indicaciones más detalladas ingrese al siguiente enlace: [Instalación de dependencias](https://github.com/carlosh93/9836_seismic_project/wiki/Instalaci%C3%B3n-de-Dependencias).
+
+Si ya posee un conocimiento más avanzado del tema, puede crear su propio entorno virtual e instalar las siguientes dependencias:
 
 ```
-python -m pip install numpy
-python -m pip install matplotlib
-python -m pip install scikit-image
-python -m pip install scipy
+pip install numpy
+pip install matplotlib
+pip install scikit-image
+pip install scipy
 ```
 
-# **Seismic Data**
+o de forma rápida:
+
+```
+pip install numpy matplotlib scikit-image scipy
+```
+
+Los recursos principales para construir la Aplicación se encuentran en la carpeta `gui`. Para ejecutar la aplicación, primero asegúrese de haber instalado el
+paquetes requeridos con:
+
+`pip install -r requirements.txt`
+
+Luego, ejecute el script `main_window.py` como:
+
+`python main_window.py`
+
+# **Datos sísmicos**
+
+---
 
 There are four available datasets:
 
@@ -27,75 +58,71 @@ There are four available datasets:
 * `syn3D_cross-spread2.npy`
 
 # **`cube4.npy`**
-Real data from the Stratton 3D Survey, a small land 3D data set from South Texas located in Stratton Field, a fluvially deposited gas. The complete 3D source/receiver geometry consists of east-west receivers lines spaced 402 m apart (12 arrays in total) and north-south source lines spaced 268 m apart. To download the complete dataset, refers to https://wiki.seg.org/wiki/Stratton_3D_survey.
+Datos reales del Stratton 3D Survey, un pequeño conjunto de datos terrestres en 3D del sur de Texas ubicado en Stratton Field, un gas depositado fluvialmente. La geometría completa de fuente/receptor 3D consta de líneas de receptores este-oeste separadas por 402 m (12 arreglos en total) y líneas de fuente norte-sur separadas por 268 m. Para descargar el conjunto de datos completo, consulte https://wiki.seg.org/wiki/Stratton_3D_survey.
 
-**Seismic adquisition parameters:**
+**Parámetros de adquisición sísmica:**
 
-* Time samples (`nt`) = `1001`
-* Number of traces (`nx`) = `80`
-* Number of shots (`ns`) = `18`
-* Time interval (`dt`) = `0.003` ms
-* Trace interval (`dx`) = `25` m
+* Muestras de tiempo (`nt`) = `1001`
+* Número de trazas (`nx`) = `80`
+* Número de shots o disparos (`ns`) = `18`
+* Intervalo de tiempo (`dt`) = `0.003` ms
+* Intervalo de traza (`dx`) = `25` m
 
 # **`data.npy`**
-Synthetic dataset composed of 40 shots with 970 ms in-depth and 3.15 km of horizontal length. For seismic traces reconstruction, it was selected shot #20 and cropped to 800 and 100 samples in time and traces, respectively. For further information refers to https://github.com/PyLops/curvelops/blob/main/examples/Demo_Seismic_Regularization.ipynb.
+Conjunto de datos sintético compuesto por 40 disparos con 970 ms de profundidad y 3,15 km de longitud horizontal. Para la reconstrucción de las huellas sísmicas, se seleccionó el tiro #20 y se recortó a 800 y 100 muestras en tiempo y huellas, respectivamente. Para obtener más información, consulte https://github.com/PyLops/curvelops/blob/main/examples/Demo_Seismic_Regularization.ipynb.
 
-**Seismic adquisition parameters:**
+**Parámetros de adquisición sísmica:**
 
-* Time samples (`nt`) = `800`
-* Number of traces (`nx`) = `100`
-* Number of shots (`ns`) = `1`
-* Time interval (`dt`) = `0.568` ms
-* Trace interval (`dx`) = `5` m
+* Muestras de tiempo (`nt`) = `800`
+* Número de trazas (`nx`) = `100`
+* Número de shots o disparos (`ns`) = `1`
+* Intervalo de tiempo (`dt`) = `0.568` ms
+* Intervalo de traza (`dx`) = `5` m
 
 # **`spii15s.npy`**
-This data was built by the SEG Advanced Modeling Program (SEAM) during its second project, called "SEAM Phase II–Land Seismic Challenges". The Foothills models are focused on mountainous regions with sharp topography at the surface and compressive fold and thrust tectonics at depth. For further information refers to https://drive.google.com/file/d/12274Q1JupEP5g7jdEb_m_KQCgMunPuNA/view.
+Estos datos fueron construidos por el Programa de Modelado Avanzado de SEG (SEAM) durante su segundo proyecto, llamado "SEAM Phase II–Land Seismic Challenges". Los modelos de Foothills se centran en regiones montañosas con topografía pronunciada en la superficie y tectónica compresiva de pliegues y empujes en profundidad. Para obtener más información, consulte https://drive.google.com/file/d/12274Q1JupEP5g7jdEb_m_KQCgMunPuNA/view.
 
-**Seismic adquisition parameters:**
+**Parámetros de adquisición sísmica:**
 
-* Time samples (`nt`) = `1034`
-* Number of traces (`nx`) = `100`
-* Number of shots (`ns`) = `15`
-* Time interval (`dt`) = `0.004` ms
-* Trace interval (`dx`) = `12.5` m
+* Muestras de tiempo (`nt`) = `1034`
+* Número de trazas (`nx`) = `100`
+* Número de shots o disparos (`ns`) = `15`
+* Intervalo de tiempo (`dt`) = `0.004` ms
+* Intervalo de traza (`dx`) = `12.5` m
 
 # **`syn3D_cross-spread2.npy`**
-Synthetic cross-spread seismic data modeled using finite differences with `devito` package (for further information refers to https://github.com/devitocodes/devito). The simulated geological conditions were continuous and parallel layers with increasing velocity in depth. The main geological structure is an anticline with hydrocarbon accumulation on its core, which causes velocity anomalies. The total length of the seismic design is 1010 m horizontally and 1000 ms in depth.
+Datos sísmicos sintéticos de dispersión cruzada modelados utilizando diferencias finitas con el paquete `devito` (para obtener más información, consulte https://github.com/devitocodes/devito). Las condiciones geológicas simuladas fueron capas continuas y paralelas con velocidad creciente en profundidad. La principal estructura geológica es un anticlinal con acumulación de hidrocarburos en su núcleo, lo que provoca anomalías de velocidad. La longitud total del diseño sísmico es de 1010 m en horizontal y 1000 m en profundidad.
 
-**Seismic adquisition parameters:**
+**Parámetros de adquisición sísmica:**
 
-* Time samples (`nt`) = `1106`
-* Number of traces (`nx`) = `101`
-* Number of shots (`ns`) = `15`
-* Time interval (`dt`) = `0.000905` ms
-* Trace interval (`dx`) = `10` m
+* Muestras de tiempo (`nt`) = `1106`
+* Número de trazas (`nx`) = `101`
+* Número de shots o disparos (`ns`) = `15`
+* Intervalo de tiempo (`dt`) = `0.000905` ms
+* Intervalo de traza (`dx`) = `10` m
 
-[More information about datasets is available here.](https://github.com/carlosh93/9836_seismic_project/blob/652f805a3acf3176a32dbd4966bedbb70ef9545a/data/README.md)
+[Más información sobre conjuntos de datos está disponible aquí.](https://github.com/carlosh93/9836_seismic_project/blob/652f805a3acf3176a32dbd4966bedbb70ef9545a/data/README.md)
 
 # Survey Binning acquisition
+
+---
 
 Summary scripts fold calculation, offset diagrams and other acquisition parameter needed in survey layout. @Claudia and @Paul
 
 # Reconstruction algorithms
 
+---
+
 Summary - algorithms. All needed documentation, including references and so on. @Bacca,@Karen, @Kareth
 
-# Graphic User Interface
-
-The main resources for constructing the GUI are placed in the `gui` folder. To run the GUI, first make sure you have installed the
-required packages with:
-
-`pip install -r requirements.txt`
-
-Then, run the `main_window.py` script as:
-
-`python main_window.py`
 
 <!--Summary about the GUI, screenshots, and some breif description @Hinojosa-->
 
 # License
 
-This work is licensed under a
+---
+
+Este trabajo está licenciado bajo
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
 
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
