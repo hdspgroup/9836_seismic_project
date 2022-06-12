@@ -8,7 +8,7 @@
 
 Esta herramienta software hace parte del proyecto 9836 - "Nuevas tecnologías computacionales para el diseño de sistemas de adquisición sísmica 3D terrestre con muestreo compresivo para la reducción de costos económicos e impactos ambientales en la exploración de hidrocarburos en cuencas terrestres colombianas" adscrito a la Convocatoria para la financiación de proyectos de investigación en geociencias para el sector de hidrocarburos, desarrollado por la alianza, Universidad Industrial de Santander (UIS), ECOPETROL y la Asociación Colombiana de Geólogos y Geofísicos del Petróleo (ACGGP). Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarburos (ANH). Los derechos sobre este software están reservados a las entidades aportantes.
 
-## **Inicio rápido**
+# **Inicio rápido**
 
 Esta es una guía para instalar las dependencias necesarias para poder ejecutar la aplicación de forma correcta.
 
@@ -45,6 +45,12 @@ paquetes requeridos con:
 Luego, ejecute el script `main_window.py` como:
 
 `python main_window.py`
+
+# Instalación independiente
+
+---
+
+Si desea usar el software directamente, dirijase a está enlace [guia de instalación](https://github.com/carlosh93/9836_seismic_project/wiki/Manual-de-Instalaci%C3%B3n) donde encontrará la instrucciones para instalar el software y usarlo directamente.
 
 # **Datos sísmicos**
 
