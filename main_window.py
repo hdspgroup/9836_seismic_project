@@ -862,6 +862,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
         if not 'npz' in save_name:
             save_name = f'{save_name}.npz'
 
+        if len(save_name.split('/')) == 1 or len(save_name.split('\\')) == 1:
+            path = os.path.expanduser('~/Documents')
+            save_name = os.path.join(path, save_name)
+
         self.saveAsLineEdit.setText(save_name)
         self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name
 
