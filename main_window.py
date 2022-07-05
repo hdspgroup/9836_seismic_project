@@ -1320,7 +1320,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("mainWindow", "ReDs"))
+        self.setWindowTitle(_translate("mainWindow", "ReDs - Universidad Industrial de Santander"))
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))
         self.dataTreeWidget.headerItem().setText(0, _translate("mainWindow", "Datos actuales"))
         self.loadPushButton.setText(_translate("mainWindow", "Cargar"))
