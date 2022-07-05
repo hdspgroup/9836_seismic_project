@@ -135,3 +135,5 @@ commands
 *.npz
 
 crear_exe.txt.bak
+
+gui/rei.py
