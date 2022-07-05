@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/comparison.png</file>
     <file>icons/run.png</file>
     <file>icons/tuning.png</file>
     <file>icons/main.png</file>

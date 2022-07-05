@@ -249,9 +249,6 @@
              <property name="maximum">
               <number>999</number>
              </property>
-             <property name="stepType">
-              <enum>QAbstractSpinBox::DefaultStepType</enum>
-             </property>
             </widget>
            </item>
           </layout>
@@ -800,7 +797,7 @@
  </widget>
  <resources>
   <include location="../assets/assets.qrc"/>
-  <include location="../../../../.designer/assets/assets.qrc"/>
+  <include location="../assets/assets.qrc"/>
  </resources>
  <connections/>
 </ui>

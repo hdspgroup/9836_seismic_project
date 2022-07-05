@@ -9,13 +9,7 @@ import scipy.sparse.linalg as ln
 from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
                                  denoise_wavelet, estimate_sigma)
 import time
-from pymitter import EventEmitter
-
-# Need to use this (EventEmitter) for comunication with the GUI, please don't remove it, I used this trough the code
-from gui.alerts import showWarning, showCritical
-
-ee = EventEmitter()
-
+from gui.scripts.alerts import showWarning, showCritical
 
 class Sampling:
     '''
