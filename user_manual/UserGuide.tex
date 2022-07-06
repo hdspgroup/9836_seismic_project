@@ -178,31 +178,31 @@ Una vez seleccionado el dato sísmico, se debe pulsar en la opción \emph{Abrir}
 
 \subsection{Algoritmos}
 
-Los algoritmos disponibles en la aplicación son \emph{FISTA}, \emph{GAP}, \emph{TwIST} y \emph{ADMM}, tal como se observa en el panel \circled{3}, en el extremo izquierdo de la figura \ref{fig:vision}. En este panel se pueden observar las diversas opciones de configuración de los parámetros, de acuerdo al algoritmo seleccionado, incluyendo la cantidad máxima de iteraciones a realizar. 
+Los algoritmos disponibles en la aplicación son \emph{FISTA}, \emph{GAP}, \emph{TwIST} y \emph{ADMM}, tal como se observa en el panel \circled{3}, en el extremo izquierdo de la figura \ref{fig:vision}. En este panel se pueden observar las opciones de configuración de parámetros según el algoritmo seleccionado, incluyendo la cantidad máxima de iteraciones a realizar. 
 
 \begin{figure}[!ht]
      \centering
-     \begin{subfigure}[b]{0.45\textwidth}
+     \begin{subfigure}[b]{0.47\textwidth}
          \centering
          \includegraphics[width=\textwidth]{algorithm-fista.png}
          \caption{FISTA}
          \label{fig:fista}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[b]{0.45\textwidth}
+     \begin{subfigure}[b]{0.47\textwidth}
          \centering
          \includegraphics[width=\textwidth]{algorithm-admm.png}
          \caption{ADMM}
          \label{fig:admm}
      \end{subfigure}
-     \begin{subfigure}[b]{0.45\textwidth}
+     \begin{subfigure}[b]{0.47\textwidth}
          \centering
          \includegraphics[width=\textwidth]{algorithm-gap.png}
          \caption{GAP}
          \label{fig:gap}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[b]{0.45\textwidth}
+     \begin{subfigure}[b]{0.47\textwidth}
          \centering
          \includegraphics[width=\textwidth]{algorithm-twist.png}
          \caption{TwIST}
@@ -216,20 +216,19 @@ Adicionalmente, el botón\hspace{0.5mm} \faEye \hspace{0.5mm} permite visualizar
 
 \subsection{Submuestreo}\label{subsampling}
 
-Debido a que hay muchas formas de recuperar un \emph{shot} a partir de las medidas recolectadas previamente, en este panel se podrá configurar que tipo de submuestreo se desea realizar a la muestra sísmica a manera de simulación, como se observa en la parte izquierda \circled{4} de la figura \ref{fig:vision}. Todos los tipos de submuestreo excepto el de tipo lista comparten el mismo nivel de compresión que el usuario desee asignar. A continuación se observarán que tipos de submuestreo se pueden aplicar:\\
+Debido a que hay varias formas de recuperar un \emph{shot} a partir de las medidas recolectadas previamente, en el panel de submuestreo \circled{4} se puede configurar cuál tipo de submuestreo se desea realizar a la muestra sísmica, a manera de simulación. Todos los tipos de submuestreo, excepto el de tipo lista, comparten el mismo nivel de compresión que el usuario desee asignar. A continuación se presentan los tipos de submuestreo a aplicar en ReDs:\\
 
 \underline{\textbf{Aleatorio}}
 
 \begin{multicols}{2}
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.8\linewidth]{subsampling-random.png}
+	\captionof{figure}{Submuestreo aleatorio.}
+	\label{fig:subsampling_random}
+\end{Figure}
 
 Aplica un submuestreo aleatorio a las muestras sismicas de acuerdo al nivel de compresión. Al habilitar la semilla, se puede establecer el mismo submuestreo para todas las veces que se ejecute un experimento, como se observa en la figura \ref{fig:subsampling_random}.
-
-\begin{Figure}
-    \centering
-    \includegraphics[width=0.8\linewidth]{subsampling-random.png}
-     \captionof{figure}{Submuestreo aleatorio.}
-    \label{fig:subsampling_random}
-\end{Figure}
 
 \end{multicols}
 
@@ -252,14 +251,14 @@ Aplica un submuestreo uniforme a las muestras sismicas de acuerdo al nivel de co
 
 \begin{multicols}{2}
 
-Aplica un submuestreo aleatorio o uniforme de acuerdo a la cantidad de bloques ingresados por el usuario a las muestras sismicas de acuerdo al nivel de compresión, como se observa en la figura \ref{fig:subsampling_jitter}.
-
 \begin{Figure}
-    \centering
-    \includegraphics[width=0.8\linewidth]{subsampling-jitter.png}
-     \captionof{figure}{Submuestreo jitter.}
-    \label{fig:subsampling_jitter}
+	\centering
+	\includegraphics[width=0.8\linewidth]{subsampling-jitter.png}
+	\captionof{figure}{Submuestreo jitter.}
+	\label{fig:subsampling_jitter}
 \end{Figure}
+
+Aplica un submuestreo aleatorio o uniforme de acuerdo a la cantidad de bloques ingresados por el usuario a las muestras sismicas de acuerdo al nivel de compresión, como se observa en la figura \ref{fig:subsampling_jitter}.
 
 \end{multicols}
 
@@ -283,19 +282,19 @@ Las condiciones son las siguientes:
 
 \begin{multicols}{2}
 
+\begin{Figure}
+	\vspace{5mm}
+	\centering
+	\includegraphics[width=1\linewidth]{subsampling-list-1.png}
+	\captionof{figure}{Ejemplo de submuestreo de tipo lista.}
+	\label{fig:subsampling_list_1}
+\end{Figure}
+
 \begin{itemize}
     \item La secuencia deben ser $x_1,x_2,x_n$, tal que $x_i \in \mathbb{Z}^+$, donde entre cada $x_i$ no deben haber espacios y estar separados por números, como se observa en la figura \ref{fig:subsampling_list_1}.
     \item Cada $x_i$ debe cumplir que $0 \leq x_i \leq N$, donde $N$ es la cantidad máxima lineas de receptores que contiene un \emph{shot}.
     \item Deben haber mínimo siete $x_i$ distintos.
 \end{itemize}
-
-\begin{Figure}
-    \vspace{5mm}
-    \centering
-    \includegraphics[width=0.8\linewidth]{subsampling-list-1.png}
-     \captionof{figure}{Ejemplo de submuestreo de tipo lista.}
-    \label{fig:subsampling_list_1}
-\end{Figure}
 
 \end{multicols}
 
