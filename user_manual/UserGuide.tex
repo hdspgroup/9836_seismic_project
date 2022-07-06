@@ -2,7 +2,7 @@
 % Modificado por Crisostomo Barajas a partir del manual creado por Emmanuel Martinez
 % Julio 2022
 
-\documentclass[12pt,oneside,a4]{ol-softwaremanual}
+\documentclass[12pt,oneside,letter]{ol-softwaremanual}
 \usepackage{float}
 \usepackage[utf8]{inputenc}
 \usepackage[a4paper,width=160mm,top=25mm,bottom=25mm]{geometry}
@@ -36,7 +36,7 @@
 \usepackage[rightcaption]{sidecap}
 \usepackage{subcaption}
 \usepackage{wrapfig}
-
+\usepackage{pifont}
 \usepackage{fontawesome}
 
 \usepackage{amsmath}
@@ -51,10 +51,15 @@
 \newenvironment{Figure}
   {\par\medskip\noindent\minipage{\linewidth}}
   {\endminipage\par\medskip}
+  
+%\setlength{\parskip}{2em}
+\setlength{\parskip}{6pt}%
+\setlength{\parindent}{0pt}%
+\setlength{\itemsep}{0em}
 
-\title{\vspace{20mm} \large{Manual de Usuario}\\ \vspace{10mm} \huge{Diseño de Adquisición Sísmica Compresiva}\\ \vspace{5mm} \huge{ReDs}}
+\title{\large{Manual de Usuario}\\ \vspace{10mm} \huge{Diseño de Adquisición Sísmica Compresiva}\\ \vspace{5mm} \huge{ReDs}}
 \author{Emmanuel Martínez \\ Crisóstomo A. Barajas-Solano}
-\softwarelogo{\includegraphics[width=10cm]{figures/applogo}}
+\softwarelogo{\includegraphics[width=7cm]{figures/icon}}
 \version{2022.7}
 
 
@@ -68,7 +73,11 @@
 \begin{abstract}
 %\includegraphics[width=1.0\linewidth]{PhysLogger.png}\\
 %Esta aplicación pertenece al proyecto de investigación 9836, de la Universidad Industrial de Santander, Colombia. Esta aplicación permite la reconstrucción de trazas de muestras sísmicas mediante 4 diferentes algoritmos. Esta reconstrucción puede ser configurada por el usuario de tal manera que pueda realizar diferentes tipos de submuestreo y ajuste de parámetros mediante una interfaz gráfica de usuario.
-Esta herramienta software hace parte del proyecto 9836 - ``Nuevas tecnologías computacionales para el diseño de sistemas de adquisición sísmica 3D terrestre con muestreo compresivo para la reducción de costos económicos e impactos ambientales en la exploración de hidrocarburos en cuencas terrestres colombianas'' adscrito a la Convocatoria para la financiación de proyectos de investigación en geociencias para el sector de hidrocarburos, desarrollado por la alianza, Universidad Industrial de Santander (UIS), ECOPETROL y la Asociación Colombiana de Geólogos y Geofísicos del Petróleo (ACGGP). Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarburos (ANH). Los derechos sobre este software están reservados a las entidades aportantes.
+La herramienta software Diseño de Adquisición Sísmica Compresiva - ReDs hace parte del proyecto 9836 - ``Nuevas tecnologías computacionales para el diseño de sistemas de adquisición sísmica 3D terrestre con muestreo compresivo para la reducción de costos económicos e impactos ambientales en la exploración de hidrocarburos en cuencas terrestres colombianas''.
+
+El proyecto 9836 está adscrito a la Convocatoria para la financiación de proyectos de investigación en geociencias para el sector de hidrocarburos, desarrollado por la alianza Universidad Industrial de Santander (UIS), ECOPETROL y la Asociación Colombiana de Geólogos y Geofísicos del Petróleo (ACGGP). 
+
+Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarburos (ANH). Los derechos y licencias de uso sobre esta aplicación software están reservados a las entidades aportantes.
 \end{abstract}
 
 \clearpage
@@ -76,30 +85,42 @@ Esta herramienta software hace parte del proyecto 9836 - ``Nuevas tecnologías c
 
 \clearpage
 
-\section{Visión General del Software}
+\section{Visión General de la Aplicación ReDs}
 
-Esta aplicación permite la reconstrucción de trazas de muestras sísmicas mediante 4 diferentes algoritmos pueden ser configurados por el usuario de tal manera que pueda realizar diferentes tipos de submuestreo y ajuste de parámetros mediante una interfaz gráfica de usuario, esto se observa en la figura \ref{fig:vision}.
+Esta aplicación permite la reconstrucción de trazas de muestras sísmicas mediante 4 diferentes algoritmos:
+\begin{itemize}[leftmargin=0.5in]
+	\setlength\itemsep{0em}
+	\item FISTA, \underline{\textit{COLOCAR NOMBRES COMPLETOS DE LOS ALGORITMOS}}
+	\item GAP
+	\item TwIST
+	\item ADMM
+\end{itemize}
+El usuario puede configurar cada uno de los algoritmos de reconstrucción de tal manera que pueda realizar diferentes tipos de submuestreo y ajuste de parámetros, todo desde una interfaz gráfica de usuario simple y clara, tal cual como se observa en la figura \ref{fig:vision}.
 
-La aplicación se encuentra distribuida en 7 partes: \circled{1} la barra de menú, \circled{2} Lector de datos, \circled{3} panel de algoritmos, \circled{4} panel de submuestreo, \circled{5} menú de experimentos \circled{6} menú de cambio de vista y finalmente, \circled{7} menú de visualización.
+La interfaz gráfica de la aplicación se encuentra distribuida en 7 secciones, a mencionar: 
+\begin{dingautolist}{192}
+	\setlength\itemsep{0em}
+	\item Barra del menú
+	\item Lector de datos
+	\item Panel de algoritmos
+	\item Panel de submuestreo
+	\item Menú de experimentos
+	\item Menú de cambio de vista
+	\item Menú de visualización
+\end{dingautolist}
 
 \begin{Figure}
     \centering
     \includegraphics[width=1\linewidth]{main.png}
-     \captionof{figure}{Partes de la interfaz general de la aplicación.}
+     \captionof{figure}{Secciones de la interfaz general de la aplicación ReDs.}
     \label{fig:vision}
 \end{Figure}
 
-A continuación se mostrará de forma especifica las herramientas principales de la aplicación y, las diferentes configuraciones y opciones que pueden ser aplicadas a las muestras sísmicas para la realización de diferentes tipos de experimentos. Cabe resaltar que de acuerdo al tipo de prueba que se quiera realizar \circled{1}, el comportamiento de algunos de los paneles disponibles cambiará para adecuarse a dicha tarea.
-
-
-\begin{multicols}{2}
-\end{multicols}
-
+A continuación se mostrará de forma especifica las herramientas principales de la aplicación y, las diferentes configuraciones y opciones que pueden ser aplicadas a las muestras sísmicas para la realización de diferentes tipos de experimentos. Cabe resaltar que de acuerdo al tipo de prueba que se quiera realizar, el comportamiento de los paneles cambiará para adecuarse a dicha tarea.
 
 \section{Menú Principal}
 
 La aplicación cuenta con una barra de tareas, que se encuentra en la parte superior \circled{1} de la figura \ref{fig:vision}. Aquí se observan 3 botones distintos que permitirán realizar distintos tipos de pruebas sobre los datos sísmicos.
-
 
 \begin{multicols}{2}
 
@@ -114,26 +135,24 @@ Como se observa en la figura \ref{fig:main_button}, el primer botón habilitará
 
 \end{multicols}
 
-El menú principal permite realizar experimentos con las muestras sísmicas siguiendo el orden que se observa en la figura \ref{fig:vision}. \\
-
-Ahora se observará paso a paso como funcionan cada uno de estos paneles, desde la lectura de datos sísmicos hasta la visualización y guardado de resultados.
-
+El menú principal permite realizar experimentos con las muestras sísmicas siguiendo el orden que se observa en la figura \ref{fig:vision}. A continuación se muestra paso a paso el funcionamiento de cada uno los paneles, desde la lectura de datos sísmicos hasta la visualización y guardado de resultados.
 
 \subsection{Lectura de Datos}
 
-Como se observa a la izquierda \circled{2} de la figura \ref{fig:vision}, el panel de lectura de datos mostrará los nombres de los datos sísmicos que el usuario haya cargado a la aplicación para realizar diversas pruebas.\\
+El panel de lectura de datos \circled{2}, situado al extremo izquierdo superior en la figura \ref{fig:vision}, muestra los nombres de los datos sísmicos que el usuario haya cargado en la aplicación para realizar diversas pruebas.\\
 
 \textbf{Leyendo una muestra sísmica} \label{sec:data_lecture}
 
 \begin{multicols}{2}
-Para leer una muestra sísmica, se pulsa la opción \emph{Cargar}, como se observa en la figura \ref{fig:data_lecture_1}. Inmediatamente se abrirá la ventana que se observa en la figura \ref{fig:data_lecture_2}, donde el usuario podrá seleccionar un dato sísmico (en este caso \emph{data.npy}, también se pueden cargar datos \emph{.mat}) que es el tipo actual de dato que lee la aplicación.
-
+	
 \begin{Figure}
-    \centering
-    \includegraphics[width=.7\linewidth]{data-lecture-1.png}
-     \captionof{figure}{Cargando una muestra sísmica.}
-    \label{fig:data_lecture_1}
+	\centering
+	\includegraphics[width=.9\linewidth]{data-lecture-1.png}
+	\captionof{figure}{Cargando una muestra sísmica.}
+	\label{fig:data_lecture_1}
 \end{Figure}
+
+Para leer una muestra sísmica, se pulsa la opción \emph{Cargar} en \circled{2}, como se observa en la figura \ref{fig:data_lecture_1}. Inmediatamente se abrirá la ventana \textit{Abrir dato sísmico}, como se observa en la figura \ref{fig:data_lecture_2}, donde el usuario podrá seleccionar un dato sísmico. Para este ejemplo cargaremos \emph{data.npy}. Las extensiones de archivos reconocidas por ReDs son \emph{.npy} y \emph{.mat}.
 
 \end{multicols}
 
@@ -146,7 +165,7 @@ Para leer una muestra sísmica, se pulsa la opción \emph{Cargar}, como se obser
 
 \begin{multicols}{2}
 
-Una vez seleccionado, se debe pulsar en la opción \emph{Abrir} y el dato sísmico cargado se podrá observar en la aplicación como se muestra en la figura \ref{fig:data_lecture_3}. Aquí los datos se observan en el siguiente orden, \circled{I} reprenta al directorio padre y \circled{II} es el dato sísmico cargado hijo del directorio padre.
+Una vez seleccionado el dato sísmico, se debe pulsar en la opción \emph{Abrir} y se podrá observar en \circled{2} como se muestra en la figura \ref{fig:data_lecture_3}. Aquí los datos se observan en el siguiente orden: \circled{I} representa al directorio padre y \circled{II} es el dato sísmico cargado hijo del directorio padre.
 
 \begin{Figure}
     \centering
@@ -159,7 +178,7 @@ Una vez seleccionado, se debe pulsar en la opción \emph{Abrir} y el dato sísmi
 
 \subsection{Algoritmos}
 
-Los algoritmos disponibles en la aplicación son \emph{FISTA}, \emph{GAP}, \emph{TwIST} y \emph{ADMM}, como se observa en la parte izquierda \circled{3} de la figura \ref{fig:vision}. En este panel se pueden observar diversas opciones que permitirán configurar los parámetros de acuerdo al algoritmo seleccionado, incluyendo la cantidad máxima de iteraciones a realizar. Adicionalmente, el botón \hspace{0.5mm} \faEye \hspace{0.5mm} permite visualizar los diferentes algoritmos con sus correspondientes parámetros, como se observa en la figura \ref{fig:algorithms}.
+Los algoritmos disponibles en la aplicación son \emph{FISTA}, \emph{GAP}, \emph{TwIST} y \emph{ADMM}, como se observa en el panel \circled{3}, en el extremo izquierdo de la figura \ref{fig:vision}. En este panel se pueden observar las diversas opciones de configuración de los parámetros, de acuerdo al algoritmo seleccionado, incluyendo la cantidad máxima de iteraciones a realizar. Adicionalmente, el botón \hspace{0.5mm} \faEye \hspace{0.5mm} permite visualizar los diferentes algoritmos con sus correspondientes parámetros, como se observa en la figura \ref{fig:algorithms}.
 
 \begin{figure}[!ht]
      \centering
