@@ -876,6 +876,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.about_window = QtWidgets.QWidget()
         self.ui_about_window = UIAboutWindow()
         self.ui_about_window.setupUi(self.about_window)
+        self.about_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.about_window.show()
 
     def show_main(self):
@@ -970,6 +971,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def algorithm_equation_clicked(self):
         self.ui_equation_window = UIEquationWindow()
         self.ui_equation_window.setupUi(self.algorithmComboBox.currentText())
+        self.ui_equation_window.setWindowModality(Qt.WindowModality.ApplicationModal)
+        # print(self.ui_equation_window.isModal())
         self.ui_equation_window.show()
 
     def param_tuning_changed(self, value):
