@@ -319,7 +319,7 @@ Las condiciones son las siguientes:
 \subsection{Experimentos}
 \label{sec:experiment}
 
-Una vez ya se ha cargado un dato sísmico, seleccionado el algoritmo, ajustado sus parámetros y configurado el tipo de submuestreo, entonces se podrá realizar un experimento. El panel \circled{5}, en el extremo izquierdo de la figura \ref{fig:vision} permite controlar el progreso de la ejecución del experimento a realizar.
+Una vez ya se ha cargado un dato sísmico, seleccionado el algoritmo, ajustado sus parámetros y configurado el tipo de submuestreo, entonces se podrá realizar un experimento. El panel \circled{5}, en el extremo izquierdo de la figura \ref{fig:vision}, permite controlar el progreso de la ejecución del experimento a realizar.
 
 \subsubsection{Realizando un experimento}
 
@@ -344,33 +344,33 @@ Para iniciar un nuevo experimento se debe pulsar el botón \hspace{0.5mm} \faSav
     \label{fig:experiment_2}
 \end{Figure}
 
+Es necesario asignar un nombre al experimento para poder guardarlo. En este ejemplo usaremos \emph{nuevo\_experimento} como nombre del archivo de salida, con la extensión \emph{.npz}. Finalmente, presionamos el botón \emph{Guardar}.
+
 \begin{multicols}{2}
 
-Para poder guardar el experimento es necesario asignarle un nombre, en este ejemplo se pondrá \emph{nuevo\_experimento}, este archivo será guardado con la extensión \emph{.npz} y finalmente, presionamos el botón \emph{Guardar}.
-
-Finalmente, para correr el experimento, se debe pulsar en el botón \hspace{0.5mm} \faPlay \hspace{0.5mm} y en la barra de progreso a la izquierda de dicho botón se podrá ir observando en tiempo real cuanto demorá el experimento en ejecutarse, como se observa en la figura \ref{fig:experiment_4}.
-
 \begin{Figure}
-    \centering
-    \includegraphics[width=0.7\linewidth]{experiment-4.png}
-     \captionof{figure}{Ejecución de un experimento en tiempo real.}
-    \label{fig:experiment_4}
+	\centering
+	\includegraphics[width=0.7\linewidth]{experiment-4.png}
+	\captionof{figure}{Ejecución de un experimento en tiempo real.}
+	\label{fig:experiment_4}
 \end{Figure}
+
+Para correr el experimento se debe pulsar en el botón \hspace{0.5mm} \faPlay \hspace{0.5mm}. En la barra de progreso, a la izquierda de dicho botón, se podrá el progreso del actual experimento, como se observa en la figura \ref{fig:experiment_4}.
 
 \end{multicols}
 
 \subsection{Visualización de Resultados}
 
-\begin{multicols}{2}
+Finalmente, los resultados de todos los experimentos que se realicen a través de esta aplicación se pueden observar en el panel \circled{7}, en el extremo derecho de la figura \ref{fig:vision}. En este panel se encuentran dos tipos de visualización: la visualización del rendimiento (iteraciones vs. error/psnr) y visualización de la reconstrucción, como se observa en la figura \ref{fig:main_result_1}.
 
-Finalmente, los resultados de todos los experimentos que se realicen a través de esta aplicación se podrán observar a la derecha \circled{7} de la figura \ref{fig:vision}. En este panel se encuentran dos tipos de visualización: la visualización del rendimiento (iteraciones vs. error/psnr) y visualización de la reconstrucción, como se observa en la figura \ref{fig:main_result_1}.
+\begin{multicols}{2}
 
 Como se mencionó en la sección \ref{sec:experiment}, los experimentos que sean ejecutados se podrá ver tanto el rendimiento como la reconstrucción de las trazas en tiempo real. A continuación se detallará que es lo que se observa exactamente en cada una de estos subpaneles.
 
 \begin{Figure}
-    \vspace{1cm}
+    %\vspace{1cm}
     \centering
-    \includegraphics[width=1\linewidth]{main-result-1.png}
+    \includegraphics[width=0.8\linewidth]{main-result-1.png}
      \captionof{figure}{Panel de resultados.}
     \label{fig:main_result_1}
 \end{Figure}
@@ -379,78 +379,88 @@ Como se mencionó en la sección \ref{sec:experiment}, los experimentos que sean
 
 \subsubsection{Rendimiento}
 
-En esta subventana se observará el rendimiento actual del experimento que esté corriendo, como se observa en la figura \ref{fig:main_result_2}. En esta figura se puede observar una gráfica con dos ejes, el \textcolor{red}{eje izquierdo} representa el indice de similaridad estructural (SSIM) y el \textcolor{blue}{eje derecho} representa la proporción máxima de señal a ruido (PSNR) de las trazas reconstruidas con respecto a las verdaderas. En general, ambas métricas son de percepción que cuantifican la degradación de la calidad de la imagen.
+En esta subventana se observa el rendimiento actual del experimento que esté corriendo, como se muestra en la figura \ref{fig:main_result_2}. Esta figura presenta una gráfica con dos ejes: el \textcolor{red}{eje izquierdo} representa el indice de similaridad estructural (SSIM); y el \textcolor{blue}{eje derecho} representa la proporción máxima de señal a ruido (PSNR) de las trazas reconstruidas con respecto a las verdaderas. En general, ambas métricas cuantifican la degradación de la calidad de la imagen.
 
-Sobre está gráfica que observan diferentes herramientas que pueden ser usadas para modificar alguna carácteristica de la gráfica \ref{fig:main_result_3}, que se dan en este orden:
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.8\linewidth]{main-result-2.png}
+	\captionof{figure}{Rendimiento de un experimento realizado.}
+	\label{fig:main_result_2}
+\end{Figure}
 
 \begin{multicols}{2}
 
 \begin{Figure}
-    \vspace{1cm}
-    \centering
-    \includegraphics[width=0.8\linewidth]{main-result-3.png}
-     \captionof{figure}{Opciones de la gráfica.}
-    \label{fig:main_result_3}
+	\vspace{0.7cm}
+	\centering
+	\includegraphics[width=0.9\linewidth]{main-result-3.png}
+	\captionof{figure}{Opciones de la gráfica.}
+	\label{fig:main_result_3}
 \end{Figure}
 
-\begin{Figure}
-    \centering
-    \includegraphics[width=0.7\linewidth]{main-result-4.png}
-     \captionof{figure}{Configuración de subplots.}
-    \label{fig:main_result_4}
-\end{Figure}
+En la parte superior de la gráfica \textit{Resultados del experimento} se observa una barra de herramientas, tal como se muestra en la figura \ref{fig:main_result_3}. Estas modifican alguna característica de la gráfica de resultados, tal como se indica a continuación:
 
 \end{multicols}
 
+\vspace{0.2cm}
 
 \begin{multicols}{2}
 
 \begin{itemize}
-    \item[I.]  El botón \hspace{0.5mm} \faHome \hspace{0.5mm} permite volver a la gráfica a su estad original, y las otros dos botones \hspace{0.5mm} \faArrowLeft \hspace{0.5mm}, \hspace{0.5mm} \faArrowRight \hspace{0.5mm} permiten ir hacia adelante o hacia atrás en las modificaciones que se le hayan hecho a la gráfica.
+	\setlength\itemsep{0em}
+    \item[I.]  El botón \hspace{0.5mm} \faHome \hspace{0.5mm} permite volver a la gráfica a su estado original. Los otros dos botones, \hspace{0.5mm} \faArrowLeft \hspace{0.5mm} y \hspace{0.5mm} \faArrowRight \hspace{0.5mm}, permiten ir hacia adelante o atrás en las modificaciones realizadas a la gráfica.
     
-    \item[II.] El botón \hspace{0.5mm} \faArrows \hspace{0.5mm} permite desplazar la gráfica en cualquier dirección, y el botón \hspace{0.5mm} \faSearch \hspace{0.5mm} permite realizar un acercamiento o alejamiento de la gráfica.
+    \item[II.] El botón \hspace{0.5mm} \faArrows \hspace{0.5mm} permite desplazar la gráfica en cualquier dirección, mientras que el botón \hspace{0.5mm} \faSearch \hspace{0.5mm} permite realizar un acercamiento o alejamiento de la gráfica.
     
-    \item[III.] Los siguientes botones tienen un comportamiento más complejo. El botón \hspace{0.5mm} \faBars \hspace{0.5mm} abre la subventana que se observa en la figura \ref{fig:main_result_4}. Esto permitirá ajustar la visualización de los bordes de la gráfica y el espaciado con respecto a su contenedor padre. Por otra parte, el botón \hspace{0.5mm} \faLineChart \hspace{0.5mm} permitirá configurar la visualización de los ejes (cantidad de valores) y el tipo de escala para cada eje, como se observa en la figura \ref{fig:main_result_5}.
-    
-    \item[IV.] Finalmente, el botón \hspace{0.5mm} \faSave \hspace{0.5mm} permitirá guardar una imagen de la gráfica exactamente como se observe en ese instante.
-    
+    \begin{Figure}
+    	\centering
+    	\includegraphics[width=0.7\linewidth]{main-result-4.png}
+    	\captionof{figure}{Configuración de subplots.}
+    	\label{fig:main_result_4}
+    \end{Figure}
+
 \end{itemize}
 
-\begin{Figure}
-    \centering
-    \includegraphics[width=1\linewidth]{main-result-5.png}
-     \captionof{figure}{Editor de ejes, curvas y parámetros de la gráfica.}
-    \label{fig:main_result_5}
-\end{Figure}
-
+\begin{multicols}{2}
+	
 \end{multicols}
 
 \begin{Figure}
-    \vspace{1cm}
-    \centering
-    \includegraphics[width=0.8\linewidth]{main-result-2.png}
-     \captionof{figure}{Rendimiento de un experimento realizado.}
-    \label{fig:main_result_2}
+	\vspace{-1cm}
+	\centering
+	\includegraphics[width=0.85\linewidth]{main-result-5.png}
+	\captionof{figure}{Editor de ejes, curvas y parámetros de la gráfica.}
+	\label{fig:main_result_5}
 \end{Figure}
+
+%\vfill\null
+%\columnbreak
+
+\begin{itemize}
+	\setlength\itemsep{0em}
+	\item[III.] Los siguientes botones tienen un comportamiento más complejo. El botón \hspace{0.5mm} \faBars \hspace{0.5mm} abre la subventana que se observa en la figura \ref{fig:main_result_4}. Esto permitirá ajustar la visualización de los bordes de la gráfica y el espaciado con respecto a su contenedor padre. Por otra parte, el botón \hspace{0.5mm} \faLineChart \hspace{0.5mm} permitirá configurar la visualización de los ejes (cantidad de valores) y el tipo de escala para cada eje, como se observa en la figura \ref{fig:main_result_5}.
+	
+	\item[IV.] Finalmente, el botón \hspace{0.5mm} \faSave \hspace{0.5mm} permitirá guardar una imagen de la gráfica exactamente como se observe en ese instante.
+	
+\end{itemize}
+
+\end{multicols}
 
 \subsubsection{Reconstrucción de Trazas}
 
-Por otra parte, los resultados cuantitativos del experimento se observan en el subpanel de \emph{Reporte} de la figura \ref{fig:main_result_6}. En esta figura, la gráfica se divide en 4 partes:
+Por otra parte, los resultados cuantitativos del experimento se observan en el subpanel de \emph{Reporte}, como se muestra en la figura \ref{fig:main_result_6}. Esta gráfica se divide en 4 secciones:
 
-\begin{multicols}{2}
-
-\begin{itemize}
-    \item[I.]  Esta gráfica es la muestra sísmica completa, la cual se usa como referencia para comparar contra la reconstruida, tanto cuantitativa como cualitativamente.
+\begin{itemize}[leftmargin=0.5in]
+	\setlength\itemsep{0em}
+    \item[I.]  \textit{Referencia}. Esta gráfica es la muestra sísmica completa, la cual se usa como referencia para comparar contra la reconstruida, tanto cuantitativa como cualitativamente.
     
-    \item[II.] Está gráfica es la muestra sísmica submuestreada y es la que pasa a través de los algoritmos para reconstruir el sensado de las líneas de receptores faltantes.
+    \item[II.] \textit{Medidas}. Está gráfica es la muestra sísmica submuestreada y es la que pasa a través de los algoritmos para reconstruir el sensado de las líneas de receptores faltantes.
     
-    \item[III.] Está gráfica contiene la muestra sísmica reconstruida.
+    \item[III.] \textit{Reconstruido}. Está gráfica contiene la muestra sísmica reconstruida.
     
-    \item[IV.] Finalmente, esta gráfica contiene una de las trazas reconstruidas comparada contra la de referencia.
+    \item[IV.] \textit{Traza}. Esta gráfica contiene una de las trazas reconstruidas comparada contra la de referencia.
     
 \end{itemize}
-
-\end{multicols}
 
 \begin{Figure}
     \centering
@@ -467,7 +477,7 @@ Como se observa en la figura \ref{fig:tuning_button}, el segundo botón habilita
 
 \begin{Figure}
     \centering
-    \includegraphics[width=0.3\linewidth]{main-tab.png}
+    \includegraphics[width=0.3\linewidth]{tuning-tab.png}
      \captionof{figure}{Botón del menú de ajuste de parámetros.}
     \label{fig:tuning_button}
 \end{Figure}
