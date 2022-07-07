@@ -1,19 +1,19 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {section}{\numberline {1}Visión General de la Aplicación ReDs}{3}{section.1}%
-\contentsline {section}{\numberline {2}Menú Principal}{4}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Lectura de Datos}{4}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Algoritmos}{5}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Submuestreo}{5}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Experimentos}{7}{subsection.2.4}%
-\contentsline {subsubsection}{\numberline {2.4.1}Realizando un experimento}{7}{subsubsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.5}Visualización de Resultados}{8}{subsection.2.5}%
-\contentsline {subsubsection}{\numberline {2.5.1}Rendimiento}{9}{subsubsection.2.5.1}%
-\contentsline {subsubsection}{\numberline {2.5.2}Reconstrucción de Trazas}{10}{subsubsection.2.5.2}%
-\contentsline {section}{\numberline {3}Ajuste de parámetros}{11}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Configuraciones}{12}{subsection.3.1}%
-\contentsline {subsubsection}{\numberline {3.1.1}Realizando un ajuste de parámetros óptimo}{13}{subsubsection.3.1.1}%
-\contentsline {section}{\numberline {4}Visualización general de Resultados}{15}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Menú principal}{15}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Menú de ajuste de parámetros}{17}{subsection.4.2}%
-\contentsline {section}{\numberline {5}Acerca de}{18}{section.5}%
-\contentsline {section}{\numberline {6}Recomendaciones de uso}{19}{section.6}%
+\contentsline {section}{\numberline {1}Visión General de la Aplicación ReDs}{7}{section.1}%
+\contentsline {section}{\numberline {2}Menú Principal}{8}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Lectura de Datos}{8}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Algoritmos}{9}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Submuestreo}{9}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Experimentos}{11}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Realizando un experimento}{11}{subsubsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.5}Visualización de Resultados}{12}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Rendimiento}{13}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}Reconstrucción de Trazas}{14}{subsubsection.2.5.2}%
+\contentsline {section}{\numberline {3}Ajuste de parámetros}{15}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Configuraciones}{16}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Realizando un ajuste de parámetros óptimo}{17}{subsubsection.3.1.1}%
+\contentsline {section}{\numberline {4}Visualización general de Resultados}{19}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Menú principal}{19}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Menú de ajuste de parámetros}{21}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Acerca de}{22}{section.5}%
+\contentsline {section}{\numberline {6}Recomendaciones de uso}{23}{section.6}%

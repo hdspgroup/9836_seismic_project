@@ -2,7 +2,7 @@
 % Modificado por Crisostomo Barajas a partir del manual creado por Emmanuel Martinez
 % Julio 2022
 
-\documentclass[12pt,oneside,letter]{ol-softwaremanual}
+\documentclass[12pt,twoside,letter]{ol-softwaremanual}
 \usepackage{float}
 \usepackage[utf8]{inputenc}
 \usepackage[a4paper,width=160mm,top=25mm,bottom=25mm]{geometry}
@@ -42,6 +42,15 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{{\footnotesize HDSP - UIS}}
+\fancyhead[RE,LO]{{\footnotesize ReDs - Manual de Usuario}}
+\fancyfoot[CE,CO]{\thepage}
+%\fancyfoot[LE,RO]{\thepage}
+
 \definecolor{ClearPurple}{RGB}{136, 0, 255}
 
 \usepackage{tikz}
@@ -67,6 +76,9 @@
 \begin{document}
 
 \maketitle
+
+\newpage\null\thispagestyle{empty}\newpage
+
 \begin{center}
 \includegraphics[width=.9\linewidth]{header.png}
 \end{center}
@@ -80,10 +92,14 @@ El proyecto 9836 está adscrito a la Convocatoria para la financiación de proye
 Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarburos (ANH). Los derechos y licencias de uso sobre esta aplicación software están reservados a las entidades aportantes.
 \end{abstract}
 
+\newpage\null\thispagestyle{empty}\newpage
+
 \clearpage
 \tableofcontents
 
 \clearpage
+
+\newpage\null\thispagestyle{empty}\newpage
 
 \section{Visión General de la Aplicación ReDs}
 
@@ -152,7 +168,8 @@ El panel de lectura de datos \circled{2}, situado al extremo izquierdo superior 
 	\label{fig:data_lecture_1}
 \end{Figure}
 
-Para leer una muestra sísmica, se pulsa la opción \emph{Cargar} en \circled{2}, como se observa en la figura \ref{fig:data_lecture_1}. Inmediatamente se abrirá la ventana \textit{Abrir dato sísmico}, como se observa en la figura \ref{fig:data_lecture_2}, donde el usuario podrá seleccionar un dato sísmico. Para este ejemplo cargaremos \emph{data.npy}. Las extensiones de archivos reconocidas por ReDs son \emph{.npy} y \emph{.mat}.
+Para leer una muestra sísmica, se pulsa la opción \emph{Cargar} en \circled{2}, como se observa en la figura \ref{fig:data_lecture_1}. Inmediatamente se abrirá la ventana \textit{Abrir dato sísmico}, como se observa en la figura \ref{fig:data_lecture_2}, donde el usuario podrá seleccionar un dato sísmico. Para este ejemplo cargaremos \emph{data.npy}.
+La aplicación ReDs reconoce las extensiones \emph{.npy} y \emph{.mat} para cargar datos sísmicos.
 
 \end{multicols}
 
@@ -165,7 +182,7 @@ Para leer una muestra sísmica, se pulsa la opción \emph{Cargar} en \circled{2}
 
 \begin{multicols}{2}
 
-Una vez seleccionado el dato sísmico, se debe pulsar en la opción \emph{Abrir} y se podrá observar en \circled{2} como se muestra en la figura \ref{fig:data_lecture_3}. Aquí los datos se observan siguiendo la siguiente estructura: \circled{I} representa al directorio padre y \circled{II} es el dato sísmico cargado hijo del directorio padre.
+Una vez seleccionado el dato sísmico, se debe pulsar en la opción \emph{Abrir}. Se podrá observar entonces en \circled{2} el dato sísmico cargado, como se muestra en la figura \ref{fig:data_lecture_3}. Aquí los datos se observan siguiendo la siguiente estructura: \circled{I} representa al directorio padre y \circled{II} es el dato sísmico cargado hijo del directorio padre.
 
 \begin{Figure}
     \centering
@@ -216,9 +233,9 @@ Adicionalmente, el botón\hspace{0.5mm} \faEye \hspace{0.5mm} permite visualizar
 
 \subsection{Submuestreo}\label{subsampling}
 
-Debido a que hay varias formas de recuperar un \emph{shot} a partir de las medidas recolectadas previamente, en el panel de submuestreo \circled{4} se puede configurar cuál tipo de submuestreo se desea realizar a la muestra sísmica, a manera de simulación. Todos los tipos de submuestreo, excepto el de tipo lista, comparten el mismo nivel de compresión que el usuario desee asignar. A continuación se presentan los tipos de submuestreo a aplicar en ReDs:\\
+Debido a que hay varias formas de recuperar un \emph{shot} a partir de las medidas recolectadas previamente, el panel de submuestreo \circled{4} permite configurar cuál tipo de submuestreo se desea realizar a la muestra sísmica, a manera de simulación. Todos los tipos de submuestreo, excepto el de tipo lista, comparten el mismo nivel de compresión que el usuario desee asignar. A continuación se presentan los tipos de submuestreo a aplicar en ReDs:\\
 
-\underline{\textbf{Aleatorio}}
+\underline{\textbf{Submuestreo Aleatorio}}
 
 \begin{multicols}{2}
 \begin{Figure}
@@ -232,7 +249,7 @@ Aplica un submuestreo aleatorio a las muestras sismicas de acuerdo al nivel de c
 
 \end{multicols}
 
-\underline{\textbf{Uniforme}}
+\underline{\textbf{Submuestreo Uniforme}}
 
 \begin{multicols}{2}
 
@@ -247,7 +264,7 @@ Aplica un submuestreo uniforme a las muestras sismicas de acuerdo al nivel de co
 
 \end{multicols}
 
-\underline{\textbf{Jitter}}
+\underline{\textbf{Submuestreo Jitter}}
 
 \begin{multicols}{2}
 
@@ -262,11 +279,11 @@ Aplica un submuestreo aleatorio o uniforme de acuerdo a la cantidad de bloques i
 
 \end{multicols}
 
-\underline{\textbf{Lista}}
+\underline{\textbf{Submuestreo Lista}}
 
 \begin{multicols}{2}
 
-Aplica un submuestreo de tipo lista donde los \emph{shots} a remover son ingresados por el usuario a las muestras sismicas, como se observa en la figura \ref{fig:subsampling_list}. Para este tipo de submuestreo es necesario validar que el usuario ingrese los datos con un formato lógico y especifico.
+Aplica un submuestreo de tipo lista donde los \emph{shots} a remover son ingresados por el usuario, como se observa en la figura \ref{fig:subsampling_list}. Para este tipo de submuestreo es necesario validar que el usuario ingrese los datos con un formato lógico y especifico.
 
 \begin{Figure}
     \vspace{5mm}
@@ -291,8 +308,9 @@ Las condiciones son las siguientes:
 \end{Figure}
 
 \begin{itemize}
-    \item La secuencia deben ser $x_1,x_2,x_n$, tal que $x_i \in \mathbb{Z}^+$, donde entre cada $x_i$ no deben haber espacios y estar separados por números, como se observa en la figura \ref{fig:subsampling_list_1}.
-    \item Cada $x_i$ debe cumplir que $0 \leq x_i \leq N$, donde $N$ es la cantidad máxima lineas de receptores que contiene un \emph{shot}.
+	\setlength\itemsep{0em}
+    \item La secuencia debe ser $x_1,x_2,x_n$, tal que $x_i \in \mathbb{Z}^+$, donde entre cada $x_i$ no deben haber espacios y estar separados por números, como se observa en la figura \ref{fig:subsampling_list_1}.
+    \item Cada $x_i$ debe cumplir $0 \leq x_i \leq N$, donde $N$ es la cantidad máxima lineas de receptores que contiene un \emph{shot}.
     \item Deben haber mínimo siete $x_i$ distintos.
 \end{itemize}
 
@@ -301,7 +319,7 @@ Las condiciones son las siguientes:
 \subsection{Experimentos}
 \label{sec:experiment}
 
-Una vez ya se haya cargado un dato sísmico, seleccionado el algoritmo, ajustado sus parámetros y configurado el tipo de submuestreo, entonces se podrá realizar un experimento. Como se observa en la parte izquierda \circled{5} de la figura \ref{fig:vision}.
+Una vez ya se ha cargado un dato sísmico, seleccionado el algoritmo, ajustado sus parámetros y configurado el tipo de submuestreo, entonces se podrá realizar un experimento. El panel \circled{5}, en el extremo izquierdo de la figura \ref{fig:vision} permite controlar el progreso de la ejecución del experimento a realizar.
 
 \subsubsection{Realizando un experimento}
 
