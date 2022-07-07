@@ -488,19 +488,6 @@
          <item row="0" column="1">
           <layout class="QHBoxLayout" name="comparisonAlgorithmHLayout">
            <item>
-            <spacer name="comparisonHSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
             <widget class="QPushButton" name="comparisonAlgorithmPushButton">
              <property name="enabled">
               <bool>true</bool>
@@ -519,6 +506,19 @@
                <normaloff>:/icons/icons/view.png</normaloff>:/icons/icons/view.png</iconset>
              </property>
             </widget>
+           </item>
+           <item>
+            <spacer name="comparisonHSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
            <item>
             <widget class="QLabel" name="comparisonMaxiterLabel">
@@ -546,16 +546,6 @@
           <widget class="Line" name="comparisonLine">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="fistaLabel">
-           <property name="text">
-            <string>FISTA</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -624,10 +614,10 @@
            </item>
           </layout>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="gapLabel">
+         <item row="2" column="0">
+          <widget class="QLabel" name="fistaLabel">
            <property name="text">
-            <string>GAP</string>
+            <string>FISTA</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -674,6 +664,26 @@
           <widget class="QLabel" name="twistLabel">
            <property name="text">
             <string>TwIST</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="gapLabel">
+           <property name="text">
+            <string>GAP</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="admmLabel">
+           <property name="text">
+            <string>ADMM</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -761,16 +771,6 @@
             </widget>
            </item>
           </layout>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="admmLabel">
-           <property name="text">
-            <string>ADMM</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
          </item>
          <item row="5" column="1">
           <layout class="QHBoxLayout" name="compParamsHLayout4">
@@ -1271,8 +1271,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1042</width>
-           <height>256</height>
+           <width>145</width>
+           <height>65</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1369,8 +1369,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1042</width>
-           <height>256</height>
+           <width>145</width>
+           <height>65</height>
           </rect>
          </property>
          <attribute name="label">

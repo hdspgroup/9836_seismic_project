@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class UIEquationWindow(QtWidgets.QWidget):
+class UIComparisonEquationWindow(QtWidgets.QWidget):
     def setupUi(self, case):
         self.setObjectName("Algoritmo")
         self.setObjectName("EquationDialog")
@@ -23,32 +23,27 @@ class UIEquationWindow(QtWidgets.QWidget):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.equation = QtWidgets.QLabel(self.equationGroupBox)
         self.equation.setText("")
-        self.equation.setPixmap(QtGui.QPixmap("assets/equations/fista.png"))
+        self.equation.setPixmap(QtGui.QPixmap("assets/equations/algorithms.png"))
         self.equation.setScaledContents(False)
         self.equation.setObjectName("equation")
         self.horizontalLayout_2.addWidget(self.equation)
         self.horizontalLayout.addWidget(self.equationGroupBox)
-        self.update_equation(case)
 
-        self.retranslateUi(case)
+        self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, case):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("UIEquationWindow", f"Algoritmo {case}"))
-        self.equationGroupBox.setTitle(_translate("UIEquationWindow", "Algoritmo y parámetros"))
-
-    def update_equation(self, case):
-        self.equation.setPixmap(QtGui.QPixmap(f'assets/equations/{case.lower()}.png'))
-        self.resize(10, 10)
+        self.setWindowTitle(_translate("UIEquationWindow", f"Algoritmos y parámetros"))
+        self.equationGroupBox.setTitle(_translate("UIEquationWindow", ""))
 
 
 if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
-    UIEquationWindow = QtWidgets.QWidget()
-    ui = UIEquationWindow()
-    ui.setupUi(UIEquationWindow, "example")
-    UIEquationWindow.show()
+    UIComparisonEquationWindow = QtWidgets.QWidget()
+    ui = UIComparisonEquationWindow()
+    ui.setupUi(UIComparisonEquationWindow, "example")
+    UIComparisonEquationWindow.show()
     sys.exit(app.exec_())

@@ -21,10 +21,11 @@ from scipy.io import loadmat
 from Algorithms.Function import Sampling, Algorithms
 from about_window import UIAboutWindow
 from equation_window import UIEquationWindow
+from equation_comparison_window import UIComparisonEquationWindow
 from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic, ComparisonPerformanceGraphic, \
     ComparisonReconstructionGraphic
 from gui.scripts.alerts import showWarning, showCritical
-from workers import Worker, TuningWorker
+from workers import Worker, TuningWorker, ComparisonWorker
 from tuning_window import UITuningWindow
 
 
@@ -283,8 +284,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.gridLayout_2.addWidget(self.comparisonAlgorithmLabel, 0, 0, 1, 1)
         self.comparisonAlgorithmHLayout = QtWidgets.QHBoxLayout()
         self.comparisonAlgorithmHLayout.setObjectName("comparisonAlgorithmHLayout")
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.comparisonAlgorithmHLayout.addItem(spacerItem2)
+        self.comparisonAlgorithmHLayout = QtWidgets.QHBoxLayout()
+        self.comparisonAlgorithmHLayout.setObjectName("comparisonAlgorithmHLayout")
         self.comparisonAlgorithmPushButton = QtWidgets.QPushButton(self.comparisonGroupBox)
         self.comparisonAlgorithmPushButton.setEnabled(True)
         self.comparisonAlgorithmPushButton.setAutoFillBackground(False)
@@ -292,6 +293,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.comparisonAlgorithmPushButton.setIcon(icon)
         self.comparisonAlgorithmPushButton.setObjectName("comparisonAlgorithmPushButton")
         self.comparisonAlgorithmHLayout.addWidget(self.comparisonAlgorithmPushButton)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.comparisonAlgorithmHLayout.addItem(spacerItem2)
         self.comparisonMaxiterLabel = QtWidgets.QLabel(self.comparisonGroupBox)
         self.comparisonMaxiterLabel.setObjectName("comparisonMaxiterLabel")
         self.comparisonAlgorithmHLayout.addWidget(self.comparisonMaxiterLabel)
@@ -875,6 +878,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.algorithmComboBox.currentTextChanged.connect(self.algorithm_changed)
         self.algorithmPushButton.clicked.connect(self.algorithm_equation_clicked)
+        self.comparisonAlgorithmPushButton.clicked.connect(self.comparison_algorithm_equation_clicked)
 
         # tuning
         self.paramTuningComboBox.currentTextChanged.connect(self.param_tuning_changed)
@@ -1071,7 +1075,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 self.reconstructionGraphic.update_report(data)
                 self.reconstructionGraphic.update_figure()
 
-            else:
+            elif self.global_variables['tab_mode'] == 'main':
                 data = np.load(self.data_fname[0], allow_pickle=True)
                 self.algorithm_name = str(data['algorithm']).lower()
                 self.tuning_data = pd.DataFrame({item[0]: item[1] for item in data['tuning_data']})
@@ -1081,6 +1085,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 self.tuningGraphic.update_tuning(self.algorithm_name, self.tuning_data, self.fixed_params,
                                                  self.current_scale)
                 self.tuningGraphic.update_figure()
+
+            else:
+                pass
 
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
@@ -1260,6 +1267,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.ui_equation_window.setupUi(self.algorithmComboBox.currentText())
         self.ui_equation_window.show()
 
+    def comparison_algorithm_equation_clicked(self):
+        self.ui_comparison_equation_window = UIComparisonEquationWindow()
+        self.ui_comparison_equation_window.setupUi(self.algorithmComboBox.currentText())
+        self.ui_comparison_equation_window.show()
+
     def param_tuning_changed(self, value):
         self.paramValuesLabel.setVisible(True if value.lower() == 'intervalo' else False)
         self.paramValuesSpinBox.setVisible(True if value.lower() == 'intervalo' else False)
@@ -1397,7 +1409,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         if self.seedCheckBox.checkState():
             seed = int(self.seedSpinBox.text())
 
-        compresson_ratio = float(self.compressSpinBox.text().split('%')[0]) / 100
+        compression_ratio = float(self.compressSpinBox.text().split('%')[0]) / 100
 
         mode = self.samplingTypeComboBox.currentText().lower()
         jitter_blocks = int(self.jitterBlockSpinBox.text())
@@ -1405,7 +1417,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         try:
             self.sampling_dict, H = self.sampling.apply_sampling(seismic_data, mode, jitter_blocks, lista, seed,
-                                                                 compresson_ratio)
+                                                                 compression_ratio)
         except:
             return
 
@@ -1428,7 +1440,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             # update worker behaviour
             self.worker = Worker(algorithm, parameters, self.maxiter)
 
-        else:
+        elif self.global_variables['tab_mode'] == 'tuning':
             param_list = []
             parameters = []
 
@@ -1485,6 +1497,23 @@ class UIMainWindow(QtWidgets.QMainWindow):
             # update worker behaviour
             self.worker = TuningWorker(func, parameters, self.maxiter)
 
+        else:
+            funcs = []
+            param_list = []
+
+            algorithm_names = ['fista', 'gap', 'twist', 'admm']
+            param_arg_names = ['param1', 'param2', 'param3']
+            for alg_name, params in zip(algorithm_names, self.comparison_params):
+                aux_params = {param_arg_names[i]: param.text() for i, param in enumerate(params)}
+
+                Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')
+                func, params = Alg.get_algorithm(alg_name, self.maxiter, **aux_params)
+
+                funcs.append(func)
+                param_list.append(params)
+
+            self.worker = ComparisonWorker(funcs, param_list, self.maxiter)
+
     def start_experiment(self):
 
         uploaded_directory = self.directories[self.global_variables['tab_mode']]['uploaded']
@@ -1501,25 +1530,43 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             # run experiment in a thread
 
-            self.thread = QtCore.QThread()
-            self.worker.moveToThread(self.thread)
+            if self.global_variables['tab_mode'] == 'comparison':
+                for worker in self.worker.workers:
+                    thread = QtCore.QThread()
+                    worker.moveToThread(thread)
 
-            self.thread.started.connect(self.worker.run)
-            self.worker.finished.connect(self.thread.quit)
-            self.worker.finished.connect(self.worker.deleteLater)
-            self.thread.finished.connect(self.thread.deleteLater)
-            report_progress = self.report_main_progress if self.global_variables[
-                                                               'tab_mode'] == 'main' else self.report_tuning_progress
-            self.worker.progress.connect(report_progress)
-            self.thread.start()
+                    thread.started.connect(worker.run)
+                    worker.finished.connect(thread.quit)
+                    worker.finished.connect(worker.deleteLater)
+                    thread.finished.connect(thread.deleteLater)
 
-            save_experiment = self.save_main_experiment if self.global_variables[
-                                                               'tab_mode'] == 'main' else self.save_tuning_experiment
-            self.worker.finished.connect(save_experiment)  # save results
+                    worker.progress.connect(self.report_comparison_progress)
+                    thread.start()
+                    worker.finished.connect(self.save_comparison_progress)
 
-            # Final resets
-            self.startPushButton.setEnabled(False)
-            self.thread.finished.connect(self.reset_values)
+                    self.startPushButton.setEnabled(False)
+                    thread.finished.connect(self.reset_values)
+
+            else:
+                self.thread = QtCore.QThread()
+                self.worker.moveToThread(self.thread)
+
+                self.thread.started.connect(self.worker.run)
+                self.worker.finished.connect(self.thread.quit)
+                self.worker.finished.connect(self.worker.deleteLater)
+                self.thread.finished.connect(self.thread.deleteLater)
+
+                tab_mode = self.global_variables['tab_mode'] == 'main'
+                report_progress = self.report_main_progress if tab_mode else self.report_tuning_progress
+                self.worker.progress.connect(report_progress)
+                self.thread.start()
+
+                save_experiment = self.save_main_experiment if tab_mode else self.save_tuning_experiment
+                self.worker.finished.connect(save_experiment)  # save results
+
+                # Final resets
+                self.startPushButton.setEnabled(False)
+                self.thread.finished.connect(self.reset_values)
 
         except BaseException as err:
             msg = f"Unexpected {err=}, {type(err)=}"
@@ -1597,6 +1644,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
                  algorithm=self.algorithm_name, tuning_data=tuning_data, fixed_params=fixed_params,
                  scale=self.current_scale)
         print("Results saved [Ok]")
+
+    def report_comparison_progress(self):
+        pass
+
+    def save_comparison_experiment(self):
+        pass
 
     def reset_values(self):
         self.startPushButton.setEnabled(True)

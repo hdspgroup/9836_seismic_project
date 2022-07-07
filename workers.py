@@ -46,3 +46,13 @@ class TuningWorker(QtCore.QObject):
                     break
 
         self.finished.emit()
+
+
+class ComparisonWorker:
+    def __init__(self, algorithms, param_list, max_iter):
+        self.fista_worker = Worker(algorithms[0], param_list[0], max_iter)
+        self.gap_worker = Worker(algorithms[1], param_list[1], max_iter)
+        self.twist_worker = Worker(algorithms[2], param_list[2], max_iter)
+        self.admm_worker = Worker(algorithms[3], param_list[3], max_iter)
+
+        self.workers = [self.fista_worker, self.gap_worker, self.twist_worker, self.admm_worker]

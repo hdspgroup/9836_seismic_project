@@ -266,19 +266,19 @@ class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
 
 class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
     def __init__(self):
-        self.report_data = None
+        self.comparison_data = None
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.05, right=0.95, bottom=0.05, top=0.90)
         super(ComparisonReconstructionGraphic, self).__init__(self.figure)
 
-    def update_report(self, report_data):
-        self.report_data = report_data
+    def update_report(self, comparison_data):
+        self.comparison_data = comparison_data
 
     def update_figure(self):
         try:
             self.figure.clear()
 
-            x_result = self.report_data['x_result']
+            x_result = self.comparison_data['x_result']
             sampling = {item[0]: item[1] for item in self.report_data['sampling']}
 
             x = sampling['x_ori']
@@ -289,36 +289,38 @@ class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
             pattern_rand_b2 = np.asarray(pattern_rand, dtype=bool) == 0
             H_elim = temp[pattern_rand_b2]
 
-            case = str(self.report_data['algorithm_name'])
-            self.figure.suptitle(f'Resultos del algoritmo {case}')
-            axs = self.figure.subplots(2, 2)
+            # =#=#=#=#=#=#=#
+
+            fig, axs = plt.subplots(2, 3, dpi=150)
+            # fig.suptitle('Comparaciones')
 
             axs[0, 0].imshow(x, cmap='gray', aspect='auto')
-            axs[0, 0].set_title('Referencia')
+            axs[0, 0].set_title('Reference')
 
             ytemp = y_rand.copy()
-            condition = H_elim.size > 0
-            if condition:
-                ytemp[:, H_elim] = None
+            ytemp[:, H_elim] = None
             axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
-            axs[1, 0].set_title('Medidas')
+            axs[1, 0].set_title('Measurements')
 
-            # axs[1, 0].sharex(axs[0, 0])
-            # metric = PSNR(x[:, H_elim], x_result[:, H_elim])
-            aux_x = x[:, H_elim] if condition else x
-            aux_x_result = x_result[:, H_elim] if condition else x_result
-            metric = PSNR(aux_x, aux_x_result)
-            metric_ssim = ssim(aux_x, aux_x_result)
-            axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
-            axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
-
-            index = 5
-            aux_H_elim = index if condition else H_elim[index]
-            axs[1, 1].plot(x[:, aux_H_elim], 'r', label='Referencia')
-            axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
-            axs[1, 1].legend(loc='best')
-            axs[1, 1].set_title('Traza ' + str("{:.0f}".format(aux_H_elim)))
-            axs[1, 1].grid(axis='both', linestyle='--')
+            # metric = PSNR(x[:, H_elim], x_result_fista[:, H_elim])
+            # metric_ssim = ssim(x[:, H_elim], x_result_fista[:, H_elim])
+            # axs[0, 1].imshow(x_result_fista, cmap='gray', aspect='auto')
+            # axs[0, 1].set_title(f'FISTA\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+            #
+            # metric = PSNR(x[:, H_elim], x_result_gap[:, H_elim])
+            # metric_ssim = ssim(x[:, H_elim], x_result_gap[:, H_elim])
+            # axs[1, 1].imshow(x_result_gap, cmap='gray', aspect='auto')
+            # axs[1, 1].set_title(f'GAP\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+            #
+            # metric = PSNR(x[:, H_elim], x_result_twist[:, H_elim])
+            # metric_ssim = ssim(x[:, H_elim], x_result_twist[:, H_elim])
+            # axs[0, 2].imshow(x_result_twist, cmap='gray', aspect='auto')
+            # axs[0, 2].set_title(f'TwIST\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+            #
+            # metric = PSNR(x[:, H_elim], x_result_admm[:, H_elim])
+            # metric_ssim = ssim(x[:, H_elim], x_result_admm[:, H_elim])
+            # axs[1, 2].imshow(x_result_admm, cmap='gray', aspect='auto')
+            # axs[1, 2].set_title(f'ADMM\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
 
             self.draw()
 
