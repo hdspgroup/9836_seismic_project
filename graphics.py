@@ -91,7 +91,7 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
             H_elim = temp[pattern_rand_b2]
 
             case = str(self.report_data['algorithm_name'])
-            self.figure.suptitle(f'Resultos del algoritmo {case}')
+            self.figure.suptitle(f'Resultados del algoritmo {case}')
             axs = self.figure.subplots(2, 2)
 
             axs[0, 0].imshow(x, cmap='gray', aspect='auto')

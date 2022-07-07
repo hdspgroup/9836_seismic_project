@@ -469,11 +469,12 @@ Por otra parte, los resultados cuantitativos del experimento se observan en el s
     \label{fig:main_result_6}
 \end{Figure}
 
+\vspace{0.5cm}
 \section{Ajuste de parámetros}
 
 \begin{multicols}{2}
 
-Como se observa en la figura \ref{fig:tuning_button}, el segundo botón habilitará a la aplicación para realizar pruebas basada en un ajuste de parámetros sobre las muestras sísmicas, este es el menú de ajuste de parámetros.
+El segundo modo de ejecución de ReDs es el ajuste de parámetros sobre las muestras sísmicas. Este modo se activa usando el segundo botón del menú principal, tal como se muestra en la figura \ref{fig:tuning_button}.
 
 \begin{Figure}
     \centering
@@ -486,7 +487,7 @@ Como se observa en la figura \ref{fig:tuning_button}, el segundo botón habilita
 
 El ajuste de parámetros permite probar diferentes rangos de parámetros para cada uno de los algoritmos de una forma sencilla y visualizar la curva de rendimiento en dichos ajustes.
 
-Como se explicó previamente, la aplicación se adapta a los tipos de pruebas que se quieran realizar, por lo que la aplicación deshabilita los paneles u opciones que no son necesarias para el ajuste de parámetros, en este caso, y se habilita un nuevo panel llamado \emph{Ajuste de parámetros}, como se observa en la figura \ref{fig:tuning}.
+La aplicación ReDs se adapta a los tipos de pruebas que se quieran realizar, por lo que la aplicación deshabilita los paneles u opciones que no son necesarias para el ajuste de parámetros, en este caso, y se habilita un nuevo panel llamado \emph{Ajuste de parámetros}, como se observa en la figura \ref{fig:tuning}.
 
 \begin{Figure}
     \centering
@@ -495,39 +496,56 @@ Como se explicó previamente, la aplicación se adapta a los tipos de pruebas qu
     \label{fig:tuning}
 \end{Figure}
 
-En esta figura se observan los cambios que surgen comparados con la interfaz general \ref{fig:vision}. En \circled{1} se deshabilitan los parámetros de los algoritmos para usar el nuevo de panel de ajuste de parámetros \circled{2} y poder realizar nuevas configuraciones de experimentos sobre los datos sísmicos cargados. Adicionalmente, la visualización de resultados se simplifica a una sola gráfica \circled{3}. A continuación, se analizará el panel de ajuste de parámetros y la visualización de resultados.
+A continuación se listan los cambios que realiza la aplicación cuando se activa el modo de ajuste de parámetros:
+
+\begin{dingautolist}{192}
+	\setlength\itemsep{0em}
+	\item Se deshabilitan los parámetros de los algoritmos para usar el nuevo de panel de ajuste de parámetros
+	\item Define el rango y modo del ajuste de parámetros
+	\item La visualización de resultados se simplifica a una sola gráfica
+\end{dingautolist}
+
+A continuación, se analiza el panel de ajuste de parámetros y la visualización de resultados.
 
 \subsection{Configuraciones}
 
-Como se observa en la figura \ref{fig:tuning_panel}, el panel de ajuste de parámetros permite al usuario configurar el tipo de prueba que desea realizar y se encuentra dividido en:
+El panel ed ajuste de parámetros, como se muestra en la figura \ref{fig:tuning_panel}, permite al usuario configurar el tipo de prueba que desea realizar. Se encuentra dividido en las siguientes secciones:
 
 \begin{multicols}{2}
+	
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{tuning-panel.png}
+	\captionof{figure}{Panel de ajuste de parámetros.}
+	\label{fig:tuning_panel}
+\end{Figure}	
 
 \begin{itemize}
-    \item[I.] \textbf{Tipo de ajuste:} El tipo de ajuste permite configurar la cantidad de valores de un mismo parámetro para algún algoritmo con los que se desean realizar pruebas. Este puede ser en intervalo, donde el usuario debe ingresar la cantidad de \textcolor{ClearPurple}{\emph{valores}} que desea ingresar, como se observa en la figura \ref{fig:tuning_panel}. El otro tipo de ajuste es de lista, donde el usuario debe ingresar cada uno de los valores con los que desea realizar pruebas.
-    
-    \item[II.] \textbf{Párametro:} Esta caja de parámetros se adaptará al algoritmo escogido. Su función es permitir al usuario seleccionar el parámetro al cual se le va a realizar el ajuste de acuerdo al tipo de ajuste.
-    
-    \item[III.] \textbf{Escala:} Permite al usuario modificar el comportamiento de los valores de los parámetros. Esta escala puede ser lineal, cuyo comportamiento no afectará a los valores de los parámetros, de tal manera que $y = x$, donde $x$ es cualquier valor de los parámetros. El otro tipo de escala es la escala logaritmica, la cual tomará cada uno de los valores establecidos por el usuario, de tal manera que $y = 10^x$.
+	
+    \item[I.] \textbf{Tipo de ajuste:} Permite configurar la cantidad de valores de un mismo parámetro para algún algoritmo con los que se desean realizar pruebas. Este puede ser en intervalo, donde el usuario debe ingresar la cantidad de \textcolor{ClearPurple}{\emph{valores}} que desea ingresar, como se observa en la figura \ref{fig:tuning_panel}. El otro tipo de ajuste es de lista, donde el usuario debe ingresar cada uno de los valores con los que desea realizar pruebas.    
     
 \end{itemize}
 
-\begin{Figure}
-    \centering
-    \includegraphics[width=0.9\linewidth]{tuning-panel.png}
-     \captionof{figure}{Panel de ajuste de parámetros.}
-    \label{fig:tuning_panel}
-\end{Figure}
-
 \end{multicols}
+
+\begin{itemize}[leftmargin=0.5in]
+	\setlength\itemsep{0em} 
+	
+	\item[II.] \textbf{Parámetro:} Este listado de parámetros se adaptará al algoritmo escogido. Su función es permitir al usuario seleccionar el parámetro al cual se le va a realizar el ajuste de acuerdo al tipo de ajuste.       
+    
+    \item[III.] \textbf{Escala:} Permite al usuario modificar el comportamiento de los valores de los parámetros. Esta escala puede ser lineal, cuyo comportamiento no afectará a los valores de los parámetros, de tal manera que $y = x$, donde $x$ es cualquier valor de los parámetros. El otro tipo de escala es la escala logarítmica, la cual tomará cada uno de los valores establecidos por el usuario, de tal manera que $y = 10^x$.
+    
+\end{itemize}
+
+
 
 \subsubsection{Realizando un ajuste de parámetros óptimo}
 
-Para realizar un ajuste de parámetros óptimo, primero se deberá cargar el dato sísmico, el proceso es igual a la mencionada en la sección \ref{sec:data_lecture}.
+Para realizar un ajuste de parámetros óptimo, primero se deberá cargar el dato sísmico, tal como se indica en la sección \ref{sec:data_lecture}.
 
 \begin{multicols}{2}
 
-Ahora se debe seleccionar el algoritmo al cual se le desea hallar los parámetros óptimos dado el dato sísmico cargado, en este caso se selecciona FISTA, y se establece la configuración de parámetros que se observa en la figura \ref{fig:tuning_params}. A continuación, se explicará esta selección de parámetros:
+Ahora, se debe seleccionar el algoritmo al cual se le desea hallar los parámetros óptimos dado el dato sísmico cargado. Para este ejemplo se selecciona el algoritmo FISTA, y se establece la configuración de parámetros que se observa en la figura \ref{fig:tuning_params}. A continuación se explica la selección de parámetros:
 
 \begin{itemize}
     \item Para el ajuste de parámetros se seleccionó de tipo intervalo con escala logarítmica ya que facilita al usuario la selección de parámetros y visualización de resultados obtenidos.
@@ -543,7 +561,7 @@ Ahora se debe seleccionar el algoritmo al cual se le desea hallar los parámetro
 
 \end{multicols}
 
-Primero se ajustará el parámetro $\lambda$, estos resultados se observan en la figura \ref{fig:tuning_1}. En esta figura se pueden observar los resultados obtenidos para la configuración de parámetros establecida en la figura \ref{fig:tuning_params}. Por inspección, el valor óptimo para $\lambda$ es $\lambda^* \approx 2.91$.
+Una vez completada la configuración se procede a ajustar el parámetro $\lambda$. Los resultados se observan en la figura \ref{fig:tuning_1}. En esta figura se pueden observar los resultados obtenidos para la configuración de parámetros establecida en la figura \ref{fig:tuning_params}. Por inspección, el valor óptimo para $\lambda$ es $\lambda^* \approx 2.91$.
 
 \begin{Figure}
     \centering
@@ -553,15 +571,15 @@ Primero se ajustará el parámetro $\lambda$, estos resultados se observan en la
 \end{Figure}
 
 \begin{multicols}{2}
+	
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.8\linewidth]{tuning-params-2.png}
+	\captionof{figure}{Ajuste del parámetro $\mu$ para el algoritmo FISTA.}
+	\label{fig:tuning_params_2}
+\end{Figure}
 
 Ahora, para encontrar el valor óptimo $\mu^*$, se toma el valor de $\lambda^*$ y se evalua para un intervalo de $\mu$, como el que se observa en la figura \ref{fig:tuning_params_2}. Los resultados obtenidos para este ajuste de parámetros se observan en la figura \ref{fig:tuning_2}. Por inspección, se observa que el valor óptimo $\mu^* \approx 0.39$.
-
-\begin{Figure}
-    \centering
-    \includegraphics[width=0.8\linewidth]{tuning-params-2.png}
-     \captionof{figure}{Ajuste del parámetro $\mu$ para el algoritmo FISTA.}
-    \label{fig:tuning_params_2}
-\end{Figure}
 
 \end{multicols}
 
@@ -574,7 +592,7 @@ Ahora, para encontrar el valor óptimo $\mu^*$, se toma el valor de $\lambda^*$ 
 
 \section{Visualización general de Resultados}
 
-Los experimentos realizados quedan almacenados en el directorio escogidos por el usuario de forma local en su computadora. Esos resultados pueden ser visualizados a través del panel de visualización \circled{6} en la figura \ref{fig:vision}.
+Los experimentos realizados quedan almacenados en el directorio escogidos por el usuario de forma local en su computadora. Esos resultados pueden ser visualizados a través del panel de visualización \circled{6} en el extremo inferior izquierdo de la figura \ref{fig:vision}.
 
 \subsection{Menú principal}
 
@@ -595,14 +613,14 @@ Esta herramienta funciona de la misma manera para los dos tipos de experimentos 
 
 \begin{multicols}{2}
 
-Como se observa en la figura \ref{fig:report_2}, el usuario podrá seleccionar el archivo que desee visualizar (en ester caso \emph{resultados\_1.npz}) con los resultados de un experimento previamente realizado. Una vez seleccionado, se debe pulsar la opción \emph{Abrir} y los resultados serán cargados tanto en el panel de resultados de la figura \ref{fig:report_3}, donde \circled{1} ese el directorio padre del los resultados cargados \circled{2}.
-
 \begin{Figure}
-    \centering
-    \includegraphics[width=0.8\linewidth]{report-3.png}
-     \captionof{figure}{Panel con resultados cargados de un experimento previo.}
-    \label{fig:report_3}
+	\centering
+	\includegraphics[width=0.8\linewidth]{report-3.png}
+	\captionof{figure}{Panel con resultados cargados de un experimento previo.}
+	\label{fig:report_3}
 \end{Figure}
+
+Como se observa en la figura \ref{fig:report_2}, el usuario podrá seleccionar el archivo que desee visualizar (en ester caso \emph{resultados\_1.npz}) con los resultados de un experimento previamente realizado. Una vez seleccionado, se debe pulsar la opción \emph{Abrir} y los resultados serán cargados tanto en el panel de resultados de la figura \ref{fig:report_3}, donde \circled{1} ese el directorio padre del los resultados cargados \circled{2}.
 
 \end{multicols}
 
@@ -641,7 +659,7 @@ Como se mencionó al principio de este manual, esta aplicación se encuentra aso
 
 \begin{Figure}
     \centering
-    \includegraphics[width=0.3\linewidth]{about-tab.png}
+    \includegraphics[width=0.5\linewidth]{about-tab.png}
      \captionof{figure}{Botón de Acerca de.}
     \label{fig:about_tab}
 \end{Figure}
@@ -659,12 +677,14 @@ Como se mencionó al principio de este manual, esta aplicación se encuentra aso
 
 Con el propósito de obtener el mayor rendimiento de la aplicación se realizan las siguientes recomendaciones:
 
-\begin{itemize}
+\begin{itemize}[leftmargin=0.5in]
+	\setlength\itemsep{0em} 
     \item Realizar los experimentos siguiendo este orden:
     
     \textbf{Menú principal}
     
-    \begin{enumerate}
+    \begin{enumerate}[leftmargin=0.5in]
+    	\setlength\itemsep{0em} 
         \item Cargar un dato sísmico.
         \item Seleccionar el algoritmo que desea usar y configurar sus parámetros.
         \item Seleccionar el tipo de submuestreo y configurar sus parámetros.
@@ -676,7 +696,8 @@ Con el propósito de obtener el mayor rendimiento de la aplicación se realizan 
     
     Se sigue el mismo orden que el menú principal, pero los incisos 2 y 3 cambian por:
     
-    \begin{enumerate}
+    \begin{enumerate}[leftmargin=0.5in]
+    	\setlength\itemsep{0em} 
         \item[2.] Seleccionar el agloritmo que desar usar y configurar la cantidad máxima de iteraciones.
         \item[3.] Configurar el ajuste de parámetros que se desea realizar.
     \end{enumerate}
