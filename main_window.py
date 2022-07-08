@@ -829,7 +829,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
                                 comparison=dict(uploaded='', temp_saved='', saved='', report=''))
         self.state = dict(main=dict(progress=dict(iteration=[], error=[], psnr=[], ssim=[])),
                           tuning=dict(progress=dict(total_runs=0, fixed_params='', current_scale='')),
-                          comparison=dict(progress=dict()))
+                          comparison=dict(progress=dict(iteration=[], errors=[], psnrs=[], ssims=[])))
 
         self.icons_path = 'assets/parameters'
 
@@ -1378,9 +1378,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.state[self.global_variables['tab_mode']]['progress']['psnr'] = []
             self.state[self.global_variables['tab_mode']]['progress']['ssim'] = []
 
-        else:
+        elif self.global_variables['tab_mode'] == 'tuning':
             self.state[self.global_variables['tab_mode']]['progress']['total_runs'] = 0
             self.state[self.global_variables['tab_mode']]['progress']['fixed_params'] = {}
+
+        else:
+            self.state[self.global_variables['tab_mode']]['progress']['iteration'] = []
+            self.state[self.global_variables['tab_mode']]['progress']['errors'] = []
+            self.state[self.global_variables['tab_mode']]['progress']['psnrs'] = []
+            self.state[self.global_variables['tab_mode']]['progress']['ssims'] = []
 
         self.maxiter = int(self.maxiterSpinBox.text())
 
@@ -1652,37 +1658,39 @@ class UIMainWindow(QtWidgets.QMainWindow):
                  scale=self.current_scale)
         print("Results saved [Ok]")
 
-    def report_comparison_progress(self, outputs):
-        iter = outputs[0][0]
+    def report_comparison_progress(self, iter, outputs):
         self.experimentProgressBar.setValue(int((iter / self.maxiter) * 100))
 
         # update figure
         errs, psnrs, ssims = [], [], []
-        #for err, psnr, ssim in
-
-
-        err = res_dict['hist'][iter, 0]
-        psnr = np.round(res_dict['hist'][iter, 1], 3)
-        ssim = np.round(res_dict['hist'][iter, 2], 3)
+        for output in outputs:
+            errs.append(output['result'][iter, 0])
+            psnrs.append(np.round(output['result'][iter, 1], 3))
+            ssims.append(np.round(output['result'][iter, 2], 3))
 
         iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration']
-        error_list = self.state[self.global_variables['tab_mode']]['progress']['error']
-        psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr']
-        ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssim']
+        error_list = self.state[self.global_variables['tab_mode']]['progress']['errors']
+        psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnrs']
+        ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssims']
 
         iteration_list.append(iter)
-        error_list.append(err)
-        psnr_list.append(psnr)
-        ssim_list.append(ssim)
+        error_list.append(errs)
+        psnr_list.append(psnrs)
+        ssim_list.append(ssims)
 
         if iter % (self.maxiter // 10) == 0 or iter == self.maxiter:
-            self.performanceGraphic.update_values(iteration_list, error_list, psnr_list, ssim_list)
-            self.performanceGraphic.update_figure()
+            self.performanceGraphicComparison.update_values(iteration_list, error_list, psnr_list, ssim_list)
+            self.performanceGraphicComparison.update_figure()
 
-            self.reconstructionGraphic.update_report(
-                dict(x_result=res_dict['result'], hist=res_dict['hist'], sampling=self.sampling_dict,
+            x_results, hists = [], []
+            for output in outputs:
+                x_results.append(output['result'])
+                hists.append(output['hist'])
+
+            self.reconstructionGraphicComparison.update_report(
+                dict(x_results=x_results, hist=hists, sampling=self.sampling_dict,
                      algorithm_name=self.algorithm_name))
-            self.reconstructionGraphic.update_figure()
+            self.reconstructionGraphicComparison.update_figure()
 
     def save_comparison_experiment(self, ):
         pass

@@ -13,7 +13,7 @@ from gui.scripts.alerts import showCritical
 
 class PerformanceGraphic(FigureCanvasQTAgg):
     def __init__(self):
-        self.performance_data = dict(iteracion=[], error=[], psnr=[])
+        self.performance_data = dict(iteracion=[], error=[], psnr=[], ssim=[])
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.1, right=0.9, bottom=0.08, top=0.92)
         super(PerformanceGraphic, self).__init__(self.figure)
@@ -212,48 +212,51 @@ class TuningGraphic(FigureCanvasQTAgg):
 
 class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
     def __init__(self):
-        self.performance_data = dict(iteracion=[], error=[], psnr=[])
+        self.algorithm_names = ['FISTA', 'GAP', 'TwIST', 'ADMM']
+        self.performance_data = dict(iteracion=[], errors=[], psnrs=[], ssims=[])
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.1, right=0.9, bottom=0.08, top=0.92)
         super(ComparisonPerformanceGraphic, self).__init__(self.figure)
 
-    def update_values(self, iteracion, error, psnr, ssim):
+    def update_values(self, iteracion, errors, psnrs, ssims):
         self.performance_data['iteracion'] = iteracion
-        self.performance_data['error'] = error
-        self.performance_data['psnr'] = psnr
-        self.performance_data['ssim'] = ssim
+        self.performance_data['errors'] = errors
+        self.performance_data['psnrs'] = psnrs
+        self.performance_data['ssims'] = ssims
 
     def update_figure(self):
         try:
-            iteracion = self.performance_data['iteracion']
-            error = self.performance_data['error']
-            psnr = self.performance_data['psnr']
-            ssim = self.performance_data['ssim']
-
             self.figure.clear()
+
+            iteracion = np.array(self.performance_data['iteracion'])
+            errors = np.array(self.performance_data['errors'])
+            psnrs = np.array(self.performance_data['psnrs'])
+            ssims = np.array(self.performance_data['ssims'])
+
             self.figure.suptitle(f'Resultados del experimento')
+            axs = self.figure.subplots(2, 2)
 
-            axes_1 = self.figure.add_subplot(111)
-            axes_2 = axes_1.twinx()
+            for idx, (i, j) in enumerate(product([0, 1], [0, 1])):
+                axes_1 = axs[i, j]
+                axes_2 = axes_1.twinx()
 
-            color = 'tab:red'
-            axes_1.set_xlabel('iteraciones')
-            axes_1.set_ylabel('ssim', color=color)
-            axes_1.plot(iteracion, ssim, color=color)
-            axes_1.tick_params(axis='y', labelcolor=color, length=5)
-            # axes_1.yaxis.set_major_locator(MaxNLocator(8))
-            axes_1.grid(axis='both', linestyle='--')
+                color = 'tab:red'
+                axes_1.set_xlabel('iteraciones')
+                axes_1.set_ylabel('ssim', color=color)
+                axes_1.plot(iteracion, ssims[:, idx], color=color)
+                axes_1.set_title(self.algorithm_names[idx])
+                axes_1.tick_params(axis='y', labelcolor=color, length=5)
+                axes_1.grid(axis='both', linestyle='--')
 
-            axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
+                axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
-            color = 'tab:blue'
-            axes_2.set_ylabel('psnr', color=color)
-            axes_2.plot(iteracion, psnr, color=color)
-            axes_2.tick_params(axis='y', labelcolor=color, length=5)
-            # axes_2.yaxis.set_major_locator(MaxNLocator(8))
-            axes_2.grid(axis='both', linestyle='--')
+                color = 'tab:blue'
+                axes_2.set_ylabel('psnr', color=color)
+                axes_2.plot(iteracion, psnrs[:, idx], color=color)
+                axes_2.tick_params(axis='y', labelcolor=color, length=5)
+                axes_2.grid(axis='both', linestyle='--')
 
-            axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
+                axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 
             self.draw()
 
@@ -266,6 +269,7 @@ class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
 
 class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
     def __init__(self):
+        self.algorithm_names = ['FISTA', 'GAP', 'TwIST', 'ADMM']
         self.comparison_data = None
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.05, right=0.95, bottom=0.05, top=0.90)
@@ -278,9 +282,7 @@ class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
         try:
             self.figure.clear()
 
-            x_result = self.comparison_data['x_result']
-            sampling = {item[0]: item[1] for item in self.report_data['sampling']}
-
+            sampling = {item[0]: item[1] for item in self.comparison_data['sampling']}
             x = sampling['x_ori']
             y_rand = sampling['y_rand']
             pattern_rand = sampling['pattern_rand']
@@ -291,36 +293,28 @@ class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
 
             # =#=#=#=#=#=#=#
 
-            fig, axs = plt.subplots(2, 3, dpi=150)
-            # fig.suptitle('Comparaciones')
+            self.figure.suptitle(f'Comparaciones de algoritmos')
+            axs = self.figure.subplots(2, 3)
 
             axs[0, 0].imshow(x, cmap='gray', aspect='auto')
-            axs[0, 0].set_title('Reference')
+            axs[0, 0].set_title('Referencia')
 
             ytemp = y_rand.copy()
-            ytemp[:, H_elim] = None
+            condition = H_elim.size > 0
+            if condition:
+                ytemp[:, H_elim] = None
             axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
-            axs[1, 0].set_title('Measurements')
+            axs[1, 0].set_title('Medidas')
 
-            # metric = PSNR(x[:, H_elim], x_result_fista[:, H_elim])
-            # metric_ssim = ssim(x[:, H_elim], x_result_fista[:, H_elim])
-            # axs[0, 1].imshow(x_result_fista, cmap='gray', aspect='auto')
-            # axs[0, 1].set_title(f'FISTA\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
-            #
-            # metric = PSNR(x[:, H_elim], x_result_gap[:, H_elim])
-            # metric_ssim = ssim(x[:, H_elim], x_result_gap[:, H_elim])
-            # axs[1, 1].imshow(x_result_gap, cmap='gray', aspect='auto')
-            # axs[1, 1].set_title(f'GAP\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
-            #
-            # metric = PSNR(x[:, H_elim], x_result_twist[:, H_elim])
-            # metric_ssim = ssim(x[:, H_elim], x_result_twist[:, H_elim])
-            # axs[0, 2].imshow(x_result_twist, cmap='gray', aspect='auto')
-            # axs[0, 2].set_title(f'TwIST\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
-            #
-            # metric = PSNR(x[:, H_elim], x_result_admm[:, H_elim])
-            # metric_ssim = ssim(x[:, H_elim], x_result_admm[:, H_elim])
-            # axs[1, 2].imshow(x_result_admm, cmap='gray', aspect='auto')
-            # axs[1, 2].set_title(f'ADMM\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+            indices = [(i, j) for i, j in product([0, 1], [1, 2])]
+            for idxs, algorithm_name, x_result in zip(indices, self.algorithm_names, self.comparison_data['x_results']):
+                i, j = idxs
+                aux_x = x[:, H_elim] if condition else x
+                aux_x_result = x_result[:, H_elim] if condition else x_result
+                metric = PSNR(aux_x, aux_x_result)
+                metric_ssim = ssim(aux_x, aux_x_result)
+                axs[i, j].imshow(x_result, cmap='gray', aspect='auto')
+                axs[i, j].set_title(f'{algorithm_name} - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
 
             self.draw()
 
