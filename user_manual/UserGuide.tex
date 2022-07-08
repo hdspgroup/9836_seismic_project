@@ -106,10 +106,10 @@ Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarbur
 Esta aplicación permite la reconstrucción de trazas de muestras sísmicas mediante 4 diferentes algoritmos:
 \begin{itemize}[leftmargin=0.5in]
 	\setlength\itemsep{0em}
-	\item FISTA, \underline{\textit{COLOCAR NOMBRES COMPLETOS DE LOS ALGORITMOS}}
-	\item GAP
-	\item TwIST
-	\item ADMM
+	\item FISTA (Fast Iterative Shrinkage-Thresholding Algorithm): permite resolver problemas inversos lineales mediante un algoritmo iterativo rápido
+	\item GAP (Generalized Alternating Projection): resuelve el problema de seguimiento de base grupal, que extiende el seguimiento de base reemplazando la norma l1 por una norma ponderada l2,1.
+	\item TwIST (Two-step Iterative Shrinkage/Thresholding): basado en el algoritmo ISTA, permite la resolución de problemas inversos
+	\item ADMM (Alternating Direction Method of Multipliers): resuelve problemas de optimización convexos dividiéndolos en partes más pequeñas.
 \end{itemize}
 El usuario puede configurar cada uno de los algoritmos de reconstrucción de tal manera que pueda realizar diferentes tipos de submuestreo y ajuste de parámetros, todo desde una interfaz gráfica de usuario simple y clara, tal cual como se observa en la figura \ref{fig:vision}.
 
