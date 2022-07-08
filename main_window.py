@@ -1530,43 +1530,50 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             # run experiment in a thread
 
-            if self.global_variables['tab_mode'] == 'comparison':
-                for worker in self.worker.workers:
-                    thread = QtCore.QThread()
-                    worker.moveToThread(thread)
+            # if self.global_variables['tab_mode'] == 'comparison':
+            #     for worker in self.worker.workers:
+            #         thread = QtCore.QThread()
+            #         worker.moveToThread(thread)
+            #
+            #         thread.started.connect(worker.run)
+            #         worker.finished.connect(thread.quit)
+            #         worker.finished.connect(worker.deleteLater)
+            #         thread.finished.connect(thread.deleteLater)
+            #
+            #         worker.progress.connect(self.report_comparison_progress)
+            #         thread.start()
+            #         worker.finished.connect(self.save_comparison_progress)
+            #
+            #         self.startPushButton.setEnabled(False)
+            #         thread.finished.connect(self.reset_values)
+            #
+            # else:
+            self.thread = QtCore.QThread()
+            self.worker.moveToThread(self.thread)
 
-                    thread.started.connect(worker.run)
-                    worker.finished.connect(thread.quit)
-                    worker.finished.connect(worker.deleteLater)
-                    thread.finished.connect(thread.deleteLater)
+            self.thread.started.connect(self.worker.run)
+            self.worker.finished.connect(self.thread.quit)
+            self.worker.finished.connect(self.worker.deleteLater)
+            self.thread.finished.connect(self.thread.deleteLater)
 
-                    worker.progress.connect(self.report_comparison_progress)
-                    thread.start()
-                    worker.finished.connect(self.save_comparison_progress)
-
-                    self.startPushButton.setEnabled(False)
-                    thread.finished.connect(self.reset_values)
-
+            tab_mode = self.global_variables['tab_mode']
+            if tab_mode == 'main':
+                report_progress = self.report_main_progress
+                save_experiment = self.save_main_experiment
+            elif tab_mode == 'tuning':
+                report_progress = self.report_tuning_progress
+                save_experiment = self.save_tuning_experiment
             else:
-                self.thread = QtCore.QThread()
-                self.worker.moveToThread(self.thread)
+                report_progress = self.report_comparison_progress
+                save_experiment = self.save_comparison_experiment
 
-                self.thread.started.connect(self.worker.run)
-                self.worker.finished.connect(self.thread.quit)
-                self.worker.finished.connect(self.worker.deleteLater)
-                self.thread.finished.connect(self.thread.deleteLater)
+            self.worker.progress.connect(report_progress)
+            self.thread.start()
+            self.worker.finished.connect(save_experiment)  # save results
 
-                tab_mode = self.global_variables['tab_mode'] == 'main'
-                report_progress = self.report_main_progress if tab_mode else self.report_tuning_progress
-                self.worker.progress.connect(report_progress)
-                self.thread.start()
-
-                save_experiment = self.save_main_experiment if tab_mode else self.save_tuning_experiment
-                self.worker.finished.connect(save_experiment)  # save results
-
-                # Final resets
-                self.startPushButton.setEnabled(False)
-                self.thread.finished.connect(self.reset_values)
+            # Final resets
+            self.startPushButton.setEnabled(False)
+            self.thread.finished.connect(self.reset_values)
 
         except BaseException as err:
             msg = f"Unexpected {err=}, {type(err)=}"
@@ -1645,10 +1652,39 @@ class UIMainWindow(QtWidgets.QMainWindow):
                  scale=self.current_scale)
         print("Results saved [Ok]")
 
-    def report_comparison_progress(self):
-        pass
+    def report_comparison_progress(self, outputs):
+        iter = outputs[0][0]
+        self.experimentProgressBar.setValue(int((iter / self.maxiter) * 100))
 
-    def save_comparison_experiment(self):
+        # update figure
+        errs, psnrs, ssims = [], [], []
+        #for err, psnr, ssim in
+
+
+        err = res_dict['hist'][iter, 0]
+        psnr = np.round(res_dict['hist'][iter, 1], 3)
+        ssim = np.round(res_dict['hist'][iter, 2], 3)
+
+        iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration']
+        error_list = self.state[self.global_variables['tab_mode']]['progress']['error']
+        psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr']
+        ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssim']
+
+        iteration_list.append(iter)
+        error_list.append(err)
+        psnr_list.append(psnr)
+        ssim_list.append(ssim)
+
+        if iter % (self.maxiter // 10) == 0 or iter == self.maxiter:
+            self.performanceGraphic.update_values(iteration_list, error_list, psnr_list, ssim_list)
+            self.performanceGraphic.update_figure()
+
+            self.reconstructionGraphic.update_report(
+                dict(x_result=res_dict['result'], hist=res_dict['hist'], sampling=self.sampling_dict,
+                     algorithm_name=self.algorithm_name))
+            self.reconstructionGraphic.update_figure()
+
+    def save_comparison_experiment(self, ):
         pass
 
     def reset_values(self):

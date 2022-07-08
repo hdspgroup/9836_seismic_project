@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtGui, QtWidgets, QtSvg
+from PyQt5 import QtCore
 
 
 class Worker(QtCore.QObject):
@@ -48,11 +48,67 @@ class TuningWorker(QtCore.QObject):
         self.finished.emit()
 
 
-class ComparisonWorker:
+class ComparisonWorker(QtCore.QObject):
+    finished = QtCore.pyqtSignal(dict)
+    progress = QtCore.pyqtSignal(tuple)
+
+    def __init__(self, functions, param_list, maxiter):
+        super().__init__()
+        self.functions = functions
+        self.param_list = param_list
+        self.maxiter = maxiter
+
+    def run(self):
+        generators = []
+        for function, parameters in zip(self.functions, self.param_list):
+            generators.append(function(**parameters))
+
+        for outputs in zip(*generators):
+            self.progress.emit(outputs)
+
+            if outputs[0][0] == self.maxiter:
+                break
+
+        # get last yield
+        x_results, hists = [], []
+        for generator in generators:
+            x_result, hist = next(generator)
+            x_results.append(x_result)
+            hists.append(hist)
+
+        self.finished.emit({'results': x_results, 'hists': hists})
+
+
+# class ComparisonWorker(QtCore.QObject):
+#     finished = QtCore.pyqtSignal(dict)
+#     progress = QtCore.pyqtSignal(str, int, dict)
+#
+#     def __init__(self, algorithm, function, parameters, maxiter):
+#         super().__init__()
+#         self.algorithm = algorithm
+#         self.function = function
+#         self.parameters = parameters
+#         self.maxiter = maxiter
+#
+#     def run(self):
+#         generator = self.function(**self.parameters)
+#         for itr, res_dict in generator:
+#             self.progress.emit(self.algorithm, itr, res_dict)
+#
+#             if itr == self.maxiter:
+#                 break
+#
+#         # get last yield
+#         x_result, hist = next(generator)
+#
+#         self.finished.emit({'algorithm': self.algorithm, 'result': x_result, 'hist': hist})
+
+
+class ComparisonWorkers:
     def __init__(self, algorithms, param_list, max_iter):
-        self.fista_worker = Worker(algorithms[0], param_list[0], max_iter)
-        self.gap_worker = Worker(algorithms[1], param_list[1], max_iter)
-        self.twist_worker = Worker(algorithms[2], param_list[2], max_iter)
-        self.admm_worker = Worker(algorithms[3], param_list[3], max_iter)
+        self.fista_worker = ComparisonWorker('fista', algorithms[0], param_list[0], max_iter)
+        self.gap_worker = ComparisonWorker('gap', algorithms[1], param_list[1], max_iter)
+        self.twist_worker = ComparisonWorker('twist', algorithms[2], param_list[2], max_iter)
+        self.admm_worker = ComparisonWorker('admm', algorithms[3], param_list[3], max_iter)
 
         self.workers = [self.fista_worker, self.gap_worker, self.twist_worker, self.admm_worker]
