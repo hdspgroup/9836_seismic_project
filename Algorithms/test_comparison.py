@@ -35,24 +35,24 @@ case = 'FISTA'
 alg = Algorithms(x, H, 'DCT2D', 'IDCT2D')
 
 fista_parameters = {'max_itr': max_itr,
-                    'lmb': 0.1,
-                    'mu': 0.3
+                    'lmb': 2.9,
+                    'mu': 0.4
                     }
 
 gap_parameters = {'max_itr': max_itr,
-                  'lmb': 1e-0
+                  'lmb': 30.0
                   }
 
 twist_parameters = {'max_itr': max_itr,
-                    'lmb': 0.5,
+                    'lmb': 17.0,
                     'alpha': 1.2,
                     'beta': 1.998
                     }
 
 admm_parameters = {'max_itr': max_itr,
-                   'lmb': 5e-4,
-                   'rho': 1,
-                   'gamma': 1
+                   'lmb': 0.0005,
+                   'rho': 0.5,
+                   'gamma': 1.05
                    }
 
 x_result_fista, hist_fista = alg.get_results('FISTA', **fista_parameters)
@@ -84,15 +84,15 @@ metric_ssim = ssim(x[:, H_elim], x_result_fista[:, H_elim])
 axs[0, 1].imshow(x_result_fista, cmap='gray', aspect='auto')
 axs[0, 1].set_title(f'FISTA\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
 
-metric = PSNR(x[:, H_elim], x_result_gap[:, H_elim])
-metric_ssim = ssim(x[:, H_elim], x_result_gap[:, H_elim])
-axs[1, 1].imshow(x_result_gap, cmap='gray', aspect='auto')
-axs[1, 1].set_title(f'GAP\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
-
 metric = PSNR(x[:, H_elim], x_result_twist[:, H_elim])
 metric_ssim = ssim(x[:, H_elim], x_result_twist[:, H_elim])
-axs[0, 2].imshow(x_result_twist, cmap='gray', aspect='auto')
-axs[0, 2].set_title(f'TwIST\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+axs[1, 1].imshow(x_result_twist, cmap='gray', aspect='auto')
+axs[1, 1].set_title(f'TwIST\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+
+metric = PSNR(x[:, H_elim], x_result_gap[:, H_elim])
+metric_ssim = ssim(x[:, H_elim], x_result_gap[:, H_elim])
+axs[0, 2].imshow(x_result_gap, cmap='gray', aspect='auto')
+axs[0, 2].set_title(f'GAP\nPSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
 
 metric = PSNR(x[:, H_elim], x_result_admm[:, H_elim])
 metric_ssim = ssim(x[:, H_elim], x_result_admm[:, H_elim])
@@ -114,14 +114,14 @@ axes_2 = axes_1.twinx()
 color = 'tab:red'
 axes_1.set_xlabel('iteraciones')
 axes_1.set_ylabel('ssim', color=color)
-axes_1.plot(iteracion, hist_fista[:, 2], color=color)
+axes_1.plot(iteracion[1:], hist_fista[1:, 2], color=color)
 axes_1.set_title('FISTA')
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
 axes_1.yaxis.set_major_locator(MaxNLocator(8))
 
 color = 'tab:blue'
 axes_2.set_ylabel('psnr', color=color)
-axes_2.plot(iteracion, hist_fista[:, 1], color=color)
+axes_2.plot(iteracion[1:], hist_fista[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
 axes_2.yaxis.set_major_locator(MaxNLocator(8))
 
@@ -131,14 +131,14 @@ axes_2 = axes_1.twinx()
 color = 'tab:red'
 axes_1.set_xlabel('iteraciones')
 axes_1.set_ylabel('ssim', color=color)
-axes_1.plot(iteracion, hist_gap[:, 2], color=color)
+axes_1.plot(iteracion[1:], hist_gap[1:, 2], color=color)
 axes_1.set_title('GAP')
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
 axes_1.yaxis.set_major_locator(MaxNLocator(8))
 
 color = 'tab:blue'
 axes_2.set_ylabel('psnr', color=color)
-axes_2.plot(iteracion, hist_gap[:, 1], color=color)
+axes_2.plot(iteracion[1:], hist_gap[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
 axes_2.yaxis.set_major_locator(MaxNLocator(8))
 
@@ -148,14 +148,14 @@ axes_2 = axes_1.twinx()
 color = 'tab:red'
 axes_1.set_xlabel('iteraciones')
 axes_1.set_ylabel('ssim', color=color)
-axes_1.plot(iteracion, hist_twist[:, 2], color=color)
+axes_1.plot(iteracion[1:], hist_twist[1:, 2], color=color)
 axes_1.set_title('TwIST')
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
 axes_1.yaxis.set_major_locator(MaxNLocator(8))
 
 color = 'tab:blue'
 axes_2.set_ylabel('psnr', color=color)
-axes_2.plot(iteracion, hist_twist[:, 1], color=color)
+axes_2.plot(iteracion[1:], hist_twist[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
 axes_2.yaxis.set_major_locator(MaxNLocator(8))
 
@@ -165,14 +165,14 @@ axes_2 = axes_1.twinx()
 color = 'tab:red'
 axes_1.set_xlabel('iteraciones')
 axes_1.set_ylabel('ssim', color=color)
-axes_1.plot(iteracion, hist_admm[:, 2], color=color)
+axes_1.plot(iteracion[1:], hist_admm[1:, 2], color=color)
 axes_1.set_title('ADMM')
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
 axes_1.yaxis.set_major_locator(MaxNLocator(8))
 
 color = 'tab:blue'
 axes_2.set_ylabel('psnr', color=color)
-axes_2.plot(iteracion, hist_admm[:, 1], color=color)
+axes_2.plot(iteracion[1:], hist_admm[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
 axes_2.yaxis.set_major_locator(MaxNLocator(8))
 

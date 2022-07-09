@@ -213,25 +213,25 @@ class TuningGraphic(FigureCanvasQTAgg):
 class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
     def __init__(self):
         self.algorithm_names = ['FISTA', 'GAP', 'TwIST', 'ADMM']
-        self.performance_data = dict(iteracion=[], errors=[], psnrs=[], ssims=[])
+        self.comparison_data = dict(iteracion=[], errors=[], psnrs=[], ssims=[])
         self.figure = plt.figure()
-        plt.subplots_adjust(left=0.1, right=0.9, bottom=0.08, top=0.92)
+        plt.subplots_adjust(left=0.08, right=0.92, bottom=0.08, top=0.92, wspace=0.5, hspace=0.3)
         super(ComparisonPerformanceGraphic, self).__init__(self.figure)
 
     def update_values(self, iteracion, errors, psnrs, ssims):
-        self.performance_data['iteracion'] = iteracion
-        self.performance_data['errors'] = errors
-        self.performance_data['psnrs'] = psnrs
-        self.performance_data['ssims'] = ssims
+        self.comparison_data['iteracion'] = iteracion
+        self.comparison_data['errors'] = errors
+        self.comparison_data['psnrs'] = psnrs
+        self.comparison_data['ssims'] = ssims
 
     def update_figure(self):
         try:
             self.figure.clear()
 
-            iteracion = np.array(self.performance_data['iteracion'])
-            errors = np.array(self.performance_data['errors'])
-            psnrs = np.array(self.performance_data['psnrs'])
-            ssims = np.array(self.performance_data['ssims'])
+            iteracion = np.array(self.comparison_data['iteracion'])
+            errors = np.array(self.comparison_data['errors'])
+            psnrs = np.array(self.comparison_data['psnrs'])
+            ssims = np.array(self.comparison_data['ssims'])
 
             self.figure.suptitle(f'Resultados del experimento')
             axs = self.figure.subplots(2, 2)
@@ -272,7 +272,7 @@ class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
         self.algorithm_names = ['FISTA', 'GAP', 'TwIST', 'ADMM']
         self.comparison_data = None
         self.figure = plt.figure()
-        plt.subplots_adjust(left=0.05, right=0.95, bottom=0.05, top=0.90)
+        plt.subplots_adjust(left=0.07, right=0.93, bottom=0.05, top=0.90)
         super(ComparisonReconstructionGraphic, self).__init__(self.figure)
 
     def update_report(self, comparison_data):

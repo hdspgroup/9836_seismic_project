@@ -1064,8 +1064,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         else:
             self.directories[self.global_variables['tab_mode']]['report'] = self.data_fname[0]
 
-            if self.global_variables['tab_mode'] == 'main':
-
+            tab_mode = self.global_variables['tab_mode']
+            if tab_mode == 'main':
                 data = np.load(self.data_fname[0], allow_pickle=True)
                 performance_data = {item[0]: item[1] for item in data['performance_data']}
 
@@ -1075,7 +1075,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 self.reconstructionGraphic.update_report(data)
                 self.reconstructionGraphic.update_figure()
 
-            elif self.global_variables['tab_mode'] == 'main':
+            elif tab_mode == 'tuning':
                 data = np.load(self.data_fname[0], allow_pickle=True)
                 self.algorithm_name = str(data['algorithm']).lower()
                 self.tuning_data = pd.DataFrame({item[0]: item[1] for item in data['tuning_data']})
@@ -1087,7 +1087,14 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 self.tuningGraphic.update_figure()
 
             else:
-                pass
+                data = np.load(self.data_fname[0], allow_pickle=True)
+                comparison_data = {item[0]: item[1] for item in data['comparison_data']}
+
+                self.performanceGraphicComparison.update_values(**comparison_data)
+                self.performanceGraphicComparison.update_figure()
+
+                self.reconstructionGraphicComparison.update_report(data)
+                self.reconstructionGraphicComparison.update_figure()
 
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
@@ -1155,7 +1162,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def show_main(self):
         self.global_variables['tab_mode'] = 'main'
-        self.algorithmGroupBox.setVisible(True)
+        view_mode = self.global_variables['view_mode']
+        comparison = True if view_mode == 'normal' else False
+
+        self.algorithmGroupBox.setVisible(comparison)
         self.tuningGroupBox.setVisible(False)
         self.comparisonGroupBox.setVisible(False)
         self.resultsToolBox.setVisible(True)
@@ -1167,8 +1177,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def show_tuning(self):
         self.global_variables['tab_mode'] = 'tuning'
-        self.algorithmGroupBox.setVisible(True)
-        self.tuningGroupBox.setVisible(True if self.global_variables['view_mode'] == 'normal' else False)
+        view_mode = self.global_variables['view_mode']
+        comparison = True if view_mode == 'normal' else False
+
+        self.algorithmGroupBox.setVisible(comparison)
+        self.tuningGroupBox.setVisible(comparison)
         self.comparisonGroupBox.setVisible(False)
         self.resultsToolBox.setVisible(False)
         self.tuningTabWidget.setVisible(True)
@@ -1186,9 +1199,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def show_comparison(self):
         self.global_variables['tab_mode'] = 'comparison'
+        view_mode = self.global_variables['view_mode']
+        comparison = True if view_mode == 'normal' else False
+
         self.algorithmGroupBox.setVisible(False)
         self.tuningGroupBox.setVisible(False)
-        self.comparisonGroupBox.setVisible(True)
+        self.comparisonGroupBox.setVisible(comparison)
         self.resultsToolBox.setVisible(False)
         self.tuningTabWidget.setVisible(False)
         self.comparisonsToolBox.setVisible(True)
@@ -1233,10 +1249,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def set_main_view(self):
         self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
 
-        self.algorithmGroupBox.setVisible(True)
-        self.tuningGroupBox.setVisible(True if self.global_variables['tab_mode'] == 'tuning' else False)
+        tab_mode = self.global_variables['tab_mode']
+        self.algorithmGroupBox.setVisible(True if tab_mode == 'main' else False)
+        self.tuningGroupBox.setVisible(True if tab_mode == 'tuning' else False)
         self.samplingGroupBox.setVisible(True)
         self.runGroupBox.setVisible(True)
+        self.comparisonGroupBox.setVisible(True if tab_mode == 'comparison' else False)
 
         _translate = QtCore.QCoreApplication.translate
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))
@@ -1248,6 +1266,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.tuningGroupBox.setVisible(False)
         self.samplingGroupBox.setVisible(False)
         self.runGroupBox.setVisible(False)
+        self.comparisonGroupBox.setVisible(False)
 
         _translate = QtCore.QCoreApplication.translate
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos reconstruidos"))
@@ -1317,17 +1336,14 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.spacerItem5.changeSize(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
 
     def verify_parameters(self, uploaded_directory):
-        validate = True
 
         if uploaded_directory == '':
             showWarning("Para iniciar, debe cargar el dato sísmico dando click al boton 'Cargar'")
-            validate = False
-            return
+            return False
 
         if self.directories[self.global_variables['tab_mode']]['temp_saved'] == '':
             showWarning("Por favor seleccione un nombre de archivo para guardar los resultados del algoritmo.")
-            validate = False
-            return
+            return False
 
         if self.global_variables['tab_mode'] == 'tuning':
             algorithm = self.algorithmComboBox.currentText().lower()
@@ -1359,15 +1375,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             if not validate_interval:
                 showWarning("Los parámetros iniciales deben ser menores que los parámetros finales.")
-                validate = False
-                return
+                return False
 
             if not validate_list:
                 showWarning("La sintaxis de la lista no es correcta, verifiquela e ingresela nuevamente.")
-                validate = False
-                return
+                return False
 
-        return validate
+        return True
 
     def update_variables(self):
         self.experimentProgressBar.setValue(0)
@@ -1523,7 +1537,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def start_experiment(self):
 
         uploaded_directory = self.directories[self.global_variables['tab_mode']]['uploaded']
-        validate = self.verify_parameters(uploaded_directory)  ###
+        validate = self.verify_parameters(uploaded_directory)
 
         if not validate:
             return
@@ -1536,24 +1550,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             # run experiment in a thread
 
-            # if self.global_variables['tab_mode'] == 'comparison':
-            #     for worker in self.worker.workers:
-            #         thread = QtCore.QThread()
-            #         worker.moveToThread(thread)
-            #
-            #         thread.started.connect(worker.run)
-            #         worker.finished.connect(thread.quit)
-            #         worker.finished.connect(worker.deleteLater)
-            #         thread.finished.connect(thread.deleteLater)
-            #
-            #         worker.progress.connect(self.report_comparison_progress)
-            #         thread.start()
-            #         worker.finished.connect(self.save_comparison_progress)
-            #
-            #         self.startPushButton.setEnabled(False)
-            #         thread.finished.connect(self.reset_values)
-            #
-            # else:
             self.thread = QtCore.QThread()
             self.worker.moveToThread(self.thread)
 
@@ -1664,9 +1660,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # update figure
         errs, psnrs, ssims = [], [], []
         for output in outputs:
-            errs.append(output['result'][iter, 0])
-            psnrs.append(np.round(output['result'][iter, 1], 3))
-            ssims.append(np.round(output['result'][iter, 2], 3))
+            errs.append(output['hist'][iter, 0])
+            psnrs.append(np.round(output['hist'][iter, 1], 3))
+            ssims.append(np.round(output['hist'][iter, 2], 3))
 
         iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration']
         error_list = self.state[self.global_variables['tab_mode']]['progress']['errors']
@@ -1692,8 +1688,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
                      algorithm_name=self.algorithm_name))
             self.reconstructionGraphicComparison.update_figure()
 
-    def save_comparison_experiment(self, ):
-        pass
+    def save_comparison_experiment(self, res_dict):
+        comparison_data = np.array(list(self.performanceGraphicComparison.comparison_data.items()), dtype=object)
+
+        temp_saved = self.directories[self.global_variables['tab_mode']]['temp_saved']
+        self.directories[self.global_variables['tab_mode']]['saved'] = temp_saved
+        self.directories[self.global_variables['tab_mode']]['report'] = temp_saved
+        np.savez(self.directories[self.global_variables['tab_mode']]['saved'],
+                 x_results=res_dict['results'], hists=res_dict['hists'], sampling=self.sampling_dict,
+                 comparison_data=comparison_data)
+        print("Results saved [Ok]")
 
     def reset_values(self):
         self.startPushButton.setEnabled(True)
@@ -1744,18 +1748,18 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.comparisonAlgorithmPushButton.setToolTip(_translate("mainWindow", "Ver ecuación"))
         self.comparisonMaxiterLabel.setText(_translate("mainWindow", "Máxima iteración"))
         self.fistaLabel.setText(_translate("mainWindow", "FISTA"))
-        self.compParam1LineEdit1.setText(_translate("mainWindow", "0.1"))
-        self.compParam2LineEdit1.setText(_translate("mainWindow", "0.3"))
+        self.compParam1LineEdit1.setText(_translate("mainWindow", "2.9"))
+        self.compParam2LineEdit1.setText(_translate("mainWindow", "0.4"))
         self.gapLabel.setText(_translate("mainWindow", "GAP"))
-        self.compParam1LineEdit2.setText(_translate("mainWindow", "0.1"))
+        self.compParam1LineEdit2.setText(_translate("mainWindow", "30.0"))
         self.twistLabel.setText(_translate("mainWindow", "TwIST"))
-        self.compParam1LineEdit3.setText(_translate("mainWindow", "0.1"))
-        self.compParam2LineEdit3.setText(_translate("mainWindow", "0.3"))
-        self.compParam3LineEdit3.setText(_translate("mainWindow", "1"))
+        self.compParam1LineEdit3.setText(_translate("mainWindow", "17.0"))
+        self.compParam2LineEdit3.setText(_translate("mainWindow", "1.2"))
+        self.compParam3LineEdit3.setText(_translate("mainWindow", "1.998"))
         self.admmLabel.setText(_translate("mainWindow", "ADMM"))
-        self.compParam1LineEdit4.setText(_translate("mainWindow", "0.1"))
-        self.compParam2LineEdit4.setText(_translate("mainWindow", "0.3"))
-        self.compParam3LineEdit4.setText(_translate("mainWindow", "1"))
+        self.compParam1LineEdit4.setText(_translate("mainWindow", "0.5"))
+        self.compParam2LineEdit4.setText(_translate("mainWindow", "1.0"))
+        self.compParam3LineEdit4.setText(_translate("mainWindow", "0.0005"))
 
         self.samplingGroupBox.setTitle(_translate("mainWindow", "Submuestreo"))
         self.samplingTypeLabel.setText(_translate("mainWindow", "Tipo"))
