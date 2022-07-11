@@ -4,11 +4,29 @@ import numpy as np
 from skimage.metrics import structural_similarity as ssim
 
 from matplotlib import pyplot as plt
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.ticker import MaxNLocator
 
 from Algorithms.Function import PSNR
 from gui.scripts.alerts import showCritical
+
+# custom toolbar with lorem ipsum text
+class CustomToolbar(NavigationToolbar2QT):
+    def __init__(self, canvas_, parent_):
+        self.toolitems = (
+            ('Home', 'Volver a la vista original', 'home', 'home'),
+            ('Back', 'Volver a la vista previa', 'back', 'back'),
+            ('Forward', 'Volver a la siguiente vista', 'forward', 'forward'),
+            (None, None, None, None),
+            ('Pan', 'El botón izquierdo panea, el botón derecho hace zoom\n'
+                    'x/y fija el eje, CTRL fija el aspecto', 'move', 'pan'),
+            ('Zoom', 'Zoom a rectángulo\nx/y fija el eje', 'zoom_to_rect', 'zoom'),
+            ('Subplots', 'Configurar subgráficas', 'subplots', 'configure_subplots'),
+            ("Customize", "Editar ejes, curvas y parámetros de la gráfica", "qt4_editor_options", "edit_parameters"),
+            (None, None, None, None),
+            ('Save', 'Guardar la figura', 'filesave', 'save_figure'),
+        )
+        NavigationToolbar2QT.__init__(self, canvas_, parent_)
 
 
 class PerformanceGraphic(FigureCanvasQTAgg):

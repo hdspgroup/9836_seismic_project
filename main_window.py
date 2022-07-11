@@ -15,18 +15,24 @@ import pandas as pd
 from PyQt5.Qt import Qt
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from scipy.io import loadmat
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 
 from Algorithms.Function import Sampling, Algorithms
 from about_window import UIAboutWindow
 from equation_window import UIEquationWindow
 from equation_comparison_window import UIComparisonEquationWindow
 from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic, ComparisonPerformanceGraphic, \
-    ComparisonReconstructionGraphic
+    ComparisonReconstructionGraphic, CustomToolbar
 from gui.scripts.alerts import showWarning, showCritical
 from workers import Worker, TuningWorker, ComparisonWorker
 from tuning_window import UITuningWindow
+
+
+def solve_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath('.'), relative_path)
 
 
 class UIMainWindow(QtWidgets.QMainWindow):
@@ -102,7 +108,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.algorithmPushButton.setAutoFillBackground(False)
         self.algorithmPushButton.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("assets/icons/view.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/view.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.algorithmPushButton.setIcon(icon)
         self.algorithmPushButton.setObjectName("algorithmPushButton")
         self.algorithmHLayout.addWidget(self.algorithmPushButton)
@@ -122,7 +128,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param1Label = QtWidgets.QLabel(self.algorithmGroupBox)
         self.param1Label.setText("")
         self.param1Label.setTextFormat(QtCore.Qt.AutoText)
-        self.param1Label.setPixmap(QtGui.QPixmap("assets/equations/lambda.png"))
+        self.param1Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
         self.param1Label.setScaledContents(True)
         self.param1Label.setWordWrap(False)
         self.param1Label.setIndent(-1)
@@ -139,7 +145,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHeightForWidth(self.param2Label.sizePolicy().hasHeightForWidth())
         self.param2Label.setSizePolicy(sizePolicy)
         self.param2Label.setText("")
-        self.param2Label.setPixmap(QtGui.QPixmap("assets/equations/mu.png"))
+        self.param2Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu.png")))
         self.param2Label.setScaledContents(True)
         self.param2Label.setObjectName("param2Label")
         self.paramsHLayout.addWidget(self.param2Label)
@@ -148,7 +154,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.paramsHLayout.addWidget(self.param2LineEdit)
         self.param3Label = QtWidgets.QLabel(self.algorithmGroupBox)
         self.param3Label.setText("")
-        self.param3Label.setPixmap(QtGui.QPixmap("assets/equations/rho.png"))
+        self.param3Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho.png")))
         self.param3Label.setObjectName("param3Label")
         self.paramsHLayout.addWidget(self.param3Label)
         self.param3LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
@@ -220,7 +226,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param1HLayout.setObjectName("param1HLayout")
         self.param1InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param1InitLabel.setText("")
-        self.param1InitLabel.setPixmap(QtGui.QPixmap("assets/parameters/lambda_init.png"))
+        self.param1InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda_init.png")))
         self.param1InitLabel.setObjectName("param1InitLabel")
         self.param1HLayout.addWidget(self.param1InitLabel)
         self.param1InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -228,7 +234,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param1HLayout.addWidget(self.param1InitLineEdit)
         self.param1EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param1EndLabel.setText("")
-        self.param1EndLabel.setPixmap(QtGui.QPixmap("assets/parameters/lambda_end.png"))
+        self.param1EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda_end.png")))
         self.param1EndLabel.setObjectName("param1EndLabel")
         self.param1HLayout.addWidget(self.param1EndLabel)
         self.param1EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -239,7 +245,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param2HLayout.setObjectName("param2HLayout")
         self.param2InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param2InitLabel.setText("")
-        self.param2InitLabel.setPixmap(QtGui.QPixmap("assets/parameters/mu_init.png"))
+        self.param2InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu_init.png")))
         self.param2InitLabel.setObjectName("param2InitLabel")
         self.param2HLayout.addWidget(self.param2InitLabel)
         self.param2InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -247,7 +253,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param2HLayout.addWidget(self.param2InitLineEdit)
         self.param2EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param2EndLabel.setText("")
-        self.param2EndLabel.setPixmap(QtGui.QPixmap("assets/parameters/mu_end.png"))
+        self.param2EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu_end.png")))
         self.param2EndLabel.setObjectName("param2EndLabel")
         self.param2HLayout.addWidget(self.param2EndLabel)
         self.param2EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -258,7 +264,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param3HLayout.setObjectName("param3HLayout")
         self.param3InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param3InitLabel.setText("")
-        self.param3InitLabel.setPixmap(QtGui.QPixmap("assets/parameters/rho_init.png"))
+        self.param3InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho_init.png")))
         self.param3InitLabel.setObjectName("param3InitLabel")
         self.param3HLayout.addWidget(self.param3InitLabel)
         self.param3InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -266,7 +272,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param3HLayout.addWidget(self.param3InitLineEdit)
         self.param3EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param3EndLabel.setText("")
-        self.param3EndLabel.setPixmap(QtGui.QPixmap("assets/parameters/rho_end.png"))
+        self.param3EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho_end.png")))
         self.param3EndLabel.setObjectName("param3EndLabel")
         self.param3HLayout.addWidget(self.param3EndLabel)
         self.param3EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -319,7 +325,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.compParam1Label1 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam1Label1.setText("")
         self.compParam1Label1.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label1.setPixmap(QtGui.QPixmap("assets/parameters/lambda.png"))
+        self.compParam1Label1.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
         self.compParam1Label1.setScaledContents(True)
         self.compParam1Label1.setWordWrap(False)
         self.compParam1Label1.setIndent(-1)
@@ -336,7 +342,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHeightForWidth(self.compParam2Label1.sizePolicy().hasHeightForWidth())
         self.compParam2Label1.setSizePolicy(sizePolicy)
         self.compParam2Label1.setText("")
-        self.compParam2Label1.setPixmap(QtGui.QPixmap("assets/parameters/mu.png"))
+        self.compParam2Label1.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu.png")))
         self.compParam2Label1.setScaledContents(True)
         self.compParam2Label1.setObjectName("compParam2Label1")
         self.compParamsHLayout1.addWidget(self.compParam2Label1)
@@ -353,7 +359,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.compParam1Label2 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam1Label2.setText("")
         self.compParam1Label2.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label2.setPixmap(QtGui.QPixmap("assets/parameters/lambda.png"))
+        self.compParam1Label2.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
         self.compParam1Label2.setScaledContents(True)
         self.compParam1Label2.setWordWrap(False)
         self.compParam1Label2.setIndent(-1)
@@ -372,7 +378,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.compParam1Label3 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam1Label3.setText("")
         self.compParam1Label3.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label3.setPixmap(QtGui.QPixmap("assets/parameters/lambda.png"))
+        self.compParam1Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
         self.compParam1Label3.setScaledContents(True)
         self.compParam1Label3.setWordWrap(False)
         self.compParam1Label3.setIndent(-1)
@@ -389,7 +395,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHeightForWidth(self.compParam2Label3.sizePolicy().hasHeightForWidth())
         self.compParam2Label3.setSizePolicy(sizePolicy)
         self.compParam2Label3.setText("")
-        self.compParam2Label3.setPixmap(QtGui.QPixmap("assets/parameters/alpha.png"))
+        self.compParam2Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/alpha.png")))
         self.compParam2Label3.setScaledContents(True)
         self.compParam2Label3.setObjectName("compParam2Label3")
         self.compParamsHLayout3.addWidget(self.compParam2Label3)
@@ -398,7 +404,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.compParamsHLayout3.addWidget(self.compParam2LineEdit3)
         self.compParam3Label3 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam3Label3.setText("")
-        self.compParam3Label3.setPixmap(QtGui.QPixmap("assets/parameters/beta.png"))
+        self.compParam3Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/beta.png")))
         self.compParam3Label3.setObjectName("compParam3Label3")
         self.compParamsHLayout3.addWidget(self.compParam3Label3)
         self.compParam3LineEdit3 = QtWidgets.QLineEdit(self.comparisonGroupBox)
@@ -414,7 +420,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.compParam1Label4 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam1Label4.setText("")
         self.compParam1Label4.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label4.setPixmap(QtGui.QPixmap("assets/parameters/rho.png"))
+        self.compParam1Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho.png")))
         self.compParam1Label4.setScaledContents(True)
         self.compParam1Label4.setWordWrap(False)
         self.compParam1Label4.setIndent(-1)
@@ -431,7 +437,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHeightForWidth(self.compParam2Label4.sizePolicy().hasHeightForWidth())
         self.compParam2Label4.setSizePolicy(sizePolicy)
         self.compParam2Label4.setText("")
-        self.compParam2Label4.setPixmap(QtGui.QPixmap("assets/parameters/gamma.png"))
+        self.compParam2Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/gamma.png")))
         self.compParam2Label4.setScaledContents(True)
         self.compParam2Label4.setObjectName("compParam2Label4")
         self.compParamsHLayout4.addWidget(self.compParam2Label4)
@@ -440,7 +446,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.compParamsHLayout4.addWidget(self.compParam2LineEdit4)
         self.compParam3Label4 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam3Label4.setText("")
-        self.compParam3Label4.setPixmap(QtGui.QPixmap("assets/parameters/lambda.png"))
+        self.compParam3Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
         self.compParam3Label4.setObjectName("compParam3Label4")
         self.compParamsHLayout4.addWidget(self.compParam3Label4)
         self.compParam3LineEdit4 = QtWidgets.QLineEdit(self.comparisonGroupBox)
@@ -557,7 +563,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.saveAsPushButton = QtWidgets.QPushButton(self.runGroupBox)
         self.saveAsPushButton.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("assets/icons/save.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(solve_path("assets/icons/save.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.saveAsPushButton.setIcon(icon1)
         self.saveAsPushButton.setObjectName("saveAsPushButton")
         self.saveAsHLayout.addWidget(self.saveAsPushButton)
@@ -572,7 +578,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.startPushButton = QtWidgets.QPushButton(self.runGroupBox)
         self.startPushButton.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("assets/icons/run.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(solve_path("assets/icons/run.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.startPushButton.setIcon(icon2)
         self.startPushButton.setObjectName("startPushButton")
         self.startHLayout.addWidget(self.startPushButton)
@@ -593,7 +599,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.resultPushButton.setAutoFillBackground(False)
         self.resultPushButton.setText("")
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("assets/icons/report.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(solve_path("assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.resultPushButton.setIcon(icon3)
         self.resultPushButton.setAutoDefault(False)
         self.resultPushButton.setDefault(False)
@@ -748,7 +754,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.aboutOfAction = QtWidgets.QAction(self)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("assets/icons/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(solve_path("assets/icons/info.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.aboutOfAction.setIcon(icon4)
         self.aboutOfAction.setObjectName("aboutOfAction")
         self.reportAction = QtWidgets.QAction(self)
@@ -756,17 +762,17 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.reportAction.setObjectName("reportAction")
         self.mainAction = QtWidgets.QAction(self)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap("assets/icons/main.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5.addPixmap(QtGui.QPixmap(solve_path("assets/icons/main.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.mainAction.setIcon(icon5)
         self.mainAction.setObjectName("mainAction")
         self.tuningAction = QtWidgets.QAction(self)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap("assets/icons/tuning.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6.addPixmap(QtGui.QPixmap(solve_path("assets/icons/tuning.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tuningAction.setIcon(icon6)
         self.tuningAction.setObjectName("tuningAction")
         self.comparisonAction = QtWidgets.QAction(self)
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap("assets/icons/comparison.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7.addPixmap(QtGui.QPixmap(solve_path("assets/icons/comparison.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.comparisonAction.setIcon(icon7)
         self.comparisonAction.setObjectName("comparisonAction")
         self.toolBar.addAction(self.mainAction)
@@ -905,13 +911,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.performanceGraphic = PerformanceGraphic()
         self.performanceToolbar = NavigationToolbar(self.performanceGraphic, self)
+        # self.performanceToolbar = CustomToolbar(self.performanceGraphic, self)
         self.graphicPerformanceVLayout.addWidget(self.performanceToolbar)
         self.graphicPerformanceVLayout.addWidget(self.performanceGraphic)
 
         # report graphic
 
         self.reconstructionGraphic = ReconstructionGraphic()
-        self.reportToolbar = NavigationToolbar(self.reconstructionGraphic, self)
+        # self.reportToolbar = NavigationToolbar(self.reconstructionGraphic, self)
+        self.reportToolbar = CustomToolbar(self.reconstructionGraphic, self)
         self.graphicReportVLayout.addWidget(self.reportToolbar)
         self.graphicReportVLayout.addWidget(self.reconstructionGraphic)
 
@@ -920,7 +928,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # tuning graphic
 
         self.tuningGraphic = TuningGraphic()
-        self.tuningToolbar = NavigationToolbar(self.tuningGraphic, self)
+        # self.tuningToolbar = NavigationToolbar(self.tuningGraphic, self)
+        self.tuningToolbar = CustomToolbar(self.tuningGraphic, self)
         self.graphicTuningReportVLayout.addWidget(self.tuningToolbar)
         self.graphicTuningReportVLayout.addWidget(self.tuningGraphic)
 
@@ -929,14 +938,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # performance graphic
 
         self.performanceGraphicComparison = ComparisonPerformanceGraphic()
-        self.performanceToolbarComparison = NavigationToolbar(self.performanceGraphicComparison, self)
+        # self.performanceToolbarComparison = NavigationToolbar(self.performanceGraphicComparison, self)
+        self.performanceToolbarComparison = CustomToolbar(self.performanceGraphicComparison, self)
         self.graphicComparisonPerformanceVLayout.addWidget(self.performanceToolbarComparison)
         self.graphicComparisonPerformanceVLayout.addWidget(self.performanceGraphicComparison)
 
         # report graphic
 
         self.reconstructionGraphicComparison = ComparisonReconstructionGraphic()
-        self.reportToolbarComparison = NavigationToolbar(self.reconstructionGraphicComparison, self)
+        # self.reportToolbarComparison = NavigationToolbar(self.reconstructionGraphicComparison, self)
+        self.reportToolbarComparison = CustomToolbar(self.reconstructionGraphicComparison, self)
         self.graphicComparisonReportVLayout.addWidget(self.reportToolbarComparison)
         self.graphicComparisonReportVLayout.addWidget(self.reconstructionGraphicComparison)
 
@@ -952,7 +963,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
                 value = str(self.params[algorithm][i][1])
 
-                label.setPixmap(QtGui.QPixmap(icon_path))
+                label.setPixmap(QtGui.QPixmap(solve_path(icon_path)))
                 line_edit.setText(value)
 
             comparison1 = True if comparison else False
@@ -987,8 +998,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 value_init = str(self.params[algorithm][i][1])
                 value_end = str(self.params[algorithm][i][2])
 
-                label_init.setPixmap(QtGui.QPixmap(icon_path_init if tuning_type == 'intervalo' else icon_path_list))
-                label_end.setPixmap(QtGui.QPixmap(icon_path_end))
+                label_init.setPixmap(QtGui.QPixmap(solve_path(icon_path_init if tuning_type == 'intervalo' else icon_path_list)))
+                label_end.setPixmap(QtGui.QPixmap(solve_path(icon_path_end)))
 
                 line_edit_init.setText(value_init)
                 line_edit_end.setText(value_end)
@@ -1008,7 +1019,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             line_edit_end.setValidator(self.onlydouble if tuning_type == 'intervalo' else None)
 
             if i != self.paramComboBox.currentIndex():
-                label_init.setPixmap(QtGui.QPixmap(icon_path))
+                label_init.setPixmap(QtGui.QPixmap(solve_path(icon_path)))
                 label_end.setVisible(False)
                 line_edit_end.setVisible(False)
 
@@ -1235,13 +1246,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
         if self.global_variables['view_mode'] == 'normal':
             self.global_variables['view_mode'] = 'report'
             self.set_report_view()
-            icon.addPixmap(QtGui.QPixmap("assets/icons/seismic.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/seismic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.resultLabel.setText('Realizar experimentos')
 
         else:
             self.global_variables['view_mode'] = 'normal'
             self.set_main_view()
-            icon.addPixmap(QtGui.QPixmap("assets/icons/report.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.resultLabel.setText('Ver resultados')
 
         self.resultPushButton.setIcon(icon)
@@ -1787,7 +1798,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.reportTabWidget.setTabText(self.reportTabWidget.indexOf(self.expReportTab1),
                                         _translate("mainWindow", "Experimento"))
         self.resultsToolBox.setItemText(self.resultsToolBox.indexOf(self.reportPage),
-                                        _translate("mainWindow", "Reporte"))
+                                        _translate("mainWindow", "Reporte de reconstrucción"))
         self.tuningTabWidget.setTabText(self.tuningTabWidget.indexOf(self.expTuningReportTab1),
                                         _translate("mainWindow", "Experimento"))
 
@@ -1799,7 +1810,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.comparisonReportTabWidget.setTabText(self.comparisonReportTabWidget.indexOf(self.expComparisonReportTab1),
                                                   _translate("mainWindow", "Experimento"))
         self.comparisonsToolBox.setItemText(self.comparisonsToolBox.indexOf(self.comparisonReportPage),
-                                            _translate("mainWindow", "Reporte"))
+                                            _translate("mainWindow", "Reporte de reconstrucción"))
 
         self.toolBar.setWindowTitle(_translate("mainWindow", "toolBar"))
         self.aboutOfAction.setText(_translate("mainWindow", "about"))
