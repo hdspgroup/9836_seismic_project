@@ -5,7 +5,6 @@ import imageio
 import matplotlib.pyplot as plt
 from Function import *
 import time
-import cv2
 import matplotlib
 from skimage.metrics import structural_similarity as ssim
 import cv2
@@ -14,74 +13,7 @@ import numpy as np
 from numba import jit
 from line_profiler import LineProfiler
 from tqdm import tqdm
-
-
-def shrinkage(X, t):
-    U, Sig, VT = np.linalg.svd(X,full_matrices=False)
-    Temp = np.zeros((U.shape[1], VT.shape[0]))
-    for i in range(len(Sig)):
-        Temp[i, i] = Sig[i]
-    Sig = Temp
-
-    Sigt = Sig
-    imSize = Sigt.shape
-
-    for i in range(imSize[0]):
-        Sigt[i, i] = np.max(Sigt[i, i] - t, 0)
-
-    temp = np.dot(U, Sigt)
-    T = np.dot(temp, VT)
-    return T
-
-
-# @jit(nopython=True)
-def ReplaceInd(X, known, Image):
-    # imSize = Image.shape
-
-    X[known[0], known[1], :] = Image[known[0], known[1], :]
-    # for i in range(len(known)):
-    #     in1 = int(np.ceil(known[i] / imSize[1]) - 1)
-    #     in2 = int(imSize[0] - known[i] % imSize[1] - 1)
-    #     X[in1, in2, :] = Image[in1, in2, :]
-    return X
-
-
-def HaLRTC(Image, X, mask):
-    res = []
-    known = np.where(mask == 0)
-    imSize = Image.shape
-    # test = np.zeros(Image.shape)
-    # test = ReplaceInd(test, known, Image)
-    a = abs(np.random.rand(3, 1))
-    a = a / np.sum(a)
-    p = 1e-6
-    K = 50
-    ArrSize = np.array(imSize)
-    ArrSize = np.append(ArrSize, 3)
-    Mi = np.zeros(ArrSize)
-    Yi = np.zeros(ArrSize)
-
-    for k in range(K):
-        # compute Mi tensors(Step1)
-        for i in range(ArrSize[3]):
-            temp1 = shrinkage(tl.unfold(X, mode=i) + tl.unfold(np.squeeze(Yi[:, :, :, i]), mode=i) / p, a[i] / p)
-            temp = tl.fold(temp1, i, imSize)
-            Mi[:, :, :, i] = temp
-        # Update X(Step2)
-        X = np.sum(Mi - Yi / p, ArrSize[3]) / ArrSize[3]
-        X = ReplaceInd(X, known, Image)
-        # Update Yi tensors (Step 3)
-        for i in range(ArrSize[3]):
-            Yi[:, :, :, i] = np.squeeze(Yi[:, :, :, i]) - p * (np.squeeze(Mi[:, :, :, i]) - X)
-        # Modify rho to help convergence(Step 4)
-        p = 1.2 * p
-    return X
-
-#
-# def fuc():
-#     Image, X, known, a, Mi, Yi, imSize, ArrSize, p, K = init()
-#
-#     return X
+import hdf5storage
 
 
 def plot_results(x, x_result, pattern_rand, case):
@@ -153,11 +85,11 @@ if __name__ == '__main__':
 
     r = []
     for exp in range(5):
-        x = np.load('../data/' + data_name)
+        x = hdf5storage.loadmat('/tmp/splitspreadfromsegy_2001_OrgSeqno_7TAR_TFD_SW.mat')['data']
+        # x = np.load('../data/' + data_name)
 
         if data_name == 'data.npy':
             x = x.T
-        # x = x / np.abs(x).max()
 
         '''
         ---------------  SAMPLING --------------------
@@ -199,9 +131,9 @@ if __name__ == '__main__':
 
             # output[..., i] = np.mean(tmp, axis=2)
             aux = output[..., [i - 1, i, i + 1]]
-            aux = (tmp.astype('float32') + aux.astype('float32'))/2
+            aux = (tmp.astype('float32') + aux.astype('float32')) / 2
 
-            output[..., [i - 1, i, i + 1]] = aux = aux.astype('uint8') # cv2.medianBlur(aux, 3)
+            output[..., [i - 1, i, i + 1]] = aux = aux.astype('uint8')  # cv2.medianBlur(aux, 3)
             # output[..., i] = np.mean(tmp, axis=2)
             # aux_s[[i - 1, i, i + 1]] += 1
         # output /= aux_s
@@ -210,28 +142,5 @@ if __name__ == '__main__':
         print(PSNR(x, output))
         r.append(PSNR(x, output))
         plot_results(x, output, pattern_rand, 'Fast Marching (Inpainting)')
-        # x = x[:, :3, :]
-        # y = y[:, :3, :]
-        # y = np.reshape(y, [x.shape[0] * x.shape[1], x.shape[2]])
-        # x = np.reshape(x, [x.shape[0] * x.shape[1], x.shape[2]])
-        # y = np.transpose(y, [0, 2, 1])
-        # x = np.transpose(x, [0, 2, 1])
-        # x = np.repeat(x[:, :, np.newaxis], 3, axis=2)
-        # y = np.repeat(y[:, :, np.newaxis], 3, axis=2)
-        '''
-        print("Starting Algorithm")
-        start = time.time()
-        image_hat = GLTC_Geman(x, y, alpha, beta, rho, theta, maxiter)
-    
-        # image_hat = GLTC(x, y, alpha, beta, rho, maxiter)
-        end = time.time()
-        print(f"Duration: {end - start}")
-        image_rec = np.round(image_hat).astype(int)
-        image_rec[np.where(image_rec > 255)] = 255
-        image_rec[np.where(image_rec < 0)] = 0
-        pos = np.where((x != 0) & (y == 0))
-        rse = np.linalg.norm(image_rec[pos] - x[pos], 2) / np.linalg.norm(x[pos], 2)
-        np.savez("tmp.npz", image_rec=image_rec, rse=rse)
-        '''
 
     print(f"Mean Result: {np.mean(r)}")
