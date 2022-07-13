@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>9836 Proyecto de Sísmica</string>
+   <string>ReDs</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../assets/assets.qrc">
+    <normaloff>:/icons/icons/g868.ico</normaloff>:/icons/icons/g868.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="centralWidgetHLayout" stretch="3,30">
