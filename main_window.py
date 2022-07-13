@@ -27,6 +27,7 @@ from equation_comparison_window import UIComparisonEquationWindow
 from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic, ComparisonPerformanceGraphic, \
     ComparisonReconstructionGraphic, CustomToolbar
 from gui.scripts.alerts import showWarning, showCritical
+from jitter_window import UIJitterWindow
 from workers import Worker, TuningWorker, ComparisonWorker
 from tuning_window import UITuningWindow
 
@@ -513,7 +514,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.gammaSpinBox = QtWidgets.QSpinBox(self.samplingGroupBox)
         self.gammaSpinBox.setMinimum(1)
         self.gammaSpinBox.setMaximum(999)
-        self.gammaSpinBox.setProperty("value", 2)
+        self.gammaSpinBox.setSingleStep(2)
         self.gammaSpinBox.setObjectName("gammaSpinBox")
         self.jitterHLayout.addWidget(self.gammaSpinBox)
         self.epsilonLabel = QtWidgets.QLabel(self.samplingGroupBox)
@@ -908,6 +909,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # tuning
         self.paramTuningComboBox.currentTextChanged.connect(self.param_tuning_changed)
         self.paramComboBox.currentTextChanged.connect(self.param_changed)
+        self.jitterPushButton.clicked.connect(self.jitter_sampling_clicked)
 
         # sampling
         self.samplingTypeComboBox.currentTextChanged.connect(self.on_sampling_changed)
@@ -1321,8 +1323,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def comparison_algorithm_equation_clicked(self):
         self.ui_comparison_equation_window = UIComparisonEquationWindow()
-        self.ui_comparison_equation_window.setupUi(self.algorithmComboBox.currentText())
+        self.ui_comparison_equation_window.setupUi()
         self.ui_comparison_equation_window.show()
+
+    def jitter_sampling_clicked(self):
+        self.jitter_sampling_window = UIJitterWindow()
+        self.jitter_sampling_window.setupUi()
+        self.jitter_sampling_window.show()
 
     def param_tuning_changed(self, value):
         self.paramValuesLabel.setVisible(True if value.lower() == 'intervalo' else False)

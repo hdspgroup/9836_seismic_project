@@ -26,6 +26,10 @@ class Sampling:
         elif mode == 'uniforme':
             return self.uniform_sampling(x, compression_ratio)
         elif mode == 'jitter':
+            # if jitter_params['gamma'] % 2 != 0:
+            #     showWarning("El valor de gamma debe ser un número impar.")
+            #     return
+
             return self.jitter_sampling(x, seed, **jitter_params)
         else:  # mode == lista
             try:

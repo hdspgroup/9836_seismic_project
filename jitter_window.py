@@ -9,12 +9,14 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QIcon
 
 
-class UIComparisonEquationWindow(QtWidgets.QWidget):
+class UIJitterWindow(QtWidgets.QWidget):
     def setupUi(self):
         self.setObjectName("Algoritmo")
-        self.setObjectName("EquationDialog")
+        self.setObjectName("JitterDialog")
+        self.setWindowIcon(QIcon("assets/icons/g868.ico"))
         self.horizontalLayout = QtWidgets.QHBoxLayout(self)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.equationGroupBox = QtWidgets.QGroupBox(self)
@@ -23,9 +25,9 @@ class UIComparisonEquationWindow(QtWidgets.QWidget):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.equation = QtWidgets.QLabel(self.equationGroupBox)
         self.equation.setText("")
-        self.equation.setPixmap(QtGui.QPixmap("assets/equations/algorithms.png"))
+        self.equation.setPixmap(QtGui.QPixmap("assets/equations/jitter.png"))
         self.equation.setScaledContents(False)
-        self.equation.setObjectName("equation")
+        self.equation.setObjectName("jitter")
         self.horizontalLayout_2.addWidget(self.equation)
         self.horizontalLayout.addWidget(self.equationGroupBox)
 
@@ -34,7 +36,7 @@ class UIComparisonEquationWindow(QtWidgets.QWidget):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("UIEquationWindow", f"Algoritmos y parámetros"))
+        self.setWindowTitle(_translate("UIEquationWindow", "Submuestreo de tipo jitter"))
         self.equationGroupBox.setTitle(_translate("UIEquationWindow", ""))
 
 
@@ -42,8 +44,8 @@ if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
-    UIComparisonEquationWindow = QtWidgets.QWidget()
-    ui = UIComparisonEquationWindow()
-    ui.setupUi(UIComparisonEquationWindow, "example")
-    UIComparisonEquationWindow.show()
+    UIEquationWindow = QtWidgets.QWidget()
+    ui = UIJitterWindow()
+    ui.setupUi(UIJitterWindow)
+    UIJitterWindow.show()
     sys.exit(app.exec_())
