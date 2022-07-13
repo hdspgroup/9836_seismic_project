@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class>
+  <min_cap>0.75</min_cap>
+  <max_cap>1.02</max_cap>
+  <allow_self_eval>true</allow_self_eval>
+  <group>
+    <student id="1345" name="Tan Kheng Joo" />
+    <student id="4323" name="Lim Lian Tze" />
+    <student id="4385" name="Wong Li Pei" />
+  </group>
+  <group>
+    <student id="4328" name="May Wong" />
+    <student id="4738" name="Ronald Khor" />
+  </group>
+</class>

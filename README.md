@@ -20,7 +20,7 @@ Esta es una guía para instalar las dependencias necesarias para poder ejecutar 
 4. Instalar dependencias en el entorno virtual creado.
 5. Correr `main_window.py` con el entorno virtual creado.
 
-De acuerdo al sistema operativo las anteriores instrucciones se deben cumplir de distintas formas, para obtener indicaciones más detalladas ingrese al siguiente enlace: [Instalación de dependencias](https://github.com/carlosh93/9836_seismic_project/wiki/Instalaci%C3%B3n-de-Dependencias).
+De acuerdo al sistema operativo las anteriores instrucciones se deben cumplir de distintas formas, para obtener indicaciones más detalladas ingrese al siguiente enlace: [Instalación de dependencias](https://github.com/carlosh93/9836_seismic_project/wiki/I.-Manual-de-Instalación-Aplicación-ReDs,-Modo-Desarrolador).
 
 Si ya posee un conocimiento más avanzado del tema, puede crear su propio entorno virtual e instalar las siguientes dependencias:
 
@@ -29,18 +29,20 @@ pip install numpy
 pip install matplotlib
 pip install scikit-image
 pip install scipy
+pip install pandas
+pip install PyQt5
+pip install pyinstaller
+pip install scikit-image
+pip install scipy
 ```
 
-o de forma rápida:
+También puede realizar la instalación de dependencias de forma rápida usando la instrucción:
 
 ```
-pip install numpy matplotlib scikit-image scipy
+pip install -r requirements.txt
 ```
 
-Los recursos principales para construir la Aplicación se encuentran en la carpeta `gui`. Para ejecutar la aplicación, primero asegúrese de haber instalado el
-paquetes requeridos con:
-
-`pip install -r requirements.txt`
+Es necesario haber realizado la correcta instalación de las dependencias mencionadas anteriormente antes de acceder a los recursos principales para construir la aplicación ReDs.
 
 Luego, ejecute el script `main_window.py` como:
 
@@ -50,7 +52,7 @@ Luego, ejecute el script `main_window.py` como:
 
 ---
 
-Si desea usar el software directamente, dirijase a está enlace [guia de instalación](https://github.com/carlosh93/9836_seismic_project/wiki/Manual-de-Instalaci%C3%B3n) donde encontrará la instrucciones para instalar el software y usarlo directamente.
+Si desea usar el software directamente, dirijase a está enlace [guia de instalación](https://github.com/carlosh93/9836_seismic_project/wiki/III.-Manual-de-Instalación-Aplicación-ReDs,-Modo-Usuario-Final-(Release) donde encontrará la instrucciones para instalar el software y usarlo directamente.
 
 # **Datos sísmicos**
 

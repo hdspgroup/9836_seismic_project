@@ -17,6 +17,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from scipy.io import loadmat
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from scipy.io import loadmat
+from PyQt5.QtGui import QIcon
 
 from Algorithms.Function import Sampling, Algorithms
 from about_window import UIAboutWindow
@@ -63,6 +65,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
             event.ignore()
 
     def setupUi(self):
+        self.setWindowTitle("ReDs")
+        self.setWindowIcon(QIcon("assets/icons/g868.ico"))
         self.setObjectName("mainWindow")
         self.resize(1412, 870)
         self.setMinimumSize(1100, 870)
@@ -1169,6 +1173,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.about_window = QtWidgets.QWidget()
         self.ui_about_window = UIAboutWindow()
         self.ui_about_window.setupUi(self.about_window)
+        self.about_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.about_window.show()
 
     def show_main(self):
@@ -1295,6 +1300,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def algorithm_equation_clicked(self):
         self.ui_equation_window = UIEquationWindow()
         self.ui_equation_window.setupUi(self.algorithmComboBox.currentText())
+        self.ui_equation_window.setWindowModality(Qt.WindowModality.ApplicationModal)
+        # print(self.ui_equation_window.isModal())
         self.ui_equation_window.show()
 
     def comparison_algorithm_equation_clicked(self):
@@ -1720,7 +1727,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("mainWindow", "9836 Proyecto de Sísmica"))
+        self.setWindowTitle(_translate("mainWindow", "ReDs - Universidad Industrial de Santander"))
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))
         self.dataTreeWidget.headerItem().setText(0, _translate("mainWindow", "Datos actuales"))
         self.loadPushButton.setText(_translate("mainWindow", "Cargar"))
