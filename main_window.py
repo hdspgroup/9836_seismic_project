@@ -15,6 +15,7 @@ import pandas as pd
 from PyQt5.Qt import Qt
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
+from scipy.io import loadmat
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from scipy.io import loadmat
 from PyQt5.QtGui import QIcon
@@ -22,10 +23,18 @@ from PyQt5.QtGui import QIcon
 from Algorithms.Function import Sampling, Algorithms
 from about_window import UIAboutWindow
 from equation_window import UIEquationWindow
-from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic
-from gui.alerts import showWarning, showCritical
-from workers import Worker, TuningWorker
+from equation_comparison_window import UIComparisonEquationWindow
+from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic, ComparisonPerformanceGraphic, \
+    ComparisonReconstructionGraphic, CustomToolbar
+from gui.scripts.alerts import showWarning, showCritical
+from workers import Worker, TuningWorker, ComparisonWorker
 from tuning_window import UITuningWindow
+
+
+def solve_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath('.'), relative_path)
 
 
 class UIMainWindow(QtWidgets.QMainWindow):
@@ -103,7 +112,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.algorithmPushButton.setAutoFillBackground(False)
         self.algorithmPushButton.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("assets/icons/view.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/view.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.algorithmPushButton.setIcon(icon)
         self.algorithmPushButton.setObjectName("algorithmPushButton")
         self.algorithmHLayout.addWidget(self.algorithmPushButton)
@@ -123,7 +132,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param1Label = QtWidgets.QLabel(self.algorithmGroupBox)
         self.param1Label.setText("")
         self.param1Label.setTextFormat(QtCore.Qt.AutoText)
-        self.param1Label.setPixmap(QtGui.QPixmap("assets/equations/lambda.png"))
+        self.param1Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
         self.param1Label.setScaledContents(True)
         self.param1Label.setWordWrap(False)
         self.param1Label.setIndent(-1)
@@ -140,7 +149,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHeightForWidth(self.param2Label.sizePolicy().hasHeightForWidth())
         self.param2Label.setSizePolicy(sizePolicy)
         self.param2Label.setText("")
-        self.param2Label.setPixmap(QtGui.QPixmap("assets/equations/mu.png"))
+        self.param2Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu.png")))
         self.param2Label.setScaledContents(True)
         self.param2Label.setObjectName("param2Label")
         self.paramsHLayout.addWidget(self.param2Label)
@@ -149,7 +158,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.paramsHLayout.addWidget(self.param2LineEdit)
         self.param3Label = QtWidgets.QLabel(self.algorithmGroupBox)
         self.param3Label.setText("")
-        self.param3Label.setPixmap(QtGui.QPixmap("assets/equations/rho.png"))
+        self.param3Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho.png")))
         self.param3Label.setObjectName("param3Label")
         self.paramsHLayout.addWidget(self.param3Label)
         self.param3LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
@@ -221,7 +230,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param1HLayout.setObjectName("param1HLayout")
         self.param1InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param1InitLabel.setText("")
-        self.param1InitLabel.setPixmap(QtGui.QPixmap("assets/parameters/lambda_init.png"))
+        self.param1InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda_init.png")))
         self.param1InitLabel.setObjectName("param1InitLabel")
         self.param1HLayout.addWidget(self.param1InitLabel)
         self.param1InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -229,7 +238,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param1HLayout.addWidget(self.param1InitLineEdit)
         self.param1EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param1EndLabel.setText("")
-        self.param1EndLabel.setPixmap(QtGui.QPixmap("assets/parameters/lambda_end.png"))
+        self.param1EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda_end.png")))
         self.param1EndLabel.setObjectName("param1EndLabel")
         self.param1HLayout.addWidget(self.param1EndLabel)
         self.param1EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -240,7 +249,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param2HLayout.setObjectName("param2HLayout")
         self.param2InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param2InitLabel.setText("")
-        self.param2InitLabel.setPixmap(QtGui.QPixmap("assets/parameters/mu_init.png"))
+        self.param2InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu_init.png")))
         self.param2InitLabel.setObjectName("param2InitLabel")
         self.param2HLayout.addWidget(self.param2InitLabel)
         self.param2InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -248,7 +257,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param2HLayout.addWidget(self.param2InitLineEdit)
         self.param2EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param2EndLabel.setText("")
-        self.param2EndLabel.setPixmap(QtGui.QPixmap("assets/parameters/mu_end.png"))
+        self.param2EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu_end.png")))
         self.param2EndLabel.setObjectName("param2EndLabel")
         self.param2HLayout.addWidget(self.param2EndLabel)
         self.param2EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -259,7 +268,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param3HLayout.setObjectName("param3HLayout")
         self.param3InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param3InitLabel.setText("")
-        self.param3InitLabel.setPixmap(QtGui.QPixmap("assets/parameters/rho_init.png"))
+        self.param3InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho_init.png")))
         self.param3InitLabel.setObjectName("param3InitLabel")
         self.param3HLayout.addWidget(self.param3InitLabel)
         self.param3InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -267,7 +276,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param3HLayout.addWidget(self.param3InitLineEdit)
         self.param3EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param3EndLabel.setText("")
-        self.param3EndLabel.setPixmap(QtGui.QPixmap("assets/parameters/rho_end.png"))
+        self.param3EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho_end.png")))
         self.param3EndLabel.setObjectName("param3EndLabel")
         self.param3HLayout.addWidget(self.param3EndLabel)
         self.param3EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -275,6 +284,180 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param3HLayout.addWidget(self.param3EndLineEdit)
         self.tuningGroupBoxVLayout.addLayout(self.param3HLayout)
         self.mainLayout.addWidget(self.tuningGroupBox)
+
+        self.comparisonGroupBox = QtWidgets.QGroupBox(self.centralwidget)
+        self.comparisonGroupBox.setObjectName("comparisonGroupBox")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.comparisonGroupBox)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.comparisonAlgorithmLabel = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.comparisonAlgorithmLabel.setObjectName("comparisonAlgorithmLabel")
+        self.gridLayout_2.addWidget(self.comparisonAlgorithmLabel, 0, 0, 1, 1)
+        self.comparisonAlgorithmHLayout = QtWidgets.QHBoxLayout()
+        self.comparisonAlgorithmHLayout.setObjectName("comparisonAlgorithmHLayout")
+        self.comparisonAlgorithmHLayout = QtWidgets.QHBoxLayout()
+        self.comparisonAlgorithmHLayout.setObjectName("comparisonAlgorithmHLayout")
+        self.comparisonAlgorithmPushButton = QtWidgets.QPushButton(self.comparisonGroupBox)
+        self.comparisonAlgorithmPushButton.setEnabled(True)
+        self.comparisonAlgorithmPushButton.setAutoFillBackground(False)
+        self.comparisonAlgorithmPushButton.setText("")
+        self.comparisonAlgorithmPushButton.setIcon(icon)
+        self.comparisonAlgorithmPushButton.setObjectName("comparisonAlgorithmPushButton")
+        self.comparisonAlgorithmHLayout.addWidget(self.comparisonAlgorithmPushButton)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.comparisonAlgorithmHLayout.addItem(spacerItem2)
+        self.comparisonMaxiterLabel = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.comparisonMaxiterLabel.setObjectName("comparisonMaxiterLabel")
+        self.comparisonAlgorithmHLayout.addWidget(self.comparisonMaxiterLabel)
+        self.comparisonMaxiterSpinBox = QtWidgets.QSpinBox(self.comparisonGroupBox)
+        self.comparisonMaxiterSpinBox.setMinimum(1)
+        self.comparisonMaxiterSpinBox.setMaximum(9999)
+        self.comparisonMaxiterSpinBox.setProperty("value", 100)
+        self.comparisonMaxiterSpinBox.setObjectName("comparisonMaxiterSpinBox")
+        self.comparisonAlgorithmHLayout.addWidget(self.comparisonMaxiterSpinBox)
+        self.gridLayout_2.addLayout(self.comparisonAlgorithmHLayout, 0, 1, 1, 1)
+        self.comparisonLine = QtWidgets.QFrame(self.comparisonGroupBox)
+        self.comparisonLine.setFrameShape(QtWidgets.QFrame.HLine)
+        self.comparisonLine.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.comparisonLine.setObjectName("comparisonLine")
+        self.gridLayout_2.addWidget(self.comparisonLine, 1, 1, 1, 1)
+        self.fistaLabel = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.fistaLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.fistaLabel.setObjectName("fistaLabel")
+        self.gridLayout_2.addWidget(self.fistaLabel, 2, 0, 1, 1)
+        self.compParamsHLayout1 = QtWidgets.QHBoxLayout()
+        self.compParamsHLayout1.setObjectName("compParamsHLayout1")
+        self.compParam1Label1 = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.compParam1Label1.setText("")
+        self.compParam1Label1.setTextFormat(QtCore.Qt.AutoText)
+        self.compParam1Label1.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
+        self.compParam1Label1.setScaledContents(True)
+        self.compParam1Label1.setWordWrap(False)
+        self.compParam1Label1.setIndent(-1)
+        self.compParam1Label1.setObjectName("compParam1Label1")
+        self.compParamsHLayout1.addWidget(self.compParam1Label1)
+        self.compParam1LineEdit1 = QtWidgets.QLineEdit(self.comparisonGroupBox)
+        self.compParam1LineEdit1.setObjectName("compParam1LineEdit1")
+        self.compParamsHLayout1.addWidget(self.compParam1LineEdit1)
+        self.compParam2Label1 = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.compParam2Label1.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.compParam2Label1.sizePolicy().hasHeightForWidth())
+        self.compParam2Label1.setSizePolicy(sizePolicy)
+        self.compParam2Label1.setText("")
+        self.compParam2Label1.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu.png")))
+        self.compParam2Label1.setScaledContents(True)
+        self.compParam2Label1.setObjectName("compParam2Label1")
+        self.compParamsHLayout1.addWidget(self.compParam2Label1)
+        self.compParam2LineEdit1 = QtWidgets.QLineEdit(self.comparisonGroupBox)
+        self.compParam2LineEdit1.setObjectName("compParam2LineEdit1")
+        self.compParamsHLayout1.addWidget(self.compParam2LineEdit1)
+        self.gridLayout_2.addLayout(self.compParamsHLayout1, 2, 1, 1, 1)
+        self.gapLabel = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.gapLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.gapLabel.setObjectName("gapLabel")
+        self.gridLayout_2.addWidget(self.gapLabel, 3, 0, 1, 1)
+        self.compParamsHLayout2 = QtWidgets.QHBoxLayout()
+        self.compParamsHLayout2.setObjectName("compParamsHLayout2")
+        self.compParam1Label2 = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.compParam1Label2.setText("")
+        self.compParam1Label2.setTextFormat(QtCore.Qt.AutoText)
+        self.compParam1Label2.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
+        self.compParam1Label2.setScaledContents(True)
+        self.compParam1Label2.setWordWrap(False)
+        self.compParam1Label2.setIndent(-1)
+        self.compParam1Label2.setObjectName("compParam1Label2")
+        self.compParamsHLayout2.addWidget(self.compParam1Label2)
+        self.compParam1LineEdit2 = QtWidgets.QLineEdit(self.comparisonGroupBox)
+        self.compParam1LineEdit2.setObjectName("compParam1LineEdit2")
+        self.compParamsHLayout2.addWidget(self.compParam1LineEdit2)
+        self.gridLayout_2.addLayout(self.compParamsHLayout2, 3, 1, 1, 1)
+        self.twistLabel = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.twistLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.twistLabel.setObjectName("twistLabel")
+        self.gridLayout_2.addWidget(self.twistLabel, 4, 0, 1, 1)
+        self.compParamsHLayout3 = QtWidgets.QHBoxLayout()
+        self.compParamsHLayout3.setObjectName("compParamsHLayout3")
+        self.compParam1Label3 = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.compParam1Label3.setText("")
+        self.compParam1Label3.setTextFormat(QtCore.Qt.AutoText)
+        self.compParam1Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
+        self.compParam1Label3.setScaledContents(True)
+        self.compParam1Label3.setWordWrap(False)
+        self.compParam1Label3.setIndent(-1)
+        self.compParam1Label3.setObjectName("compParam1Label3")
+        self.compParamsHLayout3.addWidget(self.compParam1Label3)
+        self.compParam1LineEdit3 = QtWidgets.QLineEdit(self.comparisonGroupBox)
+        self.compParam1LineEdit3.setObjectName("compParam1LineEdit3")
+        self.compParamsHLayout3.addWidget(self.compParam1LineEdit3)
+        self.compParam2Label3 = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.compParam2Label3.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.compParam2Label3.sizePolicy().hasHeightForWidth())
+        self.compParam2Label3.setSizePolicy(sizePolicy)
+        self.compParam2Label3.setText("")
+        self.compParam2Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/alpha.png")))
+        self.compParam2Label3.setScaledContents(True)
+        self.compParam2Label3.setObjectName("compParam2Label3")
+        self.compParamsHLayout3.addWidget(self.compParam2Label3)
+        self.compParam2LineEdit3 = QtWidgets.QLineEdit(self.comparisonGroupBox)
+        self.compParam2LineEdit3.setObjectName("compParam2LineEdit3")
+        self.compParamsHLayout3.addWidget(self.compParam2LineEdit3)
+        self.compParam3Label3 = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.compParam3Label3.setText("")
+        self.compParam3Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/beta.png")))
+        self.compParam3Label3.setObjectName("compParam3Label3")
+        self.compParamsHLayout3.addWidget(self.compParam3Label3)
+        self.compParam3LineEdit3 = QtWidgets.QLineEdit(self.comparisonGroupBox)
+        self.compParam3LineEdit3.setObjectName("compParam3LineEdit3")
+        self.compParamsHLayout3.addWidget(self.compParam3LineEdit3)
+        self.gridLayout_2.addLayout(self.compParamsHLayout3, 4, 1, 1, 1)
+        self.admmLabel = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.admmLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.admmLabel.setObjectName("admmLabel")
+        self.gridLayout_2.addWidget(self.admmLabel, 5, 0, 1, 1)
+        self.compParamsHLayout4 = QtWidgets.QHBoxLayout()
+        self.compParamsHLayout4.setObjectName("compParamsHLayout4")
+        self.compParam1Label4 = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.compParam1Label4.setText("")
+        self.compParam1Label4.setTextFormat(QtCore.Qt.AutoText)
+        self.compParam1Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho.png")))
+        self.compParam1Label4.setScaledContents(True)
+        self.compParam1Label4.setWordWrap(False)
+        self.compParam1Label4.setIndent(-1)
+        self.compParam1Label4.setObjectName("compParam1Label4")
+        self.compParamsHLayout4.addWidget(self.compParam1Label4)
+        self.compParam1LineEdit4 = QtWidgets.QLineEdit(self.comparisonGroupBox)
+        self.compParam1LineEdit4.setObjectName("compParam1LineEdit4")
+        self.compParamsHLayout4.addWidget(self.compParam1LineEdit4)
+        self.compParam2Label4 = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.compParam2Label4.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.compParam2Label4.sizePolicy().hasHeightForWidth())
+        self.compParam2Label4.setSizePolicy(sizePolicy)
+        self.compParam2Label4.setText("")
+        self.compParam2Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/gamma.png")))
+        self.compParam2Label4.setScaledContents(True)
+        self.compParam2Label4.setObjectName("compParam2Label4")
+        self.compParamsHLayout4.addWidget(self.compParam2Label4)
+        self.compParam2LineEdit4 = QtWidgets.QLineEdit(self.comparisonGroupBox)
+        self.compParam2LineEdit4.setObjectName("compParam2LineEdit4")
+        self.compParamsHLayout4.addWidget(self.compParam2LineEdit4)
+        self.compParam3Label4 = QtWidgets.QLabel(self.comparisonGroupBox)
+        self.compParam3Label4.setText("")
+        self.compParam3Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
+        self.compParam3Label4.setObjectName("compParam3Label4")
+        self.compParamsHLayout4.addWidget(self.compParam3Label4)
+        self.compParam3LineEdit4 = QtWidgets.QLineEdit(self.comparisonGroupBox)
+        self.compParam3LineEdit4.setObjectName("compParam3LineEdit4")
+        self.compParamsHLayout4.addWidget(self.compParam3LineEdit4)
+        self.gridLayout_2.addLayout(self.compParamsHLayout4, 5, 1, 1, 1)
+        self.mainLayout.addWidget(self.comparisonGroupBox)
 
         self.samplingGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.samplingGroupBox.setObjectName("samplingGroupBox")
@@ -384,7 +567,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.saveAsPushButton = QtWidgets.QPushButton(self.runGroupBox)
         self.saveAsPushButton.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("assets/icons/save.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(solve_path("assets/icons/save.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.saveAsPushButton.setIcon(icon1)
         self.saveAsPushButton.setObjectName("saveAsPushButton")
         self.saveAsHLayout.addWidget(self.saveAsPushButton)
@@ -399,7 +582,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.startPushButton = QtWidgets.QPushButton(self.runGroupBox)
         self.startPushButton.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("assets/icons/run.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(solve_path("assets/icons/run.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.startPushButton.setIcon(icon2)
         self.startPushButton.setObjectName("startPushButton")
         self.startHLayout.addWidget(self.startPushButton)
@@ -420,7 +603,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.resultPushButton.setAutoFillBackground(False)
         self.resultPushButton.setText("")
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("assets/icons/report.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(solve_path("assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.resultPushButton.setIcon(icon3)
         self.resultPushButton.setAutoDefault(False)
         self.resultPushButton.setDefault(False)
@@ -509,16 +692,73 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.expTuningReportTab1VLayout.addWidget(self.graphicTuningReportWidget)
         self.tuningTabWidget.addTab(self.expTuningReportTab1, "")
         self.experimentsVLayout.addWidget(self.tuningTabWidget)
+
+        self.comparisonsToolBox = QtWidgets.QToolBox(self.centralwidget)
+        self.comparisonsToolBox.setObjectName("comparisonsToolBox")
+        self.comparisonPerformancePage = QtWidgets.QWidget()
+        self.comparisonPerformancePage.setGeometry(QtCore.QRect(0, 0, 1042, 256))
+        self.comparisonPerformancePage.setObjectName("comparisonPerformancePage")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.comparisonPerformancePage)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.comparisonPerformanceTabWidget = QtWidgets.QTabWidget(self.comparisonPerformancePage)
+        self.comparisonPerformanceTabWidget.setObjectName("comparisonPerformanceTabWidget")
+        self.expComparisonPerformanceTab1 = QtWidgets.QWidget()
+        self.expComparisonPerformanceTab1.setObjectName("expComparisonPerformanceTab1")
+        self.expPerformanceTab1HLayout_2 = QtWidgets.QHBoxLayout(self.expComparisonPerformanceTab1)
+        self.expPerformanceTab1HLayout_2.setObjectName("expPerformanceTab1HLayout_2")
+        self.graphicComparisonPerformanceWidget = QtWidgets.QWidget(self.expComparisonPerformanceTab1)
+        self.graphicComparisonPerformanceWidget.setObjectName("graphicComparisonPerformanceWidget")
+        self.graphicPerformanceWidgetVLayout_2 = QtWidgets.QVBoxLayout(self.graphicComparisonPerformanceWidget)
+        self.graphicPerformanceWidgetVLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.graphicPerformanceWidgetVLayout_2.setSpacing(0)
+        self.graphicPerformanceWidgetVLayout_2.setObjectName("graphicPerformanceWidgetVLayout_2")
+        self.graphicComparisonPerformanceVLayout = QtWidgets.QVBoxLayout()
+        self.graphicComparisonPerformanceVLayout.setSpacing(0)
+        self.graphicComparisonPerformanceVLayout.setObjectName("graphicComparisonPerformanceVLayout")
+        self.graphicPerformanceWidgetVLayout_2.addLayout(self.graphicComparisonPerformanceVLayout)
+        self.expPerformanceTab1HLayout_2.addWidget(self.graphicComparisonPerformanceWidget)
+        self.expPerformanceTab1HLayout_2.setStretch(0, 9)
+        self.comparisonPerformanceTabWidget.addTab(self.expComparisonPerformanceTab1, "")
+        self.verticalLayout.addWidget(self.comparisonPerformanceTabWidget)
+        self.comparisonsToolBox.addItem(self.comparisonPerformancePage, "")
+        self.comparisonReportPage = QtWidgets.QWidget()
+        self.comparisonReportPage.setGeometry(QtCore.QRect(0, 0, 1042, 256))
+        self.comparisonReportPage.setObjectName("comparisonReportPage")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.comparisonReportPage)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.comparisonReportTabWidget = QtWidgets.QTabWidget(self.comparisonReportPage)
+        self.comparisonReportTabWidget.setObjectName("comparisonReportTabWidget")
+        self.expComparisonReportTab1 = QtWidgets.QWidget()
+        self.expComparisonReportTab1.setObjectName("expComparisonReportTab1")
+        self.expPerformanceTab1HLayout_3 = QtWidgets.QHBoxLayout(self.expComparisonReportTab1)
+        self.expPerformanceTab1HLayout_3.setObjectName("expPerformanceTab1HLayout_3")
+        self.graphicComparisonReportWidget = QtWidgets.QWidget(self.expComparisonReportTab1)
+        self.graphicComparisonReportWidget.setObjectName("graphicComparisonReportWidget")
+        self.graphicPerformanceWidgetVLayout_3 = QtWidgets.QVBoxLayout(self.graphicComparisonReportWidget)
+        self.graphicPerformanceWidgetVLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.graphicPerformanceWidgetVLayout_3.setSpacing(0)
+        self.graphicPerformanceWidgetVLayout_3.setObjectName("graphicPerformanceWidgetVLayout_3")
+        self.graphicComparisonReportVLayout = QtWidgets.QVBoxLayout()
+        self.graphicComparisonReportVLayout.setSpacing(0)
+        self.graphicComparisonReportVLayout.setObjectName("graphicComparisonReportVLayout")
+        self.graphicPerformanceWidgetVLayout_3.addLayout(self.graphicComparisonReportVLayout)
+        self.expPerformanceTab1HLayout_3.addWidget(self.graphicComparisonReportWidget)
+        self.expPerformanceTab1HLayout_3.setStretch(0, 9)
+        self.comparisonReportTabWidget.addTab(self.expComparisonReportTab1, "")
+        self.verticalLayout_2.addWidget(self.comparisonReportTabWidget)
+        self.comparisonsToolBox.addItem(self.comparisonReportPage, "")
+        self.experimentsVLayout.addWidget(self.comparisonsToolBox)
         self.centralWidgetHLayout.addLayout(self.experimentsVLayout)
-        self.centralWidgetHLayout.setStretch(0, 2)
-        self.centralWidgetHLayout.setStretch(1, 18)
+        self.centralWidgetHLayout.setStretch(0, 1)
+        self.centralWidgetHLayout.setStretch(1, 10)
         self.setCentralWidget(self.centralwidget)
+
         self.toolBar = QtWidgets.QToolBar(self)
         self.toolBar.setObjectName("toolBar")
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.aboutOfAction = QtWidgets.QAction(self)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("assets/icons/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(solve_path("assets/icons/info.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.aboutOfAction.setIcon(icon4)
         self.aboutOfAction.setObjectName("aboutOfAction")
         self.reportAction = QtWidgets.QAction(self)
@@ -526,22 +766,32 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.reportAction.setObjectName("reportAction")
         self.mainAction = QtWidgets.QAction(self)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap("assets/icons/main.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5.addPixmap(QtGui.QPixmap(solve_path("assets/icons/main.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.mainAction.setIcon(icon5)
         self.mainAction.setObjectName("mainAction")
         self.tuningAction = QtWidgets.QAction(self)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap("assets/icons/tuning.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6.addPixmap(QtGui.QPixmap(solve_path("assets/icons/tuning.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tuningAction.setIcon(icon6)
         self.tuningAction.setObjectName("tuningAction")
+        self.comparisonAction = QtWidgets.QAction(self)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(solve_path("assets/icons/comparison.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.comparisonAction.setIcon(icon7)
+        self.comparisonAction.setObjectName("comparisonAction")
         self.toolBar.addAction(self.mainAction)
         self.toolBar.addAction(self.tuningAction)
+        self.toolBar.addAction(self.comparisonAction)
         self.toolBar.addAction(self.aboutOfAction)
 
         self.retranslateUi()
         self.resultsToolBox.setCurrentIndex(0)
         self.performanceTabWidget.setCurrentIndex(0)
         self.reportTabWidget.setCurrentIndex(0)
+        self.tuningTabWidget.setCurrentIndex(0)
+        self.comparisonsToolBox.setCurrentIndex(0)
+        self.comparisonPerformanceTabWidget.setCurrentIndex(0)
+        self.comparisonReportTabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(self)
 
         # others
@@ -557,6 +807,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.algorithmGroupBox.setMinimumWidth(width)
         self.algorithmGroupBox.setMaximumWidth(width)
         self.samplingGroupBox.setMaximumWidth(width)
+        self.comparisonGroupBox.setMaximumWidth(width)
         self.runGroupBox.setMaximumWidth(width)
 
         algorithm = self.algorithmComboBox.currentText().lower()
@@ -567,6 +818,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.tuningGroupBox.setVisible(False)
         self.tuningTabWidget.setVisible(False)
+        self.comparisonsToolBox.setVisible(False)
+        self.comparisonGroupBox.setVisible(False)
         self.paramComboBox.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.elementLabel.setVisible(False)
@@ -577,14 +830,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.jitterBlockSpinBox.setVisible(False)
 
     def init_global_variables(self):
-        self.global_variables = dict(tab_mode='main', view_mode='normal', algorithm_name='')
-        # Tab mode ['main', 'tuning']
+        # Tab mode ['main', 'tuning', 'comparison']
         # View mode ['normal', 'report']
 
+        self.global_variables = dict(tab_mode='main', view_mode='normal', algorithm_name='')
         self.directories = dict(main=dict(uploaded='', temp_saved='', saved='', report=''),
-                                tuning=dict(uploaded='', temp_saved='', saved='', report=''))
+                                tuning=dict(uploaded='', temp_saved='', saved='', report=''),
+                                comparison=dict(uploaded='', temp_saved='', saved='', report=''))
         self.state = dict(main=dict(progress=dict(iteration=[], error=[], psnr=[], ssim=[])),
-                          tuning=dict(progress=dict(total_runs=0, fixed_params='', current_scale='')))
+                          tuning=dict(progress=dict(total_runs=0, fixed_params='', current_scale='')),
+                          comparison=dict(progress=dict(iteration=[], errors=[], psnrs=[], ssims=[])))
 
         self.icons_path = 'assets/parameters'
 
@@ -613,6 +868,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
                               [self.param3InitLabel, self.param3InitLineEdit,
                                self.param3EndLabel, self.param3EndLineEdit]]
 
+        self.comparison_params = [[self.compParam1LineEdit1, self.compParam2LineEdit1],
+                                  [self.compParam1LineEdit2],
+                                  [self.compParam1LineEdit3, self.compParam2LineEdit3, self.compParam3LineEdit3],
+                                  [self.compParam1LineEdit4, self.compParam2LineEdit4, self.compParam3LineEdit4]]
+
     def init_actions(self):
         self.onlydouble = QtGui.QDoubleValidator(decimals=10)
         self.onlyInt = QtGui.QIntValidator()
@@ -621,12 +881,14 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # tab
         self.mainAction.triggered.connect(self.show_main)
         self.tuningAction.triggered.connect(self.show_tuning)
+        self.comparisonAction.triggered.connect(self.show_comparison)
         self.aboutOfAction.triggered.connect(self.show_about_of)
 
         # algorithms
 
         self.algorithmComboBox.currentTextChanged.connect(self.algorithm_changed)
         self.algorithmPushButton.clicked.connect(self.algorithm_equation_clicked)
+        self.comparisonAlgorithmPushButton.clicked.connect(self.comparison_algorithm_equation_clicked)
 
         # tuning
         self.paramTuningComboBox.currentTextChanged.connect(self.param_tuning_changed)
@@ -647,26 +909,51 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def init_graphics(self):
 
+        ## Main
+
         # performance graphic
 
         self.performanceGraphic = PerformanceGraphic()
         self.performanceToolbar = NavigationToolbar(self.performanceGraphic, self)
+        # self.performanceToolbar = CustomToolbar(self.performanceGraphic, self)
         self.graphicPerformanceVLayout.addWidget(self.performanceToolbar)
         self.graphicPerformanceVLayout.addWidget(self.performanceGraphic)
 
         # report graphic
 
         self.reconstructionGraphic = ReconstructionGraphic()
-        self.reportToolbar = NavigationToolbar(self.reconstructionGraphic, self)
+        # self.reportToolbar = NavigationToolbar(self.reconstructionGraphic, self)
+        self.reportToolbar = CustomToolbar(self.reconstructionGraphic, self)
         self.graphicReportVLayout.addWidget(self.reportToolbar)
         self.graphicReportVLayout.addWidget(self.reconstructionGraphic)
 
-        # report graphic
+        ## Tuning
+
+        # tuning graphic
 
         self.tuningGraphic = TuningGraphic()
-        self.tuningToolbar = NavigationToolbar(self.tuningGraphic, self)
+        # self.tuningToolbar = NavigationToolbar(self.tuningGraphic, self)
+        self.tuningToolbar = CustomToolbar(self.tuningGraphic, self)
         self.graphicTuningReportVLayout.addWidget(self.tuningToolbar)
         self.graphicTuningReportVLayout.addWidget(self.tuningGraphic)
+
+        ## Comparison
+
+        # performance graphic
+
+        self.performanceGraphicComparison = ComparisonPerformanceGraphic()
+        # self.performanceToolbarComparison = NavigationToolbar(self.performanceGraphicComparison, self)
+        self.performanceToolbarComparison = CustomToolbar(self.performanceGraphicComparison, self)
+        self.graphicComparisonPerformanceVLayout.addWidget(self.performanceToolbarComparison)
+        self.graphicComparisonPerformanceVLayout.addWidget(self.performanceGraphicComparison)
+
+        # report graphic
+
+        self.reconstructionGraphicComparison = ComparisonReconstructionGraphic()
+        # self.reportToolbarComparison = NavigationToolbar(self.reconstructionGraphicComparison, self)
+        self.reportToolbarComparison = CustomToolbar(self.reconstructionGraphicComparison, self)
+        self.graphicComparisonReportVLayout.addWidget(self.reportToolbarComparison)
+        self.graphicComparisonReportVLayout.addWidget(self.reconstructionGraphicComparison)
 
     def update_main_visible_algorithms(self, algorithm):
         for i in range(3):
@@ -680,7 +967,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
                 value = str(self.params[algorithm][i][1])
 
-                label.setPixmap(QtGui.QPixmap(icon_path))
+                label.setPixmap(QtGui.QPixmap(solve_path(icon_path)))
                 line_edit.setText(value)
 
             comparison1 = True if comparison else False
@@ -715,8 +1002,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 value_init = str(self.params[algorithm][i][1])
                 value_end = str(self.params[algorithm][i][2])
 
-                label_init.setPixmap(QtGui.QPixmap(icon_path_init if tuning_type == 'intervalo' else icon_path_list))
-                label_end.setPixmap(QtGui.QPixmap(icon_path_end))
+                label_init.setPixmap(QtGui.QPixmap(solve_path(icon_path_init if tuning_type == 'intervalo' else icon_path_list)))
+                label_end.setPixmap(QtGui.QPixmap(solve_path(icon_path_end)))
 
                 line_edit_init.setText(value_init)
                 line_edit_end.setText(value_end)
@@ -736,7 +1023,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             line_edit_end.setValidator(self.onlydouble if tuning_type == 'intervalo' else None)
 
             if i != self.paramComboBox.currentIndex():
-                label_init.setPixmap(QtGui.QPixmap(icon_path))
+                label_init.setPixmap(QtGui.QPixmap(solve_path(icon_path)))
                 label_end.setVisible(False)
                 line_edit_end.setVisible(False)
 
@@ -792,8 +1079,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         else:
             self.directories[self.global_variables['tab_mode']]['report'] = self.data_fname[0]
 
-            if self.global_variables['tab_mode'] == 'main':
-
+            tab_mode = self.global_variables['tab_mode']
+            if tab_mode == 'main':
                 data = np.load(self.data_fname[0], allow_pickle=True)
                 performance_data = {item[0]: item[1] for item in data['performance_data']}
 
@@ -803,7 +1090,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 self.reconstructionGraphic.update_report(data)
                 self.reconstructionGraphic.update_figure()
 
-            else:
+            elif tab_mode == 'tuning':
                 data = np.load(self.data_fname[0], allow_pickle=True)
                 self.algorithm_name = str(data['algorithm']).lower()
                 self.tuning_data = pd.DataFrame({item[0]: item[1] for item in data['tuning_data']})
@@ -813,6 +1100,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 self.tuningGraphic.update_tuning(self.algorithm_name, self.tuning_data, self.fixed_params,
                                                  self.current_scale)
                 self.tuningGraphic.update_figure()
+
+            else:
+                data = np.load(self.data_fname[0], allow_pickle=True)
+                comparison_data = {item[0]: item[1] for item in data['comparison_data']}
+
+                self.performanceGraphicComparison.update_values(**comparison_data)
+                self.performanceGraphicComparison.update_figure()
+
+                self.reconstructionGraphicComparison.update_report(data)
+                self.reconstructionGraphicComparison.update_figure()
 
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
@@ -881,18 +1178,30 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def show_main(self):
         self.global_variables['tab_mode'] = 'main'
+        view_mode = self.global_variables['view_mode']
+        comparison = True if view_mode == 'normal' else False
+
+        self.algorithmGroupBox.setVisible(comparison)
         self.tuningGroupBox.setVisible(False)
+        self.comparisonGroupBox.setVisible(False)
         self.resultsToolBox.setVisible(True)
         self.tuningTabWidget.setVisible(False)
+        self.comparisonsToolBox.setVisible(False)
 
         self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
         self.set_result_view()
 
     def show_tuning(self):
         self.global_variables['tab_mode'] = 'tuning'
-        self.tuningGroupBox.setVisible(True if self.global_variables['view_mode'] == 'normal' else False)
+        view_mode = self.global_variables['view_mode']
+        comparison = True if view_mode == 'normal' else False
+
+        self.algorithmGroupBox.setVisible(comparison)
+        self.tuningGroupBox.setVisible(comparison)
+        self.comparisonGroupBox.setVisible(False)
         self.resultsToolBox.setVisible(False)
         self.tuningTabWidget.setVisible(True)
+        self.comparisonsToolBox.setVisible(False)
 
         self.param1Label.setVisible(False)
         self.param1LineEdit.setVisible(False)
@@ -904,14 +1213,31 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
         self.set_result_view()
 
+    def show_comparison(self):
+        self.global_variables['tab_mode'] = 'comparison'
+        view_mode = self.global_variables['view_mode']
+        comparison = True if view_mode == 'normal' else False
+
+        self.algorithmGroupBox.setVisible(False)
+        self.tuningGroupBox.setVisible(False)
+        self.comparisonGroupBox.setVisible(comparison)
+        self.resultsToolBox.setVisible(False)
+        self.tuningTabWidget.setVisible(False)
+        self.comparisonsToolBox.setVisible(True)
+
+        self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
+        self.set_result_view()
+
     def set_result_view(self):
         mode = self.global_variables['tab_mode']
         if self.directories[mode]['report'] != '':
             if mode == 'main':
                 self.performanceGraphic.update_figure()
                 self.reconstructionGraphic.update_figure()
-            else:
+            elif mode == 'tuning':
                 self.tuningGraphic.update_figure()
+            else:
+                pass
 
         if self.global_variables['view_mode'] == 'normal':
             self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
@@ -925,13 +1251,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
         if self.global_variables['view_mode'] == 'normal':
             self.global_variables['view_mode'] = 'report'
             self.set_report_view()
-            icon.addPixmap(QtGui.QPixmap("assets/icons/seismic.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/seismic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.resultLabel.setText('Realizar experimentos')
 
         else:
             self.global_variables['view_mode'] = 'normal'
             self.set_main_view()
-            icon.addPixmap(QtGui.QPixmap("assets/icons/report.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.resultLabel.setText('Ver resultados')
 
         self.resultPushButton.setIcon(icon)
@@ -939,10 +1265,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def set_main_view(self):
         self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
 
-        self.algorithmGroupBox.setVisible(True)
-        self.tuningGroupBox.setVisible(True if self.global_variables['tab_mode'] == 'tuning' else False)
+        tab_mode = self.global_variables['tab_mode']
+        self.algorithmGroupBox.setVisible(True if tab_mode == 'main' else False)
+        self.tuningGroupBox.setVisible(True if tab_mode == 'tuning' else False)
         self.samplingGroupBox.setVisible(True)
         self.runGroupBox.setVisible(True)
+        self.comparisonGroupBox.setVisible(True if tab_mode == 'comparison' else False)
 
         _translate = QtCore.QCoreApplication.translate
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))
@@ -954,6 +1282,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.tuningGroupBox.setVisible(False)
         self.samplingGroupBox.setVisible(False)
         self.runGroupBox.setVisible(False)
+        self.comparisonGroupBox.setVisible(False)
 
         _translate = QtCore.QCoreApplication.translate
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos reconstruidos"))
@@ -974,6 +1303,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.ui_equation_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         # print(self.ui_equation_window.isModal())
         self.ui_equation_window.show()
+
+    def comparison_algorithm_equation_clicked(self):
+        self.ui_comparison_equation_window = UIComparisonEquationWindow()
+        self.ui_comparison_equation_window.setupUi(self.algorithmComboBox.currentText())
+        self.ui_comparison_equation_window.show()
 
     def param_tuning_changed(self, value):
         self.paramValuesLabel.setVisible(True if value.lower() == 'intervalo' else False)
@@ -1020,17 +1354,14 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.spacerItem5.changeSize(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
 
     def verify_parameters(self, uploaded_directory):
-        validate = True
 
         if uploaded_directory == '':
             showWarning("Para iniciar, debe cargar el dato sísmico dando click al boton 'Cargar'")
-            validate = False
-            return
+            return False
 
         if self.directories[self.global_variables['tab_mode']]['temp_saved'] == '':
             showWarning("Por favor seleccione un nombre de archivo para guardar los resultados del algoritmo.")
-            validate = False
-            return
+            return False
 
         if self.global_variables['tab_mode'] == 'tuning':
             algorithm = self.algorithmComboBox.currentText().lower()
@@ -1062,15 +1393,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             if not validate_interval:
                 showWarning("Los parámetros iniciales deben ser menores que los parámetros finales.")
-                validate = False
-                return
+                return False
 
             if not validate_list:
                 showWarning("La sintaxis de la lista no es correcta, verifiquela e ingresela nuevamente.")
-                validate = False
-                return
+                return False
 
-        return validate
+        return True
 
     def update_variables(self):
         self.experimentProgressBar.setValue(0)
@@ -1081,9 +1410,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.state[self.global_variables['tab_mode']]['progress']['psnr'] = []
             self.state[self.global_variables['tab_mode']]['progress']['ssim'] = []
 
-        else:
+        elif self.global_variables['tab_mode'] == 'tuning':
             self.state[self.global_variables['tab_mode']]['progress']['total_runs'] = 0
             self.state[self.global_variables['tab_mode']]['progress']['fixed_params'] = {}
+
+        else:
+            self.state[self.global_variables['tab_mode']]['progress']['iteration'] = []
+            self.state[self.global_variables['tab_mode']]['progress']['errors'] = []
+            self.state[self.global_variables['tab_mode']]['progress']['psnrs'] = []
+            self.state[self.global_variables['tab_mode']]['progress']['ssims'] = []
 
         self.maxiter = int(self.maxiterSpinBox.text())
 
@@ -1112,7 +1447,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         if self.seedCheckBox.checkState():
             seed = int(self.seedSpinBox.text())
 
-        compresson_ratio = float(self.compressSpinBox.text().split('%')[0]) / 100
+        compression_ratio = float(self.compressSpinBox.text().split('%')[0]) / 100
 
         mode = self.samplingTypeComboBox.currentText().lower()
         jitter_blocks = int(self.jitterBlockSpinBox.text())
@@ -1120,7 +1455,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         try:
             self.sampling_dict, H = self.sampling.apply_sampling(seismic_data, mode, jitter_blocks, lista, seed,
-                                                                 compresson_ratio)
+                                                                 compression_ratio)
         except:
             return
 
@@ -1143,7 +1478,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             # update worker behaviour
             self.worker = Worker(algorithm, parameters, self.maxiter)
 
-        else:
+        elif self.global_variables['tab_mode'] == 'tuning':
             param_list = []
             parameters = []
 
@@ -1200,10 +1535,27 @@ class UIMainWindow(QtWidgets.QMainWindow):
             # update worker behaviour
             self.worker = TuningWorker(func, parameters, self.maxiter)
 
+        else:
+            funcs = []
+            param_list = []
+
+            algorithm_names = ['fista', 'gap', 'twist', 'admm']
+            param_arg_names = ['param1', 'param2', 'param3']
+            for alg_name, params in zip(algorithm_names, self.comparison_params):
+                aux_params = {param_arg_names[i]: param.text() for i, param in enumerate(params)}
+
+                Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')
+                func, params = Alg.get_algorithm(alg_name, self.maxiter, **aux_params)
+
+                funcs.append(func)
+                param_list.append(params)
+
+            self.worker = ComparisonWorker(funcs, param_list, self.maxiter)
+
     def start_experiment(self):
 
         uploaded_directory = self.directories[self.global_variables['tab_mode']]['uploaded']
-        validate = self.verify_parameters(uploaded_directory)  ###
+        validate = self.verify_parameters(uploaded_directory)
 
         if not validate:
             return
@@ -1223,13 +1575,20 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.worker.finished.connect(self.thread.quit)
             self.worker.finished.connect(self.worker.deleteLater)
             self.thread.finished.connect(self.thread.deleteLater)
-            report_progress = self.report_main_progress if self.global_variables[
-                                                               'tab_mode'] == 'main' else self.report_tuning_progress
+
+            tab_mode = self.global_variables['tab_mode']
+            if tab_mode == 'main':
+                report_progress = self.report_main_progress
+                save_experiment = self.save_main_experiment
+            elif tab_mode == 'tuning':
+                report_progress = self.report_tuning_progress
+                save_experiment = self.save_tuning_experiment
+            else:
+                report_progress = self.report_comparison_progress
+                save_experiment = self.save_comparison_experiment
+
             self.worker.progress.connect(report_progress)
             self.thread.start()
-
-            save_experiment = self.save_main_experiment if self.global_variables[
-                                                               'tab_mode'] == 'main' else self.save_tuning_experiment
             self.worker.finished.connect(save_experiment)  # save results
 
             # Final resets
@@ -1313,6 +1672,51 @@ class UIMainWindow(QtWidgets.QMainWindow):
                  scale=self.current_scale)
         print("Results saved [Ok]")
 
+    def report_comparison_progress(self, iter, outputs):
+        self.experimentProgressBar.setValue(int((iter / self.maxiter) * 100))
+
+        # update figure
+        errs, psnrs, ssims = [], [], []
+        for output in outputs:
+            errs.append(output['hist'][iter, 0])
+            psnrs.append(np.round(output['hist'][iter, 1], 3))
+            ssims.append(np.round(output['hist'][iter, 2], 3))
+
+        iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration']
+        error_list = self.state[self.global_variables['tab_mode']]['progress']['errors']
+        psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnrs']
+        ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssims']
+
+        iteration_list.append(iter)
+        error_list.append(errs)
+        psnr_list.append(psnrs)
+        ssim_list.append(ssims)
+
+        if iter % (self.maxiter // 10) == 0 or iter == self.maxiter:
+            self.performanceGraphicComparison.update_values(iteration_list, error_list, psnr_list, ssim_list)
+            self.performanceGraphicComparison.update_figure()
+
+            x_results, hists = [], []
+            for output in outputs:
+                x_results.append(output['result'])
+                hists.append(output['hist'])
+
+            self.reconstructionGraphicComparison.update_report(
+                dict(x_results=x_results, hist=hists, sampling=self.sampling_dict,
+                     algorithm_name=self.algorithm_name))
+            self.reconstructionGraphicComparison.update_figure()
+
+    def save_comparison_experiment(self, res_dict):
+        comparison_data = np.array(list(self.performanceGraphicComparison.comparison_data.items()), dtype=object)
+
+        temp_saved = self.directories[self.global_variables['tab_mode']]['temp_saved']
+        self.directories[self.global_variables['tab_mode']]['saved'] = temp_saved
+        self.directories[self.global_variables['tab_mode']]['report'] = temp_saved
+        np.savez(self.directories[self.global_variables['tab_mode']]['saved'],
+                 x_results=res_dict['results'], hists=res_dict['hists'], sampling=self.sampling_dict,
+                 comparison_data=comparison_data)
+        print("Results saved [Ok]")
+
     def reset_values(self):
         self.startPushButton.setEnabled(True)
         self.experimentProgressBar.setValue(0)
@@ -1356,6 +1760,25 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.param2EndLineEdit.setText(_translate("mainWindow", "1.0"))
         self.param3InitLineEdit.setText(_translate("mainWindow", "0.1"))
         self.param3EndLineEdit.setText(_translate("mainWindow", "1.0"))
+
+        self.comparisonGroupBox.setTitle(_translate("mainWindow", "Comparaciones"))
+        self.comparisonAlgorithmLabel.setText(_translate("mainWindow", "Algoritmos"))
+        self.comparisonAlgorithmPushButton.setToolTip(_translate("mainWindow", "Ver ecuación"))
+        self.comparisonMaxiterLabel.setText(_translate("mainWindow", "Máxima iteración"))
+        self.fistaLabel.setText(_translate("mainWindow", "FISTA"))
+        self.compParam1LineEdit1.setText(_translate("mainWindow", "2.9"))
+        self.compParam2LineEdit1.setText(_translate("mainWindow", "0.4"))
+        self.gapLabel.setText(_translate("mainWindow", "GAP"))
+        self.compParam1LineEdit2.setText(_translate("mainWindow", "30.0"))
+        self.twistLabel.setText(_translate("mainWindow", "TwIST"))
+        self.compParam1LineEdit3.setText(_translate("mainWindow", "17.0"))
+        self.compParam2LineEdit3.setText(_translate("mainWindow", "1.2"))
+        self.compParam3LineEdit3.setText(_translate("mainWindow", "1.998"))
+        self.admmLabel.setText(_translate("mainWindow", "ADMM"))
+        self.compParam1LineEdit4.setText(_translate("mainWindow", "0.5"))
+        self.compParam2LineEdit4.setText(_translate("mainWindow", "1.0"))
+        self.compParam3LineEdit4.setText(_translate("mainWindow", "0.0005"))
+
         self.samplingGroupBox.setTitle(_translate("mainWindow", "Submuestreo"))
         self.samplingTypeLabel.setText(_translate("mainWindow", "Tipo"))
         self.samplingTypeComboBox.setItemText(0, _translate("mainWindow", "Aleatorio"))
@@ -1382,9 +1805,20 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.reportTabWidget.setTabText(self.reportTabWidget.indexOf(self.expReportTab1),
                                         _translate("mainWindow", "Experimento"))
         self.resultsToolBox.setItemText(self.resultsToolBox.indexOf(self.reportPage),
-                                        _translate("mainWindow", "Reporte"))
+                                        _translate("mainWindow", "Reporte de reconstrucción"))
         self.tuningTabWidget.setTabText(self.tuningTabWidget.indexOf(self.expTuningReportTab1),
                                         _translate("mainWindow", "Experimento"))
+
+        self.comparisonPerformanceTabWidget.setTabText(
+            self.comparisonPerformanceTabWidget.indexOf(self.expComparisonPerformanceTab1),
+            _translate("mainWindow", "Experimento"))
+        self.comparisonsToolBox.setItemText(self.comparisonsToolBox.indexOf(self.comparisonPerformancePage),
+                                            _translate("mainWindow", "Rendimiento"))
+        self.comparisonReportTabWidget.setTabText(self.comparisonReportTabWidget.indexOf(self.expComparisonReportTab1),
+                                                  _translate("mainWindow", "Experimento"))
+        self.comparisonsToolBox.setItemText(self.comparisonsToolBox.indexOf(self.comparisonReportPage),
+                                            _translate("mainWindow", "Reporte de reconstrucción"))
+
         self.toolBar.setWindowTitle(_translate("mainWindow", "toolBar"))
         self.aboutOfAction.setText(_translate("mainWindow", "about"))
         self.aboutOfAction.setToolTip(
@@ -1395,6 +1829,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.mainAction.setToolTip(_translate("mainWindow", "Ir al menú principal"))
         self.tuningAction.setText(_translate("mainWindow", "tuning"))
         self.tuningAction.setToolTip(_translate("mainWindow", "Ajuste de parámetros"))
+        self.comparisonAction.setText(_translate("mainWindow", "comparison"))
+        self.comparisonAction.setToolTip(
+            _translate("mainWindow", "Hacer comparación de experimento con todos los algoritmos"))
 
 
 if __name__ == "__main__":
