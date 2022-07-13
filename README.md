@@ -48,7 +48,7 @@ Luego, ejecute el script `main_window.py` como:
 
 `python main_window.py`
 
-# Instalación independiente
+# Instalación Independiente
 
 ---
 
