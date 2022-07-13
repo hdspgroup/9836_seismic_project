@@ -49,11 +49,13 @@ a.datas += [("./assets/icons/main.png", "assets/icons/main.png", "DATA"),
             ("./assets/parameters/gamma.png", "assets/parameters/gamma.png", "DATA"),
             ("./assets/parameters/alpha.png", "assets/parameters/alpha.png", "DATA"),
             ("./assets/parameters/beta.png", "assets/parameters/beta.png", "DATA"),
+            ("./assets/parameters/epsilon.png", "assets/parameters/epsilon.png", "DATA"),
             ("./assets/equations/algorithms.png", "assets/equations/algorithms.png", "DATA"),
             ("./assets/equations/fista.png", "assets/equations/fista.png", "DATA"),
             ("./assets/equations/gap.png", "assets/equations/gap.png", "DATA"),
             ("./assets/equations/twist.png", "assets/equations/twist.png", "DATA"),
             ("./assets/equations/admm.png", "assets/equations/admm.png", "DATA"),
+            ("./assets/equations/jitter.png", "assets/equations/jitter.png", "DATA"),
             ("./assets/logos/upper_logo.png", "assets/logos/upper_logo.png", "DATA"),
             ("./assets/logos/lower_logo.png", "assets/logos/lower_logo.png", "DATA")]
 

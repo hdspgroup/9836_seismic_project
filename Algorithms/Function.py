@@ -14,21 +14,23 @@ import time
 # Need to use this (EventEmitter) for comunication with the GUI, please don't remove it, I used this trough the code
 from gui.scripts.alerts import showWarning, showCritical
 
-# ee = EventEmitter()
-
 
 class Sampling:
     '''
     Sampling techniques for seismic data.
     '''
 
-    def apply_sampling(self, x, mode, n_bloques, lista, seed, compression_ratio):
+    def apply_sampling(self, x, mode, jitter_params, lista, seed, compression_ratio):
         if mode == 'aleatorio':
             return self.random_sampling(x, seed, compression_ratio)
         elif mode == 'uniforme':
             return self.uniform_sampling(x, compression_ratio)
         elif mode == 'jitter':
-            return self.jitter_sampling(x, n_bloques, compression_ratio)
+            # if jitter_params['gamma'] % 2 != 0:
+            #     showWarning("El valor de gamma debe ser un número impar.")
+            #     return
+
+            return self.jitter_sampling(x, seed, **jitter_params)
         else:  # mode == lista
             try:
                 lista = [int(number) for number in lista.text().replace(' ', '').split(',')]
@@ -138,13 +140,64 @@ class Sampling:
 
         return np.array(list(sampling_dict.items())), H
 
-    def jitter_sampling(self, x, n_bloques, compression_ratio):
+    # def jitter_sampling(self, x, n_bloques, compression_ratio):
+    #     # https://slim.gatech.edu/Publications/Public/Journals/Geophysics/2008/hennenfent08GEOsdw/paper_html/node14.html
+    #     '''
+    #     Inputs:
+    #     x : full data
+    #     n_bloques: number of splited blocks in the full data for subsampling
+    #     compression_ratio: compression ratio for subsampling
+    #
+    #     Outputs:
+    #     sampling_dict : dictionary that contains all information about sample
+    #                     and its compression
+    #     '''
+    #     M, N = x.shape
+    #
+    #     n = np.int(np.floor(N / n_bloques))
+    #     t_n = np.int(n * compression_ratio)
+    #     vec_total = []
+    #
+    #     for ii in range(n_bloques):
+    #         complete = np.ones((n,))
+    #         rand_block = np.random.permutation(list(range(1, n - 1)))
+    #         if ii == n_bloques - 1 and n_bloques % 2 == 0 and t_n == 3:
+    #             complete[rand_block[:t_n + 1]] = 0
+    #         else:
+    #             complete[rand_block[:t_n]] = 0
+    #         vec_total.append(complete)
+    #
+    #     vectorize_pattern = np.array(vec_total).reshape(-1)
+    #     pattern_vec = np.ones((N,))
+    #     pattern_vec[:len(vectorize_pattern)] = vectorize_pattern
+    #
+    #     # Sampling pattern
+    #     H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
+    #
+    #     out = x * H0
+    #     pattern_bool = np.asarray(pattern_vec, dtype=bool)
+    #     H = pattern_bool
+    #
+    #     sampling_dict = {
+    #         "x_ori": x,
+    #         "sr_rand": compression_ratio,
+    #         "y_rand": out,
+    #         "pattern_rand": pattern_vec,
+    #         "pattern_index": pattern_bool,
+    #         "H": H,
+    #         "H0": H0
+    #     }
+    #
+    #     return np.array(list(sampling_dict.items())), H
+
+    def jitter_sampling(self, x, seed, gamma=3, epsilon=3):
         # https://slim.gatech.edu/Publications/Public/Journals/Geophysics/2008/hennenfent08GEOsdw/paper_html/node14.html
         '''
         Inputs:
         x : full data
-        n_bloques: number of splited blocks in the full data for subsampling
-        compression_ratio: compression ratio for subsampling
+        gamma: measurements distance, which implies that the compression ratio is N/gamma
+        epsilon: window where the perturbation is selected
+        new_position_i = ((1-gamma)/2)*gamma*i + U(-epsilon/2, epsilon/2)
 
         Outputs:
         sampling_dict : dictionary that contains all information about sample
@@ -152,40 +205,45 @@ class Sampling:
         '''
         M, N = x.shape
 
-        n = np.int(np.floor(N / n_bloques))
-        t_n = np.int(n * compression_ratio)
-        vec_total = []
+        # sensing pattern (zero when not measure that position)
+        pattern_vec = np.zeros((N,))
+        # first pisition
+        init_value = ((1 - gamma) / 2) + gamma
+        # compute the centroids of the regular grid sampling
+        centroids = list(range(int(init_value) - 1, N - 1, gamma))
+        # compute the limits of the uniform random variable
+        limits = np.floor(epsilon / 2)
+        # add 0.49 in order to make all number equally probable (edges problem)
+        limits = limits + 0.49
 
-        for ii in range(n_bloques):
-            complete = np.ones((n,))
-            rand_block = np.random.permutation(list(range(1, n - 1)))
-            if ii == n_bloques - 1 and n_bloques % 2 == 0 and t_n == 3:
-                complete[rand_block[:t_n + 1]] = 0
-            else:
-                complete[rand_block[:t_n]] = 0
-            vec_total.append(complete)
+        if seed is not None:
+            np.random.seed(seed)
 
-        vectorize_pattern = np.array(vec_total).reshape(-1)
-        pattern_vec = np.ones((N,))
-        pattern_vec[:len(vectorize_pattern)] = vectorize_pattern
+        # generate the perturbation following U(-epsilon/2, epsilon/2)
+        res = (np.random.rand(len(centroids), ) * (2 * limits)) - limits
+        # convert to integer
+        res[res > 0] = np.floor(res[res > 0])
+        res[res < 0] = np.ceil(res[res < 0])
+        # apply the perturbation to the centroids
+        positions = centroids - res
+        # placing a one in the new position
+        pattern_vec[positions.astype(int)] = 1
 
         # Sampling pattern
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
-
         out = x * H0
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
 
         sampling_dict = {
             "x_ori": x,
-            "sr_rand": compression_ratio,
+            "sr_rand": 1 / gamma,
             "y_rand": out,
             "pattern_rand": pattern_vec,
             "pattern_index": pattern_bool,
             "H": H,
             "H0": H0
         }
-
         return np.array(list(sampling_dict.items())), H
 
     def list_sampling(self, x, lista):
@@ -613,7 +671,6 @@ class Algorithms:
         H_elim = np.linspace(0, len(self.pattern) - 1, len(self.pattern), dtype=int)
         self.H_elim = H_elim[np.invert(self.pattern)]
 
-
     def measurements(self):
         '''
         Operator measurement models the subsampled acquisition process given a
@@ -996,7 +1053,8 @@ class Algorithms:
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
 
             # psnr_val = PSNR(x, x_old)
-            psnr_val = PSNR(x[:, self.H_elim], self.x[:, self.H_elim])  # the metric should be between the orig, and the estimated.
+            psnr_val = PSNR(x[:, self.H_elim],
+                            self.x[:, self.H_elim])  # the metric should be between the orig, and the estimated.
             ssim_val = ssim(x[:, self.H_elim], self.x[:, self.H_elim])
 
             hist[itr, 0] = residualx

@@ -118,7 +118,7 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
             ytemp = y_rand.copy()
             condition = H_elim.size > 0
             if condition:
-                ytemp[:, H_elim] = None
+                ytemp[:, H_elim] = 1
             axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
             axs[1, 0].set_title('Medidas')
 
@@ -320,7 +320,7 @@ class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
             ytemp = y_rand.copy()
             condition = H_elim.size > 0
             if condition:
-                ytemp[:, H_elim] = None
+                ytemp[:, H_elim] = 1
             axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
             axs[1, 0].set_title('Medidas')
 

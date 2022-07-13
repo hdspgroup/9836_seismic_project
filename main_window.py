@@ -27,6 +27,7 @@ from equation_comparison_window import UIComparisonEquationWindow
 from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic, ComparisonPerformanceGraphic, \
     ComparisonReconstructionGraphic, CustomToolbar
 from gui.scripts.alerts import showWarning, showCritical
+from jitter_window import UIJitterWindow
 from workers import Worker, TuningWorker, ComparisonWorker
 from tuning_window import UITuningWindow
 
@@ -504,27 +505,42 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.samplingGroupBoxVLayout.addLayout(self.elementHLayout)
         self.jitterHLayout = QtWidgets.QHBoxLayout()
         self.jitterHLayout.setObjectName("jitterHLayout")
-        self.jitterBlockLabel = QtWidgets.QLabel(self.samplingGroupBox)
-        self.jitterBlockLabel.setObjectName("jitterBlockLabel")
-        self.jitterHLayout.addWidget(self.jitterBlockLabel)
-        self.jitterBlockSpinBox = QtWidgets.QSpinBox(self.samplingGroupBox)
-        self.jitterBlockSpinBox.setSuffix("")
-        self.jitterBlockSpinBox.setPrefix("")
-        self.jitterBlockSpinBox.setMinimum(1)
-        self.jitterBlockSpinBox.setMaximum(999)
-        self.jitterBlockSpinBox.setObjectName("jitterBlockSpinBox")
-        self.jitterHLayout.addWidget(self.jitterBlockSpinBox)
-        self.jitterTypeLabel = QtWidgets.QLabel(self.samplingGroupBox)
-        self.jitterTypeLabel.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.jitterTypeLabel.setWordWrap(False)
-        self.jitterTypeLabel.setObjectName("jitterTypeLabel")
-        self.jitterHLayout.addWidget(self.jitterTypeLabel)
-        self.jitterComboBox = QtWidgets.QComboBox(self.samplingGroupBox)
-        self.jitterComboBox.setObjectName("jitterComboBox")
-        self.jitterComboBox.addItem("")
-        self.jitterComboBox.addItem("")
-        self.jitterHLayout.addWidget(self.jitterComboBox)
-        self.jitterHLayout.setStretch(3, 1)
+        self.gammaLabel = QtWidgets.QLabel(self.samplingGroupBox)
+        self.gammaLabel.setText("")
+        self.gammaLabel.setPixmap(QtGui.QPixmap("assets/parameters/gamma.png"))
+        self.gammaLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.gammaLabel.setObjectName("gammaLabel")
+        self.jitterHLayout.addWidget(self.gammaLabel)
+        self.gammaSpinBox = QtWidgets.QSpinBox(self.samplingGroupBox)
+        self.gammaSpinBox.setMinimum(2)
+        self.gammaSpinBox.setMaximum(999)
+        self.gammaSpinBox.setSingleStep(2)
+        self.gammaSpinBox.setValue(3)
+        self.gammaSpinBox.setObjectName("gammaSpinBox")
+        self.jitterHLayout.addWidget(self.gammaSpinBox)
+        self.epsilonLabel = QtWidgets.QLabel(self.samplingGroupBox)
+        self.epsilonLabel.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.epsilonLabel.setText("")
+        self.epsilonLabel.setPixmap(QtGui.QPixmap("assets/parameters/epsilon.png"))
+        self.epsilonLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.epsilonLabel.setWordWrap(False)
+        self.epsilonLabel.setObjectName("epsilonLabel")
+        self.jitterHLayout.addWidget(self.epsilonLabel)
+        self.epsilonSpinBox = QtWidgets.QSpinBox(self.samplingGroupBox)
+        self.epsilonSpinBox.setMinimum(1)
+        self.epsilonSpinBox.setMaximum(999)
+        self.epsilonSpinBox.setSingleStep(2)
+        self.epsilonSpinBox.setObjectName("epsilonSpinBox")
+        self.jitterHLayout.addWidget(self.epsilonSpinBox)
+        self.jitterPushButton = QtWidgets.QPushButton(self.samplingGroupBox)
+        self.jitterPushButton.setText("")
+        self.jitterPushButton.setIcon(icon)
+        self.jitterPushButton.setObjectName("jitterPushButton")
+        self.jitterHLayout.addWidget(self.jitterPushButton)
+        self.jitterHLayout.setStretch(0, 2)
+        self.jitterHLayout.setStretch(1, 4)
+        self.jitterHLayout.setStretch(2, 2)
+        self.jitterHLayout.setStretch(3, 4)
         self.samplingGroupBoxVLayout.addLayout(self.jitterHLayout)
         self.sdHLayout = QtWidgets.QHBoxLayout()
         self.sdHLayout.setObjectName("sdHLayout")
@@ -824,10 +840,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.elementLabel.setVisible(False)
         self.elementLineEdit.setVisible(False)
-        self.jitterTypeLabel.setVisible(False)
-        self.jitterComboBox.setVisible(False)
-        self.jitterBlockLabel.setVisible(False)
-        self.jitterBlockSpinBox.setVisible(False)
+        self.gammaLabel.setVisible(False)
+        self.gammaSpinBox.setVisible(False)
+        self.epsilonLabel.setVisible(False)
+        self.epsilonSpinBox.setVisible(False)
+        self.jitterPushButton.setVisible(False)
 
     def init_global_variables(self):
         # Tab mode ['main', 'tuning', 'comparison']
@@ -893,6 +910,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # tuning
         self.paramTuningComboBox.currentTextChanged.connect(self.param_tuning_changed)
         self.paramComboBox.currentTextChanged.connect(self.param_changed)
+        self.jitterPushButton.clicked.connect(self.jitter_sampling_clicked)
 
         # sampling
         self.samplingTypeComboBox.currentTextChanged.connect(self.on_sampling_changed)
@@ -1306,8 +1324,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def comparison_algorithm_equation_clicked(self):
         self.ui_comparison_equation_window = UIComparisonEquationWindow()
-        self.ui_comparison_equation_window.setupUi(self.algorithmComboBox.currentText())
+        self.ui_comparison_equation_window.setupUi()
         self.ui_comparison_equation_window.show()
+
+    def jitter_sampling_clicked(self):
+        self.jitter_sampling_window = UIJitterWindow()
+        self.jitter_sampling_window.setupUi()
+        self.jitter_sampling_window.show()
 
     def param_tuning_changed(self, value):
         self.paramValuesLabel.setVisible(True if value.lower() == 'intervalo' else False)
@@ -1329,21 +1352,22 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.spacerItem5.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.samplingHLine.setVisible(False if sampling in 'uniforme' else True)
 
-        visible = True if sampling not in 'lista' else False
+        visible = True if sampling not in ['jitter', 'lista'] else False
         self.compressLabel.setVisible(visible)
         self.compressSpinBox.setVisible(visible)
         self.compressSpinBox.setMaximum(99 if sampling in ['aleatorio', 'jitter'] else 50)
 
-        visible = True if sampling in 'aleatorio' else False
+        visible = True if sampling in ['aleatorio', 'jitter'] else False
         self.seedCheckBox.setVisible(visible)
         self.seedLabel.setVisible(visible)
         self.seedSpinBox.setVisible(visible)
 
         visible = True if sampling in 'jitter' else False
-        self.jitterBlockLabel.setVisible(visible)
-        self.jitterBlockSpinBox.setVisible(visible)
-        self.jitterTypeLabel.setVisible(visible)
-        self.jitterComboBox.setVisible(visible)
+        self.gammaLabel.setVisible(visible)
+        self.gammaSpinBox.setVisible(visible)
+        self.epsilonLabel.setVisible(visible)
+        self.epsilonSpinBox.setVisible(visible)
+        self.jitterPushButton.setVisible(visible)
 
         visible = True if sampling in 'lista' else False
         self.elementLabel.setVisible(visible)
@@ -1450,11 +1474,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
         compression_ratio = float(self.compressSpinBox.text().split('%')[0]) / 100
 
         mode = self.samplingTypeComboBox.currentText().lower()
-        jitter_blocks = int(self.jitterBlockSpinBox.text())
+        jitter_params = dict(gamma=int(self.gammaSpinBox.text()), epsilon=int(self.epsilonSpinBox.text()))
         lista = self.elementLineEdit
 
         try:
-            self.sampling_dict, H = self.sampling.apply_sampling(seismic_data, mode, jitter_blocks, lista, seed,
+            self.sampling_dict, H = self.sampling.apply_sampling(seismic_data, mode, jitter_params, lista, seed,
                                                                  compression_ratio)
         except:
             return
@@ -1782,16 +1806,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.samplingGroupBox.setTitle(_translate("mainWindow", "Submuestreo"))
         self.samplingTypeLabel.setText(_translate("mainWindow", "Tipo"))
         self.samplingTypeComboBox.setItemText(0, _translate("mainWindow", "Aleatorio"))
-        self.samplingTypeComboBox.setItemText(1, _translate("mainWindow", "Uniforme"))
+        self.samplingTypeComboBox.setItemText(1, _translate("mainWindow", "Regular"))
         self.samplingTypeComboBox.setItemText(2, _translate("mainWindow", "Jitter"))
         self.samplingTypeComboBox.setItemText(3, _translate("mainWindow", "Lista"))
         self.compressLabel.setText(_translate("mainWindow", "Compresión"))
         self.compressSpinBox.setSuffix(_translate("mainWindow", "%"))
         self.elementLabel.setText(_translate("mainWindow", "Elementos"))
-        self.jitterBlockLabel.setText(_translate("mainWindow", "Número de bloques"))
-        self.jitterTypeLabel.setText(_translate("mainWindow", "Tipo"))
-        self.jitterComboBox.setItemText(0, _translate("mainWindow", "Aleatorio"))
-        self.jitterComboBox.setItemText(1, _translate("mainWindow", "Uniforme"))
         self.seedCheckBox.setText(_translate("mainWindow", "Usar semilla"))
         self.seedLabel.setText(_translate("mainWindow", "Valor"))
         self.runGroupBox.setTitle(_translate("mainWindow", "Experimentos"))
