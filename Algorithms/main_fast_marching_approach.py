@@ -122,6 +122,8 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
         imShape = x.shape
         x = np.reshape(x, [imShape[0] * imShape[1], imShape[2]])
         mask = np.reshape(mask, [imShape[0] * imShape[1], imShape[2]])
+        x_copy = x.copy()
+        x = x * (1-mask)
         output = cv2.inpaint(x, mask, t_m + 1, flags=paint_method)
         output = np.reshape(output, [imShape[0], imShape[1], imShape[2]])
         x = np.reshape(x, [imShape[0], imShape[1], imShape[2]])
@@ -138,6 +140,8 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
             # output[..., i] = np.mean(tmp, axis=2)
             # aux_s[[i - 1, i, i + 1]] += 1
         # output /= aux_s
+        x_copy = np.reshape(x_copy, [imShape[0], imShape[1], imShape[2]])
+        x = x_copy.copy()
         output = np.transpose(output, [0, 2, 1])
         x = np.transpose(x, [0, 2, 1])
         print(PSNR(x, output))
