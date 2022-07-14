@@ -513,7 +513,7 @@ A continuación, se analiza el panel de ajuste de parámetros y la visualizació
 
 \subsection{Configuraciones}
 
-El panel ed ajuste de parámetros, como se muestra en la figura \ref{fig:tuning_panel}, permite al usuario configurar el tipo de prueba que desea realizar. Se encuentra dividido en las siguientes secciones:
+El panel de ajuste de parámetros, como se muestra en la figura \ref{fig:tuning_panel}, permite al usuario configurar el tipo de prueba que desea realizar. Se encuentra dividido en las siguientes secciones:
 
 \begin{multicols}{2}
 	
@@ -593,6 +593,66 @@ Ahora, para encontrar el valor óptimo $\mu^*$, se toma el valor de $\lambda^*$ 
      \captionof{figure}{Ajuste del parámetro $\mu$ para el algoritmo FISTA.}
     \label{fig:tuning_2}
 \end{Figure}
+
+\section{Comparación de Experimentos}
+
+\begin{multicols}{2}
+
+El tercer modo de ejecución de ReDs permite correr los cuatro algoritmos de reconstrucción al mismo tiempo. Este modo se activa con el tercer botón del menú principal, tal como se muestra en la figura \ref{fig:comp}. El objetivo es realizar comparaciones entre los algoritmos de reconstrucción.
+
+Al igual que con el modo de ajuste de parámetros, el modo de comparación modifica la interfaz gráfica, tal y como se muestra en la figura \ref{fig:main-comp}.
+
+\vfill\null
+\columnbreak
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.8\linewidth]{comp-tab.png}
+	\captionof{figure}{Modo de comparación de experimentos.}
+	\label{fig:comp}
+\end{Figure}
+
+\end{multicols}
+
+A continuación se listan los cambios que realiza la aplicación cuando se activa el modo de ajuste de parámetros:
+
+\begin{dingautolist}{192}
+	\setlength\itemsep{0em}
+	\item Se presentan los cuatro algoritmos de reconstrucción, con sus parámetros
+	\item La visualización de resultados se simplifica a una sola gráfica
+\end{dingautolist}
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.85\linewidth]{main-comp.png}
+	\captionof{figure}{Interfaz modo de comparación de experimentos.}
+	\label{fig:main-comp}
+\end{Figure}
+
+A continuación, se analiza el panel de ajuste de parámetros y la visualización de resultados para el modo de comparación de resultados.
+
+\subsection{Configuraciones}
+
+El panel de ajuste de parámetros, como se muestra en la figura \ref{fig:comp_panel}, permite al usuario configurar el tipo de prueba que desea realizar. Se encuentra dividido en las siguientes secciones:
+
+\begin{multicols}{2}
+	
+	\begin{Figure}
+		\centering
+		\includegraphics[width=0.9\linewidth]{comp-panel.png}
+		\captionof{figure}{Panel de ajuste de parámetros.}
+		\label{fig:comp_panel}
+	\end{Figure}	
+	
+	\begin{itemize}
+		
+		\item[I.] \textbf{Ver Ecuaciones:} Muestra las ecuaciones de los cuatro algoritmos de ajuste, con sus parámetros.
+		\item[II.] \textbf{Maximo de Iteraciones:} Define el número máximo de iteraciones para todos los cuatro algoritmos, por igual.
+		\item[III.] \textbf{Parámetros:} Se definen los parámetros para todos y cada uno de los algoritmos de reconstrucción, al igual que en el numeral 2.2.
+		
+	\end{itemize}
+	
+\end{multicols}
 
 \section{Visualización general de Resultados}
 
