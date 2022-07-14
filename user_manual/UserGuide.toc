@@ -18,5 +18,6 @@
 \contentsline {section}{\numberline {5}Visualización general de Resultados}{22}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Menú principal}{22}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Menú de ajuste de parámetros}{23}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Menú de comparación de experimentos}{25}{subsection.5.3}%
 \contentsline {section}{\numberline {6}Acerca de}{25}{section.6}%
 \contentsline {section}{\numberline {7}Recomendaciones de uso}{26}{section.7}%
