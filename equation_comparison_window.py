@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class UIComparisonEquationWindow(QtWidgets.QWidget):
-    def setupUi(self, case):
+    def setupUi(self):
         self.setObjectName("Algoritmo")
         self.setObjectName("EquationDialog")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self)

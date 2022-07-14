@@ -14,6 +14,7 @@
     <file>icons/view.png</file>
   </qresource>
   <qresource prefix="parameters">
+    <file>parameters/epsilon.png</file>
     <file>parameters/alpha.png</file>
     <file>parameters/alpha_beta.png</file>
     <file>parameters/alpha_end.png</file>
