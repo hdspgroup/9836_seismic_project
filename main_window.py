@@ -1020,7 +1020,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 value_init = str(self.params[algorithm][i][1])
                 value_end = str(self.params[algorithm][i][2])
 
-                label_init.setPixmap(QtGui.QPixmap(solve_path(icon_path_init if tuning_type == 'intervalo' else icon_path_list)))
+                label_init.setPixmap(
+                    QtGui.QPixmap(solve_path(icon_path_init if tuning_type == 'intervalo' else icon_path_list)))
                 label_end.setPixmap(QtGui.QPixmap(solve_path(icon_path_end)))
 
                 line_edit_init.setText(value_init)
@@ -1099,35 +1100,59 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             tab_mode = self.global_variables['tab_mode']
             if tab_mode == 'main':
-                data = np.load(self.data_fname[0], allow_pickle=True)
-                performance_data = {item[0]: item[1] for item in data['performance_data']}
+                try:
+                    data = np.load(self.data_fname[0], allow_pickle=True)
+                    performance_data = {item[0]: item[1] for item in data['performance_data']}
 
-                self.performanceGraphic.update_values(**performance_data)
-                self.performanceGraphic.update_figure()
+                    self.performanceGraphic.update_values(**performance_data)
+                    self.performanceGraphic.update_figure()
 
-                self.reconstructionGraphic.update_report(data)
-                self.reconstructionGraphic.update_figure()
+                    self.reconstructionGraphic.update_report(data)
+                    self.reconstructionGraphic.update_figure()
+
+                except BaseException as err:
+                    msg = f"Unexpected {err=}, {type(err)=}"
+                    showCritical(
+                        "Se intentó cargar un resultados que no corresponden a la herramienta actual."
+                        "Por favor, solo cargue resultados obtenidos en el menú principal", details=msg)
+                    return
 
             elif tab_mode == 'tuning':
-                data = np.load(self.data_fname[0], allow_pickle=True)
-                self.algorithm_name = str(data['algorithm']).lower()
-                self.tuning_data = pd.DataFrame({item[0]: item[1] for item in data['tuning_data']})
-                self.fixed_params = {item[0]: item[1] for item in data['fixed_params']}
-                self.current_scale = str(data['scale']).lower()
+                try:
+                    data = np.load(self.data_fname[0], allow_pickle=True)
+                    self.algorithm_name = str(data['algorithm']).lower()
+                    self.tuning_data = pd.DataFrame({item[0]: item[1] for item in data['tuning_data']})
+                    self.fixed_params = {item[0]: item[1] for item in data['fixed_params']}
+                    self.current_scale = str(data['scale']).lower()
 
-                self.tuningGraphic.update_tuning(self.algorithm_name, self.tuning_data, self.fixed_params,
-                                                 self.current_scale)
-                self.tuningGraphic.update_figure()
+                    self.tuningGraphic.update_tuning(self.algorithm_name, self.tuning_data, self.fixed_params,
+                                                     self.current_scale)
+                    self.tuningGraphic.update_figure()
+
+                except BaseException as err:
+                    msg = f"Unexpected {err=}, {type(err)=}"
+                    showCritical(
+                        "Se intentó cargar un resultados que no corresponden a la herramienta actual."
+                        "Por favor, solo cargue resultados obtenidos en el menú de ajuste de parámetros", details=msg)
+                    return
 
             else:
-                data = np.load(self.data_fname[0], allow_pickle=True)
-                comparison_data = {item[0]: item[1] for item in data['comparison_data']}
+                try:
+                    data = np.load(self.data_fname[0], allow_pickle=True)
+                    comparison_data = {item[0]: item[1] for item in data['comparison_data']}
 
-                self.performanceGraphicComparison.update_values(**comparison_data)
-                self.performanceGraphicComparison.update_figure()
+                    self.performanceGraphicComparison.update_values(**comparison_data)
+                    self.performanceGraphicComparison.update_figure()
 
-                self.reconstructionGraphicComparison.update_report(data)
-                self.reconstructionGraphicComparison.update_figure()
+                    self.reconstructionGraphicComparison.update_report(data)
+                    self.reconstructionGraphicComparison.update_figure()
+
+                except BaseException as err:
+                    msg = f"Unexpected {err=}, {type(err)=}"
+                    showCritical(
+                        "Se intentó cargar un resultados que no corresponden a la herramienta actual."
+                        "Por favor, solo cargue resultados obtenidos en el menú de comparaciones", details=msg)
+                    return
 
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
