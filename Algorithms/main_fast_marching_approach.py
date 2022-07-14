@@ -1,17 +1,10 @@
-import numpy as np
-from numpy.linalg import inv as inv
-import numpy.linalg as ng
-import imageio
 import matplotlib.pyplot as plt
 from Function import *
 import time
 import matplotlib
 from skimage.metrics import structural_similarity as ssim
 import cv2
-import tensorly as tl
 import numpy as np
-from numba import jit
-from line_profiler import LineProfiler
 from tqdm import tqdm
 import hdf5storage
 
@@ -75,28 +68,36 @@ def plot_results(x, x_result, pattern_rand, case):
     plt.show()
 
 
-if __name__ == '__main__':
-    theta = 2
-    alpha = 1000
-    rho = 0.01
-    beta = 0.1 * rho
-    maxiter = 1000
-    data_name = 'syn3D_cross-spread2.npy'
+def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
+    """
 
+    Parameters
+    ----------
+    data_format: format of the data (Matlab or Numpy)
+    data_path: path where the data is, the data should be in the format (time, traces, shots).
+    exp_number: number of experiments. The results shows at the end is the average.
+    H: Boolean vector indicating the removed shots
+
+    Returns
+    -------
+    The reconstructed cube
+    """
     r = []
-    for exp in range(5):
-        x = hdf5storage.loadmat('/tmp/splitspreadfromsegy_2001_OrgSeqno_7TAR_TFD_SW.mat')['data']
-        # x = np.load('../data/' + data_name)
-
-        if data_name == 'data.npy':
-            x = x.T
+    for exp in range(exp_number):
+        if data_format == 'matlab':
+            x = hdf5storage.loadmat(data_path)['data']
+        else:
+            x = np.load(data_path)
 
         '''
         ---------------  SAMPLING --------------------
         '''
-        sr_rand = 0.5  # 1-compression
-        y_rand, pattern_rand, pattern_index = random_sampling(x[:, int(x.shape[1] / 2), :], sr_rand)
-        H = pattern_index
+        if H is None:
+            sr_rand = 0.5  # 1-compression
+            _, _, H = random_sampling(x[:, int(x.shape[1] / 2), :], sr_rand)
+
+        pattern_rand = [int(h) for h in H]
+        pattern_rand = np.array(pattern_rand)
         # x -= x.min()
         # x /= x.max()
         y = x.copy()
@@ -144,3 +145,8 @@ if __name__ == '__main__':
         plot_results(x, output, pattern_rand, 'Fast Marching (Inpainting)')
 
     print(f"Mean Result: {np.mean(r)}")
+
+
+if __name__ == '__main__':
+    data_path = '/tmp/splitspreadfromsegy_2001_OrgSeqno_7TAR_TFD_SW.mat'
+    fastMarching_approach(data_path, 'matlab')
