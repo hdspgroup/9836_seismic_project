@@ -23,7 +23,7 @@ class Sampling:
     def apply_sampling(self, x, mode, jitter_params, lista, seed, compression_ratio):
         if mode == 'aleatorio':
             return self.random_sampling(x, seed, compression_ratio)
-        elif mode == 'uniforme':
+        elif mode == 'regular':
             return self.uniform_sampling(x, compression_ratio)
         elif mode == 'jitter':
             # if jitter_params['gamma'] % 2 != 0:
