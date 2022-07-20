@@ -89,6 +89,9 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
         else:
             x = np.load(data_path)
 
+        if 'data.npy' in data_path:
+            x = x.T
+
         '''
         ---------------  SAMPLING --------------------
         '''

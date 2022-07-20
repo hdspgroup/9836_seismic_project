@@ -68,7 +68,7 @@ H_elim = temp[pattern_rand_b2]
 
 # graphics
 
-fig, axs = plt.subplots(2, 3, dpi=150)
+fig, axs = plt.subplots(2, 3, dpi=300, figsize=(12, 9))
 # fig.suptitle('Comparaciones')
 
 axs[0, 0].imshow(x, cmap='gray', aspect='auto')
@@ -105,7 +105,10 @@ plt.show()
 # performance
 
 iteracion = np.linspace(1, len(hist_fista), len(hist_fista))
-fig, axs = plt.subplots(2, 2, dpi=150)
+
+figure = plt.figure()
+plt.subplots_adjust(left=0.08, right=0.92, bottom=0.08, top=0.92, wspace=0.5, hspace=0.3)
+axs = figure.subplots(2, 2)
 
 # fig = plt.figure()
 axes_1 = axs[0, 0]
@@ -117,13 +120,17 @@ axes_1.set_ylabel('ssim', color=color)
 axes_1.plot(iteracion[1:], hist_fista[1:, 2], color=color)
 axes_1.set_title('FISTA')
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
-axes_1.yaxis.set_major_locator(MaxNLocator(8))
+axes_1.grid(axis='both', linestyle='--')
+
+axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 color = 'tab:blue'
 axes_2.set_ylabel('psnr', color=color)
 axes_2.plot(iteracion[1:], hist_fista[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
-axes_2.yaxis.set_major_locator(MaxNLocator(8))
+axes_1.grid(axis='both', linestyle='--')
+
+axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 axes_1 = axs[0, 1]
 axes_2 = axes_1.twinx()
@@ -134,13 +141,17 @@ axes_1.set_ylabel('ssim', color=color)
 axes_1.plot(iteracion[1:], hist_gap[1:, 2], color=color)
 axes_1.set_title('GAP')
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
-axes_1.yaxis.set_major_locator(MaxNLocator(8))
+axes_1.grid(axis='both', linestyle='--')
+
+axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 color = 'tab:blue'
 axes_2.set_ylabel('psnr', color=color)
 axes_2.plot(iteracion[1:], hist_gap[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
-axes_2.yaxis.set_major_locator(MaxNLocator(8))
+axes_1.grid(axis='both', linestyle='--')
+
+axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 axes_1 = axs[1, 0]
 axes_2 = axes_1.twinx()
@@ -151,13 +162,17 @@ axes_1.set_ylabel('ssim', color=color)
 axes_1.plot(iteracion[1:], hist_twist[1:, 2], color=color)
 axes_1.set_title('TwIST')
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
-axes_1.yaxis.set_major_locator(MaxNLocator(8))
+axes_1.grid(axis='both', linestyle='--')
+
+axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 color = 'tab:blue'
 axes_2.set_ylabel('psnr', color=color)
 axes_2.plot(iteracion[1:], hist_twist[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
-axes_2.yaxis.set_major_locator(MaxNLocator(8))
+axes_1.grid(axis='both', linestyle='--')
+
+axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 axes_1 = axs[1, 1]
 axes_2 = axes_1.twinx()
@@ -168,13 +183,17 @@ axes_1.set_ylabel('ssim', color=color)
 axes_1.plot(iteracion[1:], hist_admm[1:, 2], color=color)
 axes_1.set_title('ADMM')
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
-axes_1.yaxis.set_major_locator(MaxNLocator(8))
+axes_1.grid(axis='both', linestyle='--')
+
+axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 color = 'tab:blue'
 axes_2.set_ylabel('psnr', color=color)
 axes_2.plot(iteracion[1:], hist_admm[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
-axes_2.yaxis.set_major_locator(MaxNLocator(8))
+axes_1.grid(axis='both', linestyle='--')
+
+axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 plt.show()
 

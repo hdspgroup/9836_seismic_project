@@ -23,7 +23,7 @@ class Sampling:
     def apply_sampling(self, x, mode, jitter_params, lista, seed, compression_ratio):
         if mode == 'aleatorio':
             return self.random_sampling(x, seed, compression_ratio)
-        elif mode == 'uniforme':
+        elif mode == 'regular':
             return self.uniform_sampling(x, compression_ratio)
         elif mode == 'jitter':
             # if jitter_params['gamma'] % 2 != 0:
@@ -140,55 +140,6 @@ class Sampling:
 
         return np.array(list(sampling_dict.items())), H
 
-    # def jitter_sampling(self, x, n_bloques, compression_ratio):
-    #     # https://slim.gatech.edu/Publications/Public/Journals/Geophysics/2008/hennenfent08GEOsdw/paper_html/node14.html
-    #     '''
-    #     Inputs:
-    #     x : full data
-    #     n_bloques: number of splited blocks in the full data for subsampling
-    #     compression_ratio: compression ratio for subsampling
-    #
-    #     Outputs:
-    #     sampling_dict : dictionary that contains all information about sample
-    #                     and its compression
-    #     '''
-    #     M, N = x.shape
-    #
-    #     n = np.int(np.floor(N / n_bloques))
-    #     t_n = np.int(n * compression_ratio)
-    #     vec_total = []
-    #
-    #     for ii in range(n_bloques):
-    #         complete = np.ones((n,))
-    #         rand_block = np.random.permutation(list(range(1, n - 1)))
-    #         if ii == n_bloques - 1 and n_bloques % 2 == 0 and t_n == 3:
-    #             complete[rand_block[:t_n + 1]] = 0
-    #         else:
-    #             complete[rand_block[:t_n]] = 0
-    #         vec_total.append(complete)
-    #
-    #     vectorize_pattern = np.array(vec_total).reshape(-1)
-    #     pattern_vec = np.ones((N,))
-    #     pattern_vec[:len(vectorize_pattern)] = vectorize_pattern
-    #
-    #     # Sampling pattern
-    #     H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
-    #
-    #     out = x * H0
-    #     pattern_bool = np.asarray(pattern_vec, dtype=bool)
-    #     H = pattern_bool
-    #
-    #     sampling_dict = {
-    #         "x_ori": x,
-    #         "sr_rand": compression_ratio,
-    #         "y_rand": out,
-    #         "pattern_rand": pattern_vec,
-    #         "pattern_index": pattern_bool,
-    #         "H": H,
-    #         "H0": H0
-    #     }
-    #
-    #     return np.array(list(sampling_dict.items())), H
 
     def jitter_sampling(self, x, seed, gamma=3, epsilon=3):
         # https://slim.gatech.edu/Publications/Public/Journals/Geophysics/2008/hennenfent08GEOsdw/paper_html/node14.html

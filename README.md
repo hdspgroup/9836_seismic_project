@@ -111,7 +111,7 @@ Datos sísmicos sintéticos de dispersión cruzada modelados utilizando diferenc
 
 [Más información sobre conjuntos de datos está disponible aquí.](https://github.com/carlosh93/9836_seismic_project/blob/652f805a3acf3176a32dbd4966bedbb70ef9545a/data/README.md)
 
-# Survey Binning acquisition
+<!--# Survey Binning acquisition
 
 ---
 
@@ -124,9 +124,9 @@ Summary scripts fold calculation, offset diagrams and other acquisition paramete
 Summary - algorithms. All needed documentation, including references and so on. @Bacca,@Karen, @Kareth
 
 
-<!--Summary about the GUI, screenshots, and some breif description @Hinojosa-->
+Summary about the GUI, screenshots, and some breif description @Hinojosa-->
 
-# License
+# Licencia
 
 ---
 
