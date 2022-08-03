@@ -16,6 +16,7 @@ def showInfo():
     print "value of pressed message box button:", retval
 '''
 
+
 def showCritical(message, title="Error de ejecución", details=''):
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Critical)
@@ -30,6 +31,7 @@ def showCritical(message, title="Error de ejecución", details=''):
 
     retval = msg.exec_()
     print(f"value of pressed message box button: {retval}")
+
 
 def showWarning(message, title="Advertencia"):
     msgBox = QMessageBox()

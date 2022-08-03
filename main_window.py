@@ -91,6 +91,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.loadPushButton = QtWidgets.QPushButton(self.inputGroupBox)
         self.loadPushButton.setObjectName("loadPushButton")
         self.inputHLayout.addWidget(self.loadPushButton)
+        self.clearDataPushButton = QtWidgets.QPushButton(self.inputGroupBox)
+        self.clearDataPushButton.setText("")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("assets/icons/stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.clearDataPushButton.setIcon(icon)
+        self.clearDataPushButton.setObjectName("clearDataPushButton")
+        self.inputHLayout.addWidget(self.clearDataPushButton)
         spacerItem1 = QtWidgets.QSpacerItem(13, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.inputHLayout.addItem(spacerItem1)
         self.inputGroupBoxVLayout.addLayout(self.inputHLayout)
@@ -851,9 +858,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # View mode ['normal', 'report']
 
         self.global_variables = dict(tab_mode='main', view_mode='normal', algorithm_name='')
-        self.directories = dict(main=dict(uploaded='', temp_saved='', saved='', report=''),
-                                tuning=dict(uploaded='', temp_saved='', saved='', report=''),
-                                comparison=dict(uploaded='', temp_saved='', saved='', report=''))
+        # self.directories = dict(main=dict(uploaded='', temp_saved='', saved='', report=''),
+        #                         tuning=dict(uploaded='', temp_saved='', saved='', report=''),
+        #                         comparison=dict(uploaded='', temp_saved='', saved='', report=''))
+        self.directories = dict(main=dict(uploaded=[], temp_saved='', saved='', report=['']),
+                                tuning=dict(uploaded=[], temp_saved='', saved='', report=['']),
+                                comparison=dict(uploaded=[], temp_saved='', saved='', report=''))
         self.state = dict(main=dict(progress=dict(iteration=[], error=[], psnr=[], ssim=[])),
                           tuning=dict(progress=dict(total_runs=0, fixed_params='', current_scale='')),
                           comparison=dict(progress=dict(iteration=[], errors=[], psnrs=[], ssims=[])))
@@ -918,6 +928,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # buttons
 
         self.loadPushButton.clicked.connect(self.load_files)
+        self.clearDataPushButton.clicked.connect(self.clear_data)
         self.saveAsPushButton.clicked.connect(self.save_files)
         self.saveAsLineEdit.editingFinished.connect(self.save_as_text_changed)
         self.startPushButton.clicked.connect(self.start_experiment)
@@ -1068,6 +1079,26 @@ class UIMainWindow(QtWidgets.QMainWindow):
             tuning_param = self.paramTuningComboBox.currentText().lower()
             self.update_tuning_visible_algorithms(algorithm, tuning_param)
 
+    def clear_data(self):
+
+        if self.dataTreeWidget.findItems('', Qt.MatchContains | Qt.MatchRecursive):
+            message_box = QtWidgets.QMessageBox(self)
+            message_box.pos()
+            message_box.setIcon(QtWidgets.QMessageBox.Question)
+            message_box.setWindowTitle('Limpiar area de trabajo')
+            message_box.setText('¿Estás segur@ que quiere remover todos los datos sísmicos del area de trabajo?'
+                                'Tendrá que volverlos a cargar si desea usarlos nuevamente.')
+            message_box.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            yesButton = message_box.button(QtWidgets.QMessageBox.Yes)
+            yesButton.setText('Si')
+            buttonN = message_box.button(QtWidgets.QMessageBox.No)
+            buttonN.setText('No')
+            message_box.exec_()
+
+            if message_box.clickedButton() == yesButton:
+                self.dataTreeWidget.clear()
+                self.directories[self.global_variables['tab_mode']]['uploaded'] = []
+
     def load_files(self):
         kwargs = {}
         if 'SNAP' in os.environ:
@@ -1078,6 +1109,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
         uploaded_directory = self.directories[self.global_variables['tab_mode']][
             view_directory if view_directory == 'report' else 'uploaded']
 
+        if not uploaded_directory:
+            uploaded_directory = ['']
+
         if view_directory == 'normal':
             message = 'Abrir dato sísmico'
             file_type = 'npy'
@@ -1085,15 +1119,26 @@ class UIMainWindow(QtWidgets.QMainWindow):
             message = 'Abrir datos sísmicos reconstruidos'
             file_type = 'npz'
 
-        self.data_fname = QtWidgets.QFileDialog.getOpenFileName(self, message, uploaded_directory,
-                                                                filter=f'numpy file (*.{file_type});;matlab file (*.mat)',
-                                                                **kwargs)
+        self.data_fname = QtWidgets.QFileDialog.getOpenFileNames(self, message, uploaded_directory[-1],
+                                                                 filter=f'numpy file (*.{file_type});;matlab file (*.mat)',
+                                                                 **kwargs)
 
-        if self.data_fname[0] == '':
+        if self.data_fname[0] in ['', []]:
             return
 
         if view_directory == 'normal':
-            self.directories[self.global_variables['tab_mode']]['uploaded'] = self.data_fname[0]
+            # self.directories[self.global_variables['tab_mode']]['uploaded'] = self.data_fname[0]
+            new_filenames = []
+            for filepath in self.data_fname[0]:
+                filename = filepath.split('/')[-1]
+                existing_filenames = [fnames.split('/')[-1] for fnames in
+                                      self.directories[self.global_variables['tab_mode']]['uploaded']]
+                if filename in existing_filenames:
+                    showWarning(f"El dato con el nombre {filename} ya está cargado. Se descartará esta nueva carga.")
+                else:
+                    self.directories[self.global_variables['tab_mode']]['uploaded'].append(filepath)
+                    new_filenames.append(filename)
+
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
         else:
             self.directories[self.global_variables['tab_mode']]['report'] = self.data_fname[0]
@@ -1176,29 +1221,33 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.saveAsLineEdit.setText(save_name)
         self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name
 
-    def update_data_tree(self, directory):
-        if directory == '':
+    def update_data_tree(self, directories):
+        if directories == '':
             self.dataTreeWidget.clear()
             return
 
-        filename = directory.split('/')
-        parent_name = filename[-2]
-        child_name = filename[-1]
+        for directory in directories:
+            filename = directory.split('/')
+            parent_name = filename[-2]
+            child_name = filename[-1]
 
-        parent = self.dataTreeWidget.findItems('', Qt.MatchContains | Qt.MatchRecursive)
+            # parent = self.dataTreeWidget.findItems('', Qt.MatchContains | Qt.MatchRecursive)
+            parent = self.dataTreeWidget.findItems(parent_name, Qt.MatchContains)
 
-        if parent:
-            parent[0].setText(0, parent_name)
-            parent[0].child(0).setText(0, child_name)
-            parent[0].setExpanded(True)
+            if parent:
+                child = self.dataTreeWidget.findItems(child_name, Qt.MatchContains | Qt.MatchRecursive)
 
-        else:
-            parent = QtWidgets.QTreeWidgetItem(self.dataTreeWidget)
-            parent.setText(0, parent_name)
-            child = QtWidgets.QTreeWidgetItem(parent)
-            child.setText(0, filename[-1])
+                if not child:
+                    new_child = QtWidgets.QTreeWidgetItem([child_name])
+                    parent[0].addChild(new_child)
 
-            parent.setExpanded(True)
+            else:
+                parent = QtWidgets.QTreeWidgetItem(self.dataTreeWidget)
+                parent.setText(0, parent_name)
+                child = QtWidgets.QTreeWidgetItem(parent)
+                child.setText(0, filename[-1])
+
+                parent.setExpanded(True)
 
     def save_as_text_changed(self):
         save_name = self.saveAsLineEdit.text()
