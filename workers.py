@@ -1,4 +1,5 @@
-from PyQt5 import QtCore, QtGui, QtWidgets, QtSvg
+import numpy as np
+from PyQt5 import QtCore
 
 
 class Worker(QtCore.QObject):
@@ -46,3 +47,34 @@ class TuningWorker(QtCore.QObject):
                     break
 
         self.finished.emit()
+
+
+class ComparisonWorker(QtCore.QObject):
+    finished = QtCore.pyqtSignal(dict)
+    progress = QtCore.pyqtSignal(int, tuple)
+
+    def __init__(self, functions, param_list, maxiter):
+        super().__init__()
+        self.functions = functions
+        self.param_list = param_list
+        self.maxiter = maxiter
+
+    def run(self):
+        generators = []
+        for function, parameters in zip(self.functions, self.param_list):
+            generators.append(function(**parameters))
+
+        for (itr, res_dict_fista), (_, res_dict_gap), (_, res_dict_twist), (_, res_dict_admm) in zip(*generators):
+            self.progress.emit(itr, (res_dict_fista, res_dict_gap, res_dict_twist, res_dict_admm))
+
+            if itr == self.maxiter:
+                break
+
+        # get last yield
+        x_results, hists = [], []
+        for generator in generators:
+            x_result, hist = next(generator)
+            x_results.append(x_result)
+            hists.append(hist)
+
+        self.finished.emit({'results': x_results, 'hists': hists})

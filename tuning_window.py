@@ -19,7 +19,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from Algorithms.Function import Algorithms, Sampling
 from equation_window import UIEquationWindow
 from graphics import TuningGraphic
-from gui.alerts import showCritical, showWarning
+from gui.scripts.alerts import showCritical, showWarning
 from workers import Worker, TuningWorker
 
 

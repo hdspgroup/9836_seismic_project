@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>tuningWindow</class>
+ <widget class="QMainWindow" name="tuningWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1353</width>
+    <height>863</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Ajuste de parámetros</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,15">
+    <item>
+     <layout class="QVBoxLayout" name="leftVLayout">
+      <item>
+       <widget class="QGroupBox" name="inputGroupBox">
+        <property name="title">
+         <string>Datos sísmicos</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <widget class="QTreeWidget" name="dataTreeWidget">
+           <column>
+            <property name="text">
+             <string>Datos actuales</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <spacer name="loadHSpacer1">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>13</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="loadPushButton">
+             <property name="text">
+              <string>Cargar</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="loadHSpacer2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>13</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="algorithmGroupBox">
+        <property name="title">
+         <string>Algoritmos</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <layout class="QHBoxLayout" name="algorithmHLayout">
+           <item>
+            <widget class="QComboBox" name="algorithmComboBox">
+             <item>
+              <property name="text">
+               <string>FISTA</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>GAP</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TwIST</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>ADMM</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="algorithmPushButton">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="toolTip">
+              <string>Ver ecuación</string>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../assets/assets.qrc">
+               <normaloff>:/icons/icons/view.png</normaloff>:/icons/icons/view.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="algorithmHSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>13</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="maxiterLabel">
+             <property name="text">
+              <string>Max iter</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="maxiterSpinBox">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>9999</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="paramHLayout">
+           <item>
+            <widget class="QLabel" name="paramTuningLabel">
+             <property name="text">
+              <string>Parámetrización</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="paramTuningComboBox">
+             <item>
+              <property name="text">
+               <string>Intervalo</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Lista</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="paramValueHLayout">
+           <item>
+            <widget class="QLabel" name="paramLabel">
+             <property name="text">
+              <string>Parámetro</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="paramComboBox">
+             <property name="currentText">
+              <string>param1</string>
+             </property>
+             <item>
+              <property name="text">
+               <string>param1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>param2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>param3</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <spacer name="paramHSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="paramValuesLabel">
+             <property name="text">
+              <string>Valores</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="paramValuesSpinBox">
+             <property name="suffix">
+              <string/>
+             </property>
+             <property name="prefix">
+              <string/>
+             </property>
+             <property name="minimum">
+              <number>2</number>
+             </property>
+             <property name="maximum">
+              <number>999</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="algorithmHLine">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="param1HLayout">
+           <item>
+            <widget class="QLabel" name="param1InitLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_init.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param1InitLineEdit">
+             <property name="text">
+              <string>0.1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="param1EndLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda_end.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param1EndLineEdit">
+             <property name="text">
+              <string>1.0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="param2HLayout">
+           <item>
+            <widget class="QLabel" name="param2InitLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/mu_init.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param2InitLineEdit">
+             <property name="text">
+              <string>0.1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="param2EndLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/mu_end.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param2EndLineEdit">
+             <property name="text">
+              <string>1.0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="param3HLayout">
+           <item>
+            <widget class="QLabel" name="param3InitLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/rho_init.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param3InitLineEdit">
+             <property name="text">
+              <string>0.1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="param3EndLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/rho_end.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="param3EndLineEdit">
+             <property name="text">
+              <string>1.0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="samExpVLayout">
+        <item>
+         <widget class="QGroupBox" name="samplingGroupBox">
+          <property name="title">
+           <string>Submuestreo</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <layout class="QHBoxLayout" name="samplingHLayout">
+             <item>
+              <widget class="QLabel" name="samplingTypeLabel">
+               <property name="text">
+                <string>Tipo</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="samplingTypeComboBox">
+               <item>
+                <property name="text">
+                 <string>Aleatorio</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Uniforme</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Jitter</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Lista</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="compressHSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="compressLabel">
+               <property name="text">
+                <string>Compresión</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="compressSpinBox">
+               <property name="suffix">
+                <string>%</string>
+               </property>
+               <property name="prefix">
+                <string/>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>99</number>
+               </property>
+               <property name="value">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="Line" name="samplingHLine">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="elementHLayout">
+             <item>
+              <widget class="QLabel" name="elementLabel">
+               <property name="text">
+                <string>Elementos</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="elementLineEdit"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="jitterHLayout">
+             <item>
+              <widget class="QLabel" name="jitterBlockLabel">
+               <property name="text">
+                <string>Bloques</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="jitterBlockSpinBox">
+               <property name="suffix">
+                <string/>
+               </property>
+               <property name="prefix">
+                <string/>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>999</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="jitterTypeLabel">
+               <property name="text">
+                <string>Tipo</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="jitterComboBox">
+               <item>
+                <property name="text">
+                 <string>Aleatorio</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Uniforme</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="sdHLayout">
+             <item>
+              <spacer name="seedHSpacer1">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="seedHLayout">
+               <item>
+                <widget class="QCheckBox" name="seedCheckBox">
+                 <property name="layoutDirection">
+                  <enum>Qt::RightToLeft</enum>
+                 </property>
+                 <property name="text">
+                  <string>Usar semilla</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="seedLabel">
+                 <property name="text">
+                  <string>Valor</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="seedSpinBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="suffix">
+                  <string/>
+                 </property>
+                 <property name="prefix">
+                  <string/>
+                 </property>
+                 <property name="minimum">
+                  <number>-999</number>
+                 </property>
+                 <property name="maximum">
+                  <number>999</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="seedHSpacer2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="runGroupBox">
+          <property name="title">
+           <string>Experimentos</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <layout class="QHBoxLayout" name="saveAsHLayout">
+             <item>
+              <widget class="QLabel" name="saveAsLabel">
+               <property name="text">
+                <string>Guardar como</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="saveAsLineEdit"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="saveAsPushButton">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../assets/assets.qrc">
+                 <normaloff>:/icons/icons/save.png</normaloff>:/icons/icons/save.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QProgressBar" name="experimentProgressBar">
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="startHLayout">
+             <item>
+              <spacer name="startHSpacer1">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="startPushButton">
+               <property name="text">
+                <string>Iniciar</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="startHSpacer2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="viewHLine">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="viewHLayout">
+          <item>
+           <spacer name="viewHSpacer1">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="viewLabel">
+            <property name="text">
+             <string>Ver resultados</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="viewPushButton">
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../assets/assets.qrc">
+              <normaloff>:/icons/icons/report.png</normaloff>:/icons/icons/report.png</iconset>
+            </property>
+            <property name="autoDefault">
+             <bool>false</bool>
+            </property>
+            <property name="default">
+             <bool>false</bool>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="viewHSpacer2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tuningTabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tuningPerformanceTab1">
+       <attribute name="title">
+        <string>Experimento</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QWidget" name="tuningPerformanceWidget" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QVBoxLayout" name="tuningPerformanceVLayout">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../assets/assets.qrc"/>
+  <include location="../assets/assets.qrc"/>
+ </resources>
+ <connections/>
+</ui>

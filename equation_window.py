@@ -9,12 +9,14 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QIcon
 
 
 class UIEquationWindow(QtWidgets.QWidget):
     def setupUi(self, case):
         self.setObjectName("Algoritmo")
         self.setObjectName("EquationDialog")
+        self.setWindowIcon(QIcon("assets/icons/g868.ico"))
         self.horizontalLayout = QtWidgets.QHBoxLayout(self)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.equationGroupBox = QtWidgets.QGroupBox(self)
@@ -23,7 +25,7 @@ class UIEquationWindow(QtWidgets.QWidget):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.equation = QtWidgets.QLabel(self.equationGroupBox)
         self.equation.setText("")
-        self.equation.setPixmap(QtGui.QPixmap("../assets/equations/fista.png"))
+        self.equation.setPixmap(QtGui.QPixmap("assets/equations/fista.png"))
         self.equation.setScaledContents(False)
         self.equation.setObjectName("equation")
         self.horizontalLayout_2.addWidget(self.equation)

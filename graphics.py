@@ -4,16 +4,34 @@ import numpy as np
 from skimage.metrics import structural_similarity as ssim
 
 from matplotlib import pyplot as plt
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.ticker import MaxNLocator
 
 from Algorithms.Function import PSNR
-from gui.alerts import showCritical
+from gui.scripts.alerts import showCritical
+
+# custom toolbar with lorem ipsum text
+class CustomToolbar(NavigationToolbar2QT):
+    def __init__(self, canvas_, parent_):
+        self.toolitems = (
+            ('Home', 'Volver a la vista original', 'home', 'home'),
+            ('Back', 'Volver a la vista previa', 'back', 'back'),
+            ('Forward', 'Volver a la siguiente vista', 'forward', 'forward'),
+            (None, None, None, None),
+            ('Pan', 'El botón izquierdo panea, el botón derecho hace zoom\n'
+                    'x/y fija el eje, CTRL fija el aspecto', 'move', 'pan'),
+            ('Zoom', 'Zoom a rectángulo\nx/y fija el eje', 'zoom_to_rect', 'zoom'),
+            ('Subplots', 'Configurar subgráficas', 'subplots', 'configure_subplots'),
+            ("Customize", "Editar ejes, curvas y parámetros de la gráfica", "qt4_editor_options", "edit_parameters"),
+            (None, None, None, None),
+            ('Save', 'Guardar la figura', 'filesave', 'save_figure'),
+        )
+        NavigationToolbar2QT.__init__(self, canvas_, parent_)
 
 
 class PerformanceGraphic(FigureCanvasQTAgg):
     def __init__(self):
-        self.performance_data = dict(iteracion=[], error=[], psnr=[])
+        self.performance_data = dict(iteracion=[], error=[], psnr=[], ssim=[])
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.1, right=0.9, bottom=0.08, top=0.92)
         super(PerformanceGraphic, self).__init__(self.figure)
@@ -91,7 +109,7 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
             H_elim = temp[pattern_rand_b2]
 
             case = str(self.report_data['algorithm_name'])
-            self.figure.suptitle(f'Resultos del algoritmo {case}')
+            self.figure.suptitle(f'Resultados del algoritmo {case}')
             axs = self.figure.subplots(2, 2)
 
             axs[0, 0].imshow(x, cmap='gray', aspect='auto')
@@ -100,7 +118,7 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
             ytemp = y_rand.copy()
             condition = H_elim.size > 0
             if condition:
-                ytemp[:, H_elim] = None
+                ytemp[:, H_elim] = 1
             axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
             axs[1, 0].set_title('Medidas')
 
@@ -156,7 +174,7 @@ class TuningGraphic(FigureCanvasQTAgg):
 
             params = [param.replace('lmb', 'lambda') for param in params]  # replace lmb by lambda if it exists
 
-            if self.algorithm == 'gap':     # build x label for the graphics
+            if self.algorithm == 'gap':  # build x label for the graphics
                 xlabel = f'$\\{params[0]}$'
             else:
                 for key in self.fixed_params.keys():
@@ -207,4 +225,120 @@ class TuningGraphic(FigureCanvasQTAgg):
             msg = f"Unexpected {err=}, {type(err)=}"
             showCritical("Ocurrió un error inesperado al procesar el dato sísmico. Por favor, intente nuevamente o "
                          "utilice un dato diferente.", details=msg)
+            return
+
+
+class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
+    def __init__(self):
+        self.algorithm_names = ['FISTA', 'GAP', 'TwIST', 'ADMM']
+        self.comparison_data = dict(iteracion=[], errors=[], psnrs=[], ssims=[])
+        self.figure = plt.figure()
+        plt.subplots_adjust(left=0.08, right=0.92, bottom=0.08, top=0.92, wspace=0.5, hspace=0.3)
+        super(ComparisonPerformanceGraphic, self).__init__(self.figure)
+
+    def update_values(self, iteracion, errors, psnrs, ssims):
+        self.comparison_data['iteracion'] = iteracion
+        self.comparison_data['errors'] = errors
+        self.comparison_data['psnrs'] = psnrs
+        self.comparison_data['ssims'] = ssims
+
+    def update_figure(self):
+        try:
+            self.figure.clear()
+
+            iteracion = np.array(self.comparison_data['iteracion'])
+            errors = np.array(self.comparison_data['errors'])
+            psnrs = np.array(self.comparison_data['psnrs'])
+            ssims = np.array(self.comparison_data['ssims'])
+
+            self.figure.suptitle(f'Resultados del experimento')
+            axs = self.figure.subplots(2, 2)
+
+            for idx, (i, j) in enumerate(product([0, 1], [0, 1])):
+                axes_1 = axs[i, j]
+                axes_2 = axes_1.twinx()
+
+                color = 'tab:red'
+                axes_1.set_xlabel('iteraciones')
+                axes_1.set_ylabel('ssim', color=color)
+                axes_1.plot(iteracion, ssims[:, idx], color=color)
+                axes_1.set_title(self.algorithm_names[idx])
+                axes_1.tick_params(axis='y', labelcolor=color, length=5)
+                axes_1.grid(axis='both', linestyle='--')
+
+                axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
+
+                color = 'tab:blue'
+                axes_2.set_ylabel('psnr', color=color)
+                axes_2.plot(iteracion, psnrs[:, idx], color=color)
+                axes_2.tick_params(axis='y', labelcolor=color, length=5)
+                axes_2.grid(axis='both', linestyle='--')
+
+                axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
+
+            self.draw()
+
+        except BaseException as err:
+            msg = f"Unexpected {err=}, {type(err)=}"
+            showCritical("Ocurrió un error inesperado al procesar el dato sísmico. Por favor, intente nuevamente o "
+                         "utilice un dato diferente.", details=msg)
+            return
+
+
+class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
+    def __init__(self):
+        self.algorithm_names = ['FISTA', 'GAP', 'TwIST', 'ADMM']
+        self.comparison_data = None
+        self.figure = plt.figure()
+        plt.subplots_adjust(left=0.07, right=0.93, bottom=0.05, top=0.90)
+        super(ComparisonReconstructionGraphic, self).__init__(self.figure)
+
+    def update_report(self, comparison_data):
+        self.comparison_data = comparison_data
+
+    def update_figure(self):
+        try:
+            self.figure.clear()
+
+            sampling = {item[0]: item[1] for item in self.comparison_data['sampling']}
+            x = sampling['x_ori']
+            y_rand = sampling['y_rand']
+            pattern_rand = sampling['pattern_rand']
+
+            temp = np.asarray(range(0, pattern_rand.shape[0]))
+            pattern_rand_b2 = np.asarray(pattern_rand, dtype=bool) == 0
+            H_elim = temp[pattern_rand_b2]
+
+            # =#=#=#=#=#=#=#
+
+            self.figure.suptitle(f'Comparaciones de algoritmos')
+            axs = self.figure.subplots(2, 3)
+
+            axs[0, 0].imshow(x, cmap='gray', aspect='auto')
+            axs[0, 0].set_title('Referencia')
+
+            ytemp = y_rand.copy()
+            condition = H_elim.size > 0
+            if condition:
+                ytemp[:, H_elim] = 1
+            axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
+            axs[1, 0].set_title('Medidas')
+
+            indices = [(i, j) for i, j in product([0, 1], [1, 2])]
+            for idxs, algorithm_name, x_result in zip(indices, self.algorithm_names, self.comparison_data['x_results']):
+                i, j = idxs
+                aux_x = x[:, H_elim] if condition else x
+                aux_x_result = x_result[:, H_elim] if condition else x_result
+                metric = PSNR(aux_x, aux_x_result)
+                metric_ssim = ssim(aux_x, aux_x_result)
+                axs[i, j].imshow(x_result, cmap='gray', aspect='auto')
+                axs[i, j].set_title(f'{algorithm_name} - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+
+            self.draw()
+
+        except BaseException as err:
+            msg = f"Unexpected {err=}, {type(err)=}"
+            showCritical(
+                "Ocurrió un error inesperado al procesar el dato sísmico. Por favor, intente nuevamente o "
+                "utilice un dato diferente.", details=msg)
             return
