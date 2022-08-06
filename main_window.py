@@ -856,6 +856,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         graphicPerformanceVLayout.addWidget(performanceToolbar)
         graphicPerformanceVLayout.addWidget(performanceGraphic)
 
+        return performanceGraphic
+
     def add_main_report_tab(self, name):
 
         # widgets
@@ -886,6 +888,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         graphicReportVLayout.addWidget(reportToolbar)
         graphicReportVLayout.addWidget(reconstructionGraphic)
 
+        return reconstructionGraphic
 
     def init_visible_widgets(self, width=320):
         self.inputGroupBox.setMinimumWidth(width)
@@ -927,13 +930,20 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.directories = dict(main=dict(uploaded=[], temp_saved='', saved='', report=[]),
                                 tuning=dict(uploaded=[], temp_saved='', saved='', report=[]),
                                 comparison=dict(uploaded=[], temp_saved='', saved='', report=[]))
-        self.state = dict(main=dict(progress=dict(iteration=[], error=[], psnr=[], ssim=[])),
-                          tuning=dict(progress=dict(total_runs=[0], fixed_params=[{}], current_scale=[])),
-                          comparison=dict(progress=dict(iteration=[], errors=[], psnrs=[], ssims=[])))
-        self.state = dict(main=dict(progress=dict(iteration=[], error=[], psnr=[], ssim=[])),
+        # self.state = dict(main=dict(progress=dict(iteration=[], error=[], psnr=[], ssim=[])),
+        #                   tuning=dict(progress=dict(total_runs=[0], fixed_params=[{}], current_scale=[])),
+        #                   comparison=dict(progress=dict(iteration=[], errors=[], psnrs=[], ssims=[])))
+        self.state = dict(main=dict(progress=dict(iteration={}, error={}, psnr={}, ssim={})),
                           tuning=dict(progress=dict(total_runs=0, fixed_params='', current_scale='')),
                           comparison=dict(progress=dict(iteration=[], errors=[], psnrs=[], ssims=[])))
+        self.graphics = dict(main=dict(performance={}, report={}), tuning={},
+                             comparison=dict(performance={}, report={}))
+
+        self.workers = []
         self.threads = []
+
+        self.iters = 0
+        self.max_iter = 1
 
         self.icons_path = 'assets/parameters'
 
@@ -1167,8 +1177,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 self.directories[self.global_variables['tab_mode']]['uploaded'] = []
 
     def load_files(self):
-        self.add_main_performance_tab('Rendimiento')
-        self.add_main_report_tab('Reporte')
+        # self.add_main_performance_tab('Rendimiento')
+        # self.add_main_report_tab('Reporte')
 
         kwargs = {}
         if 'SNAP' in os.environ:
@@ -1395,22 +1405,25 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.set_result_view()
 
     def set_result_view(self):
-        mode = self.global_variables['tab_mode']
-        if self.directories[mode]['report'] != '':
-            if mode == 'main':
-                self.performanceGraphic.update_figure()
-                self.reconstructionGraphic.update_figure()
-            elif mode == 'tuning':
+        tab_mode = self.global_variables['tab_mode']
+        if self.directories[tab_mode]['report'] != '':
+            if tab_mode == 'main':
+                main_graphs = self.graphics['main']
+                for per_graph, rep_graph in zip(main_graphs['performance'].values(), main_graphs['report'].values()):
+                    per_graph.update_figure()
+                    rep_graph.update_figure()
+
+            elif tab_mode == 'tuning':
                 self.tuningGraphic.update_figure()
             else:
                 pass
 
         if self.global_variables['view_mode'] == 'normal':
-            self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
-            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
+            self.saveAsLineEdit.setText(self.directories[tab_mode]['temp_saved'])
+            self.update_data_tree(self.directories[tab_mode]['uploaded'])
 
         else:
-            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
+            self.update_data_tree(self.directories[tab_mode]['report'])
 
     def show_results(self):
         icon = QtGui.QIcon()
@@ -1574,26 +1587,25 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         return True
 
-    def update_variables(self):
+    def update_variables(self, name):
         self.experimentProgressBar.setValue(0)
 
-        if self.global_variables['tab_mode'] == 'main':
-            self.state[self.global_variables['tab_mode']]['progress']['iteration'] = []
-            self.state[self.global_variables['tab_mode']]['progress']['error'] = []
-            self.state[self.global_variables['tab_mode']]['progress']['psnr'] = []
-            self.state[self.global_variables['tab_mode']]['progress']['ssim'] = []
+        tab_mode = self.global_variables['tab_mode']
+        if tab_mode == 'main':
+            self.state[tab_mode]['progress']['iteration'][name] = []
+            self.state[tab_mode]['progress']['error'][name] = []
+            self.state[tab_mode]['progress']['psnr'][name] = []
+            self.state[tab_mode]['progress']['ssim'][name] = []
 
-        elif self.global_variables['tab_mode'] == 'tuning':
-            self.state[self.global_variables['tab_mode']]['progress']['total_runs'] = [0]
-            self.state[self.global_variables['tab_mode']]['progress']['fixed_params'] = [{}]
+        elif tab_mode == 'tuning':
+            self.state[tab_mode]['progress']['total_runs'] = [0]
+            self.state[tab_mode]['progress']['fixed_params'] = [{}]
 
         else:
-            self.state[self.global_variables['tab_mode']]['progress']['iteration'] = []
-            self.state[self.global_variables['tab_mode']]['progress']['errors'] = []
-            self.state[self.global_variables['tab_mode']]['progress']['psnrs'] = []
-            self.state[self.global_variables['tab_mode']]['progress']['ssims'] = []
-
-        self.maxiter = int(self.maxiterSpinBox.text())
+            self.state[tab_mode]['progress']['iteration'] = []
+            self.state[tab_mode]['progress']['errors'] = []
+            self.state[tab_mode]['progress']['psnrs'] = []
+            self.state[tab_mode]['progress']['ssims'] = []
 
     def load_seismic_data(self, uploaded_directory):
 
@@ -1634,7 +1646,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         return sampling_dict, H
 
-    def load_algorithm(self, seismic_data, H, sampling_dict):
+    def load_algorithm(self, data_name, seismic_data, H, sampling_dict):
         self.algorithm_name = self.algorithmComboBox.currentText().lower()
         tuning_type = self.paramTuningComboBox.currentText().lower()
         fixed_param = self.paramComboBox.currentIndex()
@@ -1646,10 +1658,24 @@ class UIMainWindow(QtWidgets.QMainWindow):
                           param3=self.param3LineEdit.text())
 
             Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')  # Assuming using DCT2D ad IDCT2D for all algorithms
-            algorithm, parameters = Alg.get_algorithm(self.algorithm_name, self.maxiter, **params)
+            algorithm, parameters = Alg.get_algorithm(self.algorithm_name, self.max_iter, **params)
+
+            if data_name in self.graphics['main']['performance'].keys():
+                performance_graphic = self.graphics['main']['performance'][data_name]
+            else:
+                performance_graphic = self.add_main_performance_tab(data_name)
+                self.graphics['main']['performance'][data_name] = performance_graphic
+
+            if data_name in self.graphics['main']['report'].keys():
+                report_graphic = self.graphics['main']['report'][data_name]
+            else:
+                report_graphic = self.add_main_report_tab(data_name)
+                self.graphics['main']['report'][data_name] = report_graphic
 
             # update worker behaviour
-            return Worker(algorithm, parameters, self.maxiter, sampling_dict)
+
+            return Worker(data_name, algorithm, parameters, self.max_iter, sampling_dict,
+                          performance_graphic, report_graphic)
 
         elif self.global_variables['tab_mode'] == 'tuning':
             param_list = []
@@ -1699,14 +1725,14 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 aux_params = {param_arg_names[i]: ps[i] for i in range(num_params)}
 
                 Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')
-                func, params = Alg.get_algorithm(self.algorithm_name, self.maxiter, **aux_params)
+                func, params = Alg.get_algorithm(self.algorithm_name, self.max_iter, **aux_params)
 
                 parameters.append(params)
 
             self.total_num_run = len(parameters)
 
             # update worker behaviour
-            return TuningWorker(func, parameters, self.maxiter)
+            return TuningWorker(func, parameters, self.max_iter)
 
         else:
             funcs = []
@@ -1718,12 +1744,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 aux_params = {param_arg_names[i]: param.text() for i, param in enumerate(params)}
 
                 Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')
-                func, params = Alg.get_algorithm(alg_name, self.maxiter, **aux_params)
+                func, params = Alg.get_algorithm(alg_name, self.max_iter, **aux_params)
 
                 funcs.append(func)
                 param_list.append(params)
 
-            return ComparisonWorker(funcs, param_list, self.maxiter, sampling_dict)
+            return ComparisonWorker(funcs, param_list, self.max_iter, sampling_dict)
 
     def start_experiment(self):
 
@@ -1734,21 +1760,27 @@ class UIMainWindow(QtWidgets.QMainWindow):
             return
 
         try:
-            self.update_variables()
+            self.iters = 0
+            self.max_iter = int(self.maxiterSpinBox.text())
+            self.max_iter_progress = len(uploaded_directories) * self.max_iter
 
             for uploaded_directory in uploaded_directories:
+                data_name = uploaded_directory.split('/')[-1].split('.')[0]
+
+                self.update_variables(data_name)
                 seismic_data = self.load_seismic_data(uploaded_directory)
                 sampling_dict, H = self.load_parameters(seismic_data)
-                worker = self.load_algorithm(seismic_data, H, sampling_dict)
+                worker = self.load_algorithm(data_name, seismic_data, H, sampling_dict)
 
                 # run experiment in a thread
 
+                self.workers.append(worker)
                 self.threads.append(QtCore.QThread())
-                worker.moveToThread(self.threads[-1])
+                self.workers[-1].moveToThread(self.threads[-1])
 
-                self.threads[-1].started.connect(worker.run)
-                worker.finished.connect(self.threads[-1].quit)
-                worker.finished.connect(worker.deleteLater)
+                self.threads[-1].started.connect(self.workers[-1].run)
+                self.workers[-1].finished.connect(self.threads[-1].quit)
+                self.workers[-1].finished.connect(self.workers[-1].deleteLater)
                 self.threads[-1].finished.connect(self.threads[-1].deleteLater)
 
                 tab_mode = self.global_variables['tab_mode']
@@ -1762,9 +1794,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
                     report_progress = self.report_comparison_progress
                     save_experiment = self.save_comparison_experiment
 
-                worker.progress.connect(report_progress)
+                self.workers[-1].progress.connect(report_progress)
                 self.threads[-1].start()
-                worker.finished.connect(save_experiment)  # save results
+                self.workers[-1].finished.connect(save_experiment)  # save results
 
                 # Final resets
                 self.startPushButton.setEnabled(False)
@@ -1777,40 +1809,47 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.experimentProgressBar.setValue(0)
             return
 
-    def report_main_progress(self, iter, res_dict, sampling_dict):
-        self.experimentProgressBar.setValue(int((iter / self.maxiter) * 100))
+    def report_main_progress(self, name, iter, res_dict, sampling_dict, graphics):
+        self.iters += 1
+        self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
 
         # update figure
         err = res_dict['hist'][iter, 0]
         psnr = np.round(res_dict['hist'][iter, 1], 3)
         ssim = np.round(res_dict['hist'][iter, 2], 3)
 
-        iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration']
-        error_list = self.state[self.global_variables['tab_mode']]['progress']['error']
-        psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr']
-        ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssim']
+        iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration'][name]
+        error_list = self.state[self.global_variables['tab_mode']]['progress']['error'][name]
+        psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr'][name]
+        ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssim'][name]
 
         iteration_list.append(iter)
         error_list.append(err)
         psnr_list.append(psnr)
         ssim_list.append(ssim)
 
-        if iter % (self.maxiter // 10) == 0 or iter == self.maxiter:
-            self.performanceGraphic.update_values(iteration_list, error_list, psnr_list, ssim_list)
-            self.performanceGraphic.update_figure()
+        if iter % (self.max_iter // 10) == 0 or iter == self.max_iter:
+            graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list)
+            graphics['performance'].update_figure()
 
-            self.reconstructionGraphic.update_report(
+            graphics['report'].update_report(
                 dict(x_result=res_dict['result'], hist=res_dict['hist'], sampling=sampling_dict,
                      algorithm_name=self.algorithm_name))
-            self.reconstructionGraphic.update_figure()
+            graphics['report'].update_figure()
 
-    def save_main_experiment(self, res_dict):
-        performance_data = np.array(list(self.performanceGraphic.performance_data.items()), dtype=object)
+    def save_main_experiment(self, name, res_dict, graphics):
+        performance_data = np.array(list(graphics['performance'].performance_data.items()), dtype=object)
 
-        temp_saved = self.directories[self.global_variables['tab_mode']]['temp_saved']
-        self.directories[self.global_variables['tab_mode']]['saved'] = temp_saved
-        self.directories[self.global_variables['tab_mode']]['report'] = temp_saved
-        np.savez(self.directories[self.global_variables['tab_mode']]['saved'],
+        tab_mode = self.global_variables['tab_mode']
+        temp_saved = self.directories[tab_mode]['temp_saved']
+        self.directories[tab_mode]['saved'] = temp_saved
+
+        if temp_saved not in self.directories[tab_mode]['report']:
+            self.directories[tab_mode]['report'].append(temp_saved)
+
+        os.makedirs(temp_saved, exist_ok=True)
+
+        np.savez(Path(temp_saved) / f'exp_{tab_mode}_{name}.npz',
                  x_result=res_dict['result'], hist=res_dict['hist'], sampling=res_dict['sampling_dict'],
                  algorithm_name=self.algorithm_name, performance_data=performance_data)
         print("Results saved [Ok]")
@@ -1848,7 +1887,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         print("Results saved [Ok]")
 
     def report_comparison_progress(self, iter, outputs, sampling_dict):
-        self.experimentProgressBar.setValue(int((iter / self.maxiter) * 100))
+        self.experimentProgressBar.setValue(int((iter / self.max_iter) * 100))
 
         # update figure
         errs, psnrs, ssims = [], [], []
@@ -1867,7 +1906,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         psnr_list.append(psnrs)
         ssim_list.append(ssims)
 
-        if iter % (self.maxiter // 10) == 0 or iter == self.maxiter:
+        if iter % (self.max_iter // 10) == 0 or iter == self.max_iter:
             self.performanceGraphicComparison.update_values(iteration_list, error_list, psnr_list, ssim_list)
             self.performanceGraphicComparison.update_figure()
 
@@ -1894,7 +1933,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def reset_values(self):
         self.startPushButton.setEnabled(True)
         self.experimentProgressBar.setValue(0)
-        self.maxiter = 1
+        self.workers = []
         self.threads = []
 
     def retranslateUi(self):

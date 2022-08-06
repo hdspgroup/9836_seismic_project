@@ -3,20 +3,22 @@ from PyQt5 import QtCore
 
 
 class Worker(QtCore.QObject):
-    finished = QtCore.pyqtSignal(dict)
-    progress = QtCore.pyqtSignal(int, dict, np.ndarray)
+    finished = QtCore.pyqtSignal(str, dict, dict)
+    progress = QtCore.pyqtSignal(str, int, dict, np.ndarray, dict)
 
-    def __init__(self, function, parameters, maxiter, sampling_dict):
+    def __init__(self, name, function, parameters, maxiter, sampling_dict, performance_graphic, report_graphic):
         super().__init__()
+        self.name = name
         self.function = function
         self.parameters = parameters
         self.maxiter = maxiter
         self.sampling_dict = sampling_dict
+        self.graphics = dict(performance=performance_graphic, report=report_graphic)
 
     def run(self):
         generator = self.function(**self.parameters)
         for itr, res_dict in generator:
-            self.progress.emit(itr, res_dict, self.sampling_dict)
+            self.progress.emit(self.name, itr, res_dict, self.sampling_dict, self.graphics)
 
             if itr == self.maxiter:
                 break
@@ -24,7 +26,8 @@ class Worker(QtCore.QObject):
         # get last yield
         x_result, hist = next(generator)
 
-        self.finished.emit({'result': x_result, 'hist': hist, 'sampling_dict': self.sampling_dict})
+        self.finished.emit(self.name, {'result': x_result, 'hist': hist, 'sampling_dict': self.sampling_dict},
+                           self.graphics)
 
 
 class TuningWorker(QtCore.QObject):
