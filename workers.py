@@ -4,18 +4,19 @@ from PyQt5 import QtCore
 
 class Worker(QtCore.QObject):
     finished = QtCore.pyqtSignal(dict)
-    progress = QtCore.pyqtSignal(int, dict)
+    progress = QtCore.pyqtSignal(int, dict, np.ndarray)
 
-    def __init__(self, function, parameters, maxiter):
+    def __init__(self, function, parameters, maxiter, sampling_dict):
         super().__init__()
         self.function = function
         self.parameters = parameters
         self.maxiter = maxiter
+        self.sampling_dict = sampling_dict
 
     def run(self):
         generator = self.function(**self.parameters)
         for itr, res_dict in generator:
-            self.progress.emit(itr, res_dict)
+            self.progress.emit(itr, res_dict, self.sampling_dict)
 
             if itr == self.maxiter:
                 break
@@ -23,7 +24,7 @@ class Worker(QtCore.QObject):
         # get last yield
         x_result, hist = next(generator)
 
-        self.finished.emit({'result': x_result, 'hist': hist})
+        self.finished.emit({'result': x_result, 'hist': hist, 'sampling_dict': self.sampling_dict})
 
 
 class TuningWorker(QtCore.QObject):
@@ -51,13 +52,14 @@ class TuningWorker(QtCore.QObject):
 
 class ComparisonWorker(QtCore.QObject):
     finished = QtCore.pyqtSignal(dict)
-    progress = QtCore.pyqtSignal(int, tuple)
+    progress = QtCore.pyqtSignal(int, tuple, np.ndarray)
 
-    def __init__(self, functions, param_list, maxiter):
+    def __init__(self, functions, param_list, maxiter, sampling_dict):
         super().__init__()
         self.functions = functions
         self.param_list = param_list
         self.maxiter = maxiter
+        self.sampling_dict = sampling_dict
 
     def run(self):
         generators = []
@@ -65,7 +67,7 @@ class ComparisonWorker(QtCore.QObject):
             generators.append(function(**parameters))
 
         for (itr, res_dict_fista), (_, res_dict_gap), (_, res_dict_twist), (_, res_dict_admm) in zip(*generators):
-            self.progress.emit(itr, (res_dict_fista, res_dict_gap, res_dict_twist, res_dict_admm))
+            self.progress.emit(itr, (res_dict_fista, res_dict_gap, res_dict_twist, res_dict_admm), self.sampling_dict)
 
             if itr == self.maxiter:
                 break
@@ -77,4 +79,4 @@ class ComparisonWorker(QtCore.QObject):
             x_results.append(x_result)
             hists.append(hist)
 
-        self.finished.emit({'results': x_results, 'hists': hists})
+        self.finished.emit({'results': x_results, 'hists': hists, 'sampling_dict': self.sampling_dict})
