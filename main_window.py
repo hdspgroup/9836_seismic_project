@@ -828,7 +828,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # widgets
 
         expPerformanceTab = QtWidgets.QWidget()
-        expPerformanceTab.setObjectName(f'{name}PerformanceTab')
+        expPerformanceTab.setObjectName(f'{name}performanceTabWidget')
         expPerformanceTabHLayout = QtWidgets.QHBoxLayout(expPerformanceTab)
         expPerformanceTabHLayout.setObjectName(f"{name}expPerformanceTabHLayout")
         graphicPerformanceWidget = QtWidgets.QWidget(expPerformanceTab)
@@ -863,7 +863,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # widgets
 
         expReportTab = QtWidgets.QWidget()
-        expReportTab.setObjectName(f"{name}expReportTab")
+        expReportTab.setObjectName(f"{name}reportTabWidget")
         expReportTabVLayout = QtWidgets.QVBoxLayout(expReportTab)
         expReportTabVLayout.setObjectName(f"{name}expReportTabVLayout")
         graphicReportWidget = QtWidgets.QWidget(expReportTab)
@@ -889,6 +889,74 @@ class UIMainWindow(QtWidgets.QMainWindow):
         graphicReportVLayout.addWidget(reconstructionGraphic)
 
         return reconstructionGraphic
+    
+    def set_visible_normal_tabs(self, set_visible):
+        tab_mode = self.global_variables['tab_mode']
+        for uploaded_directory in self.directories[tab_mode]['uploaded']:
+            tab_name = uploaded_directory.split('/')[-1].split('.')[0]
+
+            tab_widgets = None
+            if tab_mode == 'main':
+                tab_widgets = self.main_tab_widgets
+
+            for tab_widget in zip(tab_widgets):
+                page = tab_widget.findChild(QtWidgets.QWidget, f'{tab_name}{tab_widget.objectName()}')
+                tab_widget.setTabVisible(tab_widget.indexOf(page), set_visible)
+
+    def set_visible_normal_tabs(self, set_visible):
+        tab_mode = self.global_variables['tab_mode']
+        for uploaded_directory in self.directories[tab_mode]['uploaded']:
+            tab_name = uploaded_directory.split('/')[-1].split('.')[0]
+
+            tab_widgets = None
+            if tab_mode == 'main':
+                tab_widgets = self.main_tab_widgets
+
+            for tab_widget in zip(tab_widgets):
+                page = tab_widget.findChild(QtWidgets.QWidget, f'{tab_name}{tab_widget.objectName()}')
+                tab_widget.setTabVisible(tab_widget.indexOf(page), set_visible)
+
+    def update_tabs(self):
+        view_mode = self.global_variables['view_mode']
+
+        if view_mode == 'normal':  # visible
+            self.set_visible_normal_tabs(True)
+
+            tab_mode = self.global_variables['tab_mode']
+            for uploaded_directory in self.directories[tab_mode]['report']:
+                tab_name = uploaded_directory.split('/')[-1].split('.')[0]
+
+                tab_widgets = None
+                if tab_mode == 'main':
+                    tab_widgets = self.main_tab_widgets
+
+                for tab_widget in tab_widgets:
+                    page = tab_widget.findChild(QtWidgets.QWidget, f'{tab_name}{tab_widget.objectName()}')
+                    index = tab_widget.indexOf(page)
+                    tab_widget.removeTab(index)
+                    # print(f'{tab_name}{tab_widget.objectName()} killed')
+                    # print(f'page index: {index}')
+                    print(f'kill: {tab_name}{tab_widget.objectName()}')
+
+        else:  # view_mode == 'report'  # kill
+            self.set_visible_normal_tabs(False)
+
+            tab_mode = self.global_variables['tab_mode']
+            for uploaded_directory in self.directories[tab_mode]['report']:
+                data = np.load(uploaded_directory, allow_pickle=True)
+                performance_data = {item[0]: item[1] for item in data['performance_data']}
+
+                data_name = uploaded_directory.split('/')[-1].split('.')[0]
+
+                performance_graphic = self.add_main_performance_tab(data_name)
+                self.graphics['main']['performance'][data_name] = performance_graphic
+                performance_graphic.update_values(**performance_data)
+                performance_graphic.update_figure()
+
+                report_graphic = self.add_main_report_tab(data_name)
+                self.graphics['main']['report'][data_name] = report_graphic
+                report_graphic.update_report(data)
+                report_graphic.update_figure()
 
     def init_visible_widgets(self, width=320):
         self.inputGroupBox.setMinimumWidth(width)
@@ -920,6 +988,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.jitterPushButton.setVisible(False)
 
     def init_global_variables(self):
+
+        # variables setup
+
         # Tab mode ['main', 'tuning', 'comparison']
         # View mode ['normal', 'report']
 
@@ -941,6 +1012,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.workers = []
         self.threads = []
+
+        # tabs setup
+
+        self.main_tab_widgets = [self.performanceTabWidget, self.reportTabWidget]
+
+        # parameters setup
 
         self.iters = 0
         self.max_iter = 1
@@ -1174,25 +1251,47 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             if message_box.clickedButton() == yesButton:
                 self.dataTreeWidget.clear()
-                self.directories[self.global_variables['tab_mode']]['uploaded'] = []
+
+                tab_mode = self.global_variables['tab_mode']
+                view_mode = self.global_variables['view_mode']
+
+                self.directories[tab_mode]['uploaded' if view_mode == 'normal' else 'report'] = []
+
+                # page = self.performanceTabWidget.findChild(QtWidgets.QWidget, 'exp_main_dataPerformanceTab')
+                # index = self.performanceTabWidget.indexOf(page)
+                #
+                # # # matar tabs
+                # self.performanceTabWidget.removeTab(index)
+                #
+                # # hacer tabs visibles
+                # self.performanceTabWidget.setTabVisible(index, True)
+
+    def update_directories(self, file_type, filenames):
+        new_filenames = []
+        for filepath in filenames:
+            filename = filepath.split('/')[-1]
+            existing_filenames = [fnames.split('/')[-1] for fnames in
+                                  self.directories[self.global_variables['tab_mode']][file_type]]
+            if filename in existing_filenames:
+                showWarning(f"El dato con el nombre {filename} ya está cargado. Se descartará esta nueva carga.")
+            else:
+                self.directories[self.global_variables['tab_mode']][file_type].append(filepath)
+                new_filenames.append(filename)
 
     def load_files(self):
-        # self.add_main_performance_tab('Rendimiento')
-        # self.add_main_report_tab('Reporte')
-
         kwargs = {}
         if 'SNAP' in os.environ:
             kwargs['options'] = QtWidgets.QFileDialog.DontUseNativeDialog
 
-        view_directory = self.global_variables['view_mode']
+        tab_mode = self.global_variables['tab_mode']
+        view_mode = self.global_variables['view_mode']
 
-        uploaded_directory = self.directories[self.global_variables['tab_mode']][
-            view_directory if view_directory == 'report' else 'uploaded']
+        uploaded_directory = self.directories[tab_mode][view_mode if view_mode == 'report' else 'uploaded']
 
         if not uploaded_directory:
             uploaded_directory = ['']
 
-        if view_directory == 'normal':
+        if view_mode == 'normal':
             message = 'Abrir dato sísmico'
             file_type = 'npy'
         else:  # 'report'
@@ -1206,41 +1305,39 @@ class UIMainWindow(QtWidgets.QMainWindow):
         if self.data_fname[0] in ['', []]:
             return
 
-        if view_directory == 'normal':
-            # self.directories[self.global_variables['tab_mode']]['uploaded'] = self.data_fname[0]
-            new_filenames = []
-            for filepath in self.data_fname[0]:
-                filename = filepath.split('/')[-1]
-                existing_filenames = [fnames.split('/')[-1] for fnames in
-                                      self.directories[self.global_variables['tab_mode']]['uploaded']]
-                if filename in existing_filenames:
-                    showWarning(f"El dato con el nombre {filename} ya está cargado. Se descartará esta nueva carga.")
-                else:
-                    self.directories[self.global_variables['tab_mode']]['uploaded'].append(filepath)
-                    new_filenames.append(filename)
+        if view_mode == 'normal':
+            self.update_directories('uploaded', self.data_fname[0])
+            self.update_data_tree(self.directories[tab_mode]['uploaded'])
 
-            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
-        else:
-            self.directories[self.global_variables['tab_mode']]['report'] = self.data_fname[0]
+        else:  # view_mode == 'report'
+            self.update_directories('report', self.data_fname[0])
+            self.update_tabs()
 
-            tab_mode = self.global_variables['tab_mode']
             if tab_mode == 'main':
-                try:
-                    data = np.load(self.data_fname[0], allow_pickle=True)
-                    performance_data = {item[0]: item[1] for item in data['performance_data']}
-
-                    self.performanceGraphic.update_values(**performance_data)
-                    self.performanceGraphic.update_figure()
-
-                    self.reconstructionGraphic.update_report(data)
-                    self.reconstructionGraphic.update_figure()
-
-                except BaseException as err:
-                    msg = f"Unexpected {err=}, {type(err)=}"
-                    showCritical(
-                        "Se intentó cargar un resultados que no corresponden a la herramienta actual."
-                        "Por favor, solo cargue resultados obtenidos en el menú principal", details=msg)
-                    return
+                pass
+                # try:
+                #     for uploaded_directory in self.directories[tab_mode]['report']:
+                #         data = np.load(uploaded_directory, allow_pickle=True)
+                #         performance_data = {item[0]: item[1] for item in data['performance_data']}
+                #
+                #         data_name = uploaded_directory.split('/')[-1].split('.')[0]
+                #
+                #         performance_graphic = self.add_main_performance_tab(data_name)
+                #         self.graphics['main']['performance'][data_name] = performance_graphic
+                #         performance_graphic.update_values(**performance_data)
+                #         performance_graphic.update_figure()
+                #
+                #         report_graphic = self.add_main_report_tab(data_name)
+                #         self.graphics['main']['report'][data_name] = report_graphic
+                #         report_graphic.update_report(data)
+                #         report_graphic.update_figure()
+                #
+                # except BaseException as err:
+                #     msg = f"Unexpected {err=}, {type(err)=}"
+                #     showCritical(
+                #         "Se intentó cargar un resultados que no corresponden a la herramienta actual."
+                #         "Por favor, solo cargue resultados obtenidos en el menú principal", details=msg)
+                #     return
 
             elif tab_mode == 'tuning':
                 try:
@@ -1404,28 +1501,77 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
         self.set_result_view()
 
+    # def set_result_view(self):
+    #     tab_mode = self.global_variables['tab_mode']
+    #     view_mode = self.global_variables['view_mode']
+    #     # if self.directories[tab_mode]['report'] != '':
+    #
+    #     if view_mode == 'normal':
+    #         pass
+    #
+    #     else:  # view_mode == 'report'
+    #         self.performanceTabWidget.clear()
+    #         self.reportTabWidget.clear()
+    #
+    #         if tab_mode == 'main':
+    #
+    #             for uploaded_directory in self.data_fname[0]:
+    #                 data = np.load(uploaded_directory, allow_pickle=True)
+    #                 performance_data = {item[0]: item[1] for item in data['performance_data']}
+    #
+    #                 data_name = uploaded_directory.split('/')[-1].split('.')[0]
+    #
+    #                 performance_graphic = self.add_main_performance_tab(data_name)
+    #                 self.graphics['main']['performance'][data_name] = performance_graphic
+    #                 performance_graphic.update_values(**performance_data)
+    #                 performance_graphic.update_figure()
+    #
+    #                 report_graphic = self.add_main_report_tab(data_name)
+    #                 self.graphics['main']['report'][data_name] = report_graphic
+    #                 report_graphic.update_report(data)
+    #                 report_graphic.update_figure()
+    #
+    #             main_graphs = self.graphics['main']
+    #             for per_graph, rep_graph in zip(main_graphs['performance'].values(), main_graphs['report'].values()):
+    #                 per_graph.update_figure()
+    #                 rep_graph.update_figure()
+    #
+    #         elif tab_mode == 'tuning':
+    #             self.tuningGraphic.update_figure()
+    #         else:
+    #             pass
+    #
+    #     if self.global_variables['view_mode'] == 'normal':
+    #         self.saveAsLineEdit.setText(self.directories[tab_mode]['temp_saved'])
+    #         self.update_data_tree(self.directories[tab_mode]['uploaded'])
+    #
+    #     else:
+    #         self.update_data_tree(self.directories[tab_mode]['report'])
+
     def set_result_view(self):
-        tab_mode = self.global_variables['tab_mode']
-        if self.directories[tab_mode]['report'] != '':
-            if tab_mode == 'main':
+        mode = self.global_variables['tab_mode']
+        if self.directories[mode]['report'] != '':
+            if mode == 'main':
+                pass
                 main_graphs = self.graphics['main']
                 for per_graph, rep_graph in zip(main_graphs['performance'].values(), main_graphs['report'].values()):
                     per_graph.update_figure()
                     rep_graph.update_figure()
-
-            elif tab_mode == 'tuning':
+            elif mode == 'tuning':
                 self.tuningGraphic.update_figure()
             else:
                 pass
 
         if self.global_variables['view_mode'] == 'normal':
-            self.saveAsLineEdit.setText(self.directories[tab_mode]['temp_saved'])
-            self.update_data_tree(self.directories[tab_mode]['uploaded'])
+            self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
+            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
 
         else:
-            self.update_data_tree(self.directories[tab_mode]['report'])
+            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
     def show_results(self):
+        self.dataTreeWidget.clear()
+
         icon = QtGui.QIcon()
         if self.global_variables['view_mode'] == 'normal':
             self.global_variables['view_mode'] = 'report'
@@ -1440,6 +1586,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.resultLabel.setText('Ver resultados')
 
         self.resultPushButton.setIcon(icon)
+        self.update_tabs()
 
     def set_main_view(self):
         self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
@@ -1842,15 +1989,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         tab_mode = self.global_variables['tab_mode']
         temp_saved = self.directories[tab_mode]['temp_saved']
-        self.directories[tab_mode]['saved'] = temp_saved
-
-        if temp_saved not in self.directories[tab_mode]['report']:
-            self.directories[tab_mode]['report'].append(temp_saved)
 
         os.makedirs(temp_saved, exist_ok=True)
+        save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{name}.npz')
 
-        np.savez(Path(temp_saved) / f'exp_{tab_mode}_{name}.npz',
-                 x_result=res_dict['result'], hist=res_dict['hist'], sampling=res_dict['sampling_dict'],
+        self.directories[tab_mode]['saved'] = save_path
+        if save_path not in self.directories[tab_mode]['report']:
+            self.directories[tab_mode]['report'].append(save_path)
+
+        np.savez(save_path, x_result=res_dict['result'], hist=res_dict['hist'], sampling=res_dict['sampling_dict'],
                  algorithm_name=self.algorithm_name, performance_data=performance_data)
         print("Results saved [Ok]")
 
