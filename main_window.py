@@ -823,7 +823,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.init_graphics()
         self.init_visible_widgets(width=320)
 
-    def add_main_performance_tab(self, name, mode):
+    def add_main_performance_tab(self, name):
 
         # widgets
 
@@ -856,10 +856,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
         graphicPerformanceVLayout.addWidget(performanceToolbar)
         graphicPerformanceVLayout.addWidget(performanceGraphic)
 
-        self.all_tabs[mode].append(expPerformanceTab)
-        return performanceGraphic
+        # self.all_tabs[mode].append([expPerformanceTab, performanceGraphic])
+        # return performanceGraphic
+        return [expPerformanceTab, performanceGraphic]
 
-    def add_main_report_tab(self, name, mode):
+    def add_main_report_tab(self, name):
 
         # widgets
 
@@ -889,9 +890,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
         graphicReportVLayout.addWidget(reportToolbar)
         graphicReportVLayout.addWidget(reconstructionGraphic)
 
-        self.all_tabs[mode].append(expReportTab)
-        return reconstructionGraphic
-    
+        # self.all_tabs[mode].append([expReportTab, reconstructionGraphic])
+        # return reconstructionGraphic
+        return [expReportTab, reconstructionGraphic]
+
     def set_visible_normal_tabs(self, set_visible):
         tab_mode = self.global_variables['tab_mode']
         for uploaded_directory in self.directories[tab_mode]['uploaded']:
@@ -918,60 +920,51 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 page = tab_widget.findChild(QtWidgets.QWidget, f'{tab_name}{tab_widget.objectName()}')
                 tab_widget.setTabVisible(tab_widget.indexOf(page), set_visible)
 
+    def load_report_tabs(self):
+        for uploaded_directory in self.directories[self.global_variables['tab_mode']]['report']:
+            data = np.load(uploaded_directory, allow_pickle=True)
+            performance_data = {item[0]: item[1] for item in data['performance_data']}
+
+            data_name = uploaded_directory.split('/')[-1].split('.')[0]
+
+            expPerformanceTab, performanceGraphic = self.add_main_performance_tab(data_name)
+            self.graphics['main']['performance'][data_name] = performanceGraphic
+            performanceGraphic.update_values(**performance_data)
+            performanceGraphic.update_figure()
+
+            expReportTab, reconstructionGraphic = self.add_main_report_tab(data_name)
+            self.graphics['main']['report'][data_name] = reconstructionGraphic
+            reconstructionGraphic.update_report(data)
+            reconstructionGraphic.update_figure()
+
+            self.all_tabs['report'].append([expPerformanceTab, performanceGraphic])
+            self.all_tabs['report'].append([expReportTab, reconstructionGraphic])
+
+    def remove_report_tabs(self):
+        for page, graph in self.all_tabs['report']:
+            tab_widgets = None
+            if self.global_variables['tab_mode'] == 'main':
+                tab_widgets = self.main_tab_widgets
+
+            for tab_widget in tab_widgets:
+                graph.figure.clf()
+                graph.figure.clear()
+                graph.close()
+                index = tab_widget.indexOf(page)
+                tab_widget.removeTab(index)
+
+
     def update_tabs(self):
-        tab_mode = self.global_variables['tab_mode']
-        view_mode = self.global_variables['view_mode']
-
-        if view_mode == 'normal':  # visible
+        self.remove_report_tabs()
+        if self.global_variables['view_mode'] == 'normal':  # visible
             self.set_visible_normal_tabs(True)
-
-            for page in self.all_tabs['report']:
-                tab_widgets = None
-                if tab_mode == 'main':
-                    tab_widgets = self.main_tab_widgets
-
-                for tab_widget in tab_widgets:
-                    index = tab_widget.indexOf(page)
-                    tab_widget.removeTab(index)
-
-            # tab_mode = self.global_variables['tab_mode']
-            # for uploaded_directory in self.directories[tab_mode]['report']:
-            #     tab_name = uploaded_directory.split('/')[-1].split('.')[0]
-            #
-            #     tab_widgets = None
-            #     if tab_mode == 'main':
-            #         tab_widgets = self.main_tab_widgets
-            #
-            #     for tab_widget in tab_widgets:
-            #         page = tab_widget.findChild(QtWidgets.QWidget, f'{tab_name}{tab_widget.objectName()}')
-            #         index = tab_widget.indexOf(page)
-            #         tab_widget.removeTab(index)
-            #         # print(f'{tab_name}{tab_widget.objectName()} killed')
-            #         # print(f'page index: {index}')
-            #         print(f'kill: {tab_name}{tab_widget.objectName()}')
 
         else:  # view_mode == 'report'  # kill
             self.set_visible_normal_tabs(False)
+            self.load_report_tabs()
 
-            tab_mode = self.global_variables['tab_mode']
-            for uploaded_directory in self.directories[tab_mode]['report']:
-                data = np.load(uploaded_directory, allow_pickle=True)
-                performance_data = {item[0]: item[1] for item in data['performance_data']}
-
-                data_name = uploaded_directory.split('/')[-1].split('.')[0]
-
-                performance_graphic = self.add_main_performance_tab(data_name, mode=view_mode)
-                self.graphics['main']['performance'][data_name] = performance_graphic
-                performance_graphic.update_values(**performance_data)
-                performance_graphic.update_figure()
-
-                report_graphic = self.add_main_report_tab(data_name, mode=view_mode)
-                self.graphics['main']['report'][data_name] = report_graphic
-                report_graphic.update_report(data)
-                report_graphic.update_figure()
-
-                self.all_tabs['report'].append(performance_graphic)
-                self.all_tabs['report'].append(report_graphic)
+        self.performanceTabWidget.setCurrentIndex(-1)
+        self.reportTabWidget.setCurrentIndex(-1)
 
     def init_visible_widgets(self, width=320):
         self.inputGroupBox.setMinimumWidth(width)
@@ -1539,6 +1532,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
     def show_results(self):
+        self.resultPushButton.setEnabled(False)
         self.dataTreeWidget.clear()
 
         icon = QtGui.QIcon()
@@ -1556,6 +1550,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.resultPushButton.setIcon(icon)
         self.update_tabs()
+
+        self.resultPushButton.setEnabled(True)
 
     def set_main_view(self):
         self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
@@ -1780,13 +1776,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
             if data_name in self.graphics['main']['performance'].keys():
                 performance_graphic = self.graphics['main']['performance'][data_name]
             else:
-                performance_graphic = self.add_main_performance_tab(data_name, mode=view_mode)
+                _, performance_graphic = self.add_main_performance_tab(data_name)
                 self.graphics['main']['performance'][data_name] = performance_graphic
 
             if data_name in self.graphics['main']['report'].keys():
                 report_graphic = self.graphics['main']['report'][data_name]
             else:
-                report_graphic = self.add_main_report_tab(data_name, mode=view_mode)
+                _, report_graphic = self.add_main_report_tab(data_name)
                 self.graphics['main']['report'][data_name] = report_graphic
 
             # update worker behaviour
