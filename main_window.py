@@ -699,21 +699,21 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.experimentsVLayout.addWidget(self.resultsToolBox)
         self.tuningTabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tuningTabWidget.setObjectName("tuningTabWidget")
-        self.expTuningReportTab1 = QtWidgets.QWidget()
-        self.expTuningReportTab1.setObjectName("expTuningReportTab1")
-        self.expTuningReportTab1VLayout = QtWidgets.QVBoxLayout(self.expTuningReportTab1)
-        self.expTuningReportTab1VLayout.setObjectName("expTuningReportTab1VLayout")
-        self.graphicTuningReportWidget = QtWidgets.QWidget(self.expTuningReportTab1)
-        self.graphicTuningReportWidget.setObjectName("graphicTuningReportWidget")
-        self.graphicTuningReportWidgetVLayout = QtWidgets.QVBoxLayout(self.graphicTuningReportWidget)
-        self.graphicTuningReportWidgetVLayout.setContentsMargins(0, 0, 0, 0)
-        self.graphicTuningReportWidgetVLayout.setSpacing(0)
-        self.graphicTuningReportWidgetVLayout.setObjectName("graphicTuningReportWidgetVLayout")
-        self.graphicTuningReportVLayout = QtWidgets.QVBoxLayout()
-        self.graphicTuningReportVLayout.setObjectName("graphicTuningReportVLayout")
-        self.graphicTuningReportWidgetVLayout.addLayout(self.graphicTuningReportVLayout)
-        self.expTuningReportTab1VLayout.addWidget(self.graphicTuningReportWidget)
-        self.tuningTabWidget.addTab(self.expTuningReportTab1, "")
+        # self.expTuningReportTab1 = QtWidgets.QWidget()
+        # self.expTuningReportTab1.setObjectName("expTuningReportTab1")
+        # self.expTuningReportTab1VLayout = QtWidgets.QVBoxLayout(self.expTuningReportTab1)
+        # self.expTuningReportTab1VLayout.setObjectName("expTuningReportTab1VLayout")
+        # self.graphicTuningReportWidget = QtWidgets.QWidget(self.expTuningReportTab1)
+        # self.graphicTuningReportWidget.setObjectName("graphicTuningReportWidget")
+        # self.graphicTuningReportWidgetVLayout = QtWidgets.QVBoxLayout(self.graphicTuningReportWidget)
+        # self.graphicTuningReportWidgetVLayout.setContentsMargins(0, 0, 0, 0)
+        # self.graphicTuningReportWidgetVLayout.setSpacing(0)
+        # self.graphicTuningReportWidgetVLayout.setObjectName("graphicTuningReportWidgetVLayout")
+        # self.graphicTuningReportVLayout = QtWidgets.QVBoxLayout()
+        # self.graphicTuningReportVLayout.setObjectName("graphicTuningReportVLayout")
+        # self.graphicTuningReportWidgetVLayout.addLayout(self.graphicTuningReportVLayout)
+        # self.expTuningReportTab1VLayout.addWidget(self.graphicTuningReportWidget)
+        # self.tuningTabWidget.addTab(self.expTuningReportTab1, "")
         self.experimentsVLayout.addWidget(self.tuningTabWidget)
 
         self.comparisonsToolBox = QtWidgets.QToolBox(self.centralwidget)
@@ -823,23 +823,20 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.init_graphics()
         self.init_visible_widgets(width=320)
 
-    def add_main_performance_tab(self, name):
-
-        # widgets
-
+    def add_main_performance_tab(self, data_name):
         expPerformanceTab = QtWidgets.QWidget()
-        expPerformanceTab.setObjectName(f'{name}performanceTabWidget')
+        expPerformanceTab.setObjectName(f'{data_name}performanceTabWidget')
         expPerformanceTabHLayout = QtWidgets.QHBoxLayout(expPerformanceTab)
-        expPerformanceTabHLayout.setObjectName(f"{name}expPerformanceTabHLayout")
+        expPerformanceTabHLayout.setObjectName(f"{data_name}expPerformanceTabHLayout")
         graphicPerformanceWidget = QtWidgets.QWidget(expPerformanceTab)
-        graphicPerformanceWidget.setObjectName(f"{name}graphicPerformanceWidget")
+        graphicPerformanceWidget.setObjectName(f"{data_name}graphicPerformanceWidget")
         graphicPerformanceWidgetVLayout = QtWidgets.QVBoxLayout(graphicPerformanceWidget)
         graphicPerformanceWidgetVLayout.setContentsMargins(0, 0, 0, 0)
         graphicPerformanceWidgetVLayout.setSpacing(0)
-        graphicPerformanceWidgetVLayout.setObjectName(f"{name}graphicPerformanceWidgetVLayout")
+        graphicPerformanceWidgetVLayout.setObjectName(f"{data_name}graphicPerformanceWidgetVLayout")
         graphicPerformanceVLayout = QtWidgets.QVBoxLayout()
         graphicPerformanceVLayout.setSpacing(0)
-        graphicPerformanceVLayout.setObjectName(f"{name}graphicPerformanceVLayout")
+        graphicPerformanceVLayout.setObjectName(f"{data_name}graphicPerformanceVLayout")
         graphicPerformanceWidgetVLayout.addLayout(graphicPerformanceVLayout)
         expPerformanceTabHLayout.addWidget(graphicPerformanceWidget)
         expPerformanceTabHLayout.setStretch(0, 9)
@@ -847,7 +844,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         _translate = QtCore.QCoreApplication.translate
         self.performanceTabWidget.setTabText(self.performanceTabWidget.indexOf(expPerformanceTab),
-                                             _translate("mainWindow", name))
+                                             _translate("mainWindow", data_name))
 
         # graphics
 
@@ -856,32 +853,27 @@ class UIMainWindow(QtWidgets.QMainWindow):
         graphicPerformanceVLayout.addWidget(performanceToolbar)
         graphicPerformanceVLayout.addWidget(performanceGraphic)
 
-        # self.all_tabs[mode].append([expPerformanceTab, performanceGraphic])
-        # return performanceGraphic
         return [expPerformanceTab, performanceGraphic]
 
-    def add_main_report_tab(self, name):
-
-        # widgets
-
+    def add_main_report_tab(self, data_name):
         expReportTab = QtWidgets.QWidget()
-        expReportTab.setObjectName(f"{name}reportTabWidget")
+        expReportTab.setObjectName(f"{data_name}reportTabWidget")
         expReportTabVLayout = QtWidgets.QVBoxLayout(expReportTab)
-        expReportTabVLayout.setObjectName(f"{name}expReportTabVLayout")
+        expReportTabVLayout.setObjectName(f"{data_name}expReportTabVLayout")
         graphicReportWidget = QtWidgets.QWidget(expReportTab)
-        graphicReportWidget.setObjectName(f"{name}graphicReportWidget")
+        graphicReportWidget.setObjectName(f"{data_name}graphicReportWidget")
         graphicReportWidgetVLayout = QtWidgets.QVBoxLayout(graphicReportWidget)
         graphicReportWidgetVLayout.setContentsMargins(0, 0, 0, 0)
         graphicReportWidgetVLayout.setSpacing(0)
-        graphicReportWidgetVLayout.setObjectName(f"{name}graphicReportWidgetVLayout")
+        graphicReportWidgetVLayout.setObjectName(f"{data_name}graphicReportWidgetVLayout")
         graphicReportVLayout = QtWidgets.QVBoxLayout()
-        graphicReportVLayout.setObjectName(f"{name}graphicReportVLayout")
+        graphicReportVLayout.setObjectName(f"{data_name}graphicReportVLayout")
         graphicReportWidgetVLayout.addLayout(graphicReportVLayout)
         expReportTabVLayout.addWidget(graphicReportWidget)
         self.reportTabWidget.addTab(expReportTab, "")
 
         _translate = QtCore.QCoreApplication.translate
-        self.reportTabWidget.setTabText(self.reportTabWidget.indexOf(expReportTab), _translate("mainWindow", name))
+        self.reportTabWidget.setTabText(self.reportTabWidget.indexOf(expReportTab), _translate("mainWindow", data_name))
 
         # graphics
 
@@ -890,9 +882,37 @@ class UIMainWindow(QtWidgets.QMainWindow):
         graphicReportVLayout.addWidget(reportToolbar)
         graphicReportVLayout.addWidget(reconstructionGraphic)
 
-        # self.all_tabs[mode].append([expReportTab, reconstructionGraphic])
-        # return reconstructionGraphic
         return [expReportTab, reconstructionGraphic]
+
+    def add_tuning_tab(self, data_name):
+        expTuningReportTab = QtWidgets.QWidget()
+        expTuningReportTab.setObjectName(f"{data_name}expTuningReportTab")
+        expTuningReportTabVLayout = QtWidgets.QVBoxLayout(expTuningReportTab)
+        expTuningReportTabVLayout.setObjectName(f"{data_name}expTuningReportTabVLayout")
+        graphicTuningReportWidget = QtWidgets.QWidget(expTuningReportTab)
+        graphicTuningReportWidget.setObjectName(f"{data_name}graphicTuningReportWidget")
+        graphicTuningReportWidgetVLayout = QtWidgets.QVBoxLayout(graphicTuningReportWidget)
+        graphicTuningReportWidgetVLayout.setContentsMargins(0, 0, 0, 0)
+        graphicTuningReportWidgetVLayout.setSpacing(0)
+        graphicTuningReportWidgetVLayout.setObjectName(f"{data_name}graphicTuningReportWidgetVLayout")
+        graphicTuningReportVLayout = QtWidgets.QVBoxLayout()
+        graphicTuningReportVLayout.setObjectName(f"{data_name}graphicTuningReportVLayout")
+        graphicTuningReportWidgetVLayout.addLayout(graphicTuningReportVLayout)
+        expTuningReportTabVLayout.addWidget(graphicTuningReportWidget)
+        self.tuningTabWidget.addTab(expTuningReportTab, "")
+
+        _translate = QtCore.QCoreApplication.translate
+        self.tuningTabWidget.setTabText(self.tuningTabWidget.indexOf(expTuningReportTab),
+                                        _translate("mainWindow", data_name))
+
+        # graphics
+
+        tuningGraphic = TuningGraphic()
+        tuningToolbar = CustomToolbar(tuningGraphic, self)
+        graphicTuningReportVLayout.addWidget(tuningToolbar)
+        graphicTuningReportVLayout.addWidget(tuningGraphic)
+
+        return [expTuningReportTab, tuningGraphic]
 
     def set_visible_normal_tabs(self, set_visible):
         tab_mode = self.global_variables['tab_mode']
@@ -953,7 +973,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 index = tab_widget.indexOf(page)
                 tab_widget.removeTab(index)
 
-
     def update_tabs(self):
         self.remove_report_tabs()
         if self.global_variables['view_mode'] == 'normal':  # visible
@@ -1003,17 +1022,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
         # View mode ['normal', 'report']
 
         self.global_variables = dict(tab_mode='main', view_mode='normal', algorithm_name='')
-        # self.directories = dict(main=dict(uploaded='', temp_saved='', saved='', report=''),
-        #                         tuning=dict(uploaded='', temp_saved='', saved='', report=''),
-        #                         comparison=dict(uploaded='', temp_saved='', saved='', report=''))
         self.directories = dict(main=dict(uploaded=[], temp_saved='', saved='', report=[]),
                                 tuning=dict(uploaded=[], temp_saved='', saved='', report=[]),
                                 comparison=dict(uploaded=[], temp_saved='', saved='', report=[]))
-        # self.state = dict(main=dict(progress=dict(iteration=[], error=[], psnr=[], ssim=[])),
-        #                   tuning=dict(progress=dict(total_runs=[0], fixed_params=[{}], current_scale=[])),
-        #                   comparison=dict(progress=dict(iteration=[], errors=[], psnrs=[], ssims=[])))
         self.state = dict(main=dict(progress=dict(iteration={}, error={}, psnr={}, ssim={})),
-                          tuning=dict(progress=dict(total_runs=0, fixed_params='', current_scale='')),
+                          tuning=dict(progress=dict(total_runs={}, fixed_params={}, current_scale={})),
                           comparison=dict(progress=dict(iteration=[], errors=[], psnrs=[], ssims=[])))
         self.graphics = dict(main=dict(performance={}, report={}), tuning={},
                              comparison=dict(performance={}, report={}))
@@ -1101,33 +1114,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def init_graphics(self):
 
-        ## Main
-
-        # performance graphic
-
-        # self.performanceGraphic = PerformanceGraphic()
-        # self.performanceToolbar = NavigationToolbar(self.performanceGraphic, self)
-        # # self.performanceToolbar = CustomToolbar(self.performanceGraphic, self)
-        # self.graphicPerformanceVLayout.addWidget(self.performanceToolbar)
-        # self.graphicPerformanceVLayout.addWidget(self.performanceGraphic)
-
-        # report graphic
-
-        # self.reconstructionGraphic = ReconstructionGraphic()
-        # # self.reportToolbar = NavigationToolbar(self.reconstructionGraphic, self)
-        # self.reportToolbar = CustomToolbar(self.reconstructionGraphic, self)
-        # self.graphicReportVLayout.addWidget(self.reportToolbar)
-        # self.graphicReportVLayout.addWidget(self.reconstructionGraphic)
-
         ## Tuning
 
-        # tuning graphic
-
-        self.tuningGraphic = TuningGraphic()
-        # self.tuningToolbar = NavigationToolbar(self.tuningGraphic, self)
-        self.tuningToolbar = CustomToolbar(self.tuningGraphic, self)
-        self.graphicTuningReportVLayout.addWidget(self.tuningToolbar)
-        self.graphicTuningReportVLayout.addWidget(self.tuningGraphic)
+        # self.tuningGraphic = TuningGraphic()
+        # # self.tuningToolbar = NavigationToolbar(self.tuningGraphic, self)
+        # self.tuningToolbar = CustomToolbar(self.tuningGraphic, self)
+        # self.graphicTuningReportVLayout.addWidget(self.tuningToolbar)
+        # self.graphicTuningReportVLayout.addWidget(self.tuningGraphic)
 
         ## Comparison
 
@@ -1520,7 +1513,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
                     per_graph.update_figure()
                     rep_graph.update_figure()
             elif mode == 'tuning':
-                self.tuningGraphic.update_figure()
+                for tun_graph in self.graphics['tuning'].values():
+                    tun_graph.update_figure()
             else:
                 pass
 
@@ -1652,6 +1646,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def verify_parameters(self, uploaded_directories):
 
+        if uploaded_directories:
+            return False
+
         for uploaded_directory in uploaded_directories:
             if uploaded_directory == '':
                 showWarning("Para iniciar, debe cargar el dato sísmico dando click al boton 'Cargar'")
@@ -1699,19 +1696,19 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         return True
 
-    def update_variables(self, name):
+    def update_variables(self, data_name):
         self.experimentProgressBar.setValue(0)
 
         tab_mode = self.global_variables['tab_mode']
         if tab_mode == 'main':
-            self.state[tab_mode]['progress']['iteration'][name] = []
-            self.state[tab_mode]['progress']['error'][name] = []
-            self.state[tab_mode]['progress']['psnr'][name] = []
-            self.state[tab_mode]['progress']['ssim'][name] = []
+            self.state[tab_mode]['progress']['iteration'][data_name] = []
+            self.state[tab_mode]['progress']['error'][data_name] = []
+            self.state[tab_mode]['progress']['psnr'][data_name] = []
+            self.state[tab_mode]['progress']['ssim'][data_name] = []
 
         elif tab_mode == 'tuning':
-            self.state[tab_mode]['progress']['total_runs'] = [0]
-            self.state[tab_mode]['progress']['fixed_params'] = [{}]
+            self.state[tab_mode]['progress']['total_runs'][data_name] = 0
+            self.state[tab_mode]['progress']['fixed_params'][data_name] = {}
 
         else:
             self.state[tab_mode]['progress']['iteration'] = []
@@ -1764,7 +1761,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
         fixed_param = self.paramComboBox.currentIndex()
         self.current_scale = self.scaleComboBox.currentText().lower()
 
-        view_mode = self.global_variables['view_mode']
         if self.global_variables['tab_mode'] == 'main':
             params = dict(param1=self.param1LineEdit.text(),
                           param2=self.param2LineEdit.text(),
@@ -1794,6 +1790,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
             param_list = []
             parameters = []
 
+            if data_name in self.graphics['tuning'].keys():
+                tuning_graphic = self.graphics['tuning'][data_name]
+            else:
+                _, tuning_graphic = self.add_tuning_tab(data_name)
+                self.graphics['tuning'][data_name] = tuning_graphic
+
             num_params = len(self.params[self.algorithm_name])
             for i in range(num_params):
 
@@ -1814,7 +1816,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
                     else:
                         num_init = float(number_init)
                         aux_fixed_param = {self.params[self.algorithm_name][i][0]: num_init}
-                        self.state[self.global_variables['tab_mode']]['progress']['fixed_params'].update(
+                        self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name].update(
                             aux_fixed_param)
                         param_list.append([num_init])
 
@@ -1828,7 +1830,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
                     else:
                         num_init = float(number_init)
                         aux_fixed_param = {self.params[self.algorithm_name][i][0]: num_init}
-                        self.state[self.global_variables['tab_mode']]['progress']['fixed_params'].update(
+                        self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name].update(
                             aux_fixed_param)
                         param_list.append([num_init])
 
@@ -1845,7 +1847,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.total_num_run = len(parameters)
 
             # update worker behaviour
-            return TuningWorker(func, parameters, self.max_iter)
+            return TuningWorker(data_name, func, parameters, self.max_iter, tuning_graphic)
 
         else:
             funcs = []
@@ -1870,12 +1872,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
         validate = self.verify_parameters(uploaded_directories)
 
         if not validate:
+            showWarning("Los directorios de archivos no son validos. Por favor cargarlos nuevamente.")
             return
 
         try:
             self.iters = 0
             self.max_iter = int(self.maxiterSpinBox.text())
-            self.max_iter_progress = len(uploaded_directories) * self.max_iter
 
             for uploaded_directory in uploaded_directories:
                 data_name = uploaded_directory.split('/')[-1].split('.')[0]
@@ -1900,9 +1902,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 if tab_mode == 'main':
                     report_progress = self.report_main_progress
                     save_experiment = self.save_main_experiment
+                    self.max_iter_progress = len(uploaded_directories) * self.max_iter
                 elif tab_mode == 'tuning':
                     report_progress = self.report_tuning_progress
                     save_experiment = self.save_tuning_experiment
+                    self.max_iter_progress = len(uploaded_directories) * self.total_num_run
                 else:
                     report_progress = self.report_comparison_progress
                     save_experiment = self.save_comparison_experiment
@@ -1915,6 +1919,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 self.startPushButton.setEnabled(False)
                 self.threads[-1].finished.connect(self.reset_values)
 
+            print(f'max progress: {self.max_iter_progress}')
+
         except BaseException as err:
             msg = f"Unexpected {err=}, {type(err)=}"
             showCritical("Ocurrió un error inesperado al procesar el dato sísmico. Por favor, intente nuevamente o "
@@ -1922,7 +1928,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.experimentProgressBar.setValue(0)
             return
 
-    def report_main_progress(self, name, iter, res_dict, sampling_dict, graphics):
+    def report_main_progress(self, data_name, iter, res_dict, sampling_dict, graphics):
         self.iters += 1
         self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
 
@@ -1931,10 +1937,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
         psnr = np.round(res_dict['hist'][iter, 1], 3)
         ssim = np.round(res_dict['hist'][iter, 2], 3)
 
-        iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration'][name]
-        error_list = self.state[self.global_variables['tab_mode']]['progress']['error'][name]
-        psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr'][name]
-        ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssim'][name]
+        iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration'][data_name]
+        error_list = self.state[self.global_variables['tab_mode']]['progress']['error'][data_name]
+        psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr'][data_name]
+        ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssim'][data_name]
 
         iteration_list.append(iter)
         error_list.append(err)
@@ -1950,14 +1956,14 @@ class UIMainWindow(QtWidgets.QMainWindow):
                      algorithm_name=self.algorithm_name))
             graphics['report'].update_figure()
 
-    def save_main_experiment(self, name, res_dict, graphics):
+    def save_main_experiment(self, data_name, res_dict, graphics):
         performance_data = np.array(list(graphics['performance'].performance_data.items()), dtype=object)
 
         tab_mode = self.global_variables['tab_mode']
         temp_saved = self.directories[tab_mode]['temp_saved']
 
         os.makedirs(temp_saved, exist_ok=True)
-        save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{name}.npz')
+        save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_name}.npz')
 
         self.directories[tab_mode]['saved'] = save_path
         if save_path not in self.directories[tab_mode]['report']:
@@ -1967,8 +1973,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
                  algorithm_name=self.algorithm_name, performance_data=performance_data)
         print("Results saved [Ok]")
 
-    def report_tuning_progress(self, num_run, res_dict, params):
-        self.experimentProgressBar.setValue(int((num_run / self.total_num_run) * 100))
+    def report_tuning_progress(self, data_name, num_run, res_dict, params, graphics):
+        self.iters += 1
+        self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
+        print(f'iters: {self.iters}')
+        print(f'progress: {int((self.iters / self.max_iter_progress) * 100)}')
+        # self.experimentProgressBar.setValue(int((num_run / self.total_num_run) * 100))
 
         # update figure
         data = {key: [float(value)] for key, value in params.items()}
@@ -1981,15 +1991,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
         else:
             self.tuning_data = pd.concat([self.tuning_data, pd.DataFrame(data)])
 
-        fixed_params = self.state[self.global_variables['tab_mode']]['progress']['fixed_params']
-        self.tuningGraphic.update_tuning(self.algorithm_name.lower(), self.tuning_data, fixed_params,
+        fixed_params = self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name]
+        graphics['tuning'].update_tuning(self.algorithm_name.lower(), self.tuning_data, fixed_params,
                                          self.current_scale.lower())
-        self.tuningGraphic.update_figure()
+        graphics['tuning'].update_figure()
 
-    def save_tuning_experiment(self):
-        fixed_params = self.state[self.global_variables['tab_mode']]['progress']['fixed_params']
+    def save_tuning_experiment(self, data_name, graphics):
+        fixed_params = self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name]
         fixed_params = np.array(list(fixed_params.items()), dtype=object)
-        tuning_data = np.array(list(self.tuningGraphic.tuning_data.items()), dtype=object)
+        tuning_data = np.array(list(graphics['tuning'].tuning_data.items()), dtype=object)
 
         temp_saved = self.directories[self.global_variables['tab_mode']]['temp_saved']
         self.directories[self.global_variables['tab_mode']]['saved'] = temp_saved
@@ -2044,10 +2054,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
         print("Results saved [Ok]")
 
     def reset_values(self):
-        self.startPushButton.setEnabled(True)
-        self.experimentProgressBar.setValue(0)
-        self.workers = []
-        self.threads = []
+        if int(self.iters / self.max_iter_progress) == 1:
+            self.startPushButton.setEnabled(True)
+            self.experimentProgressBar.setValue(0)
+            self.workers = []
+            self.threads = []
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
@@ -2126,8 +2137,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         #                                 _translate("mainWindow", "Experimento"))
         self.resultsToolBox.setItemText(self.resultsToolBox.indexOf(self.reportPage),
                                         _translate("mainWindow", "Reporte de reconstrucción"))
-        self.tuningTabWidget.setTabText(self.tuningTabWidget.indexOf(self.expTuningReportTab1),
-                                        _translate("mainWindow", "Experimento"))
+        # self.tuningTabWidget.setTabText(self.tuningTabWidget.indexOf(self.expTuningReportTab1),
+        #                                 _translate("mainWindow", "Experimento"))
 
         self.comparisonPerformanceTabWidget.setTabText(
             self.comparisonPerformanceTabWidget.indexOf(self.expComparisonPerformanceTab1),

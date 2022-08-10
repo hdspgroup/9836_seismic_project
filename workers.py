@@ -31,14 +31,16 @@ class Worker(QtCore.QObject):
 
 
 class TuningWorker(QtCore.QObject):
-    finished = QtCore.pyqtSignal()
-    progress = QtCore.pyqtSignal(int, dict, dict)
+    finished = QtCore.pyqtSignal(str, dict)
+    progress = QtCore.pyqtSignal(str, int, dict, dict, dict)
 
-    def __init__(self, function, parameters, maxiter):
+    def __init__(self, name, function, parameters, maxiter, tuning_graphic):
         super().__init__()
+        self.name = name
         self.function = function
         self.parameters = parameters
         self.maxiter = maxiter
+        self.graphic = dict(tuning=tuning_graphic)
 
     def run(self):
         for num_run, params in enumerate(self.parameters):
@@ -47,10 +49,10 @@ class TuningWorker(QtCore.QObject):
 
                 if itr == self.maxiter:
                     params.pop('max_itr')
-                    self.progress.emit(num_run + 1, res_dict, params)
+                    self.progress.emit(self.name, num_run + 1, res_dict, params, self.graphic)
                     break
 
-        self.finished.emit()
+        self.finished.emit(self.name, self.graphic)
 
 
 class ComparisonWorker(QtCore.QObject):
