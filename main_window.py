@@ -1136,6 +1136,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.performanceTabWidget.setCurrentIndex(self.performanceTabWidget.count() - 1)
         self.reportTabWidget.setCurrentIndex(self.reportTabWidget.count() - 1)
         self.tuningTabWidget.setCurrentIndex(self.tuningTabWidget.count() - 1)
+        self.comparisonPerformanceTabWidget.setCurrentIndex(self.comparisonPerformanceTabWidget.count() - 1)
+        self.comparisonReportTabWidget.setCurrentIndex(self.comparisonReportTabWidget.count() - 1)
 
     def update_main_visible_algorithms(self, algorithm):
         for i in range(3):
@@ -1255,17 +1257,45 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 view_mode = self.global_variables['view_mode']
 
                 self.directories[tab_mode]['uploaded' if view_mode == 'normal' else 'report'] = []
+                self.update_tabs()
 
     def update_directories(self, file_type, filenames):
+        tab_mode = self.global_variables['tab_mode']
+        valid_dict = dict(main=['performance_data', 'principal'],
+                          tuning=['tuning_data', 'de ajuste'],
+                          comparison=['comparison_data', 'de comparación'])
+
+        # validate dir with current tool
+
+        idx_list = []
+        for i, filepath in enumerate(filenames):
+            filename = filepath.split('/')[-1]
+            data = np.load(filepath, allow_pickle=True)
+
+            if not valid_dict[tab_mode][0] in list(data.keys()):
+                idx_list.append(i)
+
+                if 'performance_data' in list(data.keys()):
+                    tool = valid_dict['main'][1]
+                elif 'tuning_data' in list(data.keys()):
+                    tool = valid_dict['tuning'][1]
+                else:
+                    tool = valid_dict['comparison'][1]
+
+                showWarning(f"Se intentó cargar {filename} obtenido de la herramienta {tool}. "
+                            f"Por favor, solo cargue resultados obtenidos con la heramienta "
+                            f"{valid_dict[tab_mode][1]}.")
+
+        filenames = [filename for i, filename in enumerate(filenames) if i not in idx_list]
+
         new_filenames = []
         for filepath in filenames:
             filename = filepath.split('/')[-1]
-            existing_filenames = [fnames.split('/')[-1] for fnames in
-                                  self.directories[self.global_variables['tab_mode']][file_type]]
+            existing_filenames = [fnames.split('/')[-1] for fnames in self.directories[tab_mode][file_type]]
             if filename in existing_filenames:
                 showWarning(f"El dato con el nombre {filename} ya está cargado. Se descartará esta nueva carga.")
             else:
-                self.directories[self.global_variables['tab_mode']][file_type].append(filepath)
+                self.directories[tab_mode][file_type].append(filepath)
                 new_filenames.append(filename)
 
     def load_files(self):
