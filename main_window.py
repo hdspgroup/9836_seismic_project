@@ -1261,32 +1261,32 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def update_directories(self, file_type, filenames):
         tab_mode = self.global_variables['tab_mode']
-        valid_dict = dict(main=['performance_data', 'principal'],
-                          tuning=['tuning_data', 'de ajuste'],
-                          comparison=['comparison_data', 'de comparación'])
 
         # validate dir with current tool
 
-        idx_list = []
-        for i, filepath in enumerate(filenames):
-            filename = filepath.split('/')[-1]
-            data = np.load(filepath, allow_pickle=True)
+        if file_type == 'report':
+            valid_dict = dict(main=['performance_data', 'principal'], tuning=['tuning_data', 'de ajuste'],
+                              comparison=['comparison_data', 'de comparación'])
+            idx_list = []
+            for i, filepath in enumerate(filenames):
+                filename = filepath.split('/')[-1]
+                data = np.load(filepath, allow_pickle=True)
 
-            if not valid_dict[tab_mode][0] in list(data.keys()):
-                idx_list.append(i)
+                if not valid_dict[tab_mode][0] in list(data.keys()):
+                    idx_list.append(i)
 
-                if 'performance_data' in list(data.keys()):
-                    tool = valid_dict['main'][1]
-                elif 'tuning_data' in list(data.keys()):
-                    tool = valid_dict['tuning'][1]
-                else:
-                    tool = valid_dict['comparison'][1]
+                    if 'performance_data' in list(data.keys()):
+                        tool = valid_dict['main'][1]
+                    elif 'tuning_data' in list(data.keys()):
+                        tool = valid_dict['tuning'][1]
+                    else:
+                        tool = valid_dict['comparison'][1]
 
-                showWarning(f"Se intentó cargar {filename} obtenido de la herramienta {tool}. "
-                            f"Por favor, solo cargue resultados obtenidos con la heramienta "
-                            f"{valid_dict[tab_mode][1]}.")
+                    showWarning(f"Se intentó cargar {filename} obtenido de la herramienta {tool}. "
+                                f"Por favor, solo cargue resultados obtenidos con la heramienta "
+                                f"{valid_dict[tab_mode][1]}.")
 
-        filenames = [filename for i, filename in enumerate(filenames) if i not in idx_list]
+            filenames = [filename for i, filename in enumerate(filenames) if i not in idx_list]
 
         new_filenames = []
         for filepath in filenames:
@@ -1457,19 +1457,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.set_result_view()
 
     def set_result_view(self):
-        mode = self.global_variables['tab_mode']
-        if self.directories[mode]['report'] != '':
-            if mode == 'main':
-                pass
-                main_graphs = self.graphics['main']
-                for per_graph, rep_graph in zip(main_graphs['performance'].values(), main_graphs['report'].values()):
-                    per_graph.update_figure()
-                    rep_graph.update_figure()
-            elif mode == 'tuning':
-                for tun_graph in self.graphics['tuning'].values():
-                    tun_graph.update_figure()
-            else:
-                pass
+        self.update_tabs()
 
         if self.global_variables['view_mode'] == 'normal':
             self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
