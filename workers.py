@@ -90,3 +90,12 @@ class ComparisonWorker(QtCore.QObject):
 
         self.finished.emit(self.data_name, {'results': x_results, 'hists': hists, 'sampling_dict': self.sampling_dict},
                            self.graphics)
+
+
+class TabWorker(QtCore.QObject):
+    finished = QtCore.pyqtSignal()
+    progress = QtCore.pyqtSignal()
+
+    def run(self):
+        self.progress.emit()
+        self.finished.emit()

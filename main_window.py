@@ -15,7 +15,6 @@ import pandas as pd
 from PyQt5.Qt import Qt
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from scipy.io import loadmat
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from scipy.io import loadmat
 from PyQt5.QtGui import QIcon
@@ -28,7 +27,7 @@ from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic, C
     ComparisonReconstructionGraphic, CustomToolbar
 from gui.scripts.alerts import showWarning, showCritical
 from jitter_window import UIJitterWindow
-from workers import Worker, TuningWorker, ComparisonWorker
+from workers import Worker, TuningWorker, ComparisonWorker, TabWorker
 from tuning_window import UITuningWindow
 
 
@@ -785,6 +784,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.graphics = dict(main=dict(performance={}, report={}), tuning={},
                              comparison=dict(performance={}, report={}))
 
+        self.thread_tab = None
+        self.worker_tab = None
+
         self.workers = []
         self.threads = []
 
@@ -1139,6 +1141,32 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.comparisonPerformanceTabWidget.setCurrentIndex(self.comparisonPerformanceTabWidget.count() - 1)
         self.comparisonReportTabWidget.setCurrentIndex(self.comparisonReportTabWidget.count() - 1)
 
+    def update_tab_thread(self):
+        self.thread_tab = QtCore.QThread()
+        self.worker_tab = TabWorker()
+
+        self.worker_tab.moveToThread(self.thread_tab)
+        self.thread_tab.started.connect(self.worker_tab.run)
+        self.worker_tab.finished.connect(self.thread_tab.quit)
+        self.worker_tab.finished.connect(self.worker_tab.deleteLater)
+        self.thread_tab.finished.connect(self.thread_tab.deleteLater)
+        self.worker_tab.progress.connect(self.update_tabs)
+        # Start the thread_tab
+        self.thread_tab.start()
+
+        # Final resets
+        self.mainAction.setEnabled(False)
+        self.tuningAction.setEnabled(False)
+        self.comparisonAction.setEnabled(False)
+        self.resultPushButton.setEnabled(False)
+        self.thread_tab.finished.connect(self.update_tab_finished)
+
+    def update_tab_finished(self):
+        self.mainAction.setEnabled(True)
+        self.tuningAction.setEnabled(True)
+        self.comparisonAction.setEnabled(True)
+        self.resultPushButton.setEnabled(True)
+
     def update_main_visible_algorithms(self, algorithm):
         for i in range(3):
             label = self.main_params[i][0]
@@ -1257,7 +1285,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 view_mode = self.global_variables['view_mode']
 
                 self.directories[tab_mode]['uploaded' if view_mode == 'normal' else 'report'] = []
-                self.update_tabs()
+                # self.update_tabs()
+                self.update_tab_thread()
 
     def update_directories(self, file_type, filenames):
         tab_mode = self.global_variables['tab_mode']
@@ -1331,7 +1360,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         else:  # view_mode == 'report'
             self.update_directories('report', self.data_fname[0])
-            self.update_tabs()
+            # self.update_tabs()
+            self.update_tab_thread()
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
     def save_files(self):
@@ -1457,7 +1487,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.set_result_view()
 
     def set_result_view(self):
-        self.update_tabs()
+        self.update_tab_thread()
 
         if self.global_variables['view_mode'] == 'normal':
             self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
@@ -1467,7 +1497,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
 
     def show_results(self):
-        self.resultPushButton.setEnabled(False)
         self.dataTreeWidget.clear()
 
         icon = QtGui.QIcon()
@@ -1483,9 +1512,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.resultLabel.setText('Ver resultados')
 
-        self.update_tabs()
         self.resultPushButton.setIcon(icon)
-        self.resultPushButton.setEnabled(True)
 
     def set_main_view(self):
         self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
