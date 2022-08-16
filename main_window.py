@@ -15,6 +15,7 @@ import pandas as pd
 from PyQt5.Qt import Qt
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from scipy.io import loadmat
 from PyQt5.QtGui import QIcon
@@ -1117,21 +1118,19 @@ class UIMainWindow(QtWidgets.QMainWindow):
                     return
 
     def remove_report_tabs(self):
-        tab_mode = self.global_variables['tab_mode']
         for page, graph in self.all_tabs['report']:
-            for tab_widget in self.tab_widgets[tab_mode]:
-                graph.figure.clf()
-                graph.figure.clear()
-                graph.close()
+            for tab_widget in self.tab_widgets[self.global_variables['tab_mode']]:
                 index = tab_widget.indexOf(page)
                 tab_widget.removeTab(index)
+
+        plt.close('all')
 
     def update_tabs(self):
         self.remove_report_tabs()
         if self.global_variables['view_mode'] == 'normal':  # visible
             self.set_visible_normal_tabs(True)
 
-        else:  # view_mode == 'report'  # kill
+        else:  # view_mode == 'report'
             self.load_report_tabs()
             self.set_visible_normal_tabs(False)
 
@@ -1158,6 +1157,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.mainAction.setEnabled(False)
         self.tuningAction.setEnabled(False)
         self.comparisonAction.setEnabled(False)
+        self.aboutOfAction.setEnabled(False)
+
+        self.loadPushButton.setEnabled(False)
+        self.loadPushButton.setText('Cargando...')
+        self.clearDataPushButton.setEnabled(False)
+
         self.resultPushButton.setEnabled(False)
         self.thread_tab.finished.connect(self.update_tab_finished)
 
@@ -1165,6 +1170,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.mainAction.setEnabled(True)
         self.tuningAction.setEnabled(True)
         self.comparisonAction.setEnabled(True)
+        self.aboutOfAction.setEnabled(True)
+
+        self.loadPushButton.setEnabled(True)
+        self.loadPushButton.setText('Cargar')
+        self.clearDataPushButton.setEnabled(True)
+
         self.resultPushButton.setEnabled(True)
 
     def update_main_visible_algorithms(self, algorithm):
@@ -1285,7 +1296,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 view_mode = self.global_variables['view_mode']
 
                 self.directories[tab_mode]['uploaded' if view_mode == 'normal' else 'report'] = []
-                # self.update_tabs()
                 self.update_tab_thread()
 
     def update_directories(self, file_type, filenames):
@@ -1360,9 +1370,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         else:  # view_mode == 'report'
             self.update_directories('report', self.data_fname[0])
-            # self.update_tabs()
-            self.update_tab_thread()
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
+            self.update_tab_thread()
 
     def save_files(self):
         kwargs = {}
@@ -1382,8 +1391,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
                                                 **kwargs)
         if save_name[0] == '':
             return
-
-        # save_name = f'{save_name[0]}.npz' if not 'npz' in save_name[0] else save_name[0]
 
         self.saveAsLineEdit.setText(save_name[0])
         self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name[0]
@@ -1949,9 +1956,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
         save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_name}.npz')
 
         self.directories[tab_mode]['saved'] = save_path
-        if save_path not in self.directories[tab_mode]['report']:
-            self.directories[tab_mode]['report'].append(save_path)
-
         np.savez(save_path, x_result=res_dict['result'], hist=res_dict['hist'], sampling=res_dict['sampling_dict'],
                  algorithm_name=self.algorithm_name, performance_data=performance_data)
         print("Results saved [Ok]")
@@ -1959,8 +1963,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def report_tuning_progress(self, data_name, num_run, res_dict, params, graphics):
         self.iters += 1
         self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
-        # print(f'iters: {self.iters}')
-        # print(f'progress: {int((self.iters / self.max_iter_progress) * 100)}')
 
         # update figure
         data = {key: [float(value)] for key, value in params.items()}
@@ -1983,10 +1985,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
         fixed_params = np.array(list(fixed_params.items()), dtype=object)
         tuning_data = np.array(list(graphics['tuning'].tuning_data.items()), dtype=object)
 
-        # temp_saved = self.directories[self.global_variables['tab_mode']]['temp_saved']
-        # self.directories[self.global_variables['tab_mode']]['saved'] = temp_saved
-        # self.directories[self.global_variables['tab_mode']]['report'] = temp_saved
-
         tab_mode = self.global_variables['tab_mode']
         temp_saved = self.directories[tab_mode]['temp_saved']
 
@@ -1994,10 +1992,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_name}.npz')
 
         self.directories[tab_mode]['saved'] = save_path
-        if save_path not in self.directories[tab_mode]['report']:
-            self.directories[tab_mode]['report'].append(save_path)
-
-        np.savez(save_path,  # self.directories[self.global_variables['tab_mode']]['saved'],
+        np.savez(save_path,
                  algorithm=self.algorithm_name, tuning_data=tuning_data, fixed_params=fixed_params,
                  scale=self.current_scale)
         print("Results saved [Ok]")
@@ -2005,7 +2000,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def report_comparison_progress(self, data_name, iter, outputs, sampling_dict, graphics):
         self.iters += 1
         self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
-        # self.experimentProgressBar.setValue(int((iter / self.max_iter) * 100))
 
         # update figure
         errs, psnrs, ssims = [], [], []
@@ -2040,10 +2034,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def save_comparison_experiment(self, data_name, res_dict, graphics):
         comparison_data = np.array(list(graphics['performance'].comparison_data.items()), dtype=object)
 
-        # temp_saved = self.directories[self.global_variables['tab_mode']]['temp_saved']
-        # self.directories[self.global_variables['tab_mode']]['saved'] = temp_saved
-        # self.directories[self.global_variables['tab_mode']]['report'] = temp_saved
-
         tab_mode = self.global_variables['tab_mode']
         temp_saved = self.directories[tab_mode]['temp_saved']
 
@@ -2051,16 +2041,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
         save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_name}.npz')
 
         self.directories[tab_mode]['saved'] = save_path
-        if save_path not in self.directories[tab_mode]['report']:
-            self.directories[tab_mode]['report'].append(save_path)
-
-        np.savez(save_path,  # self.directories[self.global_variables['tab_mode']]['saved'],
+        np.savez(save_path,
                  x_results=res_dict['results'], hists=res_dict['hists'], sampling=res_dict['sampling_dict'],
                  comparison_data=comparison_data)
         print("Results saved [Ok]")
 
     def reset_values(self):
-        if int(self.iters / self.max_iter_progress) == 1:
+        if self.iters / self.max_iter_progress == 1.0:
             self.startPushButton.setEnabled(True)
             self.experimentProgressBar.setValue(0)
             self.workers = []
