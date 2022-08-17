@@ -1428,23 +1428,19 @@ class UIMainWindow(QtWidgets.QMainWindow):
     def save_as_text_changed(self):
         save_name = self.saveAsLineEdit.text()
 
-        if self.saveAsLineEdit.text() == '':
-            if len(save_name.split('/')) == 1 or len(save_name.split('\\')) == 1:
-                op_sys = platform.system().lower()
-                if op_sys == 'windows':
-                    save_name = f'{os.environ["HOMEPATH"]}\\{save_name}'
-                elif op_sys == 'linux':
-                    save_name = f'{os.environ["HOME"]}/{save_name}'
-                elif op_sys == 'darwin':
-                    save_name = f'{os.environ["HOME"]}/{save_name}'
-                else:
-                    showWarning('No se pudo determinar el sistema operativo. Por favor, especifique la ruta completa.')
-                    return
-                # path = os.path.expanduser('~/Documents')
-                # save_name = os.path.join(path, save_name)
+        op_sys = platform.system().lower()
+        if op_sys == 'windows':
+            if len(save_name.split('\\')) == 1:
+                save_name = f'{os.environ["HOMEPATH"]}\\{save_name}'
+        elif op_sys == 'linux' or op_sys == 'darwin':
+            if len(save_name.split('/')) == 1:
+                save_name = f'{os.environ["HOME"]}/{save_name}'
+        else:
+            showWarning('No se pudo determinar el sistema operativo. Por favor, especifique la ruta completa.')
+            return
 
-            self.saveAsLineEdit.setText(save_name)
-            self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name
+        self.saveAsLineEdit.setText(save_name)
+        self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name
 
     def show_about_of(self):
         self.about_window = QtWidgets.QWidget()
