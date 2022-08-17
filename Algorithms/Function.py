@@ -1004,9 +1004,8 @@ class Algorithms:
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
 
             # psnr_val = PSNR(x, x_old)
-            psnr_val = PSNR(x[:, self.H_elim],
-                            self.x[:, self.H_elim])  # the metric should be between the orig, and the estimated.
-            ssim_val = ssim(x[:, self.H_elim], self.x[:, self.H_elim])
+            psnr_val = PSNR(self.x[:, self.H_elim], x[:, self.H_elim])
+            ssim_val = ssim(self.x[:, self.H_elim], x[:, self.H_elim])
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
