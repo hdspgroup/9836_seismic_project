@@ -954,6 +954,17 @@
            <item>
             <widget class="QLineEdit" name="elementLineEdit"/>
            </item>
+           <item>
+            <widget class="QPushButton" name="elementHelpButton">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../assets/assets.qrc">
+               <normaloff>:/icons/icons/help.png</normaloff>:/icons/icons/help.png</iconset>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>

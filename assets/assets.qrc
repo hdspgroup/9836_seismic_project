@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/help.png</file>
     <file>icons/g868.ico</file>
     <file>icons/g867.ico</file>
     <file>icons/run.png</file>

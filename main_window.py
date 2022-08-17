@@ -23,6 +23,7 @@ from PyQt5.QtGui import QIcon
 
 from Algorithms.Function import Sampling, Algorithms
 from about_window import UIAboutWindow
+from element_help_window import UIElementHelpWindow
 from equation_window import UIEquationWindow
 from equation_comparison_window import UIComparisonEquationWindow
 from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic, ComparisonPerformanceGraphic, \
@@ -509,6 +510,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.elementLineEdit = QtWidgets.QLineEdit(self.samplingGroupBox)
         self.elementLineEdit.setObjectName("elementLineEdit")
         self.elementHLayout.addWidget(self.elementLineEdit)
+        self.elementHelpButton = QtWidgets.QPushButton(self.samplingGroupBox)
+        self.elementHelpButton.setText("")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap("assets/icons/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.elementHelpButton.setIcon(icon2)
+        self.elementHelpButton.setObjectName("elementHelpButton")
+        self.elementHLayout.addWidget(self.elementHelpButton)
         self.samplingGroupBoxVLayout.addLayout(self.elementHLayout)
         self.jitterHLayout = QtWidgets.QHBoxLayout()
         self.jitterHLayout.setObjectName("jitterHLayout")
@@ -763,6 +771,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.elementLabel.setVisible(False)
         self.elementLineEdit.setVisible(False)
+        self.elementHelpButton.setVisible(False)
         self.gammaLabel.setVisible(False)
         self.gammaSpinBox.setVisible(False)
         self.epsilonLabel.setVisible(False)
@@ -852,6 +861,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.algorithmComboBox.currentTextChanged.connect(self.algorithm_changed)
         self.algorithmPushButton.clicked.connect(self.algorithm_equation_clicked)
         self.comparisonAlgorithmPushButton.clicked.connect(self.comparison_algorithm_equation_clicked)
+        self.elementHelpButton.clicked.connect(self.element_help_clicked)
 
         # tuning
         self.paramTuningComboBox.currentTextChanged.connect(self.param_tuning_changed)
@@ -1568,13 +1578,18 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.ui_equation_window = UIEquationWindow()
         self.ui_equation_window.setupUi(self.algorithmComboBox.currentText())
         self.ui_equation_window.setWindowModality(Qt.WindowModality.ApplicationModal)
-        # print(self.ui_equation_window.isModal())
         self.ui_equation_window.show()
 
     def comparison_algorithm_equation_clicked(self):
         self.ui_comparison_equation_window = UIComparisonEquationWindow()
         self.ui_comparison_equation_window.setupUi()
         self.ui_comparison_equation_window.show()
+
+    def element_help_clicked(self):
+        self.ui_element_help_window = UIElementHelpWindow()
+        self.ui_element_help_window.setupUi()
+        self.ui_element_help_window.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.ui_element_help_window.show()
 
     def jitter_sampling_clicked(self):
         self.jitter_sampling_window = UIJitterWindow()
@@ -1621,6 +1636,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         visible = True if sampling in 'lista' else False
         self.elementLabel.setVisible(visible)
         self.elementLineEdit.setVisible(visible)
+        self.elementHelpButton.setVisible(visible)
 
         if sampling in ['aleatorio']:
             self.spacerItem4.changeSize(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
