@@ -1093,6 +1093,17 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QPushButton" name="seedHelpButton">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../assets/assets.qrc">
+                 <normaloff>:/icons/icons/help.png</normaloff>:/icons/icons/help.png</iconset>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
@@ -1255,8 +1266,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>997</width>
-           <height>291</height>
+           <width>1042</width>
+           <height>301</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1312,8 +1323,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>997</width>
-           <height>291</height>
+           <width>145</width>
+           <height>65</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1410,8 +1421,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>997</width>
-           <height>291</height>
+           <width>145</width>
+           <height>65</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1467,8 +1478,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>997</width>
-           <height>291</height>
+           <width>1042</width>
+           <height>301</height>
           </rect>
          </property>
          <attribute name="label">

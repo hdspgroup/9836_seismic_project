@@ -12,10 +12,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon
 
 
-class UIElementHelpWindow(QtWidgets.QWidget):
+class UISeedHelpWindow(QtWidgets.QWidget):
     def setupUi(self):
-        self.setObjectName("Submuestreo de elementos")
+        self.setObjectName("Uso de semilla")
         self.setObjectName("EquationDialog")
+        self.resize(250, 100)
         self.setWindowIcon(QIcon('assets/icons/g868.ico'))
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -45,20 +46,20 @@ class UIElementHelpWindow(QtWidgets.QWidget):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("UIElementHelpWindow", "Submuestreo de elementos"))
-        self.groupBox.setTitle(_translate("UIElementHelpWindow", "Instrucciones"))
-        self.label.setText(_translate("UIElementHelpWindow", "* Ingrese la lista en formato: a,b,c,..."))
-        self.label_2.setText(_translate("UIElementHelpWindow", "* Las columnas empiezan desde el índice cero (0)"))
-        self.label_3.setText(_translate("UIElementHelpWindow", "* Para números por comas sin espacios"))
-        self.label_4.setText(_translate("UIElementHelpWindow", "* Ingresar solamente números enteros"))
-        self.label_5.setText(_translate("UIElementHelpWindow", "* Ingresar un mínimo de 7 números"))
+        self.setWindowTitle(_translate("UISeedHelpWindow", "Uso de semilla"))
+        self.groupBox.setTitle(_translate("UISeedHelpWindow", "Instrucciones"))
+        self.label.setText(_translate("UISeedHelpWindow", "El uso de la semilla fija los parámetros de"))
+        self.label_2.setText(_translate("UISeedHelpWindow", "submuestreo aleatorio y jitter mediante"))
+        self.label_3.setText(_translate("UISeedHelpWindow", "el valor establecido que se repetirá"))
+        self.label_4.setText(_translate("UISeedHelpWindow", "cada vez que se ejecute el mismo"))
+        self.label_5.setText(_translate("UISeedHelpWindow", " experimento"))
 
 if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
     UIEquationWindow = QtWidgets.QWidget()
-    ui = UIElementHelpWindow()
-    ui.setupUi(UIElementHelpWindow, "example")
-    UIElementHelpWindow.show()
+    ui = UISeedHelpWindow()
+    ui.setupUi(UISeedHelpWindow, "example")
+    UISeedHelpWindow.show()
     sys.exit(app.exec_())
