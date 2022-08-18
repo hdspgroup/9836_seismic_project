@@ -30,6 +30,7 @@ from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic, C
     ComparisonReconstructionGraphic, CustomToolbar
 from gui.scripts.alerts import showWarning, showCritical
 from jitter_window import UIJitterWindow
+from seed_help_window import UISeedHelpWindow
 from workers import Worker, TuningWorker, ComparisonWorker, TabWorker
 from tuning_window import UITuningWindow
 
@@ -578,6 +579,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.seedSpinBox.setMaximum(999)
         self.seedSpinBox.setObjectName("seedSpinBox")
         self.seedHLayout.addWidget(self.seedSpinBox)
+        self.seedHelpButton = QtWidgets.QPushButton(self.samplingGroupBox)
+        self.seedHelpButton.setText("")
+        self.seedHelpButton.setIcon(icon2)
+        self.seedHelpButton.setObjectName("seedHelpButton")
+        self.seedHLayout.addWidget(self.seedHelpButton)
         self.sdHLayout.addLayout(self.seedHLayout)
         self.spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.sdHLayout.addItem(self.spacerItem5)
@@ -862,6 +868,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.algorithmPushButton.clicked.connect(self.algorithm_equation_clicked)
         self.comparisonAlgorithmPushButton.clicked.connect(self.comparison_algorithm_equation_clicked)
         self.elementHelpButton.clicked.connect(self.element_help_clicked)
+        self.seedHelpButton.clicked.connect(self.seed_help_clicked)
 
         # tuning
         self.paramTuningComboBox.currentTextChanged.connect(self.param_tuning_changed)
@@ -1591,6 +1598,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.ui_element_help_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.ui_element_help_window.show()
 
+    def seed_help_clicked(self):
+        self.ui_seed_help_window = UISeedHelpWindow()
+        self.ui_seed_help_window.setupUi()
+        self.ui_seed_help_window.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.ui_seed_help_window.show()
+
     def jitter_sampling_clicked(self):
         self.jitter_sampling_window = UIJitterWindow()
         self.jitter_sampling_window.setupUi()
@@ -1625,6 +1638,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.seedCheckBox.setVisible(visible)
         self.seedLabel.setVisible(visible)
         self.seedSpinBox.setVisible(visible)
+        self.seedHelpButton.setVisible(visible)
 
         visible = True if sampling in 'jitter' else False
         self.gammaLabel.setVisible(visible)
