@@ -52,7 +52,7 @@ Luego, ejecute el script `main_window.py` como:
 
 ---
 
-Si desea usar el software directamente, dirijase a está enlace [guia de instalación](https://github.com/carlosh93/9836_seismic_project/wiki/III.-Manual-de-Instalación-Aplicación-ReDs,-Modo-Usuario-Final-(Release) donde encontrará la instrucciones para instalar el software y usarlo directamente.
+Si desea usar el software directamente, dirijase a este enlace [guia de instalación](https://github.com/carlosh93/9836_seismic_project/wiki/III.-Versi%C3%B3n-Ejecutable-ReDs-(Release),-Modo-Usuario-Final) donde encontrará la instrucciones para instalar el software y usarlo directamente.
 
 # **Datos sísmicos**
 
