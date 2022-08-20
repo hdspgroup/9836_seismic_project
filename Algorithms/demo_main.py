@@ -112,7 +112,6 @@ axes_1.plot(iteracion, hist[1:, 2], color=color)
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
 axes_1.yaxis.set_major_locator(MaxNLocator(8))
 axes_1.grid(axis='both', which="both", linestyle='--')
-
 axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 color = 'tab:blue'
@@ -121,7 +120,8 @@ axes_2.plot(iteracion, hist[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
 axes_2.yaxis.set_major_locator(MaxNLocator(8))
 axes_2.grid(axis='both', which="both", linestyle='--')
-
 axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 
 plt.show()
+
+print('Fin')

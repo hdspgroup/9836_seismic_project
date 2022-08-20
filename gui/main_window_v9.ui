@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1412</width>
-    <height>1131</height>
+    <height>1185</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
         <property name="title">
          <string>Datos sísmicos</string>
         </property>
-        <layout class="QVBoxLayout" name="inputGroupBoxVLayout">
+        <layout class="QVBoxLayout" name="inputGroupBoxVLayout" stretch="0,0">
          <item>
           <widget class="QTreeWidget" name="dataTreeWidget">
            <column>
@@ -46,6 +46,27 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="typeDataLabel">
+             <property name="text">
+              <string>Tipo:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="dataComboBox">
+             <item>
+              <property name="text">
+               <string>Datos completos</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Datos incompletos</string>
+              </property>
+             </item>
+            </widget>
            </item>
            <item>
             <widget class="QPushButton" name="loadPushButton">
@@ -1093,17 +1114,6 @@
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QPushButton" name="seedHelpButton">
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../assets/assets.qrc">
-                 <normaloff>:/icons/icons/help.png</normaloff>:/icons/icons/help.png</iconset>
-               </property>
-              </widget>
-             </item>
             </layout>
            </item>
            <item>
@@ -1266,8 +1276,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1042</width>
-           <height>301</height>
+           <width>997</width>
+           <height>309</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1323,8 +1333,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>145</width>
-           <height>65</height>
+           <width>997</width>
+           <height>309</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1421,8 +1431,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>145</width>
-           <height>65</height>
+           <width>997</width>
+           <height>309</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1478,8 +1488,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1042</width>
-           <height>301</height>
+           <width>997</width>
+           <height>309</height>
           </rect>
          </property>
          <attribute name="label">

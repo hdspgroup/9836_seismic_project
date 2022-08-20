@@ -126,7 +126,7 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
         x = np.reshape(x, [imShape[0] * imShape[1], imShape[2]])
         mask = np.reshape(mask, [imShape[0] * imShape[1], imShape[2]])
         x_copy = x.copy()
-        x = x * (1-mask)
+        x = x * (1 - mask)
         output = cv2.inpaint(x, mask, t_m + 1, flags=paint_method)
         output = np.reshape(output, [imShape[0], imShape[1], imShape[2]])
         x = np.reshape(x, [imShape[0], imShape[1], imShape[2]])

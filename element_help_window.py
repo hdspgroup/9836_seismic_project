@@ -53,6 +53,7 @@ class UIElementHelpWindow(QtWidgets.QWidget):
         self.label_4.setText(_translate("UIElementHelpWindow", "* Ingresar solamente números enteros"))
         self.label_5.setText(_translate("UIElementHelpWindow", "* Ingresar un mínimo de 7 números"))
 
+
 if __name__ == "__main__":
     import sys
 
