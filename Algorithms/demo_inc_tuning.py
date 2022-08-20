@@ -22,7 +22,7 @@ if data_name == 'data.npy':
 
 x = np.nan_to_num(x, nan=0)
 x = x / np.abs(x).max()
-max_itr = 500
+max_itr = 100
 
 '''
 ---------------  SAMPLING --------------------
@@ -38,18 +38,11 @@ H = None
 ---------------- RECOVERY ALGORITHM -----------------
 Select the Algorithm: FISTA , GAP , TWIST , ADMM
 '''
-case = 'FISTA'
+case = 'GAP'
 alg = Algorithms(x, H, 'DCT2D', 'IDCT2D')
 H = alg.H_raw
 pattern_rand = np.double(H)
 y_rand = x
-
-'''
----------------- RECOVERY ALGORITHM -----------------
-Select the Algorithm: FISTA , GAP , TWIST , ADMM
-'''
-case = 'GAP'
-alg = Algorithms(x, H, 'DCT2D', 'IDCT2D')
 
 # Prueba con el algoritmo GAP
 lmbs = np.logspace(np.log10(10), np.log10(200), 15)
@@ -89,12 +82,13 @@ performances = np.array(performances)
 # -------------- Performance ----------------
 
 fig = plt.figure()
+fig.suptitle('Algoritmo ' + case + ' - Ajuste de parámetros - Escala logarítmica')
 axes_1 = fig.add_subplot(111)
 axes_2 = axes_1.twinx()
 
 color = 'tab:red'
 axes_1.set_xlabel(r'$\rho$ | Valores fijos: $\gamma=1.0$ $\lambda=0.0005$')
-axes_1.plot(performances[:, 0], performances[:, 0], '--o', color=color, label='Error residual')
+axes_1.plot(performances[:, 0], performances[:, 1], '--o', color=color, label='Error residual')
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
 axes_1.yaxis.set_major_locator(MaxNLocator(8))
 axes_1.set_xscale('log')
@@ -103,8 +97,7 @@ axes_1.grid(axis='both', which="both", linestyle='--')
 axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
 color = 'tab:blue'
-axes_2.set_ylabel('ssim', color=color)
-axes_2.plot(performances[:, 0], performances[:, 3], '--o', color=color)
+axes_2.plot(performances[:, 0], performances[:, 4], '--o', color=color)
 axes_1.plot(np.nan, '--o', color=color, label='Norma TV')
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
 axes_2.yaxis.set_major_locator(MaxNLocator(8))

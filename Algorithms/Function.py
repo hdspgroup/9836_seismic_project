@@ -891,7 +891,7 @@ class Algorithms:
 
         dim = self.x.shape
         x = np.zeros(dim)
-        hist = np.zeros((max_itr + 1, 3))
+        hist = np.zeros((max_itr + 1, 4))
 
         residualx = 1
         tol = 1e-3
@@ -920,15 +920,16 @@ class Algorithms:
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
             psnr_val = PSNR(self.x[:, self.H_elim], self.operator_inv(x)[:, self.H_elim])
             ssim_val = ssim(self.x[:, self.H_elim], self.operator_inv(x)[:, self.H_elim])
+            tv_val = tv_norm(self.operator_inv(x))
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
             hist[itr, 2] = ssim_val
+            hist[itr, 3] = tv_val
 
             print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
                   '\t SSIM:', format(hist[itr, 2], ".3f"), '\n')
-            # yield itr, format(hist[itr, 0], ".2e"), format(hist[itr, 1], ".3f"), dict(result=self.operator_inv(s),
-            #                                                                           hist=hist)
+
             yield itr, dict(result=self.operator_inv(x), hist=hist)
 
         yield self.operator_inv(x), hist
