@@ -80,7 +80,7 @@ H_elim = temp[pattern_rand_b2]
 
 # x = Alg.x
 
-fig, axs = plt.subplots(2, 2, dpi=150, figsize=(8, 8))
+fig, axs = plt.subplots(2, 3, dpi=150, figsize=(12, 8))
 fig.suptitle('Resultados del algoritmo ' + case)
 
 metric = tv_norm(x)
@@ -90,6 +90,12 @@ axs[0, 0].set_title(f'Reference \n TV-norm: {metric:0.2f}')
 metric = tv_norm(x_result)
 axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
 axs[0, 1].set_title(f'Reconstructed \n TV norm: {metric:0.2f}')
+
+index = 5
+axs[0, 2].plot(x_result[:, H_elim[index]], 'b', label='Recovered')
+axs[0, 2].legend(loc='best')
+axs[0, 2].set_title('Trace ' + str("{:.0f}".format(H_elim[index])))
+axs[0, 2].grid(axis='both', linestyle='--')
 
 # fk domain
 
@@ -105,6 +111,12 @@ FK, f, kx = fk(x_result, dt, dx)
 
 axs[1, 1].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
 axs[1, 1].set_title('FK reconstruction')
+
+index = -1
+axs[1, 2].plot(x_result[:, H_elim[index]], 'b', label='Recovered')
+axs[1, 2].legend(loc='best')
+axs[1, 2].set_title('Trace ' + str("{:.0f}".format(H_elim[index])))
+axs[1, 2].grid(axis='both', linestyle='--')
 
 plt.show()
 
