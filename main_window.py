@@ -891,7 +891,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def add_main_performance_tab(self, data_name):
         expPerformanceTab = QtWidgets.QWidget()
-        expPerformanceTab.setObjectName(f'{data_name}performanceTabWidget')
+        expPerformanceTab.setObjectName(data_name)
         expPerformanceTabHLayout = QtWidgets.QHBoxLayout(expPerformanceTab)
         expPerformanceTabHLayout.setObjectName(f"{data_name}expPerformanceTabHLayout")
         graphicPerformanceWidget = QtWidgets.QWidget(expPerformanceTab)
@@ -1051,8 +1051,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
             tab_name = uploaded_directory.split('/')[-1].split('.')[0]
 
             for (tab_widget,) in zip(self.tab_widgets[tab_mode]):
-                page = tab_widget.findChild(QtWidgets.QWidget, f'{tab_name}{tab_widget.objectName()}')
-                tab_widget.setTabVisible(tab_widget.indexOf(page), set_visible)
+                all_tabs = tab_widget.findChildren(QtWidgets.QWidget)
+                index = [tab_widget.indexOf(x) for x in all_tabs if
+                         tab_widget.indexOf(x) != -1 and tab_name in x.objectName()]
+                if len(index) > 0:
+                    tab_widget.setTabVisible(index[0], set_visible)
+
+        # xd = tab_widget.findChildren(QtWidgets.QWidget)
 
     def load_report_tabs(self):
         tab_mode = self.global_variables['tab_mode']
@@ -1149,8 +1154,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.set_visible_normal_tabs(True)
 
         else:  # view_mode == 'report'
-            self.load_report_tabs()
             self.set_visible_normal_tabs(False)
+            self.load_report_tabs()
 
         self.performanceTabWidget.setCurrentIndex(self.performanceTabWidget.count() - 1)
         self.reportTabWidget.setCurrentIndex(self.reportTabWidget.count() - 1)
@@ -1315,6 +1320,20 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
                 self.directories[tab_mode]['uploaded' if view_mode == 'normal' else 'report'] = []
                 self.update_tab_thread()
+
+                # clear tabs
+                if tab_mode in ['main', 'comparison']:
+                    self.graphics[tab_mode]['performance'] = {}
+                    self.graphics[tab_mode]['report'] = {}
+                else:
+                    self.graphics[tab_mode] = {}
+
+                for tab_widget in self.tab_widgets[tab_mode]:
+                    for page, graph in self.all_tabs[view_mode if view_mode == 'report' else 'normal']:
+                        index = tab_widget.indexOf(page)
+                        tab_widget.removeTab(index)
+
+                    plt.close('all')
 
     def update_directories(self, file_type, filenames):
         tab_mode = self.global_variables['tab_mode']
@@ -1784,14 +1803,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
             if data_name in self.graphics['main']['performance'].keys():
                 performance_graphic = self.graphics['main']['performance'][data_name]
             else:
-                _, performance_graphic = self.add_main_performance_tab(data_name)
+                performance_tab, performance_graphic = self.add_main_performance_tab(data_name)
                 self.graphics['main']['performance'][data_name] = performance_graphic
+                self.all_tabs['normal'].append([performance_tab, performance_graphic])
 
             if data_name in self.graphics['main']['report'].keys():
                 report_graphic = self.graphics['main']['report'][data_name]
             else:
-                _, report_graphic = self.add_main_report_tab(data_name)
+                report_tab, report_graphic = self.add_main_report_tab(data_name)
                 self.graphics['main']['report'][data_name] = report_graphic
+                self.all_tabs['normal'].append([report_tab, report_graphic])
 
             # update worker behaviour
 
@@ -1805,8 +1826,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
             if data_name in self.graphics['tuning'].keys():
                 tuning_graphic = self.graphics['tuning'][data_name]
             else:
-                _, tuning_graphic = self.add_tuning_tab(data_name)
+                tuning_tab, tuning_graphic = self.add_tuning_tab(data_name)
                 self.graphics['tuning'][data_name] = tuning_graphic
+                self.all_tabs['normal'].append([tuning_tab, tuning_graphic])
 
             num_params = len(self.params[self.algorithm_name])
             for i in range(num_params):
@@ -1868,14 +1890,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
             if data_name in self.graphics['comparison']['performance'].keys():
                 comp_performance_graphic = self.graphics['comparison']['performance'][data_name]
             else:
-                _, comp_performance_graphic = self.add_comparison_performance_tab(data_name)
+                comp_performance_tab, comp_performance_graphic = self.add_comparison_performance_tab(data_name)
                 self.graphics['comparison']['performance'][data_name] = comp_performance_graphic
+                self.all_tabs['normal'].append([comp_performance_tab, comp_performance_graphic])
 
             if data_name in self.graphics['comparison']['report'].keys():
                 comp_report_graphic = self.graphics['comparison']['report'][data_name]
             else:
-                _, comp_report_graphic = self.add_comparison_report_tab(data_name)
+                comp_report_tab, comp_report_graphic = self.add_comparison_report_tab(data_name)
                 self.graphics['comparison']['report'][data_name] = comp_report_graphic
+                self.all_tabs['normal'].append([comp_report_tab, comp_report_graphic])
 
             algorithm_names = ['fista', 'gap', 'twist', 'admm']
             param_arg_names = ['param1', 'param2', 'param3']

@@ -135,7 +135,8 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
             axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
 
             index = 5
-            aux_H_elim = index if condition else H_elim[index]
+            # aux_H_elim = index if condition else H_elim[index]
+            aux_H_elim = H_elim[index]
             axs[1, 1].plot(x[:, aux_H_elim], 'r', label='Referencia')
             axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
             axs[1, 1].legend(loc='best')
