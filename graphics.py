@@ -10,6 +10,7 @@ from matplotlib.ticker import MaxNLocator
 from Algorithms.Function import PSNR
 from gui.scripts.alerts import showCritical
 
+
 # custom toolbar with lorem ipsum text
 class CustomToolbar(NavigationToolbar2QT):
     def __init__(self, canvas_, parent_):
@@ -57,23 +58,27 @@ class PerformanceGraphic(FigureCanvasQTAgg):
 
             color = 'tab:red'
             axes_1.set_xlabel('iteraciones')
-            axes_1.set_ylabel('ssim', color=color)
-            axes_1.plot(iteracion, ssim, color=color)
+            axes_1.plot(iteracion, ssim, color=color, label='SSIM')
             axes_1.tick_params(axis='y', labelcolor=color, length=5)
-            # axes_1.yaxis.set_major_locator(MaxNLocator(8))
             axes_1.grid(axis='both', linestyle='--')
 
             axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
             color = 'tab:blue'
-            axes_2.set_ylabel('psnr', color=color)
-            axes_2.plot(iteracion, psnr, color=color)
+            axes_2.plot(iteracion, psnr, '--', color=color)
+            axes_1.plot(np.nan, '--', color=color, label='PSNR')
             axes_2.tick_params(axis='y', labelcolor=color, length=5)
-            # axes_2.yaxis.set_major_locator(MaxNLocator(8))
             axes_2.grid(axis='both', linestyle='--')
 
             axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 
+            if np.abs(psnr[-1]) == np.inf:
+                # print a text in the bottom part of axes_2 that indicates that the psnr is infinite
+                text_kwargs = dict(ha='center', va='center', fontsize=16, color=color)
+                axes_2.text(0.5, 0.1, f'PSNR is {psnr[-1]}, it will be not plotted', horizontalalignment='center',
+                            verticalalignment='center', transform=axes_2.transAxes, **text_kwargs)
+
+            axes_1.legend(loc='best')
             self.draw()
 
         except BaseException as err:
@@ -122,8 +127,6 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
             axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
             axs[1, 0].set_title('Medidas')
 
-            # axs[1, 0].sharex(axs[0, 0])
-            # metric = PSNR(x[:, H_elim], x_result[:, H_elim])
             aux_x = x[:, H_elim] if condition else x
             aux_x_result = x_result[:, H_elim] if condition else x_result
             metric = PSNR(aux_x, aux_x_result)
@@ -132,7 +135,8 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
             axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
 
             index = 5
-            aux_H_elim = index if condition else H_elim[index]
+            # aux_H_elim = index if condition else H_elim[index]
+            aux_H_elim = H_elim[index]
             axs[1, 1].plot(x[:, aux_H_elim], 'r', label='Referencia')
             axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
             axs[1, 1].legend(loc='best')
@@ -192,12 +196,11 @@ class TuningGraphic(FigureCanvasQTAgg):
 
             color = 'tab:red'
             axes_1.set_xlabel(xlabel)
-            axes_1.set_ylabel('ssim', color=color)
             graphic = axes_1.plot
             if len(self.tuning_data['ssim']) == 1:
                 graphic = axes_1.scatter
             graphic(self.tuning_data['lmb' if params[0] == 'lambda' else params[0]], self.tuning_data['ssim'],
-                    '--o' if len(self.tuning_data) > 1 else None, color=color)
+                    '-o' if len(self.tuning_data) > 1 else None, color=color, label='SSIM')
             axes_1.tick_params(axis='y', labelcolor=color, length=5)
             axes_1.yaxis.set_major_locator(MaxNLocator(8))
             axes_1.set_xscale('linear' if self.current_scale == 'lineal' else 'log')
@@ -206,12 +209,13 @@ class TuningGraphic(FigureCanvasQTAgg):
             axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
             color = 'tab:blue'
-            axes_2.set_ylabel('psnr', color=color)
             graphic = axes_2.plot
             if len(self.tuning_data['psnr']) == 1:
                 graphic = axes_2.scatter
             graphic(self.tuning_data['lmb' if params[0] == 'lambda' else params[0]], self.tuning_data['psnr'],
                     '--o' if len(self.tuning_data) > 1 else None, color=color)
+            # axes_1.plot(np.nan, '--o' if len(self.tuning_data) > 1 else None, color=color, label='PSNR')
+            axes_1.plot(np.nan, '--o', color=color, label='PSNR')
             axes_2.tick_params(axis='y', labelcolor=color, length=5)
             axes_2.yaxis.set_major_locator(MaxNLocator(8))
             axes_2.set_xscale('linear' if self.current_scale == 'lineal' else 'log')
@@ -219,6 +223,7 @@ class TuningGraphic(FigureCanvasQTAgg):
 
             axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 
+            axes_1.legend(loc='best')
             self.draw()
 
         except BaseException as err:
@@ -260,8 +265,7 @@ class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
 
                 color = 'tab:red'
                 axes_1.set_xlabel('iteraciones')
-                axes_1.set_ylabel('ssim', color=color)
-                axes_1.plot(iteracion, ssims[:, idx], color=color)
+                axes_1.plot(iteracion, ssims[:, idx], color=color, label='SSIM')
                 axes_1.set_title(self.algorithm_names[idx])
                 axes_1.tick_params(axis='y', labelcolor=color, length=5)
                 axes_1.grid(axis='both', linestyle='--')
@@ -269,12 +273,14 @@ class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
                 axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
                 color = 'tab:blue'
-                axes_2.set_ylabel('psnr', color=color)
                 axes_2.plot(iteracion, psnrs[:, idx], color=color)
+                axes_1.plot(np.nan, color=color, label='PSNR')
                 axes_2.tick_params(axis='y', labelcolor=color, length=5)
                 axes_2.grid(axis='both', linestyle='--')
 
                 axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
+
+                axes_1.legend(loc='best')
 
             self.draw()
 

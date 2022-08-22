@@ -12,6 +12,7 @@ import time
 # from pymitter import EventEmitter
 
 # Need to use this (EventEmitter) for comunication with the GUI, please don't remove it, I used this trough the code
+from Algorithms.tv_norm import tv_norm
 from gui.scripts.alerts import showWarning, showCritical
 
 
@@ -564,6 +565,13 @@ class Algorithms:
             This function applies the inverse transform of the
             `operator_dir` function.
         '''
+        self.is_complete_data = True
+        # ------ Build sensing matrix for incomplete data ---------
+        if H is None:
+            x = np.nan_to_num(x, nan=0)
+            H = np.all(x != 0, axis=0)
+            self.is_complete_data = False
+
         # ------- change the dimension of the inputs image --------
         m, n = x.shape
         # m = int(2 ** (np.ceil(np.log2(m)) - 1))
@@ -573,6 +581,7 @@ class Algorithms:
         self.x = x
         self.m, self.n = x.shape
         self.pattern = 0
+        self.H_raw = H
 
         # ---------- Load or build the sensing matrix -------------
         if isinstance(H, (list, tuple, np.ndarray)):
@@ -744,7 +753,7 @@ class Algorithms:
         x = np.zeros(dim)
         q = 1
         s = x
-        hist = np.zeros((max_itr + 1, 3))
+        hist = np.zeros((max_itr + 1, 4))
         # print('itr \t ||x-xold|| \t PSNR \n')
         itr = 0
         while (itr < max_itr):
@@ -762,18 +771,24 @@ class Algorithms:
             itr = itr + 1
 
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
+
+            # if self.is_complete_data:
             psnr_val = PSNR(self.x[:, self.H_elim], self.operator_inv(s)[:, self.H_elim])
             ssim_val = ssim(self.x[:, self.H_elim], self.operator_inv(s)[:, self.H_elim])
+            tv_val = tv_norm(self.operator_inv(s))
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
             hist[itr, 2] = ssim_val
+            hist[itr, 3] = tv_val
 
             print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\n')
-            # yield itr, format(hist[itr, 0], ".2e"), format(hist[itr, 1], ".3f"), dict(result=self.operator_inv(s),
-            #                                                                           hist=hist)
+                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
+
             yield itr, dict(result=self.operator_inv(s), hist=hist)
+
+            # else:
+            #     yield None, None
 
         yield self.operator_inv(s), hist
 
@@ -807,7 +822,7 @@ class Algorithms:
 
         dim = self.x.shape
         x = np.zeros(dim)
-        hist = np.zeros((max_itr + 1, 3))
+        hist = np.zeros((max_itr + 1, 4))
 
         residualx = 1
         tol = 1e-2
@@ -830,15 +845,16 @@ class Algorithms:
 
             psnr_val = PSNR(self.x[:, self.H_elim], self.operator_inv(x)[:, self.H_elim])
             ssim_val = ssim(self.x[:, self.H_elim], self.operator_inv(x)[:, self.H_elim])
+            tv_val = tv_norm(self.operator_inv(x))
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
             hist[itr, 2] = ssim_val
+            hist[itr, 3] = tv_val
 
             print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\n')
-            # yield itr, format(hist[itr, 0], ".2e"), format(hist[itr, 1], ".3f"), dict(result=self.operator_inv(s),
-            #                                                                           hist=hist)
+                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
+
             yield itr, dict(result=self.operator_inv(x), hist=hist)
 
         yield self.operator_inv(x), hist
@@ -875,7 +891,7 @@ class Algorithms:
 
         dim = self.x.shape
         x = np.zeros(dim)
-        hist = np.zeros((max_itr + 1, 3))
+        hist = np.zeros((max_itr + 1, 4))
 
         residualx = 1
         tol = 1e-3
@@ -904,15 +920,16 @@ class Algorithms:
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
             psnr_val = PSNR(self.x[:, self.H_elim], self.operator_inv(x)[:, self.H_elim])
             ssim_val = ssim(self.x[:, self.H_elim], self.operator_inv(x)[:, self.H_elim])
+            tv_val = tv_norm(self.operator_inv(x))
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
             hist[itr, 2] = ssim_val
+            hist[itr, 3] = tv_val
 
             print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\n')
-            # yield itr, format(hist[itr, 0], ".2e"), format(hist[itr, 1], ".3f"), dict(result=self.operator_inv(s),
-            #                                                                           hist=hist)
+                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
+
             yield itr, dict(result=self.operator_inv(x), hist=hist)
 
         yield self.operator_inv(x), hist
@@ -956,7 +973,7 @@ class Algorithms:
 
         print('---------ADMM method---------- \n')
 
-        hist = np.zeros((max_itr + 1, 3))
+        hist = np.zeros((max_itr + 1, 4))
         dim = self.x.shape
         x = np.zeros(dim)
 
@@ -1004,21 +1021,21 @@ class Algorithms:
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
 
             # psnr_val = PSNR(x, x_old)
-            psnr_val = PSNR(x[:, self.H_elim],
-                            self.x[:, self.H_elim])  # the metric should be between the orig, and the estimated.
-            ssim_val = ssim(x[:, self.H_elim], self.x[:, self.H_elim])
+            psnr_val = PSNR(self.x[:, self.H_elim], x[:, self.H_elim])
+            ssim_val = ssim(self.x[:, self.H_elim], x[:, self.H_elim])
+            tv_val = tv_norm(self.operator_inv(x))
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
             hist[itr, 2] = ssim_val
+            hist[itr, 3] = tv_val
 
             if (itr + 1) % 5 == 0:
                 # mse = np.mean(np.sum((y-A(v,Phi))**2,axis=(0,1)))
                 end_time = time.time()
                 # Error = %2.2f,
-                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB, SSIM = %1.2f time = %3.1fs." % (
-                    itr + 1, residualx, psnr_val, ssim_val, end_time - begin_time))
-                # % (ni + 1, psnr(v, X_ori), end_time - begin_time))
+                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB, SSIM = %1.2f, TV norm = %4.2f time = %3.1fs." % (
+                    itr + 1, residualx, psnr_val, ssim_val, tv_val, end_time - begin_time))
 
             yield itr, dict(result=x, hist=hist)
 
