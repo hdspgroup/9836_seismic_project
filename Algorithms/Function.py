@@ -13,7 +13,7 @@ import time
 
 # Need to use this (EventEmitter) for comunication with the GUI, please don't remove it, I used this trough the code
 from Algorithms.tv_norm import tv_norm
-from gui.scripts.alerts import showWarning, showCritical
+from Desarrollo.ReDS.gui.scripts.alerts import showWarning, showCritical
 
 
 class Sampling:

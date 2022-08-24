@@ -4,7 +4,7 @@ from matplotlib.pyplot import figure
 
 from Algorithms.fk_domain import fk, FK_visualize
 
-data2 = np.load('../data/data.npy').T
+data2 = np.load('../Desarrollo/ReDS/data/data.npy').T
 print('data2 dimensions are:', data2.shape)
 
 # calculate FK domain

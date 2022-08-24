@@ -32,7 +32,6 @@ from gui.scripts.alerts import showWarning, showCritical
 from jitter_window import UIJitterWindow
 from seed_help_window import UISeedHelpWindow
 from workers import Worker, TuningWorker, ComparisonWorker, TabWorker
-from tuning_window import UITuningWindow
 
 
 def solve_path(relative_path):

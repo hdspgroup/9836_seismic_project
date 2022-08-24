@@ -9,9 +9,9 @@ from skimage.metrics import structural_similarity as ssim
 import scipy
 
 # ----------------- --------------------
-# x = np.load('../data/data.npy')
+# x = np.load('../Desarrollo/ReDS/data/data.npy')
 data_name = 'data.npy'
-x = np.load('../data/' + data_name)
+x = np.load('../Desarrollo/ReDS/data/' + data_name)
 if len(x.shape) > 2:
     x = x[:, :, int(x.shape[-1] / 2)]
 
@@ -111,6 +111,7 @@ axes_1.set_ylabel('ssim', color=color)
 axes_1.plot(iteracion, hist[1:, 2], color=color)
 axes_1.tick_params(axis='y', labelcolor=color, length=5)
 axes_1.yaxis.set_major_locator(MaxNLocator(8))
+axes_1.set_xscale('log')
 axes_1.grid(axis='both', which="both", linestyle='--')
 axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
@@ -119,6 +120,7 @@ axes_2.set_ylabel('psnr', color=color)
 axes_2.plot(iteracion, hist[1:, 1], color=color)
 axes_2.tick_params(axis='y', labelcolor=color, length=5)
 axes_2.yaxis.set_major_locator(MaxNLocator(8))
+axes_2.set_xscale('log')
 axes_2.grid(axis='both', which="both", linestyle='--')
 axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 

@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
     r = []
     for exp in range(10):
-        x = np.load('../data/' + data_name)
+        x = np.load('../Desarrollo/ReDS/data/' + data_name)
 
         if data_name == 'data.npy':
             x = x.T

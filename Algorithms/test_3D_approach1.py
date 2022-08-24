@@ -13,9 +13,9 @@ import scipy
 
 def run_alg(data_name, case='ADMM', maxiter=500, sr_rand=0.5):
     # ----------------- --------------------
-    # x = np.load('../data/data.npy')
+    # x = np.load('../Desarrollo/ReDS/data/data.npy')
 
-    x = np.load('../data/' + data_name)
+    x = np.load('../Desarrollo/ReDS/data/' + data_name)
 
     if data_name == 'data.npy':
         x = x.T

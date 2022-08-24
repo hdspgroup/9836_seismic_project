@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 from Algorithms.tv_norm import *
 
 # ----------------- --------------------
-# x = np.load('../data/data.npy')
+# x = np.load('../Desarrollo/ReDS/data/data.npy')
 data_name = 'data.npy'
-x = np.load('../data/' + data_name)
+x = np.load('../Desarrollo/ReDS/data/' + data_name)
 if len(x.shape) > 2:
     x = x[:, :, int(x.shape[-1] / 2)]
 
@@ -17,9 +17,9 @@ x = x / np.abs(x).max()
 
 
 # ----------------- --------------------
-# x = np.load('../data/data.npy')
+# x = np.load('../Desarrollo/ReDS/data/data.npy')
 data_name = 'inc_data.npy'
-x_inc = np.load('../data/' + data_name)
+x_inc = np.load('../Desarrollo/ReDS/data/incomplete_samples/' + data_name)
 if len(x_inc.shape) > 2:
     x_inc = x_inc[:, :, int(x_inc.shape[-1] / 2)]
 

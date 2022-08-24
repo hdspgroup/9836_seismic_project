@@ -11,9 +11,9 @@ from skimage.metrics import structural_similarity as ssim
 import scipy
 
 # ----------------- --------------------
-# x = np.load('../data/data.npy')
+# x = np.load('../Desarrollo/ReDS/data/data.npy')
 data_name = 'inc_data.npy'
-x = np.load('../data/' + data_name)
+x = np.load('../Desarrollo/ReDS/data/incomplete_samples/' + data_name)
 if len(x.shape) > 2:
     x = x[:, :, int(x.shape[-1] / 2)]
 
