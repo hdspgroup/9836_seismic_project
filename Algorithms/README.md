@@ -6,9 +6,18 @@
 ![fund](https://img.shields.io/badge/Fundby-Minciencias--ANH-red)
 ![coverage](https://img.shields.io/badge/status-40%25-yellowgreen)
 
-Esta sección del repositorio contiene las rutinas de computo numérico desarrollados durante el transcurso del proyecto 9836. Esta sección contiene prototipos funcionales, prototipos no-funcionales (aún en desarrollo), colección de librerias y demostraciones de las rutinas desarrollados. Por favor, **use el contenido de esta sección bajo su propio riesgo**
+Esta sección del repositorio contiene las rutinas de computo numérico desarrollados durante el transcurso del proyecto 9836 - "Nuevas tecnologías computacionales para el diseño de sistemas de adquisición sísmica 3D terrestre con muestreo compresivo para la reducción de costos económicos e impactos ambientales en la exploración de hidrocarburos en cuencas terrestres colombianas" adscrito a la Convocatoria para la financiación de proyectos de investigación en geociencias para el sector de hidrocarburos, desarrollado por la alianza, Universidad Industrial de Santander (UIS), ECOPETROL y la Asociación Colombiana de Geólogos y Geofísicos del Petróleo (ACGGP).
 
-Esta herramienta software hace parte del proyecto 9836 - "Nuevas tecnologías computacionales para el diseño de sistemas de adquisición sísmica 3D terrestre con muestreo compresivo para la reducción de costos económicos e impactos ambientales en la exploración de hidrocarburos en cuencas terrestres colombianas" adscrito a la Convocatoria para la financiación de proyectos de investigación en geociencias para el sector de hidrocarburos, desarrollado por la alianza, Universidad Industrial de Santander (UIS), ECOPETROL y la Asociación Colombiana de Geólogos y Geofísicos del Petróleo (ACGGP). Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarburos (ANH). Los derechos sobre este software están reservados a las entidades aportantes.
+Esta sección contiene prototipos funcionales, prototipos no-funcionales (aún en desarrollo), colección de librerias y demostraciones de las rutinas desarrollados. Por favor, **use el contenido de esta sección bajo su propio riesgo**.
+
+# **Descripción de Rutinas**
+
+A continuación encontrará la descripción de la naturaleza de las rutinas, prototipos y demostraciones contenidas en esta sección del repositorio:
+
+* Análisis de geometrías de adquisición
+* Generación de geometrías sub-muestreadas
+* Reconstrucción básica de shots con sparsity (wavelet)
+* Cálculo de mapas de cubrimiento
 
 # **Inicio rápido**
 
