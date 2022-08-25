@@ -1,4 +1,4 @@
-# COmpressive Seismic Acquisition Design (COSAD) project
+# COmpressive Seismic Acquisition Design (COSAD): Algoritmos
 
 ---
 
