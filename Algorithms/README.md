@@ -23,6 +23,7 @@ A continuación encontrará la descripción de la naturaleza de las rutinas, pro
 * Estimación de parámetros de los algoritmos computacionales desarrollados
 * Realización de pruebas de factibilidad de los algoritmos desarrollados
 
+
 # **Descripción de Librerías**
 
 A continuación encontrará el listado de las librerías Python necesarias para correr las rutinas, prototipos y demostraciones contenidas en esta sección del repositorio:
