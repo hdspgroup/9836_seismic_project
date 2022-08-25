@@ -40,4 +40,15 @@ A continuación encontrará el listado de las librerías Python necesarias para 
 
 Para instalar los componentes necesarios puede revisar los pasos 1 al 4 del [Manual de Instalación Aplicación ReDs, Modo Desarrolador](https://www.anaconda.com/]https://github.com/carlosh93/9836_seismic_project/wiki/I.-Manual-de-Instalación-Aplicación-ReDs,-Modo-Desarrolador)
 
+# Licencia
 
+---
+
+Este trabajo está licenciado bajo
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
+
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
+
+[cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+[cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
