@@ -15,6 +15,7 @@ A continuación encontrará la descripción de la naturaleza de las rutinas, pro
 * Reconstrucción básica de shots con sparsity (wavelet)
 * Cálculo de mapas de cubrimiento
 * Reconstrucción de disparos sísmicos utilizando algoritmo Fast Marching
+* Diseño de geometrías de adquisición sísmica usando aprendizaje profundo
 * Reconstrucción de datos 3D usando geometrías del tipo Cross-Spread
 * Estimación de parámetros de los algoritmos computacionales desarrollados
 * Realización de pruebas de factibilidad de los algoritmos desarrollados
