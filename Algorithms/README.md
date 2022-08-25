@@ -17,6 +17,9 @@ A continuación encontrará la descripción de la naturaleza de las rutinas, pro
 * Reconstrucción de disparos sísmicos utilizando algoritmo Fast Marching
 * Diseño de geometrías de adquisición sísmica usando aprendizaje profundo
 * Reconstrucción de datos 3D usando geometrías del tipo Cross-Spread
+* Determinar méticas para evaluación de reconstrucciones
+* Establecer esquemas de submuestreo para las fuentes sismicas
+* Formular el problema de reconstrucción de fuentes sísmicas
 * Estimación de parámetros de los algoritmos computacionales desarrollados
 * Realización de pruebas de factibilidad de los algoritmos desarrollados
 
