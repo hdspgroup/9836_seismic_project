@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from Function import *
+from ..Function import *
 import time
 import matplotlib
 from skimage.metrics import structural_similarity as ssim
@@ -85,7 +85,7 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
     r = []
     for exp in range(exp_number):
         if data_format == 'matlab':
-            x = hdf5storage.loadmat(data_path)['data']
+            x = hdf5storage.loadmat(data_path)['RL3042']
         else:
             x = np.load(data_path)
 
@@ -127,6 +127,7 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
         mask = np.reshape(mask, [imShape[0] * imShape[1], imShape[2]])
         x_copy = x.copy()
         x = x * (1 - mask)
+        print(f"Running first reconstruction...")
         output = cv2.inpaint(x, mask, t_m + 1, flags=paint_method)
         output = np.reshape(output, [imShape[0], imShape[1], imShape[2]])
         x = np.reshape(x, [imShape[0], imShape[1], imShape[2]])
@@ -155,5 +156,5 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
 
 
 if __name__ == '__main__':
-    data_path = '/tmp/splitspreadfromsegy_2001_OrgSeqno_7TAR_TFD_SW.mat'
+    data_path = '/home/carlosh/Data_Seismic/RL3042.mat'
     fastMarching_approach(data_path, 'matlab')
