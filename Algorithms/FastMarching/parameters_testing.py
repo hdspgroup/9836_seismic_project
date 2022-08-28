@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import Function
+import Algorithms.Function
 import time
 import matplotlib
 from skimage.metrics import structural_similarity as ssim
