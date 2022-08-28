@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import Algorithms.Function
+from Algorithms.Function import *
 import time
 import matplotlib
 from skimage.metrics import structural_similarity as ssim
@@ -9,7 +9,7 @@ from tqdm import tqdm
 import hdf5storage
 
 
-def plot_results(x, x_result, pattern_rand, case):
+def plot_results(x, x_result, pattern_rand, case, output_name=''):
     # -------------- Visualization ----------------
     y_rand = x[:, int(x.shape[1] / 2)].copy()
     y_rand[:, pattern_rand == 0] = 0
@@ -18,7 +18,10 @@ def plot_results(x, x_result, pattern_rand, case):
     plt.title("Removed shots")
     plt.xlabel("Shots")
     plt.ylabel("Time")
-    plt.show()
+    if len(output_name) == 0:
+        plt.show()
+    else:
+        plt.savefig(output_name+'rm_shots.png')
 
     # x = Alg.x
     matplotlib.rcParams.update({'font.size': 8})
@@ -28,7 +31,7 @@ def plot_results(x, x_result, pattern_rand, case):
     rem_shots = rem_shots[pattern_rand == 0]
     psnr_vec = []
     for s in rem_shots:
-        psnr_vec.append(Function.PSNR(x[..., s], x_result[..., s]))
+        psnr_vec.append(PSNR(x[..., s], x_result[..., s]))
     idxs = (-np.array(psnr_vec)).argsort()
     rem_shots = rem_shots[idxs]
     axs[0, 0].imshow(x[..., rem_shots[0]], cmap='seismic', aspect='auto')
@@ -37,12 +40,12 @@ def plot_results(x, x_result, pattern_rand, case):
     axs[1, 0].imshow(x[..., rem_shots[1]], cmap='seismic', aspect='auto')
     axs[1, 0].set_title(f'Reference, shot {rem_shots[1]}')
 
-    metric = Function.PSNR(x[..., rem_shots[0]], x_result[..., rem_shots[0]])
+    metric = PSNR(x[..., rem_shots[0]], x_result[..., rem_shots[0]])
     metric_ssim = ssim(x[..., rem_shots[0]], x_result[..., rem_shots[0]])
     axs[0, 1].imshow(x_result[..., rem_shots[0]], cmap='seismic', aspect='auto')
     axs[0, 1].set_title(f'Reconstructed shot {rem_shots[0]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
 
-    metric = Function.PSNR(x[..., rem_shots[1]], x_result[..., rem_shots[1]])
+    metric = PSNR(x[..., rem_shots[1]], x_result[..., rem_shots[1]])
     metric_ssim = ssim(x[..., rem_shots[1]], x_result[..., rem_shots[1]])
     axs[1, 1].imshow(x_result[..., rem_shots[1]], cmap='seismic', aspect='auto')
     axs[1, 1].set_title(f'Reconstructed shot {rem_shots[1]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
@@ -54,21 +57,24 @@ def plot_results(x, x_result, pattern_rand, case):
     axs[1, 2].imshow(x[..., rem_shots[3]], cmap='seismic', aspect='auto')
     axs[1, 2].set_title(f'Reference, shot {rem_shots[3]}')
 
-    metric = Function.PSNR(x[..., rem_shots[2]], x_result[..., rem_shots[2]])
+    metric = PSNR(x[..., rem_shots[2]], x_result[..., rem_shots[2]])
     metric_ssim = ssim(x[..., rem_shots[2]], x_result[..., rem_shots[2]])
     axs[0, 3].imshow(x_result[..., rem_shots[2]], cmap='seismic', aspect='auto')
     axs[0, 3].set_title(f'Reconstructed shot {rem_shots[2]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
 
-    metric = Function.PSNR(x[..., rem_shots[3]], x_result[..., rem_shots[3]])
+    metric = PSNR(x[..., rem_shots[3]], x_result[..., rem_shots[3]])
     metric_ssim = ssim(x[..., rem_shots[3]], x_result[..., rem_shots[3]])
     axs[1, 3].imshow(x_result[..., rem_shots[3]], cmap='seismic', aspect='auto')
     axs[1, 3].set_title(f'Reconstructed shot {rem_shots[3]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
 
     fig.tight_layout()
-    plt.show()
+    if len(output_name) == 0:
+        plt.show()
+    else:
+        plt.savefig(output_name+'recon.png')
 
 
-def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
+def fastMarching_approach(data_path, data_format='numpy', tm_val=0, exp_number=1, H=None):
     """
 
     Parameters
@@ -97,7 +103,7 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
         '''
         if H is None:
             sr_rand = 0.5  # 1-compression
-            _, _, H = Function.random_sampling(x[:, int(x.shape[1] / 2), :], sr_rand)
+            _, _, H = random_sampling(x[:, int(x.shape[1] / 2), :], sr_rand)
 
         pattern_rand = [int(h) for h in H]
         pattern_rand = np.array(pattern_rand)
@@ -121,7 +127,7 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
         for t in tmp:
             if t.strip().count('0') > t_m:
                 t_m = t.strip().count('0')
-        t_m = 3
+        t_m = tm_val
         aux_s = np.zeros(x.shape[-1])
         imShape = x.shape
         x = np.reshape(x, [imShape[0] * imShape[1], imShape[2]])
@@ -149,13 +155,21 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
         x = x_copy.copy()
         output = np.transpose(output, [0, 2, 1])
         x = np.transpose(x, [0, 2, 1])
-        print(Function.PSNR(x, output))
-        r.append(Function.PSNR(x, output))
-        plot_results(x, output, pattern_rand, 'Fast Marching (Inpainting)')
+        print(PSNR(x, output))
+        r.append(PSNR(x, output))
+        output_name = 'params_results/tm=' + str(t_m)
+        np.savez(output_name+'.npz', output=output)
+        plot_results(x, output, pattern_rand, 'Fast Marching (Inpainting)', output_name=output_name)
 
     print(f"Mean Result: {np.mean(r)}")
+    return np.mean(r)
 
 
 if __name__ == '__main__':
     data_path = '/home/carlosh/Data_Seismic/RL3042.mat'
-    fastMarching_approach(data_path, 'matlab')
+    dict_res = {}
+    for tm_val in range(0,101,2):
+        res=fastMarching_approach(data_path, 'matlab')
+        dict_res[tm_val] = res
+
+    np.savez("params_results/all_res.npz", dict_res=dict_res)
