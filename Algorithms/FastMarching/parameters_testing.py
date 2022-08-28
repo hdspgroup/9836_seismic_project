@@ -1,12 +1,76 @@
+import os.path
+
 import matplotlib.pyplot as plt
-from Algorithms.Function import *
+from Algorithms.Function import random_sampling
+from image_quality_metrics.utils.psnr import PSNR
+from image_quality_metrics.utils.ssim import SSIM
+from image_quality_metrics.utils.msssim import MSSSIM
+from image_quality_metrics.utils.lpips import LPIPS
 import time
 import matplotlib
-from skimage.metrics import structural_similarity as ssim
+# from skimage.metrics import structural_similarity as ssim
 import cv2
 import numpy as np
 from tqdm import tqdm
 import hdf5storage
+import pandas as pd
+
+
+def compute_msssim(x, x_recon):
+    x = np.tile(np.expand_dims(x, axis=2), [1, 1, 3])
+    x_recon = np.tile(np.expand_dims(x_recon, axis=2), [1, 1, 3])
+    return msssim(x, x_recon)
+
+
+def compute_lpips(x, x_recon):
+    x = np.tile(np.expand_dims(x, axis=2), [1, 1, 3])
+    x_recon = np.tile(np.expand_dims(x_recon, axis=2), [1, 1, 3])
+    return lpips(x, x_recon)
+
+
+def save_metrics(x, x_result, pattern_rand, t_m_val):
+    rem_shots = np.arange(len(pattern_rand))
+    rem_shots = rem_shots[pattern_rand == 0]
+    if not os.path.exists("params_results.xlsx"):
+
+        column_names = ["Inpaint Radius", "Rem Shots", "PSNR Vec",
+                        "SSIM Vec", "MSSSIM Vec", "LPIPS Vec",
+                        "PSNR Mean", "SSIM Mean", "MSSSIM Mean", "LPIPS Mean"]
+
+        df = pd.DataFrame(columns=column_names)
+        df.to_excel("params_results.xlsx", index=False)
+    else:
+        df = pd.read_excel('params_results.xlsx')
+    psnr_vec = []
+    ssim_vec = []
+    msssim_vec = []
+    lpips_vec = []
+    print("Saving results to params_results.xlsx")
+    for rm_s in rem_shots:
+        metric_psnr = psnr(x[..., rm_s], x_result[..., rm_s])
+        metric_ssim = ssim(x[..., rm_s], x_result[..., rm_s])
+        metric_msssim = compute_msssim(x[..., rm_s], x_result[..., rm_s])
+        metric_lpips = compute_lpips(x[..., rm_s], x_result[..., rm_s])
+        psnr_vec.append(metric_psnr)
+        ssim_vec.append(metric_ssim)
+        msssim_vec.append(metric_msssim)
+        lpips_vec.append(metric_lpips)
+
+    df2 = pd.DataFrame({
+        "Inpaint Radius": str(t_m_val),
+        "Rem Shots": str(rem_shots),
+        "PSNR Vec": str(psnr_vec),
+        "SSIM Vec": str(ssim_vec),
+        "MSSSIM Vec": str(msssim_vec),
+        "LPIPS Vec": str(lpips_vec),
+        "PSNR Mean": str(np.mean(psnr_vec)),
+        "SSIM Mean": str(np.mean(ssim_vec)),
+        "MSSSIM Mean": str(np.mean(msssim_vec)),
+        "LPIPS Mean": str(np.mean(lpips_vec))
+    }, index=[0])
+
+    df = pd.concat([df, df2], ignore_index=True, axis=0)
+    df.to_excel("params_results.xlsx", index=False)
 
 
 def plot_results(x, x_result, pattern_rand, case, output_name=''):
@@ -21,7 +85,7 @@ def plot_results(x, x_result, pattern_rand, case, output_name=''):
     if len(output_name) == 0:
         plt.show()
     else:
-        plt.savefig(output_name+'rm_shots.png')
+        plt.savefig(output_name + '_rm_shots.png')
 
     # x = Alg.x
     matplotlib.rcParams.update({'font.size': 8})
@@ -31,7 +95,7 @@ def plot_results(x, x_result, pattern_rand, case, output_name=''):
     rem_shots = rem_shots[pattern_rand == 0]
     psnr_vec = []
     for s in rem_shots:
-        psnr_vec.append(PSNR(x[..., s], x_result[..., s]))
+        psnr_vec.append(psnr(x[..., s], x_result[..., s]))
     idxs = (-np.array(psnr_vec)).argsort()
     rem_shots = rem_shots[idxs]
     axs[0, 0].imshow(x[..., rem_shots[0]], cmap='seismic', aspect='auto')
@@ -40,12 +104,12 @@ def plot_results(x, x_result, pattern_rand, case, output_name=''):
     axs[1, 0].imshow(x[..., rem_shots[1]], cmap='seismic', aspect='auto')
     axs[1, 0].set_title(f'Reference, shot {rem_shots[1]}')
 
-    metric = PSNR(x[..., rem_shots[0]], x_result[..., rem_shots[0]])
+    metric = psnr(x[..., rem_shots[0]], x_result[..., rem_shots[0]])
     metric_ssim = ssim(x[..., rem_shots[0]], x_result[..., rem_shots[0]])
     axs[0, 1].imshow(x_result[..., rem_shots[0]], cmap='seismic', aspect='auto')
     axs[0, 1].set_title(f'Reconstructed shot {rem_shots[0]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
 
-    metric = PSNR(x[..., rem_shots[1]], x_result[..., rem_shots[1]])
+    metric = psnr(x[..., rem_shots[1]], x_result[..., rem_shots[1]])
     metric_ssim = ssim(x[..., rem_shots[1]], x_result[..., rem_shots[1]])
     axs[1, 1].imshow(x_result[..., rem_shots[1]], cmap='seismic', aspect='auto')
     axs[1, 1].set_title(f'Reconstructed shot {rem_shots[1]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
@@ -57,12 +121,12 @@ def plot_results(x, x_result, pattern_rand, case, output_name=''):
     axs[1, 2].imshow(x[..., rem_shots[3]], cmap='seismic', aspect='auto')
     axs[1, 2].set_title(f'Reference, shot {rem_shots[3]}')
 
-    metric = PSNR(x[..., rem_shots[2]], x_result[..., rem_shots[2]])
+    metric = psnr(x[..., rem_shots[2]], x_result[..., rem_shots[2]])
     metric_ssim = ssim(x[..., rem_shots[2]], x_result[..., rem_shots[2]])
     axs[0, 3].imshow(x_result[..., rem_shots[2]], cmap='seismic', aspect='auto')
     axs[0, 3].set_title(f'Reconstructed shot {rem_shots[2]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
 
-    metric = PSNR(x[..., rem_shots[3]], x_result[..., rem_shots[3]])
+    metric = psnr(x[..., rem_shots[3]], x_result[..., rem_shots[3]])
     metric_ssim = ssim(x[..., rem_shots[3]], x_result[..., rem_shots[3]])
     axs[1, 3].imshow(x_result[..., rem_shots[3]], cmap='seismic', aspect='auto')
     axs[1, 3].set_title(f'Reconstructed shot {rem_shots[3]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
@@ -71,7 +135,7 @@ def plot_results(x, x_result, pattern_rand, case, output_name=''):
     if len(output_name) == 0:
         plt.show()
     else:
-        plt.savefig(output_name+'recon.png')
+        plt.savefig(output_name + '_recon.png')
 
 
 def fastMarching_approach(data_path, data_format='numpy', tm_val=0, exp_number=1, H=None):
@@ -155,11 +219,15 @@ def fastMarching_approach(data_path, data_format='numpy', tm_val=0, exp_number=1
         x = x_copy.copy()
         output = np.transpose(output, [0, 2, 1])
         x = np.transpose(x, [0, 2, 1])
-        print(PSNR(x, output))
-        r.append(PSNR(x, output))
+        assert x.dtype == 'uint8'
+        assert output.dtype == 'uint8'
+        print(psnr(x, output))
+        r.append(psnr(x, output))
         output_name = 'params_results/tm=' + str(t_m)
-        np.savez(output_name+'.npz', output=output)
-        plot_results(x, output, pattern_rand, 'Fast Marching (Inpainting)', output_name=output_name)
+        np.savez(output_name + '.npz', x=x, output=output)
+        plot_results(x.copy(), output.copy(), pattern_rand, f'Fast Marching (Inpainting), Inp. Radius: {t_m}',
+                     output_name=output_name)
+        save_metrics(x.copy(), output.copy(), pattern_rand, t_m)
 
     print(f"Mean Result: {np.mean(r)}")
     return np.mean(r)
@@ -168,8 +236,13 @@ def fastMarching_approach(data_path, data_format='numpy', tm_val=0, exp_number=1
 if __name__ == '__main__':
     data_path = '/home/carlosh/Data_Seismic/RL3042.mat'
     dict_res = {}
-    for tm_val in range(0,101,2):
-        res=fastMarching_approach(data_path, 'matlab')
+    psnr = PSNR().forward
+    ssim = SSIM().forward
+    msssim = MSSSIM().forward
+    lpips = LPIPS().forward
+    for tm_val in range(0, 131, 3):
+        print(f"Running experiment inpainting radius: {tm_val}")
+        res = fastMarching_approach(data_path, 'matlab', tm_val)
         dict_res[tm_val] = res
 
     np.savez("params_results/all_res.npz", dict_res=dict_res)
