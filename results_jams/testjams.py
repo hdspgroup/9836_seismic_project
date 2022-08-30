@@ -1,7 +1,9 @@
-from Algorithms.Function import Sampling, Algorithms
+from Function import Sampling, Algorithms
 import numpy as np
 from scipy.io import savemat
 from skimage.metrics import structural_similarity as ssim
+from fktransform import fktransform
+from matplotlib import pyplot as plt
 
 def PSNR(original, compressed):
     '''
@@ -96,42 +98,125 @@ def load_seismic_data(uploaded_directory):
     return seismic_data
 
 
-sampling = Sampling()
-seismic_data1 = load_seismic_data('/home/jams/Documents/9836_seismic_project/data/data.npy')
-psnrs = np.zeros((30,1))
-snrs = np.zeros((30,1))
-ssims = np.zeros((30,1))
-jitparams = dict(gamma=3, epsilon=3)
-mstr = "window"
-algstr = "twist"
-for i in range(30):
-    sampling_dict, H = sampling.apply_sampling(seismic_data1, mstr, jitparams, None, None, 0.33)
-    p_init = int(10 + np.floor(75*np.random.rand()))
-    H[p_init:(p_init+10)] = 0
-    Alg = Algorithms(seismic_data1, H, 'DCT2D', 'IDCT2D')  # Assuming using DCT2D ad IDCT2D for all algorithms
-    '''
-            if alg_name == 'FISTA':
-                alg = self.FISTA
-            elif alg_name == 'GAP':
-                alg = self.GAP
-            elif alg_name == 'TwIST':
-                alg = self.TwIST
-            elif alg_name == 'ADMM':
-                alg = self.ADMM
-    '''
-    params = dict(param1=0.9,param2=1.89,param3=3.1)
-    iters = 300
-    algorithm, parameters = Alg.get_algorithm(algstr, iters, **params)
+def searchparameters(iter1, iter2, limits2=[0,5], iter3=1, limits3=[0,5], iter4=1, limits4=[0,5], algstr="twist", mstr = "aleatorio"):
+    sampling = Sampling()
+    seismic_data1 = load_seismic_data('/home/jams/Documents/9836_seismic_project/Desarrollo/ReDS/data/data.npy')
 
-    res = algorithm(**parameters)
-    for itr, res_dict in res:
-        if itr>=iters:
-            break
-    x_result, hist = next(res)
-    psnrs[i]=PSNR(seismic_data1,x_result)
-    snrs[i] = SNR(seismic_data1, x_result)
-    ssims[i]=ssim(seismic_data1,x_result)
-    print("PSNR: ", psnrs[i],"SNR: ", snrs[i], " ssim: ", ssims[i])
+    jitparams = dict(gamma=3, epsilon=3)
+    #mstr = "jitter"
+    #algstr = "twist"
+    step4 = (limits4[1]-limits4[0])/iter4
+    step3 = (limits3[1] - limits3[0]) / iter3
+    step2 = (limits2[1] - limits2[0]) / iter2
+    psnrs = np.zeros((iter1, iter2, iter3, iter4))
+    snrs = np.zeros((iter1, iter2, iter3, iter4))
+    ssims = np.zeros((iter1, iter2, iter3, iter4))
+    for r in range(iter4):
+        p4 = limits4[0] + (step4*r)
+        for j in range(iter3):
+            p3 = limits3[0] + (step3 * j)
+            for k in range(iter2):
+                p2 = limits2[0] + (step2 * k)
+                for i in range(iter1):
+                    sampling_dict, H = sampling.apply_sampling(seismic_data1, mstr, jitparams, None, None, 0.33)
+                    p_init = int(10 + np.floor(75 * np.random.rand()))
+                    H[p_init:(p_init + 10)] = 0
+                    Alg = Algorithms(seismic_data1, H, 'DCT2D', 'IDCT2D')  # Assuming using DCT2D ad IDCT2D for all algorithms
+                    '''
+                            if alg_name == 'FISTA':
+                                alg = self.FISTA
+                            elif alg_name == 'GAP':
+                                alg = self.GAP
+                            elif alg_name == 'TwIST':
+                                alg = self.TwIST
+                            elif alg_name == 'ADMM':
+                                alg = self.ADMM
+                    '''
+                    if algstr == "twist":
+                        params = dict(param1=p2, param2=p3, param3=p4)
+                    elif algstr == "gap":
+                        params = dict(param1=p2)
+                    elif algstr == "fista":
+                        params = dict(param1=p2, param2=p3)
+                    iters = 150
+                    algorithm, parameters = Alg.get_algorithm(algstr, iters, **params)
+
+                    res = algorithm(**parameters)
+                    for itr, res_dict in res:
+                        if itr >= iters:
+                            break
+                    x_result, hist = next(res)
+                    [x_result, _, _] = fktransform(x_result, 0.02, 10)
+                    [seismic_data2, _, _] = fktransform(seismic_data1, 0.02, 10)
+                    """plt.figure()
+                    plt.imshow(x_result, cmap="seismic")
+                    plt.show()
+                    plt.figure()
+                    plt.imshow(seismic_data2, cmap="seismic")
+                    plt.show()"""
+                    psnrs[i,k,j,r] = PSNR(seismic_data2, x_result)
+                    snrs[i,k,j,r] = SNR(seismic_data2, x_result)
+                    ssims[i,k,j,r] = ssim(seismic_data2, x_result)
+                    print("iter: ", i, "iter2: ", k, "iter3: ", j, "iter4: ", r, "PSNR: ", psnrs[i,k,j,r], "SNR: ", snrs[i,k,j,r], " ssim: ", ssims[i,k,j,r])
+
+                savemat('./FKparams-' + algstr + mstr + '33-r.mat', {'psnrs': psnrs, 'snrs': snrs, 'ssims': ssims})
 
 
-savemat('./results/'+algstr+mstr+'33-r.mat',{'psnrs':psnrs,'snrs':snrs, 'ssims':ssims})
+def simulationsfixedparameters():
+    sampling = Sampling()
+    seismic_data1 = load_seismic_data('/home/jams/Documents/9836_seismic_project/Desarrollo/ReDS/data/data.npy')
+    psnrs = np.zeros((30,1))
+    snrs = np.zeros((30,1))
+    ssims = np.zeros((30,1))
+    jitparams = dict(gamma=3, epsilon=3)
+    mstr = "aleatorio"
+    algstr = "fista"
+    for i in range(30):
+        sampling_dict, H = sampling.apply_sampling(seismic_data1, mstr, jitparams, None, None, 0.33)
+        #H = H==0
+        #p_init = int(10 + np.floor(75*np.random.rand()))
+        #H[p_init:(p_init+10)] = 0
+        Alg = Algorithms(seismic_data1, H, 'DCT2D', 'IDCT2D')  # Assuming using DCT2D ad IDCT2D for all algorithms
+        '''
+                if alg_name == 'FISTA':
+                    alg = self.FISTA
+                elif alg_name == 'GAP':
+                    alg = self.GAP
+                elif alg_name == 'TwIST':
+                    alg = self.TwIST
+                elif alg_name == 'ADMM':
+                    alg = self.ADMM
+        '''
+        if algstr=="twist":
+            params = dict(param1=2.25,param2=1.75,param3=3.0)
+        elif algstr=="gap":
+            params = dict(param1=10.8)
+        elif algstr=="fista":
+            params = dict(param1=2.4, param2=1.2)
+        iters = 300
+        algorithm, parameters = Alg.get_algorithm(algstr, iters, **params)
+
+        res = algorithm(**parameters)
+        for itr, res_dict in res:
+            if itr>=iters:
+                break
+        x_result, hist = next(res)
+        [x_result,_,_] = fktransform(x_result, 0.02, 10)
+        [seismic_data2, _, _] = fktransform(seismic_data1, 0.02, 10)
+        """plt.figure()
+        plt.imshow(x_result, cmap="seismic")
+        plt.show()
+        plt.figure()
+        plt.imshow(seismic_data2, cmap="seismic")
+        plt.show()"""
+        psnrs[i]=PSNR(seismic_data2,x_result)
+        snrs[i] = SNR(seismic_data2, x_result)
+        ssims[i]=ssim(seismic_data2,x_result)
+        print("iter: ", i,"PSNR: ", psnrs[i],"SNR: ", snrs[i], " ssim: ", ssims[i])
+
+    savemat('./FK-'+algstr+mstr+'33-s.mat',{'psnrs':psnrs,'snrs':snrs, 'ssims':ssims})
+
+simulationsfixedparameters()
+#searchparameters(3, 12, limits2=[0,3], iter3=12, limits3=[0,3], iter4=20, limits4=[0,5], algstr="twist", mstr = "aleatorio")
+#searchparameters(3, 40, limits2=[0,15], iter3=1, limits3=[0,5], iter4=1, limits4=[0,5], algstr="gap", mstr = "aleatorio")
+#searchparameters(3, 20, limits2=[0,3], iter3=20, limits3=[0,3], iter4=1, limits4=[0,5], algstr="fista", mstr = "aleatorio")
