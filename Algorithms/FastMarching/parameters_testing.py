@@ -2,6 +2,7 @@ import os.path
 
 import matplotlib.pyplot as plt
 from Algorithms.Function import random_sampling
+# https://github.com/ryanxingql/image-quality-assessment-toolbox
 from image_quality_metrics.utils.psnr import PSNR
 from image_quality_metrics.utils.ssim import SSIM
 from image_quality_metrics.utils.msssim import MSSSIM
@@ -241,6 +242,7 @@ if __name__ == '__main__':
     msssim = MSSSIM().forward
     lpips = LPIPS().forward
     for tm_val in range(0, 131, 3):
+        tm_val = 9
         print(f"Running experiment inpainting radius: {tm_val}")
         res = fastMarching_approach(data_path, 'matlab', tm_val)
         dict_res[tm_val] = res
