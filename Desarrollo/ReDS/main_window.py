@@ -90,6 +90,14 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.inputHLayout.setObjectName("inputHLayout")
         spacerItem = QtWidgets.QSpacerItem(13, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.inputHLayout.addItem(spacerItem)
+        self.typeDataLabel = QtWidgets.QLabel(self.inputGroupBox)
+        self.typeDataLabel.setObjectName("typeDataLabel")
+        self.inputHLayout.addWidget(self.typeDataLabel)
+        self.dataComboBox = QtWidgets.QComboBox(self.inputGroupBox)
+        self.dataComboBox.setObjectName("dataComboBox")
+        self.dataComboBox.addItem("")
+        self.dataComboBox.addItem("")
+        self.inputHLayout.addWidget(self.dataComboBox)
         self.loadPushButton = QtWidgets.QPushButton(self.inputGroupBox)
         self.loadPushButton.setObjectName("loadPushButton")
         self.inputHLayout.addWidget(self.loadPushButton)
@@ -1399,6 +1407,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         if self.data_fname[0] in ['', []]:
             return
+        self.data_fname = list(self.data_fname)
+
+        # verify if data is complete or incomplete
+        self.verify_type_data(self.data_fname[0])
 
         if view_mode == 'normal':
             self.update_directories('uploaded', self.data_fname[0])
@@ -1408,6 +1420,31 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.update_directories('report', self.data_fname[0])
             self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
             self.update_tab_thread()
+
+    def verify_type_data(self, directories):
+        data_type = self.dataComboBox.currentText().lower()
+
+        indices = []
+        for i, directory in enumerate(directories):
+            filename = directory.split('/')
+            child_name = filename[-1]
+
+            data = self.load_seismic_data(directory)
+            data = np.nan_to_num(data, nan=0)
+
+            # check if some column of data contains only zeros
+            if np.all(data == 0, axis=1).any():
+                if data_type == 'datos completos':
+                    showWarning(f"El dato cargado {child_name} no es completo. Se ignorará el dato.")
+                    continue
+            else:
+                if data_type == 'datos incompletos':
+                    showWarning(f"El dato cargado {child_name} no es incompleto. Se ignorará el dato.")
+                    continue
+
+            indices.append(i)
+
+        self.data_fname[0] = [self.data_fname[0][i] for i in indices]
 
     def save_files(self):
         kwargs = {}
@@ -1590,11 +1627,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos reconstruidos"))
 
         self.set_result_view()
-
-    def show_tuning_window(self):
-        self.ui_tuning_window = UITuningWindow()
-        self.ui_tuning_window.setupUi()
-        self.ui_tuning_window.show()
 
     def algorithm_changed(self, value):
         self.set_visible_algorithm(value.lower())
@@ -2118,6 +2150,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("mainWindow", "ReDs - Universidad Industrial de Santander"))
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))
+        self.typeDataLabel.setText(_translate("mainWindow", "Tipo:"))
+        self.dataComboBox.setItemText(0, _translate("mainWindow", "Datos completos"))
+        self.dataComboBox.setItemText(1, _translate("mainWindow", "Datos incompletos"))
         self.dataTreeWidget.headerItem().setText(0, _translate("mainWindow", "Datos actuales"))
         self.loadPushButton.setText(_translate("mainWindow", "Cargar"))
         self.algorithmGroupBox.setTitle(_translate("mainWindow", "Algoritmos"))
