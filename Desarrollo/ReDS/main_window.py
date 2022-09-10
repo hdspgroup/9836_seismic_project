@@ -797,16 +797,22 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         # Tab mode ['main', 'tuning', 'comparison']
         # View mode ['normal', 'report']
+        # Data mode ['complete', 'incomplete']
 
-        self.global_variables = dict(tab_mode='main', view_mode='normal', algorithm_name='')
-        self.directories = dict(main=dict(uploaded=[], temp_saved='', saved='', report=[]),
-                                tuning=dict(uploaded=[], temp_saved='', saved='', report=[]),
-                                comparison=dict(uploaded=[], temp_saved='', saved='', report=[]))
-        self.state = dict(main=dict(progress=dict(iteration={}, error={}, psnr={}, ssim={})),
+        self.global_variables = dict(tab_mode='main', view_mode='normal', data_mode='complete', algorithm_name='')
+
+        tab_mode = ['main', 'tuning', 'comparison']
+        data_mode = ['complete', 'incomplete']
+
+        dirs = lambda: dict(uploaded=[], temp_saved='', saved='', report=[])
+        self.directories = {t_mode: {d_mode: dirs() for d_mode in data_mode} for t_mode in tab_mode}
+
+        self.state = dict(main=dict(progress=dict(iteration={}, error={}, psnr={}, ssim={}, tv={})),
                           tuning=dict(progress=dict(total_runs={}, fixed_params={}, current_scale={})),
-                          comparison=dict(progress=dict(iteration={}, errors={}, psnrs={}, ssims={})))
-        self.graphics = dict(main=dict(performance={}, report={}), tuning={},
-                             comparison=dict(performance={}, report={}))
+                          comparison=dict(progress=dict(iteration={}, errors={}, psnrs={}, ssims={}, tv={})))
+
+        graphs = lambda x: {} if x == 'tuning' else dict(performance={}, report={})
+        self.graphics = {t_mode: {d_mode: graphs(t_mode) for d_mode in data_mode} for t_mode in tab_mode}
 
         self.thread_tab = None
         self.worker_tab = None
@@ -871,6 +877,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         # algorithms
 
+        self.dataComboBox.currentTextChanged.connect(self.update_data)
         self.algorithmComboBox.currentTextChanged.connect(self.algorithm_changed)
         self.algorithmPushButton.clicked.connect(self.algorithm_equation_clicked)
         self.comparisonAlgorithmPushButton.clicked.connect(self.comparison_algorithm_equation_clicked)
@@ -895,6 +902,35 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.resultPushButton.clicked.connect(self.show_results)
 
         self.seedCheckBox.stateChanged.connect(self.activate_seed)
+
+    def add_tab(self, data_name, tab_widget, graphic):
+        tab = QtWidgets.QWidget()
+        tab.setObjectName(data_name)
+        tabHLayout = QtWidgets.QHBoxLayout(tab)
+        tabHLayout.setObjectName(f"{data_name}TabHLayout")
+        graphicWidget = QtWidgets.QWidget(tab)
+        graphicWidget.setObjectName(f"{data_name}graphicWidget")
+        graphicWidgetVLayout = QtWidgets.QVBoxLayout(graphicWidget)
+        graphicWidgetVLayout.setContentsMargins(0, 0, 0, 0)
+        graphicWidgetVLayout.setSpacing(0)
+        graphicWidgetVLayout.setObjectName(f"{data_name}graphicWidgetVLayout")
+        graphicVLayout = QtWidgets.QVBoxLayout()
+        graphicVLayout.setSpacing(0)
+        graphicVLayout.setObjectName(f"{data_name}graphicVLayout")
+        graphicWidgetVLayout.addLayout(graphicVLayout)
+        tabHLayout.addWidget(graphicWidget)
+        tabHLayout.setStretch(0, 9)
+        tab_widget.addTab(tab, "")
+
+        _translate = QtCore.QCoreApplication.translate
+        tab_widget.setTabText(tab_widget.indexOf(tab), _translate("mainWindow", data_name))
+
+        # graphics
+
+        graphicVLayout.addWidget(NavigationToolbar(graphic, self))
+        graphicVLayout.addWidget(graphic)
+
+        return [tab, graphic]
 
     def add_main_performance_tab(self, data_name):
         expPerformanceTab = QtWidgets.QWidget()
@@ -1054,7 +1090,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def set_visible_normal_tabs(self, set_visible):
         tab_mode = self.global_variables['tab_mode']
-        for uploaded_directory in self.directories[tab_mode]['uploaded']:
+        for uploaded_directory in self.directories[tab_mode][self.global_variables['data_mode']]['uploaded']:
             tab_name = uploaded_directory.split('/')[-1].split('.')[0]
 
             for (tab_widget,) in zip(self.tab_widgets[tab_mode]):
@@ -1068,7 +1104,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def load_report_tabs(self):
         tab_mode = self.global_variables['tab_mode']
-        for uploaded_directory in self.directories[self.global_variables['tab_mode']]['report']:
+        data_mode = self.global_variables['data_mode']
+        for uploaded_directory in self.directories[tab_mode][self.global_variables['data_mode']]['report']:
             if tab_mode == 'main':
                 try:
                     data = np.load(uploaded_directory, allow_pickle=True)
@@ -1076,13 +1113,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
                     data_name = uploaded_directory.split('/')[-1].split('.')[0]
 
-                    expPerformanceTab, performanceGraphic = self.add_main_performance_tab(data_name)
-                    self.graphics['main']['performance'][data_name] = performanceGraphic
+                    expPerformanceTab, performanceGraphic = self.add_tab(data_name, self.performanceTabWidget,
+                                                                         PerformanceGraphic())
+                    self.graphics['main'][data_mode]['performance'][data_name] = performanceGraphic
                     performanceGraphic.update_values(**performance_data)
                     performanceGraphic.update_figure()
 
-                    expReportTab, reconstructionGraphic = self.add_main_report_tab(data_name)
-                    self.graphics['main']['report'][data_name] = reconstructionGraphic
+                    expReportTab, reconstructionGraphic = self.add_tab(data_name, self.reportTabWidget,
+                                                                       ReconstructionGraphic())
+                    self.graphics['main'][data_mode]['report'][data_name] = reconstructionGraphic
                     reconstructionGraphic.update_report(data)
                     reconstructionGraphic.update_figure()
 
@@ -1106,8 +1145,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
                     data_name = uploaded_directory.split('/')[-1].split('.')[0]
 
-                    expTuningTab, tuningGraphic = self.add_tuning_tab(data_name)
-                    self.graphics['tuning'][data_name] = tuningGraphic
+                    expTuningTab, tuningGraphic = self.add_tab(data_name, self.tuningTabWidget, TuningGraphic())
+                    self.graphics['tuning'][data_mode][data_name] = tuningGraphic
                     tuningGraphic.update_tuning(algorithm_name, tuning_data, fixed_params, current_scale)
                     tuningGraphic.update_figure()
 
@@ -1127,13 +1166,17 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
                     data_name = uploaded_directory.split('/')[-1].split('.')[0]
 
-                    expCompPerformanceTab, compPerformanceGraphic = self.add_comparison_performance_tab(data_name)
-                    self.graphics['comparison']['performance'][data_name] = compPerformanceGraphic
+                    expCompPerformanceTab, compPerformanceGraphic = self.add_tab(data_name,
+                                                                                 self.comparisonPerformanceTabWidget,
+                                                                                 ComparisonPerformanceGraphic())
+                    self.graphics['comparison'][data_mode]['performance'][data_name] = compPerformanceGraphic
                     compPerformanceGraphic.update_values(**comparison_data)
                     compPerformanceGraphic.update_figure()
 
-                    expCompReportTab, compReconstructionGraphic = self.add_comparison_report_tab(data_name)
-                    self.graphics['comparison']['report'][data_name] = compReconstructionGraphic
+                    expCompReportTab, compReconstructionGraphic = self.add_tab(data_name,
+                                                                               self.comparisonReportTabWidget,
+                                                                               ComparisonReconstructionGraphic())
+                    self.graphics['comparison'][data_mode]['report'][data_name] = compReconstructionGraphic
                     compReconstructionGraphic.update_report(data)
                     compReconstructionGraphic.update_figure()
 
@@ -1324,16 +1367,18 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
                 tab_mode = self.global_variables['tab_mode']
                 view_mode = self.global_variables['view_mode']
+                data_mode = self.global_variables['data_mode']
 
-                self.directories[tab_mode]['uploaded' if view_mode == 'normal' else 'report'] = []
+                self.directories[tab_mode][self.global_variables['data_mode']][
+                    'uploaded' if view_mode == 'normal' else 'report'] = []
                 self.update_tab_thread()
 
                 # clear tabs
                 if tab_mode in ['main', 'comparison']:
-                    self.graphics[tab_mode]['performance'] = {}
-                    self.graphics[tab_mode]['report'] = {}
+                    self.graphics[tab_mode][data_mode]['performance'] = {}
+                    self.graphics[tab_mode][data_mode]['report'] = {}
                 else:
-                    self.graphics[tab_mode] = {}
+                    self.graphics[tab_mode][data_mode] = {}
 
                 for tab_widget in self.tab_widgets[tab_mode]:
                     for page, graph in self.all_tabs[view_mode if view_mode == 'report' else 'normal']:
@@ -1344,6 +1389,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def update_directories(self, file_type, filenames):
         tab_mode = self.global_variables['tab_mode']
+        data_mode = self.global_variables['data_mode']
 
         # validate dir with current tool
 
@@ -1374,11 +1420,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
         new_filenames = []
         for filepath in filenames:
             filename = filepath.split('/')[-1]
-            existing_filenames = [fnames.split('/')[-1] for fnames in self.directories[tab_mode][file_type]]
+            existing_filenames = [fnames.split('/')[-1] for fnames in
+                                  self.directories[tab_mode][data_mode][file_type]]
             if filename in existing_filenames:
                 showWarning(f"El dato con el nombre {filename} ya está cargado. Se descartará esta nueva carga.")
             else:
-                self.directories[tab_mode][file_type].append(filepath)
+                self.directories[tab_mode][data_mode][file_type].append(filepath)
                 new_filenames.append(filename)
 
     def load_files(self):
@@ -1388,8 +1435,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         tab_mode = self.global_variables['tab_mode']
         view_mode = self.global_variables['view_mode']
+        data_mode = self.global_variables['data_mode']
 
-        uploaded_directory = self.directories[tab_mode][view_mode if view_mode == 'report' else 'uploaded']
+        uploaded_directory = self.directories[tab_mode][data_mode][view_mode if view_mode == 'report' else 'uploaded']
 
         if not uploaded_directory:
             uploaded_directory = ['']
@@ -1409,16 +1457,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
             return
         self.data_fname = list(self.data_fname)
 
-        # verify if data is complete or incomplete
-        self.verify_type_data(self.data_fname[0])
+        # verify if data is complete or incomplete (optional)
+        # self.verify_type_data(self.data_fname[0])
 
         if view_mode == 'normal':
             self.update_directories('uploaded', self.data_fname[0])
-            self.update_data_tree(self.directories[tab_mode]['uploaded'])
+            self.update_data_tree(self.directories[tab_mode][data_mode]['uploaded'])
 
         else:  # view_mode == 'report'
             self.update_directories('report', self.data_fname[0])
-            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
+            self.update_data_tree(self.directories[tab_mode][data_mode]['report'])
             self.update_tab_thread()
 
     def verify_type_data(self, directories):
@@ -1451,7 +1499,10 @@ class UIMainWindow(QtWidgets.QMainWindow):
         if 'SNAP' in os.environ:
             kwargs['options'] = QFileDialog.DontUseNativeDialog
 
-        directories = self.directories[self.global_variables['tab_mode']]
+        tab_mode = self.global_variables['tab_mode']
+        data_mode = self.global_variables['data_mode']
+
+        directories = self.directories[tab_mode][data_mode]
         temp_saved_directory = directories['temp_saved']
         if temp_saved_directory == '':
             temp_saved_directory = directories['uploaded']
@@ -1466,7 +1517,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             return
 
         self.saveAsLineEdit.setText(save_name[0])
-        self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name[0]
+        self.directories[tab_mode][data_mode]['temp_saved'] = save_name[0]
 
     def update_data_tree(self, directories):
         self.dataTreeWidget.clear()
@@ -1512,7 +1563,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
             return
 
         self.saveAsLineEdit.setText(save_name)
-        self.directories[self.global_variables['tab_mode']]['temp_saved'] = save_name
+        self.directories[self.global_variables['tab_mode']][self.global_variables['data_mode']][
+            'temp_saved'] = save_name
 
     def show_about_of(self):
         self.about_window = QtWidgets.QWidget()
@@ -1575,13 +1627,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def set_result_view(self):
         self.update_tab_thread()
+        tab_mode = self.global_variables['tab_mode']
+        data_mode = self.global_variables['data_mode']
 
         if self.global_variables['view_mode'] == 'normal':
-            self.saveAsLineEdit.setText(self.directories[self.global_variables['tab_mode']]['temp_saved'])
-            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['uploaded'])
+            self.saveAsLineEdit.setText(self.directories[tab_mode][data_mode]['temp_saved'])
+            self.update_data_tree(self.directories[tab_mode][data_mode]['uploaded'])
 
         else:
-            self.update_data_tree(self.directories[self.global_variables['tab_mode']]['report'])
+            self.update_data_tree(self.directories[tab_mode][data_mode]['report'])
 
     def show_results(self):
         self.dataTreeWidget.clear()
@@ -1626,6 +1680,18 @@ class UIMainWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos reconstruidos"))
 
+        self.set_result_view()
+
+    # create the function update_data
+    def update_data(self, value):
+        if value.lower() == 'datos completos':
+            self.samplingGroupBox.setVisible(True)
+            self.global_variables['data_mode'] = 'complete'
+        else:
+            self.samplingGroupBox.setVisible(False)
+            self.global_variables['data_mode'] = 'incomplete'
+
+        self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
         self.set_result_view()
 
     def algorithm_changed(self, value):
@@ -1716,7 +1782,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 showWarning("Para iniciar, debe cargar el dato sísmico dando click al boton 'Cargar'")
                 return False
 
-            if self.directories[self.global_variables['tab_mode']]['temp_saved'] == '':
+            if self.directories[self.global_variables['tab_mode']][self.global_variables['data_mode']][
+                'temp_saved'] == '':
                 showWarning("Por favor seleccione un nombre de archivo para guardar los resultados del algoritmo.")
                 return False
 
@@ -1822,6 +1889,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         tuning_type = self.paramTuningComboBox.currentText().lower()
         fixed_param = self.paramComboBox.currentIndex()
         self.current_scale = self.scaleComboBox.currentText().lower()
+        data_mode = self.global_variables['data_mode']
 
         if self.global_variables['tab_mode'] == 'main':
             params = dict(param1=self.param1LineEdit.text(),
@@ -1831,18 +1899,19 @@ class UIMainWindow(QtWidgets.QMainWindow):
             Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')  # Assuming using DCT2D ad IDCT2D for all algorithms
             algorithm, parameters = Alg.get_algorithm(self.algorithm_name, self.max_iter, **params)
 
-            if data_name in self.graphics['main']['performance'].keys():
-                performance_graphic = self.graphics['main']['performance'][data_name]
+            if data_name in self.graphics['main'][data_mode]['performance'].keys():
+                performance_graphic = self.graphics['main'][data_mode]['performance'][data_name]
             else:
-                performance_tab, performance_graphic = self.add_main_performance_tab(data_name)
-                self.graphics['main']['performance'][data_name] = performance_graphic
+                performance_tab, performance_graphic = self.add_tab(data_name, self.performanceTabWidget,
+                                                                    PerformanceGraphic())
+                self.graphics['main'][data_mode]['performance'][data_name] = performance_graphic
                 self.all_tabs['normal'].append([performance_tab, performance_graphic])
 
-            if data_name in self.graphics['main']['report'].keys():
-                report_graphic = self.graphics['main']['report'][data_name]
+            if data_name in self.graphics['main'][data_mode]['report'].keys():
+                report_graphic = self.graphics['main'][data_mode]['report'][data_name]
             else:
-                report_tab, report_graphic = self.add_main_report_tab(data_name)
-                self.graphics['main']['report'][data_name] = report_graphic
+                report_tab, report_graphic = self.add_tab(data_name, self.reportTabWidget, ReconstructionGraphic())
+                self.graphics['main'][data_mode]['report'][data_name] = report_graphic
                 self.all_tabs['normal'].append([report_tab, report_graphic])
 
             # update worker behaviour
@@ -1854,11 +1923,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
             param_list = []
             parameters = []
 
-            if data_name in self.graphics['tuning'].keys():
-                tuning_graphic = self.graphics['tuning'][data_name]
+            if data_name in self.graphics['tuning'][data_mode].keys():
+                tuning_graphic = self.graphics['tuning'][data_mode][data_name]
             else:
-                tuning_tab, tuning_graphic = self.add_tuning_tab(data_name)
-                self.graphics['tuning'][data_name] = tuning_graphic
+                tuning_tab, tuning_graphic = self.add_tab(data_name, self.tuningTabWidget, TuningGraphic())
+                self.graphics['tuning'][data_mode][data_name] = tuning_graphic
                 self.all_tabs['normal'].append([tuning_tab, tuning_graphic])
 
             num_params = len(self.params[self.algorithm_name])
@@ -1918,18 +1987,21 @@ class UIMainWindow(QtWidgets.QMainWindow):
             funcs = []
             param_list = []
 
-            if data_name in self.graphics['comparison']['performance'].keys():
-                comp_performance_graphic = self.graphics['comparison']['performance'][data_name]
+            if data_name in self.graphics['comparison'][data_mode]['performance'].keys():
+                comp_performance_graphic = self.graphics['comparison'][data_mode]['performance'][data_name]
             else:
-                comp_performance_tab, comp_performance_graphic = self.add_comparison_performance_tab(data_name)
-                self.graphics['comparison']['performance'][data_name] = comp_performance_graphic
+                comp_performance_tab, comp_performance_graphic = self.add_tab(data_name,
+                                                                              self.comparisonPerformanceTabWidget,
+                                                                              ComparisonPerformanceGraphic())
+                self.graphics['comparison'][data_mode]['performance'][data_name] = comp_performance_graphic
                 self.all_tabs['normal'].append([comp_performance_tab, comp_performance_graphic])
 
-            if data_name in self.graphics['comparison']['report'].keys():
-                comp_report_graphic = self.graphics['comparison']['report'][data_name]
+            if data_name in self.graphics['comparison'][data_mode]['report'].keys():
+                comp_report_graphic = self.graphics['comparison'][data_mode]['report'][data_name]
             else:
-                comp_report_tab, comp_report_graphic = self.add_comparison_report_tab(data_name)
-                self.graphics['comparison']['report'][data_name] = comp_report_graphic
+                comp_report_tab, comp_report_graphic = self.add_tab(data_name, self.comparisonReportTabWidget,
+                                                                    ComparisonReconstructionGraphic())
+                self.graphics['comparison'][data_mode]['report'][data_name] = comp_report_graphic
                 self.all_tabs['normal'].append([comp_report_tab, comp_report_graphic])
 
             algorithm_names = ['fista', 'gap', 'twist', 'admm']
@@ -1950,7 +2022,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def start_experiment(self):
 
-        uploaded_directories = self.directories[self.global_variables['tab_mode']]['uploaded']
+        uploaded_directories = self.directories[self.global_variables['tab_mode']][self.global_variables['data_mode']][
+            'uploaded']
         validate = self.verify_parameters(uploaded_directories)
 
         if not validate:
@@ -2043,12 +2116,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
         performance_data = np.array(list(graphics['performance'].performance_data.items()), dtype=object)
 
         tab_mode = self.global_variables['tab_mode']
-        temp_saved = self.directories[tab_mode]['temp_saved']
+        data_mode = self.global_variables['data_mode']
+        temp_saved = self.directories[tab_mode][data_mode]['temp_saved']
 
         os.makedirs(temp_saved, exist_ok=True)
         save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_name}.npz')
 
-        self.directories[tab_mode]['saved'] = save_path
+        self.directories[tab_mode][data_mode]['saved'] = save_path
         np.savez(save_path, x_result=res_dict['result'], hist=res_dict['hist'], sampling=res_dict['sampling_dict'],
                  algorithm_name=self.algorithm_name, performance_data=performance_data)
         print("Results saved [Ok]")
@@ -2079,12 +2153,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
         tuning_data = np.array(list(graphics['tuning'].tuning_data.items()), dtype=object)
 
         tab_mode = self.global_variables['tab_mode']
-        temp_saved = self.directories[tab_mode]['temp_saved']
+        data_mode = self.global_variables['data_mode']
+        temp_saved = self.directories[tab_mode][data_mode]['temp_saved']
 
         os.makedirs(temp_saved, exist_ok=True)
         save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_name}.npz')
 
-        self.directories[tab_mode]['saved'] = save_path
+        self.directories[tab_mode][data_mode]['saved'] = save_path
         np.savez(save_path,
                  algorithm=self.algorithm_name, tuning_data=tuning_data, fixed_params=fixed_params,
                  scale=self.current_scale)
@@ -2128,12 +2203,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
         comparison_data = np.array(list(graphics['performance'].comparison_data.items()), dtype=object)
 
         tab_mode = self.global_variables['tab_mode']
-        temp_saved = self.directories[tab_mode]['temp_saved']
+        data_mode = self.global_variables['data_mode']
+        temp_saved = self.directories[tab_mode][data_mode]['temp_saved']
 
         os.makedirs(temp_saved, exist_ok=True)
         save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_name}.npz')
 
-        self.directories[tab_mode]['saved'] = save_path
+        self.directories[tab_mode][data_mode]['saved'] = save_path
         np.savez(save_path,
                  x_results=res_dict['results'], hists=res_dict['hists'], sampling=res_dict['sampling_dict'],
                  comparison_data=comparison_data)
