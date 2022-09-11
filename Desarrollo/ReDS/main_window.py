@@ -1671,24 +1671,18 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.experimentProgressBar.setValue(0)
 
         tab_mode = self.global_variables['tab_mode']
-        if tab_mode == 'main':
+        if tab_mode in ['main', 'comparison']:
             self.state[tab_mode]['progress']['iteration'][data_name] = []
             self.state[tab_mode]['progress']['error'][data_name] = []
             self.state[tab_mode]['progress']['psnr'][data_name] = []
             self.state[tab_mode]['progress']['ssim'][data_name] = []
+            self.state[tab_mode]['progress']['tv'][data_name] = []
 
-        elif tab_mode == 'tuning':
+        else:
             self.state[tab_mode]['progress']['total_runs'][data_name] = 0
             self.state[tab_mode]['progress']['fixed_params'][data_name] = {}
 
-        else:
-            self.state[tab_mode]['progress']['iteration'][data_name] = []
-            self.state[tab_mode]['progress']['errors'][data_name] = []
-            self.state[tab_mode]['progress']['psnrs'][data_name] = []
-            self.state[tab_mode]['progress']['ssims'][data_name] = []
-
     def load_seismic_data(self, uploaded_directory):
-
         if Path(uploaded_directory).suffix == '.npy':
             data = np.load(uploaded_directory)
         else:
@@ -1707,30 +1701,36 @@ class UIMainWindow(QtWidgets.QMainWindow):
         data = np.nan_to_num(data, nan=0)
         data = data / np.max(np.abs(data))
 
+        # data direction
+        data = np.nan_to_num(data, nan=0)
+        if not np.all(data != 0, axis=0).any():
+            data = data.T
+
         return data
 
     def load_parameters(self, data):
+        data_mode = self.global_variables['data_mode']
         seed = None
         if self.seedCheckBox.checkState():
             seed = int(self.seedSpinBox.text())
 
         compression_ratio = float(self.compressSpinBox.text().split('%')[0]) / 100
 
-        if self.dataComboBox.currentText().lower() == 'datos completos':
-            mode = self.samplingTypeComboBox.currentText().lower()
-            jitter_params = dict(gamma=int(self.gammaSpinBox.text()), epsilon=int(self.epsilonSpinBox.text()))
-            lista = self.elementLineEdit
+        mode = self.samplingTypeComboBox.currentText().lower()
+        jitter_params = dict(gamma=int(self.gammaSpinBox.text()), epsilon=int(self.epsilonSpinBox.text()))
+        lista = self.elementLineEdit
 
-            try:
-                sampling_dict, H = self.sampling.apply_sampling(data, mode, jitter_params, lista, seed,
-                                                                compression_ratio)
-            except:
-                return
+        try:
+            sampling_dict, H = self.sampling.apply_sampling(data, mode, jitter_params, lista, seed,
+                                                            compression_ratio)
 
-            return sampling_dict, H
+            if data_mode == 'incomplete':
+                sampling_dict = {key: value for key, value in sampling_dict if key == 'x_ori'}
 
-        else:
-            return None, None
+        except:
+            return
+
+        return sampling_dict, H if data_mode == 'complete' else None
 
     def load_algorithm(self, data_name, seismic_data, H, sampling_dict):
         self.algorithm_name = self.algorithmComboBox.currentText().lower()
@@ -1766,6 +1766,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             # update worker behaviour
 
+            sampling_dict['H'] = Alg.H_raw
+            sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
             return Worker(data_name, algorithm, parameters, self.max_iter, sampling_dict,
                           performance_graphic, report_graphic)
 
@@ -1867,6 +1869,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             # # update worker behaviour
 
+            sampling_dict['H'] = Alg.H_raw
+            sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
             return ComparisonWorker(data_name, funcs, param_list, self.max_iter, sampling_dict,
                                     comp_performance_graphic, comp_report_graphic)
 
@@ -1942,19 +1946,22 @@ class UIMainWindow(QtWidgets.QMainWindow):
         err = res_dict['hist'][iter, 0]
         psnr = np.round(res_dict['hist'][iter, 1], 3)
         ssim = np.round(res_dict['hist'][iter, 2], 3)
+        tv = np.round(res_dict['hist'][iter, 3], 3)
 
         iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration'][data_name]
         error_list = self.state[self.global_variables['tab_mode']]['progress']['error'][data_name]
         psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr'][data_name]
         ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssim'][data_name]
+        tv_list = self.state[self.global_variables['tab_mode']]['progress']['tv'][data_name]
 
         iteration_list.append(iter)
         error_list.append(err)
         psnr_list.append(psnr)
         ssim_list.append(ssim)
+        tv_list.append(tv)
 
         if iter % (self.max_iter // 10) == 0 or iter == self.max_iter:
-            graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list)
+            graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list, tv_list)
             graphics['performance'].update_figure()
 
             graphics['report'].update_report(

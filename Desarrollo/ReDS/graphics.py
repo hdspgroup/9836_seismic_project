@@ -34,6 +34,7 @@ class CustomToolbar(NavigationToolbar2QT):
 
 class PerformanceGraphic(FigureCanvasQTAgg):
     def __init__(self, is_complete=True):
+        self.is_complete = is_complete
         self.performance_data = dict(iteracion=[], error=[], psnr=[], ssim=[], tv=[])
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.1, right=0.9, bottom=0.08, top=0.92)
@@ -62,25 +63,27 @@ class PerformanceGraphic(FigureCanvasQTAgg):
 
             color = 'tab:red'
             axes_1.set_xlabel('iteraciones')
-            axes_1.plot(iteracion, ssim, color=color, label='SSIM')
+            axes_1.plot(iteracion, ssim if self.is_complete else error, color=color,
+                        label='SSIM' if self.is_complete else 'Error residual')
             axes_1.tick_params(axis='y', labelcolor=color, length=5)
             axes_1.grid(axis='both', linestyle='--')
 
             axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
             color = 'tab:blue'
-            axes_2.plot(iteracion, psnr, '--', color=color)
-            axes_1.plot(np.nan, '--', color=color, label='PSNR')
+            axes_2.plot(iteracion, psnr if self.is_complete else tv, '--', color=color)
+            axes_1.plot(np.nan, '--', color=color, label='PSNR' if self.is_complete else 'Norma TV')
             axes_2.tick_params(axis='y', labelcolor=color, length=5)
             axes_2.grid(axis='both', linestyle='--')
 
             axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
 
-            if np.abs(psnr[-1]) == np.inf:
-                # print a text in the bottom part of axes_2 that indicates that the psnr is infinite
-                text_kwargs = dict(ha='center', va='center', fontsize=16, color=color)
-                axes_2.text(0.5, 0.1, f'PSNR is {psnr[-1]}, it will be not plotted', horizontalalignment='center',
-                            verticalalignment='center', transform=axes_2.transAxes, **text_kwargs)
+            if self.is_complete:
+                if np.abs(psnr[-1]) == np.inf:
+                    # print a text in the bottom part of axes_2 that indicates that the psnr is infinite
+                    text_kwargs = dict(ha='center', va='center', fontsize=16, color=color)
+                    axes_2.text(0.5, 0.1, f'PSNR is {psnr[-1]}, it will be not plotted', horizontalalignment='center',
+                                verticalalignment='center', transform=axes_2.transAxes, **text_kwargs)
 
             axes_1.legend(loc='best')
             self.draw()
@@ -110,9 +113,14 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
             x_result = self.report_data['x_result']
             sampling = {item[0]: item[1] for item in self.report_data['sampling']}
 
-            x = sampling['x_ori']
-            y_rand = sampling['y_rand']
-            pattern_rand = sampling['pattern_rand']
+            if self.is_complete:
+                x = sampling['x_ori']
+                y_rand = sampling['y_rand']
+                pattern_rand = sampling['pattern_rand']
+            else:
+                x = sampling['x_ori']
+                y_rand = x
+                pattern_rand = np.double(sampling['H'])
 
             temp = np.asarray(range(0, pattern_rand.shape[0]))
             pattern_rand_b2 = np.asarray(pattern_rand, dtype=bool) == 0
@@ -151,7 +159,7 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
                 axs[1, 1].grid(axis='both', linestyle='--')
 
             else:
-                axs = plt.subplots(2, 3)
+                axs = self.figure.subplots(2, 3)
 
                 metric = tv_norm(x)
                 axs[0, 0].imshow(x, cmap='gray', aspect='auto')

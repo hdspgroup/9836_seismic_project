@@ -100,7 +100,7 @@ class Sampling:
             "H0": H0
         }
 
-        return np.array(list(sampling_dict.items())), H
+        return np.array(list(sampling_dict.items()), dtype=object), H
 
     def uniform_sampling(self, x, compression_ratio):
         '''
@@ -139,8 +139,7 @@ class Sampling:
             "H0": H0
         }
 
-        return np.array(list(sampling_dict.items())), H
-
+        return np.array(list(sampling_dict.items()), dtype=object), H
 
     def jitter_sampling(self, x, seed, gamma=3, epsilon=3):
         # https://slim.gatech.edu/Publications/Public/Journals/Geophysics/2008/hennenfent08GEOsdw/paper_html/node14.html
@@ -196,7 +195,7 @@ class Sampling:
             "H": H,
             "H0": H0
         }
-        return np.array(list(sampling_dict.items())), H
+        return np.array(list(sampling_dict.items()), dtype=object), H
 
     def list_sampling(self, x, lista):
         M, N = x.shape
@@ -221,7 +220,7 @@ class Sampling:
             "H0": H0
         }
 
-        return np.array(list(sampling_dict.items())), H
+        return np.array(list(sampling_dict.items()), dtype=object), H
 
 
 def random_sampling(x, sr, seed=None):
@@ -570,6 +569,9 @@ class Algorithms:
         if H is None:
             x = np.nan_to_num(x, nan=0)
             H = np.all(x != 0, axis=0)
+            if not H.any():
+                x = x.T
+                H = np.all(x != 0, axis=0)
             self.is_complete_data = False
 
         # ------- change the dimension of the inputs image --------
@@ -1034,8 +1036,9 @@ class Algorithms:
                 # mse = np.mean(np.sum((y-A(v,Phi))**2,axis=(0,1)))
                 end_time = time.time()
                 # Error = %2.2f,
-                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB, SSIM = %1.2f, TV norm = %4.2f time = %3.1fs." % (
-                    itr + 1, residualx, psnr_val, ssim_val, tv_val, end_time - begin_time))
+                print(
+                    "ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB, SSIM = %1.2f, TV norm = %4.2f time = %3.1fs." % (
+                        itr + 1, residualx, psnr_val, ssim_val, tv_val, end_time - begin_time))
 
             yield itr, dict(result=x, hist=hist)
 
