@@ -932,9 +932,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         return [tab, graphic]
 
-    def set_visible_normal_tabs(self, set_visible):
+    def set_visible_normal_tabs(self, directories, data_mode, set_visible):
         tab_mode = self.global_variables['tab_mode']
-        for uploaded_directory in self.directories[tab_mode][self.global_variables['data_mode']]['uploaded']:
+        for uploaded_directory in directories[data_mode]['uploaded']:
             tab_name = uploaded_directory.split('/')[-1].split('.')[0]
 
             for (tab_widget,) in zip(self.tab_widgets[tab_mode]):
@@ -944,10 +944,14 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 if len(index) > 0:
                     tab_widget.setTabVisible(index[0], set_visible)
 
+                    if set_visible:
+                        tab_widget.setCurrentIndex(index[0])
+
+
     def load_report_tabs(self):
         tab_mode = self.global_variables['tab_mode']
         data_mode = self.global_variables['data_mode']
-        for uploaded_directory in self.directories[tab_mode][self.global_variables['data_mode']]['report']:
+        for uploaded_directory in self.directories[tab_mode][data_mode]['report']:
             if tab_mode == 'main':
                 try:
                     data = np.load(uploaded_directory, allow_pickle=True)
@@ -1042,13 +1046,24 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     def update_tabs(self):
         self.remove_report_tabs()
+
+        directories = self.directories[self.global_variables['tab_mode']]
+        data_mode = self.global_variables['data_mode']
         if self.global_variables['view_mode'] == 'normal':  # visible
-            self.set_visible_normal_tabs(True)
+            self.set_visible_normal_tabs(directories, data_mode, True)
 
         else:  # view_mode == 'report'
-            self.set_visible_normal_tabs(False)
+            self.set_visible_normal_tabs(directories, data_mode, False)
             self.load_report_tabs()
 
+        if data_mode == 'complete':
+            self.set_visible_normal_tabs(directories, 'incomplete', False)
+        else:
+            self.set_visible_normal_tabs(directories, 'complete', False)
+
+        # self.set_current_index_tab_last()
+
+    def set_current_index_tab_last(self):
         self.performanceTabWidget.setCurrentIndex(self.performanceTabWidget.count() - 1)
         self.reportTabWidget.setCurrentIndex(self.reportTabWidget.count() - 1)
         self.tuningTabWidget.setCurrentIndex(self.tuningTabWidget.count() - 1)
@@ -1766,8 +1781,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             # update worker behaviour
 
-            sampling_dict['H'] = Alg.H_raw
-            sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
+            if not is_complete:
+                sampling_dict['H'] = Alg.H_raw
+                sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
             return Worker(data_name, algorithm, parameters, self.max_iter, sampling_dict,
                           performance_graphic, report_graphic)
 
@@ -1869,8 +1885,9 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
             # # update worker behaviour
 
-            sampling_dict['H'] = Alg.H_raw
-            sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
+            if not is_complete:
+                sampling_dict['H'] = Alg.H_raw
+                sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
             return ComparisonWorker(data_name, funcs, param_list, self.max_iter, sampling_dict,
                                     comp_performance_graphic, comp_report_graphic)
 
@@ -1929,6 +1946,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 self.startPushButton.setEnabled(False)
                 self.threads[-1].finished.connect(self.reset_values)
 
+            self.set_current_index_tab_last()
             print(f'max progress: {self.max_iter_progress}')
 
         except BaseException as err:

@@ -100,7 +100,8 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
         self.is_complete = is_complete
         self.report_data = None
         self.figure = plt.figure()
-        plt.subplots_adjust(left=0.05, right=0.95, bottom=0.05, top=0.90)
+        left, right, bottom, top = [0.05, 0.95, 0.05, 0.90] if is_complete else [0.05, 0.98, 0.05, 0.85]
+        plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top)
         super(ReconstructionGraphic, self).__init__(self.figure)
 
     def update_report(self, report_data):
