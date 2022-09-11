@@ -8,6 +8,8 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationTool
 from matplotlib.ticker import MaxNLocator
 
 from Algorithms.Function import PSNR
+from Algorithms.fk_domain import fk
+from Algorithms.tv_norm import tv_norm
 from gui.scripts.alerts import showCritical
 
 
@@ -31,17 +33,18 @@ class CustomToolbar(NavigationToolbar2QT):
 
 
 class PerformanceGraphic(FigureCanvasQTAgg):
-    def __init__(self):
-        self.performance_data = dict(iteracion=[], error=[], psnr=[], ssim=[])
+    def __init__(self, is_complete=True):
+        self.performance_data = dict(iteracion=[], error=[], psnr=[], ssim=[], tv=[])
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.1, right=0.9, bottom=0.08, top=0.92)
         super(PerformanceGraphic, self).__init__(self.figure)
 
-    def update_values(self, iteracion, error, psnr, ssim):
+    def update_values(self, iteracion, error, psnr, ssim, tv):
         self.performance_data['iteracion'] = iteracion
         self.performance_data['error'] = error
         self.performance_data['psnr'] = psnr
         self.performance_data['ssim'] = ssim
+        self.performance_data['tv'] = tv
 
     def update_figure(self):
         try:
@@ -49,6 +52,7 @@ class PerformanceGraphic(FigureCanvasQTAgg):
             error = self.performance_data['error']
             psnr = self.performance_data['psnr']
             ssim = self.performance_data['ssim']
+            tv = self.performance_data['tv']
 
             self.figure.clear()
             self.figure.suptitle(f'Resultados del experimento')
@@ -89,7 +93,8 @@ class PerformanceGraphic(FigureCanvasQTAgg):
 
 
 class ReconstructionGraphic(FigureCanvasQTAgg):
-    def __init__(self):
+    def __init__(self, is_complete=True):
+        self.is_complete = is_complete
         self.report_data = None
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.05, right=0.95, bottom=0.05, top=0.90)
@@ -115,33 +120,71 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
 
             case = str(self.report_data['algorithm_name'])
             self.figure.suptitle(f'Resultados del algoritmo {case}')
-            axs = self.figure.subplots(2, 2)
 
-            axs[0, 0].imshow(x, cmap='gray', aspect='auto')
-            axs[0, 0].set_title('Referencia')
+            if self.is_complete:
+                axs = self.figure.subplots(2, 2)
 
-            ytemp = y_rand.copy()
-            condition = H_elim.size > 0
-            if condition:
-                ytemp[:, H_elim] = 1
-            axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
-            axs[1, 0].set_title('Medidas')
+                axs[0, 0].imshow(x, cmap='gray', aspect='auto')
+                axs[0, 0].set_title('Referencia')
 
-            aux_x = x[:, H_elim] if condition else x
-            aux_x_result = x_result[:, H_elim] if condition else x_result
-            metric = PSNR(aux_x, aux_x_result)
-            metric_ssim = ssim(aux_x, aux_x_result)
-            axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
-            axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+                ytemp = y_rand.copy()
+                condition = H_elim.size > 0
+                if condition:
+                    ytemp[:, H_elim] = 1
+                axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
+                axs[1, 0].set_title('Medidas')
 
-            index = 5
-            # aux_H_elim = index if condition else H_elim[index]
-            aux_H_elim = H_elim[index]
-            axs[1, 1].plot(x[:, aux_H_elim], 'r', label='Referencia')
-            axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
-            axs[1, 1].legend(loc='best')
-            axs[1, 1].set_title('Traza ' + str("{:.0f}".format(aux_H_elim)))
-            axs[1, 1].grid(axis='both', linestyle='--')
+                aux_x = x[:, H_elim] if condition else x
+                aux_x_result = x_result[:, H_elim] if condition else x_result
+                metric = PSNR(aux_x, aux_x_result)
+                metric_ssim = ssim(aux_x, aux_x_result)
+                axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
+                axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+
+                index = 5
+                # aux_H_elim = index if condition else H_elim[index]
+                aux_H_elim = H_elim[index]
+                axs[1, 1].plot(x[:, aux_H_elim], 'r', label='Referencia')
+                axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
+                axs[1, 1].legend(loc='best')
+                axs[1, 1].set_title('Traza ' + str("{:.0f}".format(aux_H_elim)))
+                axs[1, 1].grid(axis='both', linestyle='--')
+
+            else:
+                axs = plt.subplots(2, 3)
+
+                metric = tv_norm(x)
+                axs[0, 0].imshow(x, cmap='gray', aspect='auto')
+                axs[0, 0].set_title(f'Reference \n TV-norm: {metric:0.2f}')
+
+                metric = tv_norm(x_result)
+                axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
+                axs[0, 1].set_title(f'Reconstructed \n TV norm: {metric:0.2f}')
+
+                index = 5
+                axs[0, 2].plot(x_result[:, H_elim[index]], 'b', label='Recovered')
+                axs[0, 2].legend(loc='best')
+                axs[0, 2].set_title('Trace ' + str("{:.0f}".format(H_elim[index])))
+                axs[0, 2].grid(axis='both', linestyle='--')
+
+                # fk domain
+
+                # calculate FK domain
+                FK, f, kx = fk(x, dt=0.568, dx=5)
+
+                axs[1, 0].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[1, 0].set_title('FK reference')
+
+                FK, f, kx = fk(x_result, dt=0.568, dx=5)
+
+                axs[1, 1].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[1, 1].set_title('FK reconstruction')
+
+                index = -1
+                axs[1, 2].plot(x_result[:, H_elim[index]], 'b', label='Recovered')
+                axs[1, 2].legend(loc='best')
+                axs[1, 2].set_title('Trace ' + str("{:.0f}".format(H_elim[index])))
+                axs[1, 2].grid(axis='both', linestyle='--')
 
             self.draw()
 

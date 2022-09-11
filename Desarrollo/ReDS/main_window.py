@@ -932,162 +932,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         return [tab, graphic]
 
-    def add_main_performance_tab(self, data_name):
-        expPerformanceTab = QtWidgets.QWidget()
-        expPerformanceTab.setObjectName(data_name)
-        expPerformanceTabHLayout = QtWidgets.QHBoxLayout(expPerformanceTab)
-        expPerformanceTabHLayout.setObjectName(f"{data_name}expPerformanceTabHLayout")
-        graphicPerformanceWidget = QtWidgets.QWidget(expPerformanceTab)
-        graphicPerformanceWidget.setObjectName(f"{data_name}graphicPerformanceWidget")
-        graphicPerformanceWidgetVLayout = QtWidgets.QVBoxLayout(graphicPerformanceWidget)
-        graphicPerformanceWidgetVLayout.setContentsMargins(0, 0, 0, 0)
-        graphicPerformanceWidgetVLayout.setSpacing(0)
-        graphicPerformanceWidgetVLayout.setObjectName(f"{data_name}graphicPerformanceWidgetVLayout")
-        graphicPerformanceVLayout = QtWidgets.QVBoxLayout()
-        graphicPerformanceVLayout.setSpacing(0)
-        graphicPerformanceVLayout.setObjectName(f"{data_name}graphicPerformanceVLayout")
-        graphicPerformanceWidgetVLayout.addLayout(graphicPerformanceVLayout)
-        expPerformanceTabHLayout.addWidget(graphicPerformanceWidget)
-        expPerformanceTabHLayout.setStretch(0, 9)
-        self.performanceTabWidget.addTab(expPerformanceTab, "")
-
-        _translate = QtCore.QCoreApplication.translate
-        self.performanceTabWidget.setTabText(self.performanceTabWidget.indexOf(expPerformanceTab),
-                                             _translate("mainWindow", data_name))
-
-        # graphics
-
-        performanceGraphic = PerformanceGraphic()
-        performanceToolbar = NavigationToolbar(performanceGraphic, self)
-        graphicPerformanceVLayout.addWidget(performanceToolbar)
-        graphicPerformanceVLayout.addWidget(performanceGraphic)
-
-        return [expPerformanceTab, performanceGraphic]
-
-    def add_main_report_tab(self, data_name):
-        expReportTab = QtWidgets.QWidget()
-        expReportTab.setObjectName(f"{data_name}reportTabWidget")
-        expReportTabVLayout = QtWidgets.QVBoxLayout(expReportTab)
-        expReportTabVLayout.setObjectName(f"{data_name}expReportTabVLayout")
-        graphicReportWidget = QtWidgets.QWidget(expReportTab)
-        graphicReportWidget.setObjectName(f"{data_name}graphicReportWidget")
-        graphicReportWidgetVLayout = QtWidgets.QVBoxLayout(graphicReportWidget)
-        graphicReportWidgetVLayout.setContentsMargins(0, 0, 0, 0)
-        graphicReportWidgetVLayout.setSpacing(0)
-        graphicReportWidgetVLayout.setObjectName(f"{data_name}graphicReportWidgetVLayout")
-        graphicReportVLayout = QtWidgets.QVBoxLayout()
-        graphicReportVLayout.setObjectName(f"{data_name}graphicReportVLayout")
-        graphicReportWidgetVLayout.addLayout(graphicReportVLayout)
-        expReportTabVLayout.addWidget(graphicReportWidget)
-        self.reportTabWidget.addTab(expReportTab, "")
-
-        _translate = QtCore.QCoreApplication.translate
-        self.reportTabWidget.setTabText(self.reportTabWidget.indexOf(expReportTab), _translate("mainWindow", data_name))
-
-        # graphics
-
-        reconstructionGraphic = ReconstructionGraphic()
-        reportToolbar = CustomToolbar(reconstructionGraphic, self)
-        graphicReportVLayout.addWidget(reportToolbar)
-        graphicReportVLayout.addWidget(reconstructionGraphic)
-
-        return [expReportTab, reconstructionGraphic]
-
-    def add_tuning_tab(self, data_name):
-        expTuningReportTab = QtWidgets.QWidget()
-        expTuningReportTab.setObjectName(f"{data_name}tuningTabWidget")
-        expTuningReportTabVLayout = QtWidgets.QVBoxLayout(expTuningReportTab)
-        expTuningReportTabVLayout.setObjectName(f"{data_name}expTuningReportTabVLayout")
-        graphicTuningReportWidget = QtWidgets.QWidget(expTuningReportTab)
-        graphicTuningReportWidget.setObjectName(f"{data_name}graphicTuningReportWidget")
-        graphicTuningReportWidgetVLayout = QtWidgets.QVBoxLayout(graphicTuningReportWidget)
-        graphicTuningReportWidgetVLayout.setContentsMargins(0, 0, 0, 0)
-        graphicTuningReportWidgetVLayout.setSpacing(0)
-        graphicTuningReportWidgetVLayout.setObjectName(f"{data_name}graphicTuningReportWidgetVLayout")
-        graphicTuningReportVLayout = QtWidgets.QVBoxLayout()
-        graphicTuningReportVLayout.setObjectName(f"{data_name}graphicTuningReportVLayout")
-        graphicTuningReportWidgetVLayout.addLayout(graphicTuningReportVLayout)
-        expTuningReportTabVLayout.addWidget(graphicTuningReportWidget)
-        self.tuningTabWidget.addTab(expTuningReportTab, "")
-
-        _translate = QtCore.QCoreApplication.translate
-        self.tuningTabWidget.setTabText(self.tuningTabWidget.indexOf(expTuningReportTab),
-                                        _translate("mainWindow", data_name))
-
-        # graphics
-
-        tuningGraphic = TuningGraphic()
-        tuningToolbar = CustomToolbar(tuningGraphic, self)
-        graphicTuningReportVLayout.addWidget(tuningToolbar)
-        graphicTuningReportVLayout.addWidget(tuningGraphic)
-
-        return [expTuningReportTab, tuningGraphic]
-
-    def add_comparison_performance_tab(self, data_name):
-        expComparisonPerformanceTab = QtWidgets.QWidget()
-        expComparisonPerformanceTab.setObjectName(f"{data_name}comparisonPerformanceTabWidget")
-        expPerformanceTab1HLayout = QtWidgets.QHBoxLayout(expComparisonPerformanceTab)
-        expPerformanceTab1HLayout.setObjectName(f"{data_name}expPerformanceTab1HLayout")
-        graphicComparisonPerformanceWidget = QtWidgets.QWidget(expComparisonPerformanceTab)
-        graphicComparisonPerformanceWidget.setObjectName(f"{data_name}graphicComparisonPerformanceWidget")
-        graphicPerformanceWidgetVLayout = QtWidgets.QVBoxLayout(graphicComparisonPerformanceWidget)
-        graphicPerformanceWidgetVLayout.setContentsMargins(0, 0, 0, 0)
-        graphicPerformanceWidgetVLayout.setSpacing(0)
-        graphicPerformanceWidgetVLayout.setObjectName(f"{data_name}graphicPerformanceWidgetVLayout")
-        graphicComparisonPerformanceVLayout = QtWidgets.QVBoxLayout()
-        graphicComparisonPerformanceVLayout.setSpacing(0)
-        graphicComparisonPerformanceVLayout.setObjectName(f"{data_name}graphicComparisonPerformanceVLayout")
-        graphicPerformanceWidgetVLayout.addLayout(graphicComparisonPerformanceVLayout)
-        expPerformanceTab1HLayout.addWidget(graphicComparisonPerformanceWidget)
-        expPerformanceTab1HLayout.setStretch(0, 9)
-        self.comparisonPerformanceTabWidget.addTab(expComparisonPerformanceTab, "")
-
-        _translate = QtCore.QCoreApplication.translate
-        self.comparisonPerformanceTabWidget.setTabText(
-            self.comparisonPerformanceTabWidget.indexOf(expComparisonPerformanceTab),
-            _translate("mainWindow", data_name))
-
-        # graphics
-
-        performanceGraphicComparison = ComparisonPerformanceGraphic()
-        performanceToolbarComparison = CustomToolbar(performanceGraphicComparison, self)
-        graphicComparisonPerformanceVLayout.addWidget(performanceToolbarComparison)
-        graphicComparisonPerformanceVLayout.addWidget(performanceGraphicComparison)
-
-        return [expComparisonPerformanceTab, performanceGraphicComparison]
-
-    def add_comparison_report_tab(self, data_name):
-        expComparisonReportTab = QtWidgets.QWidget()
-        expComparisonReportTab.setObjectName(f"{data_name}comparisonReportTabWidget")
-        expPerformanceTab1HLayout = QtWidgets.QHBoxLayout(expComparisonReportTab)
-        expPerformanceTab1HLayout.setObjectName(f"{data_name}expPerformanceTab1HLayout")
-        graphicComparisonReportWidget = QtWidgets.QWidget(expComparisonReportTab)
-        graphicComparisonReportWidget.setObjectName(f"{data_name}graphicComparisonReportWidget")
-        graphicPerformanceWidgetVLayout = QtWidgets.QVBoxLayout(graphicComparisonReportWidget)
-        graphicPerformanceWidgetVLayout.setContentsMargins(0, 0, 0, 0)
-        graphicPerformanceWidgetVLayout.setSpacing(0)
-        graphicPerformanceWidgetVLayout.setObjectName(f"{data_name}graphicPerformanceWidgetVLayout")
-        graphicComparisonReportVLayout = QtWidgets.QVBoxLayout()
-        graphicComparisonReportVLayout.setSpacing(0)
-        graphicComparisonReportVLayout.setObjectName(f"{data_name}graphicComparisonReportVLayout")
-        graphicPerformanceWidgetVLayout.addLayout(graphicComparisonReportVLayout)
-        expPerformanceTab1HLayout.addWidget(graphicComparisonReportWidget)
-        expPerformanceTab1HLayout.setStretch(0, 9)
-        self.comparisonReportTabWidget.addTab(expComparisonReportTab, "")
-
-        _translate = QtCore.QCoreApplication.translate
-        self.comparisonReportTabWidget.setTabText(self.comparisonReportTabWidget.indexOf(expComparisonReportTab),
-                                                  _translate("mainWindow", data_name))
-
-        # graphics
-
-        reconstructionGraphicComparison = ComparisonReconstructionGraphic()
-        reportToolbarComparison = CustomToolbar(reconstructionGraphicComparison, self)
-        graphicComparisonReportVLayout.addWidget(reportToolbarComparison)
-        graphicComparisonReportVLayout.addWidget(reconstructionGraphicComparison)
-
-        return [expComparisonReportTab, reconstructionGraphicComparison]
-
     def set_visible_normal_tabs(self, set_visible):
         tab_mode = self.global_variables['tab_mode']
         for uploaded_directory in self.directories[tab_mode][self.global_variables['data_mode']]['uploaded']:
@@ -1099,8 +943,6 @@ class UIMainWindow(QtWidgets.QMainWindow):
                          tab_widget.indexOf(x) != -1 and tab_name in x.objectName()]
                 if len(index) > 0:
                     tab_widget.setTabVisible(index[0], set_visible)
-
-        # xd = tab_widget.findChildren(QtWidgets.QWidget)
 
     def load_report_tabs(self):
         tab_mode = self.global_variables['tab_mode']
@@ -1458,7 +1300,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.data_fname = list(self.data_fname)
 
         # verify if data is complete or incomplete (optional)
-        # self.verify_type_data(self.data_fname[0])
+        self.verify_type_data(self.data_fname[0])
 
         if view_mode == 'normal':
             self.update_directories('uploaded', self.data_fname[0])
@@ -1477,11 +1319,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
             filename = directory.split('/')
             child_name = filename[-1]
 
-            data = self.load_seismic_data(directory)
+            data = self.load_seismic_data(directory)[1:-1, 1:-1]
             data = np.nan_to_num(data, nan=0)
 
-            # check if some column of data contains only zeros
-            if np.all(data == 0, axis=1).any():
+            # check if some row or column of data contains only zeros
+            if np.all(data == 0, axis=0).any() or np.all(data == 0, axis=1).any():
                 if data_type == 'datos completos':
                     showWarning(f"El dato cargado {child_name} no es completo. Se ignorará el dato.")
                     continue
@@ -1862,6 +1704,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         else:  # only for data.npy
             data = data.T
 
+        data = np.nan_to_num(data, nan=0)
         data = data / np.max(np.abs(data))
 
         return data
@@ -1873,16 +1716,21 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         compression_ratio = float(self.compressSpinBox.text().split('%')[0]) / 100
 
-        mode = self.samplingTypeComboBox.currentText().lower()
-        jitter_params = dict(gamma=int(self.gammaSpinBox.text()), epsilon=int(self.epsilonSpinBox.text()))
-        lista = self.elementLineEdit
+        if self.dataComboBox.currentText().lower() == 'datos completos':
+            mode = self.samplingTypeComboBox.currentText().lower()
+            jitter_params = dict(gamma=int(self.gammaSpinBox.text()), epsilon=int(self.epsilonSpinBox.text()))
+            lista = self.elementLineEdit
 
-        try:
-            sampling_dict, H = self.sampling.apply_sampling(data, mode, jitter_params, lista, seed, compression_ratio)
-        except:
-            return
+            try:
+                sampling_dict, H = self.sampling.apply_sampling(data, mode, jitter_params, lista, seed,
+                                                                compression_ratio)
+            except:
+                return
 
-        return sampling_dict, H
+            return sampling_dict, H
+
+        else:
+            return None, None
 
     def load_algorithm(self, data_name, seismic_data, H, sampling_dict):
         self.algorithm_name = self.algorithmComboBox.currentText().lower()
@@ -1890,6 +1738,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         fixed_param = self.paramComboBox.currentIndex()
         self.current_scale = self.scaleComboBox.currentText().lower()
         data_mode = self.global_variables['data_mode']
+        is_complete = True if data_mode == 'complete' else False
 
         if self.global_variables['tab_mode'] == 'main':
             params = dict(param1=self.param1LineEdit.text(),
@@ -1903,14 +1752,15 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 performance_graphic = self.graphics['main'][data_mode]['performance'][data_name]
             else:
                 performance_tab, performance_graphic = self.add_tab(data_name, self.performanceTabWidget,
-                                                                    PerformanceGraphic())
+                                                                    PerformanceGraphic(is_complete=is_complete))
                 self.graphics['main'][data_mode]['performance'][data_name] = performance_graphic
                 self.all_tabs['normal'].append([performance_tab, performance_graphic])
 
             if data_name in self.graphics['main'][data_mode]['report'].keys():
                 report_graphic = self.graphics['main'][data_mode]['report'][data_name]
             else:
-                report_tab, report_graphic = self.add_tab(data_name, self.reportTabWidget, ReconstructionGraphic())
+                report_tab, report_graphic = self.add_tab(data_name, self.reportTabWidget,
+                                                          ReconstructionGraphic(is_complete=is_complete))
                 self.graphics['main'][data_mode]['report'][data_name] = report_graphic
                 self.all_tabs['normal'].append([report_tab, report_graphic])
 
