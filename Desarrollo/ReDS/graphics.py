@@ -180,12 +180,10 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
 
                 # calculate FK domain
                 FK, f, kx = fk(x, dt=0.568, dx=5)
-
                 axs[1, 0].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
                 axs[1, 0].set_title('FK reference')
 
                 FK, f, kx = fk(x_result, dt=0.568, dx=5)
-
                 axs[1, 1].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
                 axs[1, 1].set_title('FK reconstruction')
 
@@ -205,7 +203,8 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
 
 
 class TuningGraphic(FigureCanvasQTAgg):
-    def __init__(self):
+    def __init__(self, is_complete):
+        self.is_complete = is_complete
         self.algorithm = None
         self.tuning_data = None
         self.fixed_params = None
@@ -227,6 +226,7 @@ class TuningGraphic(FigureCanvasQTAgg):
             params.remove('error')
             params.remove('psnr')
             params.remove('ssim')
+            params.remove('tv')
 
             params = [param.replace('lmb', 'lambda') for param in params]  # replace lmb by lambda if it exists
 
@@ -251,8 +251,10 @@ class TuningGraphic(FigureCanvasQTAgg):
             graphic = axes_1.plot
             if len(self.tuning_data['ssim']) == 1:
                 graphic = axes_1.scatter
-            graphic(self.tuning_data['lmb' if params[0] == 'lambda' else params[0]], self.tuning_data['ssim'],
-                    '-o' if len(self.tuning_data) > 1 else None, color=color, label='SSIM')
+            graphic(self.tuning_data['lmb' if params[0] == 'lambda' else params[0]],
+                    self.tuning_data['ssim'] if self.is_complete else self.tuning_data['error'],
+                    '-o' if len(self.tuning_data) > 1 else None, color=color,
+                    label='SSIM' if self.is_complete else 'Error residual')
             axes_1.tick_params(axis='y', labelcolor=color, length=5)
             axes_1.yaxis.set_major_locator(MaxNLocator(8))
             axes_1.set_xscale('linear' if self.current_scale == 'lineal' else 'log')
@@ -264,10 +266,10 @@ class TuningGraphic(FigureCanvasQTAgg):
             graphic = axes_2.plot
             if len(self.tuning_data['psnr']) == 1:
                 graphic = axes_2.scatter
-            graphic(self.tuning_data['lmb' if params[0] == 'lambda' else params[0]], self.tuning_data['psnr'],
+            graphic(self.tuning_data['lmb' if params[0] == 'lambda' else params[0]],
+                    self.tuning_data['psnr'] if self.is_complete else self.tuning_data['tv'],
                     '--o' if len(self.tuning_data) > 1 else None, color=color)
-            # axes_1.plot(np.nan, '--o' if len(self.tuning_data) > 1 else None, color=color, label='PSNR')
-            axes_1.plot(np.nan, '--o', color=color, label='PSNR')
+            axes_1.plot(np.nan, '--o', color=color, label='PSNR' if self.is_complete else 'Norma TV')
             axes_2.tick_params(axis='y', labelcolor=color, length=5)
             axes_2.yaxis.set_major_locator(MaxNLocator(8))
             axes_2.set_xscale('linear' if self.current_scale == 'lineal' else 'log')
@@ -286,18 +288,20 @@ class TuningGraphic(FigureCanvasQTAgg):
 
 
 class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
-    def __init__(self):
+    def __init__(self, is_complete):
+        self.is_complete = is_complete
         self.algorithm_names = ['FISTA', 'GAP', 'TwIST', 'ADMM']
         self.comparison_data = dict(iteracion=[], errors=[], psnrs=[], ssims=[])
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.08, right=0.92, bottom=0.08, top=0.92, wspace=0.5, hspace=0.3)
         super(ComparisonPerformanceGraphic, self).__init__(self.figure)
 
-    def update_values(self, iteracion, errors, psnrs, ssims):
+    def update_values(self, iteracion, errors, psnrs, ssims, tvs):
         self.comparison_data['iteracion'] = iteracion
         self.comparison_data['errors'] = errors
         self.comparison_data['psnrs'] = psnrs
         self.comparison_data['ssims'] = ssims
+        self.comparison_data['tvs'] = tvs
 
     def update_figure(self):
         try:
@@ -307,6 +311,7 @@ class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
             errors = np.array(self.comparison_data['errors'])
             psnrs = np.array(self.comparison_data['psnrs'])
             ssims = np.array(self.comparison_data['ssims'])
+            tvs = np.array(self.comparison_data['tvs'])
 
             self.figure.suptitle(f'Resultados del experimento')
             axs = self.figure.subplots(2, 2)
@@ -317,7 +322,8 @@ class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
 
                 color = 'tab:red'
                 axes_1.set_xlabel('iteraciones')
-                axes_1.plot(iteracion, ssims[:, idx], color=color, label='SSIM')
+                axes_1.plot(iteracion, ssims[:, idx] if self.is_complete else errors[:, idx], color=color,
+                            label='SSIM' if self.is_complete else 'Error residual')
                 axes_1.set_title(self.algorithm_names[idx])
                 axes_1.tick_params(axis='y', labelcolor=color, length=5)
                 axes_1.grid(axis='both', linestyle='--')
@@ -325,8 +331,9 @@ class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
                 axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
 
                 color = 'tab:blue'
-                axes_2.plot(iteracion, psnrs[:, idx], color=color)
-                axes_1.plot(np.nan, color=color, label='PSNR')
+                axes_2.plot(iteracion, psnrs[:, idx] if self.is_complete else tvs[:, idx], color=color)
+                axes_1.legend(loc='best')
+                axes_1.plot(np.nan, color=color, label='PSNR' if self.is_complete else 'Norma TV')
                 axes_2.tick_params(axis='y', labelcolor=color, length=5)
                 axes_2.grid(axis='both', linestyle='--')
 
@@ -344,11 +351,13 @@ class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
 
 
 class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
-    def __init__(self):
+    def __init__(self, is_complete):
+        self.is_complete = is_complete
         self.algorithm_names = ['FISTA', 'GAP', 'TwIST', 'ADMM']
         self.comparison_data = None
         self.figure = plt.figure()
-        plt.subplots_adjust(left=0.07, right=0.93, bottom=0.05, top=0.90)
+        left, right, bottom, top = [0.07, 0.93, 0.05, 0.90] if is_complete else [0.05, 0.98, 0.05, 0.85]
+        plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=0.3, hspace=0.3)
         super(ComparisonReconstructionGraphic, self).__init__(self.figure)
 
     def update_report(self, comparison_data):
@@ -357,11 +366,16 @@ class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
     def update_figure(self):
         try:
             self.figure.clear()
-
             sampling = {item[0]: item[1] for item in self.comparison_data['sampling']}
-            x = sampling['x_ori']
-            y_rand = sampling['y_rand']
-            pattern_rand = sampling['pattern_rand']
+
+            if self.is_complete:
+                x = sampling['x_ori']
+                y_rand = sampling['y_rand']
+                pattern_rand = sampling['pattern_rand']
+            else:
+                x = sampling['x_ori']
+                y_rand = x
+                pattern_rand = np.double(sampling['H'])
 
             temp = np.asarray(range(0, pattern_rand.shape[0]))
             pattern_rand_b2 = np.asarray(pattern_rand, dtype=bool) == 0
@@ -370,27 +384,107 @@ class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
             # =#=#=#=#=#=#=#
 
             self.figure.suptitle(f'Comparaciones de algoritmos')
-            axs = self.figure.subplots(2, 3)
 
-            axs[0, 0].imshow(x, cmap='gray', aspect='auto')
-            axs[0, 0].set_title('Referencia')
+            if self.is_complete:
+                axs = self.figure.subplots(2, 3)
 
-            ytemp = y_rand.copy()
-            condition = H_elim.size > 0
-            if condition:
-                ytemp[:, H_elim] = 1
-            axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
-            axs[1, 0].set_title('Medidas')
+                axs[0, 0].imshow(x, cmap='gray', aspect='auto')
+                axs[0, 0].set_title('Referencia')
 
-            indices = [(i, j) for i, j in product([0, 1], [1, 2])]
-            for idxs, algorithm_name, x_result in zip(indices, self.algorithm_names, self.comparison_data['x_results']):
-                i, j = idxs
-                aux_x = x[:, H_elim] if condition else x
-                aux_x_result = x_result[:, H_elim] if condition else x_result
-                metric = PSNR(aux_x, aux_x_result)
-                metric_ssim = ssim(aux_x, aux_x_result)
-                axs[i, j].imshow(x_result, cmap='gray', aspect='auto')
-                axs[i, j].set_title(f'{algorithm_name} - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+                ytemp = y_rand.copy()
+                condition = H_elim.size > 0
+                if condition:
+                    ytemp[:, H_elim] = 1
+                axs[0, 1].imshow(ytemp, cmap='gray', aspect='auto')
+                axs[0, 1].set_title('Medidas')
+
+                indices = [(i, j) for i, j in product([0, 1], [1, 2])]
+                for idxs, algorithm_name, x_result in zip(indices, self.algorithm_names,
+                                                          self.comparison_data['x_results']):
+                    i, j = idxs
+                    aux_x = x[:, H_elim] if condition else x
+                    aux_x_result = x_result[:, H_elim] if condition else x_result
+                    metric = PSNR(aux_x, aux_x_result)
+                    metric_ssim = ssim(aux_x, aux_x_result)
+                    axs[i, j].imshow(x_result, cmap='gray', aspect='auto')
+                    axs[i, j].set_title(f'{algorithm_name} - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+
+            else:
+                axs = self.figure.subplots(3, 4)
+
+                metric = tv_norm(x)
+                axs[0, 0].imshow(x, cmap='gray', aspect='auto')
+                axs[0, 0].set_title(f'Reference - TV-norm: {metric:0.2f}')
+
+                x_result_fista = self.comparison_data['x_results'][0]
+                metric = tv_norm(x_result_fista)
+                axs[1, 0].imshow(x_result_fista, cmap='gray', aspect='auto')
+                axs[1, 0].set_title(f'FISTA - TV norm: {metric:0.2f}')
+
+                x_result_gap = self.comparison_data['x_results'][1]
+                metric = tv_norm(x_result_gap)
+                axs[2, 0].imshow(x_result_gap, cmap='gray', aspect='auto')
+                axs[2, 0].set_title(f'GAP - TV norm: {metric:0.2f}')
+
+                # calculate FK domain
+
+                dt = 0.568
+                dx = 5
+
+                FK, f, kx = fk(x, dt, dx)
+                axs[0, 1].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[0, 1].set_title('FK reference')
+
+                FK, f, kx = fk(x_result_fista, dt, dx)
+                axs[1, 1].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[1, 1].set_title('FK FISTA')
+
+                FK, f, kx = fk(x_result_gap, dt, dx)
+                axs[2, 1].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[2, 1].set_title('FK GAP')
+
+                # ----------------- --------------------
+
+                x_result_twist = self.comparison_data['x_results'][2]
+                x_result_admm = self.comparison_data['x_results'][3]
+                index = 5
+                axs[0, 2].plot(x_result_fista[:, H_elim[index]], 'b', label='Fista')
+                axs[0, 2].plot(x_result_gap[:, H_elim[index]], 'r', label='Gap')
+                axs[0, 2].plot(x_result_twist[:, H_elim[index]], 'g', label='Twist')
+                axs[0, 2].plot(x_result_admm[:, H_elim[index]], 'm', label='Admm')
+                axs[0, 2].legend(loc='best')
+                axs[0, 2].set_title('Trace ' + str("{:.0f}".format(H_elim[index])))
+                axs[0, 2].grid(axis='both', linestyle='--')
+
+                metric = tv_norm(x_result_twist)
+                axs[1, 2].imshow(x_result_twist, cmap='gray', aspect='auto')
+                axs[1, 2].set_title(f'TwIST - TV-norm: {metric:0.2f}')
+
+                metric = tv_norm(x_result_admm)
+                axs[2, 2].imshow(x_result_admm, cmap='gray', aspect='auto')
+                axs[2, 2].set_title(f'ADMM - TV norm: {metric:0.2f}')
+
+                # calculate FK domain
+
+                dt = 0.568
+                dx = 5
+
+                index = -5
+                axs[0, 3].plot(x_result_fista[:, H_elim[index]], 'b', label='Fista')
+                axs[0, 3].plot(x_result_gap[:, H_elim[index]], 'r', label='Gap')
+                axs[0, 3].plot(x_result_twist[:, H_elim[index]], 'g', label='Twist')
+                axs[0, 3].plot(x_result_admm[:, H_elim[index]], 'm', label='Admm')
+                axs[0, 3].legend(loc='best')
+                axs[0, 3].set_title('Trace ' + str("{:.0f}".format(H_elim[index])))
+                axs[0, 3].grid(axis='both', linestyle='--')
+
+                FK, f, kx = fk(x_result_twist, dt, dx)
+                axs[1, 3].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[1, 3].set_title('FK TwIST')
+
+                FK, f, kx = fk(x_result_admm, dt, dx)
+                axs[2, 3].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[2, 3].set_title('FK ADMM')
 
             self.draw()
 

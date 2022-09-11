@@ -809,7 +809,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.state = dict(main=dict(progress=dict(iteration={}, error={}, psnr={}, ssim={}, tv={})),
                           tuning=dict(progress=dict(total_runs={}, fixed_params={}, current_scale={})),
-                          comparison=dict(progress=dict(iteration={}, errors={}, psnrs={}, ssims={}, tv={})))
+                          comparison=dict(progress=dict(iteration={}, errors={}, psnrs={}, ssims={}, tvs={})))
 
         graphs = lambda x: {} if x == 'tuning' else dict(performance={}, report={})
         self.graphics = {t_mode: {d_mode: graphs(t_mode) for d_mode in data_mode} for t_mode in tab_mode}
@@ -947,10 +947,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
                     if set_visible:
                         tab_widget.setCurrentIndex(index[0])
 
-
     def load_report_tabs(self):
         tab_mode = self.global_variables['tab_mode']
         data_mode = self.global_variables['data_mode']
+        is_complete = True if data_mode == 'complete' else False
+
         for uploaded_directory in self.directories[tab_mode][data_mode]['report']:
             if tab_mode == 'main':
                 try:
@@ -960,13 +961,13 @@ class UIMainWindow(QtWidgets.QMainWindow):
                     data_name = uploaded_directory.split('/')[-1].split('.')[0]
 
                     expPerformanceTab, performanceGraphic = self.add_tab(data_name, self.performanceTabWidget,
-                                                                         PerformanceGraphic())
+                                                                         PerformanceGraphic(is_complete=is_complete))
                     self.graphics['main'][data_mode]['performance'][data_name] = performanceGraphic
                     performanceGraphic.update_values(**performance_data)
                     performanceGraphic.update_figure()
 
                     expReportTab, reconstructionGraphic = self.add_tab(data_name, self.reportTabWidget,
-                                                                       ReconstructionGraphic())
+                                                                       ReconstructionGraphic(is_complete=is_complete))
                     self.graphics['main'][data_mode]['report'][data_name] = reconstructionGraphic
                     reconstructionGraphic.update_report(data)
                     reconstructionGraphic.update_figure()
@@ -991,7 +992,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
                     data_name = uploaded_directory.split('/')[-1].split('.')[0]
 
-                    expTuningTab, tuningGraphic = self.add_tab(data_name, self.tuningTabWidget, TuningGraphic())
+                    expTuningTab, tuningGraphic = self.add_tab(data_name, self.tuningTabWidget,
+                                                               TuningGraphic(is_complete=is_complete))
                     self.graphics['tuning'][data_mode][data_name] = tuningGraphic
                     tuningGraphic.update_tuning(algorithm_name, tuning_data, fixed_params, current_scale)
                     tuningGraphic.update_figure()
@@ -1014,14 +1016,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
                     expCompPerformanceTab, compPerformanceGraphic = self.add_tab(data_name,
                                                                                  self.comparisonPerformanceTabWidget,
-                                                                                 ComparisonPerformanceGraphic())
+                                                                                 ComparisonPerformanceGraphic(
+                                                                                     is_complete=is_complete))
                     self.graphics['comparison'][data_mode]['performance'][data_name] = compPerformanceGraphic
                     compPerformanceGraphic.update_values(**comparison_data)
                     compPerformanceGraphic.update_figure()
 
                     expCompReportTab, compReconstructionGraphic = self.add_tab(data_name,
                                                                                self.comparisonReportTabWidget,
-                                                                               ComparisonReconstructionGraphic())
+                                                                               ComparisonReconstructionGraphic(
+                                                                                   is_complete=is_complete))
                     self.graphics['comparison'][data_mode]['report'][data_name] = compReconstructionGraphic
                     compReconstructionGraphic.update_report(data)
                     compReconstructionGraphic.update_figure()
@@ -1411,7 +1415,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         op_sys = platform.system().lower()
         if op_sys == 'windows':
             if len(save_name.split('\\')) == 1:
-                save_name = f'{os.environ["HOMEPATH"]}\\{save_name}'
+                save_name = f'C:{os.environ["HOMEPATH"]}\\{save_name}'
         elif op_sys == 'linux' or op_sys == 'darwin':
             if len(save_name.split('/')) == 1:
                 save_name = f'{os.environ["HOME"]}/{save_name}'
@@ -1541,15 +1545,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
     # create the function update_data
     def update_data(self, value):
-        if value.lower() == 'datos completos':
-            self.samplingGroupBox.setVisible(True)
-            self.global_variables['data_mode'] = 'complete'
-        else:
-            self.samplingGroupBox.setVisible(False)
-            self.global_variables['data_mode'] = 'incomplete'
+        if self.global_variables['view_mode'] == 'normal':
+            if value.lower() == 'datos completos':
+                self.samplingGroupBox.setVisible(True)
+                self.global_variables['data_mode'] = 'complete'
+            else:
+                self.samplingGroupBox.setVisible(False)
+                self.global_variables['data_mode'] = 'incomplete'
 
-        self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
-        self.set_result_view()
+            self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
+            self.set_result_view()
 
     def algorithm_changed(self, value):
         self.set_visible_algorithm(value.lower())
@@ -1687,11 +1692,12 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         tab_mode = self.global_variables['tab_mode']
         if tab_mode in ['main', 'comparison']:
+            suffix = '' if tab_mode == 'main' else 's'
             self.state[tab_mode]['progress']['iteration'][data_name] = []
-            self.state[tab_mode]['progress']['error'][data_name] = []
-            self.state[tab_mode]['progress']['psnr'][data_name] = []
-            self.state[tab_mode]['progress']['ssim'][data_name] = []
-            self.state[tab_mode]['progress']['tv'][data_name] = []
+            self.state[tab_mode]['progress'][f'error{suffix}'][data_name] = []
+            self.state[tab_mode]['progress'][f'psnr{suffix}'][data_name] = []
+            self.state[tab_mode]['progress'][f'ssim{suffix}'][data_name] = []
+            self.state[tab_mode]['progress'][f'tv{suffix}'][data_name] = []
 
         else:
             self.state[tab_mode]['progress']['total_runs'][data_name] = 0
@@ -1794,7 +1800,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
             if data_name in self.graphics['tuning'][data_mode].keys():
                 tuning_graphic = self.graphics['tuning'][data_mode][data_name]
             else:
-                tuning_tab, tuning_graphic = self.add_tab(data_name, self.tuningTabWidget, TuningGraphic())
+                tuning_tab, tuning_graphic = self.add_tab(data_name, self.tuningTabWidget,
+                                                          TuningGraphic(is_complete=is_complete))
                 self.graphics['tuning'][data_mode][data_name] = tuning_graphic
                 self.all_tabs['normal'].append([tuning_tab, tuning_graphic])
 
@@ -1860,7 +1867,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
             else:
                 comp_performance_tab, comp_performance_graphic = self.add_tab(data_name,
                                                                               self.comparisonPerformanceTabWidget,
-                                                                              ComparisonPerformanceGraphic())
+                                                                              ComparisonPerformanceGraphic(
+                                                                                  is_complete=is_complete))
                 self.graphics['comparison'][data_mode]['performance'][data_name] = comp_performance_graphic
                 self.all_tabs['normal'].append([comp_performance_tab, comp_performance_graphic])
 
@@ -1868,7 +1876,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
                 comp_report_graphic = self.graphics['comparison'][data_mode]['report'][data_name]
             else:
                 comp_report_tab, comp_report_graphic = self.add_tab(data_name, self.comparisonReportTabWidget,
-                                                                    ComparisonReconstructionGraphic())
+                                                                    ComparisonReconstructionGraphic(
+                                                                        is_complete=is_complete))
                 self.graphics['comparison'][data_mode]['report'][data_name] = comp_report_graphic
                 self.all_tabs['normal'].append([comp_report_tab, comp_report_graphic])
 
@@ -1992,10 +2001,11 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         tab_mode = self.global_variables['tab_mode']
         data_mode = self.global_variables['data_mode']
+
         temp_saved = self.directories[tab_mode][data_mode]['temp_saved']
 
         os.makedirs(temp_saved, exist_ok=True)
-        save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_name}.npz')
+        save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_mode}_{data_name}.npz')
 
         self.directories[tab_mode][data_mode]['saved'] = save_path
         np.savez(save_path, x_result=res_dict['result'], hist=res_dict['hist'], sampling=res_dict['sampling_dict'],
@@ -2011,6 +2021,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         data['error'] = [res_dict['hist'][-1, 0]]
         data['psnr'] = [np.round(res_dict['hist'][-1, 1], 3)]
         data['ssim'] = [np.round(res_dict['hist'][-1, 2], 3)]
+        data['tv'] = [np.round(res_dict['hist'][-1, 3], 3)]
 
         if num_run == 1:
             self.tuning_data = pd.DataFrame(data)
@@ -2032,7 +2043,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         temp_saved = self.directories[tab_mode][data_mode]['temp_saved']
 
         os.makedirs(temp_saved, exist_ok=True)
-        save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_name}.npz')
+        save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_mode}_{data_name}.npz')
 
         self.directories[tab_mode][data_mode]['saved'] = save_path
         np.savez(save_path,
@@ -2045,24 +2056,27 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
 
         # update figure
-        errs, psnrs, ssims = [], [], []
+        errs, psnrs, ssims, tvs = [], [], [], []
         for output in outputs:
             errs.append(output['hist'][iter, 0])
             psnrs.append(np.round(output['hist'][iter, 1], 3))
             ssims.append(np.round(output['hist'][iter, 2], 3))
+            tvs.append(np.round(output['hist'][iter, 3], 3))
 
         iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration'][data_name]
         error_list = self.state[self.global_variables['tab_mode']]['progress']['errors'][data_name]
         psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnrs'][data_name]
         ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssims'][data_name]
+        tv_list = self.state[self.global_variables['tab_mode']]['progress']['tvs'][data_name]
 
         iteration_list.append(iter)
         error_list.append(errs)
         psnr_list.append(psnrs)
         ssim_list.append(ssims)
+        tv_list.append(tvs)
 
         if iter % (self.max_iter // 10) == 0 or iter == self.max_iter:
-            graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list)
+            graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list ,tv_list)
             graphics['performance'].update_figure()
 
             x_results, hists = [], []
@@ -2082,7 +2096,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         temp_saved = self.directories[tab_mode][data_mode]['temp_saved']
 
         os.makedirs(temp_saved, exist_ok=True)
-        save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_name}.npz')
+        save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_mode}_{data_name}.npz')
 
         self.directories[tab_mode][data_mode]['saved'] = save_path
         np.savez(save_path,
