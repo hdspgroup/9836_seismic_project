@@ -1331,6 +1331,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
             self.update_tab_thread()
 
     def verify_type_data(self, directories):
+        view_mode = self.global_variables['view_mode']
         data_type = self.dataComboBox.currentText().lower()
 
         indices = []
@@ -1338,18 +1339,34 @@ class UIMainWindow(QtWidgets.QMainWindow):
             filename = directory.split('/')
             child_name = filename[-1]
 
-            data = self.load_seismic_data(directory)[1:-1, 1:-1]
-            data = np.nan_to_num(data, nan=0)
+            data = np.load(directory, allow_pickle=True)
+            if hasattr(data, 'keys'):
+                if view_mode == 'normal':
+                    showWarning(f"El dato cargado {child_name} no es un reporte de algún experimento previamente hecho"
+                                f"en este software. Se ignorará el dato.")
+                    continue
 
-            # check if some row or column of data contains only zeros
-            if np.all(data == 0, axis=0).any() or np.all(data == 0, axis=1).any():
-                if data_type == 'datos completos':
-                    showWarning(f"El dato cargado {child_name} no es completo. Se ignorará el dato.")
-                    continue
+                if not data['is_complete']:
+                    if data_type == 'datos completos':
+                        showWarning(f"El dato cargado {child_name} no es completo. Se ignorará el dato.")
+                        continue
+                else:
+                    if data_type == 'datos incompletos':
+                        showWarning(f"El dato cargado {child_name} no es incompleto. Se ignorará el dato.")
+                        continue
             else:
-                if data_type == 'datos incompletos':
-                    showWarning(f"El dato cargado {child_name} no es incompleto. Se ignorará el dato.")
-                    continue
+                data = self.load_seismic_data(directory)[1:-1, 1:-1]
+                data = np.nan_to_num(data, nan=0)
+
+                # check if some row or column of data contains only zeros
+                if np.all(data == 0, axis=0).any() or np.all(data == 0, axis=1).any():
+                    if data_type == 'datos completos':
+                        showWarning(f"El dato cargado {child_name} no es completo. Se ignorará el dato.")
+                        continue
+                else:
+                    if data_type == 'datos incompletos':
+                        showWarning(f"El dato cargado {child_name} no es incompleto. Se ignorará el dato.")
+                        continue
 
             indices.append(i)
 
@@ -1543,18 +1560,16 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.set_result_view()
 
-    # create the function update_data
     def update_data(self, value):
-        if self.global_variables['view_mode'] == 'normal':
-            if value.lower() == 'datos completos':
-                self.samplingGroupBox.setVisible(True)
-                self.global_variables['data_mode'] = 'complete'
-            else:
-                self.samplingGroupBox.setVisible(False)
-                self.global_variables['data_mode'] = 'incomplete'
+        if value.lower() == 'datos completos':
+            self.samplingGroupBox.setVisible(True if self.global_variables['view_mode'] == 'normal' else False)
+            self.global_variables['data_mode'] = 'complete'
+        else:
+            self.samplingGroupBox.setVisible(False)
+            self.global_variables['data_mode'] = 'incomplete'
 
-            self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
-            self.set_result_view()
+        self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
+        self.set_result_view()
 
     def algorithm_changed(self, value):
         self.set_visible_algorithm(value.lower())
@@ -1724,7 +1739,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         # data direction
         data = np.nan_to_num(data, nan=0)
-        if not np.all(data != 0, axis=0).any():
+        if not np.all(data != 0, axis=0).any() and 'cube' not in uploaded_directory:
             data = data.T
 
         return data
@@ -2009,7 +2024,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
 
         self.directories[tab_mode][data_mode]['saved'] = save_path
         np.savez(save_path, x_result=res_dict['result'], hist=res_dict['hist'], sampling=res_dict['sampling_dict'],
-                 algorithm_name=self.algorithm_name, performance_data=performance_data)
+                 algorithm_name=self.algorithm_name, performance_data=performance_data,
+                 is_complete=True if data_mode == 'complete' else False)
         print("Results saved [Ok]")
 
     def report_tuning_progress(self, data_name, num_run, res_dict, params, graphics):
@@ -2048,7 +2064,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.directories[tab_mode][data_mode]['saved'] = save_path
         np.savez(save_path,
                  algorithm=self.algorithm_name, tuning_data=tuning_data, fixed_params=fixed_params,
-                 scale=self.current_scale)
+                 scale=self.current_scale, is_complete=True if data_mode == 'complete' else False)
         print("Results saved [Ok]")
 
     def report_comparison_progress(self, data_name, iter, outputs, sampling_dict, graphics):
@@ -2076,7 +2092,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         tv_list.append(tvs)
 
         if iter % (self.max_iter // 10) == 0 or iter == self.max_iter:
-            graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list ,tv_list)
+            graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list, tv_list)
             graphics['performance'].update_figure()
 
             x_results, hists = [], []
@@ -2101,7 +2117,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.directories[tab_mode][data_mode]['saved'] = save_path
         np.savez(save_path,
                  x_results=res_dict['results'], hists=res_dict['hists'], sampling=res_dict['sampling_dict'],
-                 comparison_data=comparison_data)
+                 comparison_data=comparison_data, is_complete=True if data_mode == 'complete' else False)
         print("Results saved [Ok]")
 
     def reset_values(self):
