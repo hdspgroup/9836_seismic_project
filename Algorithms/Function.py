@@ -548,7 +548,7 @@ class Algorithms:
         algorithm to solve the optimization problem.
     '''
 
-    def __init__(self, x, H, operator_dir, operator_inv):
+    def __init__(self, x, H, operator_dir, operator_inv, print_info=True):
         '''
         Parameters
         ----------
@@ -564,6 +564,7 @@ class Algorithms:
             This function applies the inverse transform of the
             `operator_dir` function.
         '''
+        self.print_info = print_info
         self.is_complete_data = True
         # ------ Build sensing matrix for incomplete data ---------
         if H is None:
@@ -784,8 +785,9 @@ class Algorithms:
             hist[itr, 2] = ssim_val
             hist[itr, 3] = tv_val
 
-            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
+            if self.print_info:
+                print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
+                      '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
 
             yield itr, dict(result=self.operator_inv(s), hist=hist)
 
@@ -854,8 +856,9 @@ class Algorithms:
             hist[itr, 2] = ssim_val
             hist[itr, 3] = tv_val
 
-            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
+            if self.print_info:
+                print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
+                      '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
 
             yield itr, dict(result=self.operator_inv(x), hist=hist)
 
@@ -929,8 +932,9 @@ class Algorithms:
             hist[itr, 2] = ssim_val
             hist[itr, 3] = tv_val
 
-            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
+            if self.print_info:
+                print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
+                      '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
 
             yield itr, dict(result=self.operator_inv(x), hist=hist)
 
@@ -1032,7 +1036,7 @@ class Algorithms:
             hist[itr, 2] = ssim_val
             hist[itr, 3] = tv_val
 
-            if (itr + 1) % 5 == 0:
+            if self.print_info:
                 # mse = np.mean(np.sum((y-A(v,Phi))**2,axis=(0,1)))
                 end_time = time.time()
                 # Error = %2.2f,
