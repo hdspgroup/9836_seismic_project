@@ -14,6 +14,10 @@
     <file>icons/report.png</file>
     <file>icons/view.png</file>
   </qresource>
+  <qresource prefix="logos">
+    <file>logos/lower_logo.png</file>
+    <file>logos/upper_logo.png</file>
+  </qresource>
   <qresource prefix="parameters">
     <file>parameters/epsilon.png</file>
     <file>parameters/alpha.png</file>
