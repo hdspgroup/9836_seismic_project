@@ -70,7 +70,6 @@ def plot_results(x, x_result, pattern_rand, case):
 
 def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
     """
-
     Parameters
     ----------
     data_format: format of the data (Matlab or Numpy)

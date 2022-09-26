@@ -41,9 +41,9 @@ def solve_path(relative_path):
     return os.path.join(os.path.abspath('.'), relative_path)
 
 
-class UIMainWindow(QtWidgets.QMainWindow):
+class UIMainAWindow(QtWidgets.QMainWindow):
     def __init__(self, launcher):
-        super(UIMainWindow, self).__init__()
+        super(UIMainAWindow, self).__init__()
         self.launcher = launcher
         self.setupUi()
 
@@ -2228,7 +2228,7 @@ if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = UIMainWindow()
+    MainWindow = UIMainAWindow()
 
     qtRectangle = MainWindow.frameGeometry()
     centerPoint = QtWidgets.QDesktopWidget().availableGeometry().center()

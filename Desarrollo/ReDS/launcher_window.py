@@ -9,11 +9,10 @@
 import os
 import sys
 
-from PyQt5.Qt import Qt
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from Algorithms.Function import Sampling
-from Desarrollo.ReDS.main_window import UIMainWindow
+from Desarrollo.ReDS.mainA_window import UIMainAWindow
+from Desarrollo.ReDS.mainB_window import UIMainBWindow
 
 
 def solve_path(relative_path):
@@ -70,13 +69,16 @@ class UILauncherWindow(QtWidgets.QMainWindow):
         self.moduleBPushButton.clicked.connect(self.open_module_B)
 
     def open_module_A(self):
-        self.main_window = QtWidgets.QWidget()
-        self.ui_main_window = UIMainWindow(self)
-        self.ui_main_window.show()
+        self.main_A_window = QtWidgets.QWidget()
+        self.ui_main_A_window = UIMainAWindow(self)
+        self.ui_main_A_window.show()
         self.hide()
 
     def open_module_B(self):
-        pass
+        self.main_B_window = QtWidgets.QWidget()
+        self.ui_main_B_window = UIMainBWindow(self)
+        self.ui_main_B_window.show()
+        self.hide()
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
