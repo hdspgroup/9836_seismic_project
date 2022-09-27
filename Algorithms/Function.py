@@ -1,17 +1,16 @@
 import scipy.io
 import numpy as np
+
 from skimage import transform
 from scipy.io import loadmat
 from scipy.sparse import csr_matrix
 from skimage.metrics import structural_similarity as ssim
 import inspect
-import scipy.sparse.linalg as ln
-from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
-                                 denoise_wavelet, estimate_sigma)
 import time
-# from pymitter import EventEmitter
 
-# Need to use this (EventEmitter) for comunication with the GUI, please don't remove it, I used this trough the code
+from tqdm import tqdm
+import cv2
+
 from Algorithms.tv_norm import tv_norm
 from Desarrollo.ReDS.gui.scripts.alerts import showWarning, showCritical
 
@@ -1047,3 +1046,125 @@ class Algorithms:
             yield itr, dict(result=x, hist=hist)
 
         yield x, hist
+
+
+class ShotAlgorithms:
+    """
+    Parameters
+    ----------
+    data_format: format of the data (Matlab or Numpy)
+    data_path: path where the data is, the data should be in the format (time, traces, shots).
+    exp_number: number of experiments. The results shows at the end is the average.
+    H: Boolean vector indicating the removed shots
+
+    Returns
+    -------
+    The reconstructed cube
+    """
+
+    def __init__(self, x, H, print_info=True):
+        self.print_info = print_info
+
+        x = np.transpose(x, [0, 2, 1])
+        x -= x.min()
+        x /= x.max()
+        x *= 255
+        self.x = x.astype('uint8')
+        self.H = H
+
+        pattern_rand = [int(h) for h in self.H]
+        self.pattern_rand = np.array(pattern_rand)
+
+        self.mask = np.zeros(x.shape).astype('uint8')
+        self.mask[:, self.pattern_rand == 0, :] = 1
+
+    def measurements(self):
+        '''
+        Operator measurement models the subsampled acquisition process given a
+        sampling matrix H
+
+        Returns
+        -------
+        measures : Y = H@x
+        '''
+
+        print(f'H.shape={self.H.shape}, mask.shape={self.mask.shape}')
+        return self.x * (1 - self.mask)
+
+    def get_results(self, alg_name):
+        '''
+        This function allows to get the final results of the implemented algorithms
+        in this class.
+
+        This is due to algorithms functions works as generators, where each iteration
+        returns the current output info of the algorithm and the last iteration
+        returns the desired output of the function.
+
+        Parameters
+        ----------
+        alg_name :    str
+                      The name of the algorithm to solve.
+        max_itr :     int
+                      The maximum number of iteration for the algorithm.
+        parameters :  dict
+                      Parameters of the selected algorithm to solve.
+
+        Returns
+        -------
+        x_results : recovery results of the selected algorithm.
+        hist      : history of the selected algorithm.
+        '''
+        if alg_name == 'FastMarching':
+            alg = self.FastMarching
+        else:
+            raise 'The algorithm entered was not found.'
+
+        results = [output for i, output in enumerate(alg())][-1]
+        x_result, hist = results
+
+        return x_result, hist
+
+    def FastMarching(self):
+        paint_method = cv2.INPAINT_TELEA
+
+        imShape = self.x.shape
+        self.x = np.reshape(self.x, [imShape[0] * imShape[1], imShape[2]])
+        self.mask = np.reshape(self.mask, [imShape[0] * imShape[1], imShape[2]])
+
+        tmp = str(self.pattern_rand.astype('uint8')).split('1')
+        t_m = 0
+        for t in tmp:
+            if t.strip().count('0') > t_m:
+                t_m = t.strip().count('0')
+
+        x_copy = self.x.copy()
+        x = self.measurements()
+
+        output = cv2.inpaint(x, self.mask, t_m + 1, flags=paint_method)
+        output = np.reshape(output, [imShape[0], imShape[1], imShape[2]])
+        x = np.reshape(x, [imShape[0], imShape[1], imShape[2]])
+        mask = np.reshape(self.mask, [imShape[0], imShape[1], imShape[2]])
+
+        hist = []
+        for i in tqdm(range(1, x.shape[-1] - 1)):
+            tmp = cv2.inpaint(x[:, :, [i - 1, i, i + 1]], mask[..., 0], t_m + 1, flags=paint_method)
+            aux = output[..., [i - 1, i, i + 1]]
+            aux = (tmp.astype('float32') + aux.astype('float32')) / 2
+            output[..., [i - 1, i, i + 1]] = aux = aux.astype('uint8')
+
+            if self.print_info:
+                hist.append(PSNR(x, output))
+                # print(hist[-1])
+
+            yield i, dict(output=output, hist=hist)
+
+        x_copy = np.reshape(x_copy, [imShape[0], imShape[1], imShape[2]])
+        x = x_copy.copy()
+        output = np.transpose(output, [0, 2, 1])
+        x = np.transpose(x, [0, 2, 1])
+
+        if self.print_info:
+            hist.append(PSNR(x, output))
+            print(hist[-1])
+
+        yield output, hist

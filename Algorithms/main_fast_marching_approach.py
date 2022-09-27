@@ -96,7 +96,7 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
         '''
         if H is None:
             sr_rand = 0.5  # 1-compression
-            _, _, H = random_sampling(x[:, int(x.shape[1] / 2), :], sr_rand)
+            _, _, H = random_sampling(x[:, int(x.shape[1] / 2), :], sr_rand, seed=0)
 
         pattern_rand = [int(h) for h in H]
         pattern_rand = np.array(pattern_rand)
@@ -125,6 +125,7 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
         x = np.reshape(x, [imShape[0] * imShape[1], imShape[2]])
         mask = np.reshape(mask, [imShape[0] * imShape[1], imShape[2]])
         x_copy = x.copy()
+
         x = x * (1 - mask)
         output = cv2.inpaint(x, mask, t_m + 1, flags=paint_method)
         output = np.reshape(output, [imShape[0], imShape[1], imShape[2]])
@@ -154,5 +155,8 @@ def fastMarching_approach(data_path, data_format='numpy', exp_number=1, H=None):
 
 
 if __name__ == '__main__':
-    data_path = '/tmp/splitspreadfromsegy_2001_OrgSeqno_7TAR_TFD_SW.mat'
-    fastMarching_approach(data_path, 'matlab')
+    # data_path = '/tmp/splitspreadfromsegy_2001_OrgSeqno_7TAR_TFD_SW.mat'
+    # fastMarching_approach(data_path, 'matlab')
+
+    data_path = '../Desarrollo/ReDS/data/cube4.npy'
+    fastMarching_approach(data_path, 'numpy')
