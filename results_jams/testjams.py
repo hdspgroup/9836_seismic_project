@@ -161,22 +161,28 @@ def searchparameters(iter1, iter2, limits2=[0,5], iter3=1, limits3=[0,5], iter4=
 
                 savemat('./FKparams-' + algstr + mstr + '33-r.mat', {'psnrs': psnrs, 'snrs': snrs, 'ssims': ssims})
 
-
+from scipy.io import savemat
 def simulationsfixedparameters():
     sampling = Sampling()
-    seismic_data1 = load_seismic_data('/home/jams/Documents/9836_seismic_project/Desarrollo/ReDS/data/data.npy')
-    psnrs = np.zeros((30,1))
-    snrs = np.zeros((30,1))
-    ssims = np.zeros((30,1))
+    seismic_data1 = load_seismic_data('/home/jams/Documents/9836_seismic_project/Desarrollo/ReDS/data/spii15s.npy')
+    reps = 5
+    psnrs = np.zeros((reps,1))
+    snrs = np.zeros((reps,1))
+    ssims = np.zeros((reps,1))
     jitparams = dict(gamma=3, epsilon=3)
     mstr = "aleatorio"
-    algstr = "fista"
-    for i in range(30):
+    algstr = "gap"
+    ss2 = np.array(seismic_data1, copy=True)
+    transform = 'FDCT2'
+    transforminv = 'FDCT2'
+
+    #seismic_data1 = (seismic_data1**2)*np.sign(seismic_data1)
+    for i in range(reps):
         sampling_dict, H = sampling.apply_sampling(seismic_data1, mstr, jitparams, None, None, 0.33)
         #H = H==0
         #p_init = int(10 + np.floor(75*np.random.rand()))
         #H[p_init:(p_init+10)] = 0
-        Alg = Algorithms(seismic_data1, H, 'DCT2D', 'IDCT2D')  # Assuming using DCT2D ad IDCT2D for all algorithms
+        Alg = Algorithms(seismic_data1, H, transform, transforminv)  # Assuming using DCT2D ad IDCT2D for all algorithms FDCT2
         '''
                 if alg_name == 'FISTA':
                     alg = self.FISTA
@@ -188,12 +194,12 @@ def simulationsfixedparameters():
                     alg = self.ADMM
         '''
         if algstr=="twist":
-            params = dict(param1=2.25,param2=1.75,param3=3.0)
+            params = dict(param1=0.001,param2=0.8,param3=0.2)
         elif algstr=="gap":
-            params = dict(param1=10.8)
+            params = dict(param1=0.03)
         elif algstr=="fista":
-            params = dict(param1=2.4, param2=1.2)
-        iters = 300
+            params = dict(param1=0.001, param2=1.2)
+        iters = 50
         algorithm, parameters = Alg.get_algorithm(algstr, iters, **params)
 
         res = algorithm(**parameters)
@@ -201,18 +207,27 @@ def simulationsfixedparameters():
             if itr>=iters:
                 break
         x_result, hist = next(res)
-        [x_result,_,_] = fktransform(x_result, 0.02, 10)
-        [seismic_data2, _, _] = fktransform(seismic_data1, 0.02, 10)
+        if transform=='FDCT2':
+            x_result =x_result.T
+        #[x_result,_,_] = fktransform(x_result, 0.02, 10)
+        #[seismic_data2, _, _] = fktransform(seismic_data1, 0.02, 10)
         """plt.figure()
         plt.imshow(x_result, cmap="seismic")
         plt.show()
         plt.figure()
         plt.imshow(seismic_data2, cmap="seismic")
         plt.show()"""
-        psnrs[i]=PSNR(seismic_data2,x_result)
-        snrs[i] = SNR(seismic_data2, x_result)
-        ssims[i]=ssim(seismic_data2,x_result)
+        psnrs[i]=PSNR(seismic_data1,x_result)
+        snrs[i] = SNR(seismic_data1, x_result)
+        ssims[i]=ssim(seismic_data1,x_result)
+        #x_result = np.sqrt(np.abs(x_result)) * np.sign(x_result)
+        savemat('prueba.mat',{'data':x_result, 'orig':ss2})
         print("iter: ", i,"PSNR: ", psnrs[i],"SNR: ", snrs[i], " ssim: ", ssims[i])
+        plt.imshow(x_result, cmap='seismic',aspect=0.1)
+        plt.show()
+        plt.imshow(seismic_data1, cmap='seismic', aspect=0.1)
+        plt.show()
+        break
 
     savemat('./FK-'+algstr+mstr+'33-s.mat',{'psnrs':psnrs,'snrs':snrs, 'ssims':ssims})
 
