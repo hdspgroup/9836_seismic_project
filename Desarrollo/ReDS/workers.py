@@ -99,3 +99,32 @@ class TabWorker(QtCore.QObject):
     def run(self):
         self.progress.emit()
         self.finished.emit()
+
+
+# ------------------------------------------------- Shots -------------------------------------------------
+
+class ShotWorker(QtCore.QObject):
+    finished = QtCore.pyqtSignal(str, dict, dict)
+    progress = QtCore.pyqtSignal(str, int, dict, np.ndarray, dict)
+
+    def __init__(self, name, function, maxiter, sampling_dict, performance_graphic, report_graphic):
+        super().__init__()
+        self.data_name = name
+        self.function = function
+        self.maxiter = maxiter
+        self.sampling_dict = sampling_dict
+        self.graphics = dict(performance=performance_graphic, report=report_graphic)
+
+    def run(self):
+        generator = self.function()
+        for itr, res_dict in generator:
+            self.progress.emit(self.data_name, itr, res_dict, self.sampling_dict, self.graphics)
+
+            if itr == self.maxiter:
+                break
+
+        # get last yield
+        x_result, hist = next(generator)
+
+        self.finished.emit(self.data_name, {'result': x_result, 'hist': hist, 'sampling_dict': self.sampling_dict},
+                           self.graphics)

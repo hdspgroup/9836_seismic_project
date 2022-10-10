@@ -3,6 +3,8 @@ import numpy as np
 
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+
 from skimage.metrics import structural_similarity as ssim
 
 from Algorithms.Function import random_sampling, ShotAlgorithms, PSNR
@@ -94,6 +96,35 @@ axs[1, 3].imshow(x_result[..., rem_shots[3]], cmap='seismic', aspect='auto')
 axs[1, 3].set_title(f'Reconstructed shot {rem_shots[3]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
 
 fig.tight_layout()
+plt.show()
+
+# performance
+
+iteracion = np.linspace(1, len(hist) - 1, len(hist) - 1)
+
+fig = plt.figure()
+axes_1 = fig.add_subplot(111)
+axes_2 = axes_1.twinx()
+
+color = 'tab:red'
+axes_1.set_xlabel('iteraciones')
+axes_1.set_ylabel('ssim', color=color)
+axes_1.plot(iteracion, hist[1:, 1], color=color)
+axes_1.tick_params(axis='y', labelcolor=color, length=5)
+axes_1.yaxis.set_major_locator(MaxNLocator(8))
+axes_1.set_xscale('log')
+axes_1.grid(axis='both', which="both", linestyle='--')
+axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
+
+color = 'tab:blue'
+axes_2.set_ylabel('psnr', color=color)
+axes_2.plot(iteracion, hist[1:, 0], color=color)
+axes_2.tick_params(axis='y', labelcolor=color, length=5)
+axes_2.yaxis.set_major_locator(MaxNLocator(8))
+axes_2.set_xscale('log')
+axes_2.grid(axis='both', which="both", linestyle='--')
+axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
+
 plt.show()
 
 print('Fin')

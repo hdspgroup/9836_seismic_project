@@ -1091,6 +1091,17 @@ class ShotAlgorithms:
         print(f'H.shape={self.H.shape}, mask.shape={self.mask.shape}')
         return self.x * (1 - self.mask)
 
+    def get_algorithm(self, algorithm_case):
+        if algorithm_case == "fast_marching":
+            func = self.FastMarching
+
+        else:
+            showCritical(
+                "No se encontró el algoritmo. Por favor intente nuevamente o utilice un algoritmo diferente.")
+            return
+
+        return func
+
     def get_results(self, alg_name):
         '''
         This function allows to get the final results of the implemented algorithms
@@ -1104,10 +1115,6 @@ class ShotAlgorithms:
         ----------
         alg_name :    str
                       The name of the algorithm to solve.
-        max_itr :     int
-                      The maximum number of iteration for the algorithm.
-        parameters :  dict
-                      Parameters of the selected algorithm to solve.
 
         Returns
         -------
@@ -1146,15 +1153,21 @@ class ShotAlgorithms:
         mask = np.reshape(self.mask, [imShape[0], imShape[1], imShape[2]])
 
         hist = []
-        for i in tqdm(range(1, x.shape[-1] - 1)):
+        max_itr = x.shape[-1] - 1
+        hist = np.zeros((max_itr + 1, 3))
+        for i in tqdm(range(1, max_itr)):
             tmp = cv2.inpaint(x[:, :, [i - 1, i, i + 1]], mask[..., 0], t_m + 1, flags=paint_method)
             aux = output[..., [i - 1, i, i + 1]]
             aux = (tmp.astype('float32') + aux.astype('float32')) / 2
             output[..., [i - 1, i, i + 1]] = aux = aux.astype('uint8')
 
-            if self.print_info:
-                hist.append(PSNR(x, output))
-                # print(hist[-1])
+            psnr_val = PSNR(x, output)
+            ssim_val = ssim(x, output)
+            tv_val = tv_norm(x)
+
+            hist[i, 0] = psnr_val
+            hist[i, 1] = ssim_val
+            hist[i, 2] = tv_val
 
             yield i, dict(output=output, hist=hist)
 
@@ -1163,8 +1176,15 @@ class ShotAlgorithms:
         output = np.transpose(output, [0, 2, 1])
         x = np.transpose(x, [0, 2, 1])
 
+        psnr_val = PSNR(x, output)
+        ssim_val = ssim(x, output)
+        tv_val = tv_norm(x)
+
+        hist[max_itr, 0] = psnr_val
+        hist[max_itr, 1] = ssim_val
+        hist[max_itr, 2] = tv_val
+
         if self.print_info:
-            hist.append(PSNR(x, output))
             print(hist[-1])
 
         yield output, hist

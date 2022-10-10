@@ -494,3 +494,173 @@ class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
                 "Ocurrió un error inesperado al procesar el dato sísmico. Por favor, intente nuevamente o "
                 "utilice un dato diferente.", details=msg)
             return
+
+
+# ---------------------------------------------- shots ----------------------------------------------
+
+class ShotPerformanceGraphic(FigureCanvasQTAgg):
+    def __init__(self, is_complete=True):
+        self.is_complete = is_complete
+        self.performance_data = dict(iteracion=[], error=[], psnr=[], ssim=[], tv=[])
+        self.figure = plt.figure()
+        plt.subplots_adjust(left=0.1, right=0.9, bottom=0.08, top=0.92)
+        super(ShotPerformanceGraphic, self).__init__(self.figure)
+
+    def update_values(self, iteracion, error, psnr, ssim, tv):
+        self.performance_data['iteracion'] = iteracion
+        self.performance_data['psnr'] = psnr
+        self.performance_data['ssim'] = ssim
+        self.performance_data['tv'] = tv
+
+    def update_figure(self):
+        try:
+            iteracion = self.performance_data['iteracion']
+            psnr = self.performance_data['psnr']
+            ssim = self.performance_data['ssim']
+            tv = self.performance_data['tv']
+
+            self.figure.clear()
+            self.figure.suptitle(f'Resultados del experimento')
+
+            axes_1 = self.figure.add_subplot(111)
+            axes_2 = axes_1.twinx()
+
+            color = 'tab:red'
+            axes_1.set_xlabel('iteraciones')
+            axes_1.plot(iteracion, ssim if self.is_complete else ssim, color=color,
+                        label='SSIM' if self.is_complete else 'SSIM')
+            axes_1.tick_params(axis='y', labelcolor=color, length=5)
+            axes_1.grid(axis='both', linestyle='--')
+
+            axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
+
+            color = 'tab:blue'
+            axes_2.plot(iteracion, psnr if self.is_complete else tv, '--', color=color)
+            axes_1.plot(np.nan, '--', color=color, label='PSNR' if self.is_complete else 'Norma TV')
+            axes_2.tick_params(axis='y', labelcolor=color, length=5)
+            axes_2.grid(axis='both', linestyle='--')
+
+            axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
+
+            if self.is_complete:
+                if np.abs(psnr[-1]) == np.inf:
+                    # print a text in the bottom part of axes_2 that indicates that the psnr is infinite
+                    text_kwargs = dict(ha='center', va='center', fontsize=16, color=color)
+                    axes_2.text(0.5, 0.1, f'PSNR is {psnr[-1]}, it will be not plotted', horizontalalignment='center',
+                                verticalalignment='center', transform=axes_2.transAxes, **text_kwargs)
+
+            axes_1.legend(loc='best')
+            self.draw()
+
+        except BaseException as err:
+            msg = f"Unexpected {err=}, {type(err)=}"
+            showCritical("Ocurrió un error inesperado al procesar el dato sísmico. Por favor, intente nuevamente o "
+                         "utilice un dato diferente.", details=msg)
+            return
+
+
+class ShotReconstructionGraphic(FigureCanvasQTAgg):
+    def __init__(self, is_complete=True):
+        self.is_complete = is_complete
+        self.report_data = None
+        self.figure = plt.figure()
+        left, right, bottom, top = [0.05, 0.95, 0.05, 0.90] if is_complete else [0.05, 0.98, 0.05, 0.85]
+        plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top)
+        super(ShotReconstructionGraphic, self).__init__(self.figure)
+
+    def update_report(self, report_data):
+        self.report_data = report_data
+
+    def update_figure(self):
+        try:
+            self.figure.clear()
+
+            x_result = self.report_data['x_result']
+            sampling = {item[0]: item[1] for item in self.report_data['sampling']}
+
+            if self.is_complete:
+                x = sampling['x_ori']
+                y_rand = sampling['y_rand']
+                pattern_rand = sampling['pattern_rand']
+            else:
+                x = sampling['x_ori']
+                y_rand = x
+                pattern_rand = np.double(sampling['H'])
+
+            temp = np.asarray(range(0, pattern_rand.shape[0]))
+            pattern_rand_b2 = np.asarray(pattern_rand, dtype=bool) == 0
+            H_elim = temp[pattern_rand_b2]
+
+            case = str(self.report_data['algorithm_name'])
+            self.figure.suptitle(f'Resultados del algoritmo {case}')
+
+            if self.is_complete:
+                axs = self.figure.subplots(2, 2)
+
+                axs[0, 0].imshow(x, cmap='gray', aspect='auto')
+                axs[0, 0].set_title('Referencia')
+
+                ytemp = y_rand.copy()
+                condition = H_elim.size > 0
+                if condition:
+                    ytemp[:, H_elim] = 1
+                axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
+                axs[1, 0].set_title('Medidas')
+
+                aux_x = x[:, H_elim] if condition else x
+                aux_x_result = x_result[:, H_elim] if condition else x_result
+                metric = PSNR(aux_x, aux_x_result)
+                metric_ssim = ssim(aux_x, aux_x_result)
+                axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
+                axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+
+                index = 5
+                # aux_H_elim = index if condition else H_elim[index]
+                aux_H_elim = H_elim[index]
+                axs[1, 1].plot(x[:, aux_H_elim], 'r', label='Referencia')
+                axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
+                axs[1, 1].legend(loc='best')
+                axs[1, 1].set_title('Traza ' + str("{:.0f}".format(aux_H_elim)))
+                axs[1, 1].grid(axis='both', linestyle='--')
+
+            else:
+                axs = self.figure.subplots(2, 3)
+
+                metric = tv_norm(x)
+                axs[0, 0].imshow(x, cmap='gray', aspect='auto')
+                axs[0, 0].set_title(f'Reference \n TV-norm: {metric:0.2f}')
+
+                metric = tv_norm(x_result)
+                axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
+                axs[0, 1].set_title(f'Reconstructed \n TV norm: {metric:0.2f}')
+
+                index = 5
+                axs[0, 2].plot(x_result[:, H_elim[index]], 'b', label='Recovered')
+                axs[0, 2].legend(loc='best')
+                axs[0, 2].set_title('Trace ' + str("{:.0f}".format(H_elim[index])))
+                axs[0, 2].grid(axis='both', linestyle='--')
+
+                # fk domain
+
+                # calculate FK domain
+                FK, f, kx = fk(x, dt=0.568, dx=5)
+                axs[1, 0].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[1, 0].set_title('FK reference')
+
+                FK, f, kx = fk(x_result, dt=0.568, dx=5)
+                axs[1, 1].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[1, 1].set_title('FK reconstruction')
+
+                index = -1
+                axs[1, 2].plot(x_result[:, H_elim[index]], 'b', label='Recovered')
+                axs[1, 2].legend(loc='best')
+                axs[1, 2].set_title('Trace ' + str("{:.0f}".format(H_elim[index])))
+                axs[1, 2].grid(axis='both', linestyle='--')
+
+            self.draw()
+
+        except BaseException as err:
+            msg = f"Unexpected {err=}, {type(err)=}"
+            showCritical("Ocurrió un error inesperado al procesar el dato sísmico. Por favor, intente nuevamente o "
+                         "utilice un dato diferente.", details=msg)
+            return

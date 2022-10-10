@@ -22,17 +22,16 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from scipy.io import loadmat
 from PyQt5.QtGui import QIcon
 
-from Algorithms.Function import Sampling, Algorithms
+from Algorithms.Function import Sampling, ShotAlgorithms
 from about_window import UIAboutWindow
 from element_help_window import UIElementHelpWindow
 from equation_window import UIEquationWindow
 from equation_comparison_window import UIComparisonEquationWindow
-from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic, ComparisonPerformanceGraphic, \
-    ComparisonReconstructionGraphic, CustomToolbar
+from graphics import ShotPerformanceGraphic, ShotReconstructionGraphic
 from gui.scripts.alerts import showWarning, showCritical
 from jitter_window import UIJitterWindow
 from seed_help_window import UISeedHelpWindow
-from workers import Worker, TuningWorker, ComparisonWorker, TabWorker
+from workers import ShotWorker, TuningWorker, ComparisonWorker, TabWorker
 
 
 def solve_path(relative_path):
@@ -124,9 +123,9 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.algorithmComboBox = QtWidgets.QComboBox(self.algorithmGroupBox)
         self.algorithmComboBox.setObjectName("algorithmComboBox")
         self.algorithmComboBox.addItem("")
-        self.algorithmComboBox.addItem("")
-        self.algorithmComboBox.addItem("")
-        self.algorithmComboBox.addItem("")
+        # self.algorithmComboBox.addItem("")
+        # self.algorithmComboBox.addItem("")
+        # self.algorithmComboBox.addItem("")
         self.algorithmHLayout.addWidget(self.algorithmComboBox)
         self.algorithmPushButton = QtWidgets.QPushButton(self.algorithmGroupBox)
         self.algorithmPushButton.setEnabled(True)
@@ -137,55 +136,55 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.algorithmPushButton.setIcon(icon)
         self.algorithmPushButton.setObjectName("algorithmPushButton")
         self.algorithmHLayout.addWidget(self.algorithmPushButton)
-        self.maxiterLabel = QtWidgets.QLabel(self.algorithmGroupBox)
-        self.maxiterLabel.setObjectName("maxiterLabel")
-        self.algorithmHLayout.addWidget(self.maxiterLabel)
-        self.maxiterSpinBox = QtWidgets.QSpinBox(self.algorithmGroupBox)
-        self.maxiterSpinBox.setMinimum(1)
-        self.maxiterSpinBox.setMaximum(9999)
-        self.maxiterSpinBox.setProperty("value", 10)
-        self.maxiterSpinBox.setObjectName("maxiterSpinBox")
-        self.algorithmHLayout.addWidget(self.maxiterSpinBox)
+        # self.maxiterLabel = QtWidgets.QLabel(self.algorithmGroupBox)
+        # self.maxiterLabel.setObjectName("maxiterLabel")
+        # self.algorithmHLayout.addWidget(self.maxiterLabel)
+        # self.maxiterSpinBox = QtWidgets.QSpinBox(self.algorithmGroupBox)
+        # self.maxiterSpinBox.setMinimum(1)
+        # self.maxiterSpinBox.setMaximum(9999)
+        # self.maxiterSpinBox.setProperty("value", 10)
+        # self.maxiterSpinBox.setObjectName("maxiterSpinBox")
+        # self.algorithmHLayout.addWidget(self.maxiterSpinBox)
         self.algorithmHLayout.setStretch(0, 5)
         self.algorithmGroupVLayout.addLayout(self.algorithmHLayout)
-        self.paramsHLayout = QtWidgets.QHBoxLayout()
-        self.paramsHLayout.setObjectName("paramsHLayout")
-        self.param1Label = QtWidgets.QLabel(self.algorithmGroupBox)
-        self.param1Label.setText("")
-        self.param1Label.setTextFormat(QtCore.Qt.AutoText)
-        self.param1Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
-        self.param1Label.setScaledContents(True)
-        self.param1Label.setWordWrap(False)
-        self.param1Label.setIndent(-1)
-        self.param1Label.setObjectName("param1Label")
-        self.paramsHLayout.addWidget(self.param1Label)
-        self.param1LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
-        self.param1LineEdit.setObjectName("param1LineEdit")
-        self.paramsHLayout.addWidget(self.param1LineEdit)
-        self.param2Label = QtWidgets.QLabel(self.algorithmGroupBox)
-        self.param2Label.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.param2Label.sizePolicy().hasHeightForWidth())
-        self.param2Label.setSizePolicy(sizePolicy)
-        self.param2Label.setText("")
-        self.param2Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu.png")))
-        self.param2Label.setScaledContents(True)
-        self.param2Label.setObjectName("param2Label")
-        self.paramsHLayout.addWidget(self.param2Label)
-        self.param2LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
-        self.param2LineEdit.setObjectName("param2LineEdit")
-        self.paramsHLayout.addWidget(self.param2LineEdit)
-        self.param3Label = QtWidgets.QLabel(self.algorithmGroupBox)
-        self.param3Label.setText("")
-        self.param3Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho.png")))
-        self.param3Label.setObjectName("param3Label")
-        self.paramsHLayout.addWidget(self.param3Label)
-        self.param3LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
-        self.param3LineEdit.setObjectName("param3LineEdit")
-        self.paramsHLayout.addWidget(self.param3LineEdit)
-        self.algorithmGroupVLayout.addLayout(self.paramsHLayout)
+        # self.paramsHLayout = QtWidgets.QHBoxLayout()
+        # self.paramsHLayout.setObjectName("paramsHLayout")
+        # self.param1Label = QtWidgets.QLabel(self.algorithmGroupBox)
+        # self.param1Label.setText("")
+        # self.param1Label.setTextFormat(QtCore.Qt.AutoText)
+        # self.param1Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
+        # self.param1Label.setScaledContents(True)
+        # self.param1Label.setWordWrap(False)
+        # self.param1Label.setIndent(-1)
+        # self.param1Label.setObjectName("param1Label")
+        # self.paramsHLayout.addWidget(self.param1Label)
+        # self.param1LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
+        # self.param1LineEdit.setObjectName("param1LineEdit")
+        # self.paramsHLayout.addWidget(self.param1LineEdit)
+        # self.param2Label = QtWidgets.QLabel(self.algorithmGroupBox)
+        # self.param2Label.setEnabled(True)
+        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        # sizePolicy.setHorizontalStretch(0)
+        # sizePolicy.setVerticalStretch(0)
+        # sizePolicy.setHeightForWidth(self.param2Label.sizePolicy().hasHeightForWidth())
+        # self.param2Label.setSizePolicy(sizePolicy)
+        # self.param2Label.setText("")
+        # self.param2Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu.png")))
+        # self.param2Label.setScaledContents(True)
+        # self.param2Label.setObjectName("param2Label")
+        # self.paramsHLayout.addWidget(self.param2Label)
+        # self.param2LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
+        # self.param2LineEdit.setObjectName("param2LineEdit")
+        # self.paramsHLayout.addWidget(self.param2LineEdit)
+        # self.param3Label = QtWidgets.QLabel(self.algorithmGroupBox)
+        # self.param3Label.setText("")
+        # self.param3Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho.png")))
+        # self.param3Label.setObjectName("param3Label")
+        # self.paramsHLayout.addWidget(self.param3Label)
+        # self.param3LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
+        # self.param3LineEdit.setObjectName("param3LineEdit")
+        # self.paramsHLayout.addWidget(self.param3LineEdit)
+        # self.algorithmGroupVLayout.addLayout(self.paramsHLayout)
         self.mainLayout.addWidget(self.algorithmGroupBox)
 
         self.tuningGroupBox = QtWidgets.QGroupBox(self.centralwidget)
@@ -744,9 +743,9 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         icon7.addPixmap(QtGui.QPixmap(solve_path("assets/icons/comparison.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.comparisonAction.setIcon(icon7)
         self.comparisonAction.setObjectName("comparisonAction")
-        self.toolBar.addAction(self.mainAction)
-        self.toolBar.addAction(self.tuningAction)
-        self.toolBar.addAction(self.comparisonAction)
+        # self.toolBar.addAction(self.mainAction)
+        # self.toolBar.addAction(self.tuningAction)
+        # self.toolBar.addAction(self.comparisonAction)
         self.toolBar.addAction(self.aboutOfAction)
 
         self.retranslateUi()
@@ -776,7 +775,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         algorithm = self.algorithmComboBox.currentText().lower()
         tuning_type = self.paramTuningComboBox.currentText().lower()
 
-        self.update_main_visible_algorithms(algorithm)
+        # self.update_main_visible_algorithms(algorithm)
         self.update_tuning_visible_algorithms(algorithm, tuning_type)
 
         self.tuningGroupBox.setVisible(False)
@@ -810,7 +809,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         dirs = lambda: dict(uploaded=[], temp_saved='', saved='', report=[])
         self.directories = {t_mode: {d_mode: dirs() for d_mode in data_mode} for t_mode in tab_mode}
 
-        self.state = dict(main=dict(progress=dict(iteration={}, error={}, psnr={}, ssim={}, tv={})),
+        self.state = dict(main=dict(progress=dict(iteration={}, psnr={}, ssim={}, tv={})),
                           tuning=dict(progress=dict(total_runs={}, fixed_params={}, current_scale={})),
                           comparison=dict(progress=dict(iteration={}, errors={}, psnrs={}, ssims={}, tvs={})))
 
@@ -837,23 +836,25 @@ class UIMainBWindow(QtWidgets.QMainWindow):
 
         self.icons_path = 'assets/parameters'
 
-        lmb = 'lambda'
-        mu = 'mu'
-        rho = 'rho'
-        alpha = 'alpha'
-        beta = 'beta'
-        gamma = 'gamma'
+        # lmb = 'lambda'
+        # mu = 'mu'
+        # rho = 'rho'
+        # alpha = 'alpha'
+        # beta = 'beta'
+        # gamma = 'gamma'
 
         self.param_type = ['init', 'end', 'list']
 
-        self.params = dict(fista=[[lmb, 0.1, 0.5], [mu, 0.3, 0.7]],
-                           gap=[[lmb, 1.0, 1.5]],
-                           twist=[[lmb, 0.9, 1.5], [alpha, 1.2, 1.7], [beta, 1.998, 2.3]],
-                           admm=[[rho, 0.5, 1.5], [gamma, 1.0, 1.7], [lmb, 0.0078, 0.009]])
+        # self.params = dict(fista=[[lmb, 0.1, 0.5], [mu, 0.3, 0.7]],
+        #                    gap=[[lmb, 1.0, 1.5]],
+        #                    twist=[[lmb, 0.9, 1.5], [alpha, 1.2, 1.7], [beta, 1.998, 2.3]],
+        #                    admm=[[rho, 0.5, 1.5], [gamma, 1.0, 1.7], [lmb, 0.0078, 0.009]])
+        self.params = dict(fast_marching=[['init', 0.0, 0.0], ['end', 0.0, 0.0]])
 
-        self.main_params = [[self.param1Label, self.param1LineEdit],
-                            [self.param2Label, self.param2LineEdit],
-                            [self.param3Label, self.param3LineEdit]]
+        # self.main_params = [[self.param1Label, self.param1LineEdit],
+        #                     [self.param2Label, self.param2LineEdit],
+        #                     [self.param3Label, self.param3LineEdit]]
+        self.main_params = None
 
         self.tuning_params = [[self.param1InitLabel, self.param1InitLineEdit,
                                self.param1EndLabel, self.param1EndLineEdit],
@@ -964,13 +965,15 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                     data_name = uploaded_directory.split('/')[-1].split('.')[0]
 
                     expPerformanceTab, performanceGraphic = self.add_tab(data_name, self.performanceTabWidget,
-                                                                         PerformanceGraphic(is_complete=is_complete))
+                                                                         ShotPerformanceGraphic(
+                                                                             is_complete=is_complete))
                     self.graphics['main'][data_mode]['performance'][data_name] = performanceGraphic
                     performanceGraphic.update_values(**performance_data)
                     performanceGraphic.update_figure()
 
                     expReportTab, reconstructionGraphic = self.add_tab(data_name, self.reportTabWidget,
-                                                                       ReconstructionGraphic(is_complete=is_complete))
+                                                                       ShotReconstructionGraphic(
+                                                                           is_complete=is_complete))
                     self.graphics['main'][data_mode]['report'][data_name] = reconstructionGraphic
                     reconstructionGraphic.update_report(data)
                     reconstructionGraphic.update_figure()
@@ -1143,6 +1146,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.update_tuning_visible_algorithms(algorithm, tuning_type)
 
     def update_tuning_visible_algorithms(self, algorithm, tuning_type):
+        algorithm = str.replace(algorithm, ' ', '_')
 
         for i in range(3):
             label_init = self.tuning_params[i][0]
@@ -1192,7 +1196,8 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         algorithm = algorithm.lower()
 
         if self.global_variables['tab_mode'] == 'main':
-            self.update_main_visible_algorithms(algorithm)
+            # self.update_main_visible_algorithms(algorithm)
+            pass
 
         else:
             count = 0
@@ -1262,6 +1267,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                               comparison=['comparison_data', 'de comparación'])
             idx_list = []
             for i, filepath in enumerate(filenames):
+                filename = filepath.split('/')[-1]
                 filename = filepath.split('/')[-1]
                 data = np.load(filepath, allow_pickle=True)
 
@@ -1712,7 +1718,6 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         if tab_mode in ['main', 'comparison']:
             suffix = '' if tab_mode == 'main' else 's'
             self.state[tab_mode]['progress']['iteration'][data_name] = []
-            self.state[tab_mode]['progress'][f'error{suffix}'][data_name] = []
             self.state[tab_mode]['progress'][f'psnr{suffix}'][data_name] = []
             self.state[tab_mode]['progress'][f'ssim{suffix}'][data_name] = []
             self.state[tab_mode]['progress'][f'tv{suffix}'][data_name] = []
@@ -1731,11 +1736,6 @@ class UIMainBWindow(QtWidgets.QMainWindow):
             keys.remove('__version__')
             keys.remove('__globals__')
             data = data[keys[0]]
-
-        if data.ndim > 2:
-            data = data[..., int(data.shape[-1] / 2)]
-        else:  # only for data.npy
-            data = data.T
 
         data = np.nan_to_num(data, nan=0)
         data = data / np.max(np.abs(data))
@@ -1760,8 +1760,8 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         lista = self.elementLineEdit
 
         try:
-            sampling_dict, H = self.sampling.apply_sampling(data, mode, jitter_params, lista, seed,
-                                                            compression_ratio)
+            sampling_dict, H = self.sampling.apply_sampling(data[:, int(data.shape[1] / 2), :], mode, jitter_params,
+                                                            lista, seed, compression_ratio)
 
             if data_mode == 'incomplete':
                 sampling_dict = {key: value for key, value in sampling_dict if key == 'x_ori'}
@@ -1773,6 +1773,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
 
     def load_algorithm(self, data_name, seismic_data, H, sampling_dict):
         self.algorithm_name = self.algorithmComboBox.currentText().lower()
+        self.algorithm_name = str.replace(self.algorithm_name, ' ', '_')
         tuning_type = self.paramTuningComboBox.currentText().lower()
         fixed_param = self.paramComboBox.currentIndex()
         self.current_scale = self.scaleComboBox.currentText().lower()
@@ -1780,12 +1781,8 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         is_complete = True if data_mode == 'complete' else False
 
         if self.global_variables['tab_mode'] == 'main':
-            params = dict(param1=self.param1LineEdit.text(),
-                          param2=self.param2LineEdit.text(),
-                          param3=self.param3LineEdit.text())
-
-            Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')  # Assuming using DCT2D ad IDCT2D for all algorithms
-            algorithm, parameters = Alg.get_algorithm(self.algorithm_name, self.max_iter, **params)
+            Alg = ShotAlgorithms(seismic_data, H)
+            algorithm = Alg.get_algorithm(self.algorithm_name)
 
             if data_name in self.graphics['main'][data_mode]['performance'].keys():
                 performance_graphic = self.graphics['main'][data_mode]['performance'][data_name]
@@ -1808,8 +1805,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
             if not is_complete:
                 sampling_dict['H'] = Alg.H_raw
                 sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
-            return Worker(data_name, algorithm, parameters, self.max_iter, sampling_dict,
-                          performance_graphic, report_graphic)
+            return ShotWorker(data_name, algorithm, self.max_iter, sampling_dict, performance_graphic, report_graphic)
 
         elif self.global_variables['tab_mode'] == 'tuning':
             param_list = []
@@ -1930,7 +1926,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
 
         try:
             self.iters = 0
-            self.max_iter = int(self.maxiterSpinBox.text())
+            self.max_iter = None  # int(self.maxiterSpinBox.text())
 
             for uploaded_directory in uploaded_directories:
                 data_name = uploaded_directory.split('/')[-1].split('.')[0]
@@ -1955,7 +1951,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                 if tab_mode == 'main':
                     report_progress = self.report_main_progress
                     save_experiment = self.save_main_experiment
-                    self.max_iter_progress = len(uploaded_directories) * self.max_iter
+                    self.max_iter_progress = len(uploaded_directories)  # * self.max_iter
                 elif tab_mode == 'tuning':
                     report_progress = self.report_tuning_progress
                     save_experiment = self.save_tuning_experiment
@@ -1963,7 +1959,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                 else:
                     report_progress = self.report_comparison_progress
                     save_experiment = self.save_comparison_experiment
-                    self.max_iter_progress = len(uploaded_directories) * self.max_iter
+                    self.max_iter_progress = len(uploaded_directories)  # * self.max_iter
 
                 self.workers[-1].progress.connect(report_progress)
                 self.threads[-1].start()
@@ -1994,19 +1990,17 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         tv = np.round(res_dict['hist'][iter, 3], 3)
 
         iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration'][data_name]
-        error_list = self.state[self.global_variables['tab_mode']]['progress']['error'][data_name]
         psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr'][data_name]
         ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssim'][data_name]
         tv_list = self.state[self.global_variables['tab_mode']]['progress']['tv'][data_name]
 
         iteration_list.append(iter)
-        error_list.append(err)
         psnr_list.append(psnr)
         ssim_list.append(ssim)
         tv_list.append(tv)
 
         if iter % (self.max_iter // 10) == 0 or iter == self.max_iter:
-            graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list, tv_list)
+            graphics['performance'].update_values(iteration_list, psnr_list, ssim_list, tv_list)
             graphics['performance'].update_figure()
 
             graphics['report'].update_report(
@@ -2140,15 +2134,15 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.dataTreeWidget.headerItem().setText(0, _translate("mainWindow", "Datos actuales"))
         self.loadPushButton.setText(_translate("mainWindow", "Cargar"))
         self.algorithmGroupBox.setTitle(_translate("mainWindow", "Algoritmos"))
-        self.algorithmComboBox.setItemText(0, _translate("mainWindow", "FISTA"))
-        self.algorithmComboBox.setItemText(1, _translate("mainWindow", "GAP"))
-        self.algorithmComboBox.setItemText(2, _translate("mainWindow", "TwIST"))
-        self.algorithmComboBox.setItemText(3, _translate("mainWindow", "ADMM"))
+        self.algorithmComboBox.setItemText(0, _translate("mainWindow", "Fast Marching"))
+        # self.algorithmComboBox.setItemText(1, _translate("mainWindow", "GAP"))
+        # self.algorithmComboBox.setItemText(2, _translate("mainWindow", "TwIST"))
+        # self.algorithmComboBox.setItemText(3, _translate("mainWindow", "ADMM"))
         self.algorithmPushButton.setToolTip(_translate("mainWindow", "Ver ecuación"))
-        self.maxiterLabel.setText(_translate("mainWindow", "Máxima iteración"))
-        self.param1LineEdit.setText(_translate("mainWindow", "0.1"))
-        self.param2LineEdit.setText(_translate("mainWindow", "0.3"))
-        self.param3LineEdit.setText(_translate("mainWindow", "1"))
+        # self.maxiterLabel.setText(_translate("mainWindow", "Máxima iteración"))
+        # self.param1LineEdit.setText(_translate("mainWindow", "0.1"))
+        # self.param2LineEdit.setText(_translate("mainWindow", "0.3"))
+        # self.param3LineEdit.setText(_translate("mainWindow", "1"))
         self.tuningGroupBox.setTitle(_translate("mainWindow", "Ajuste de parámetros"))
         self.paramTuningLabel.setText(_translate("mainWindow", "Tipo"))
         self.paramTuningComboBox.setItemText(0, _translate("mainWindow", "Intervalo"))
@@ -2228,7 +2222,7 @@ if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = UIMainBWindow()
+    MainWindow = UIMainBWindow(launcher=None)
 
     qtRectangle = MainWindow.frameGeometry()
     centerPoint = QtWidgets.QDesktopWidget().availableGeometry().center()
