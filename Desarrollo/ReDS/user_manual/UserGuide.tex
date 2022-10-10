@@ -103,7 +103,21 @@ Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarbur
 
 \section{Visión General de la Aplicación ReDs}
 
-Esta aplicación permite la reconstrucción de receptores y disparos sísmicos mediante 4 algoritmos diferentes:
+Esta aplicación Reconstrucción de Datos Sísmicos (ReDs) permite la reconstrucción de receptores y disparos sísmicos. Para esto, la aplicación ReDs dispone de dos modos de operación:
+\begin{dingautolist}{192}
+	\setlength\itemsep{0em}
+	\item Reconstrucción de Receptores (ReDs - RR)
+	\item Reconstrucción de Disparos (ReDs - RD)
+\end{dingautolist}
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.65\linewidth]{launch2}
+	\captionof{figure}{Secciones de la pantalla de inicio de ReDs.}
+	\label{fig:launch}
+\end{Figure}
+
+Ambos modos de operación, RR y RD, realizan la reconstrucción de datos sísmicos usando 4 algoritmos numéricos diferentes:
 \begin{itemize}[leftmargin=0.5in]
 	\setlength\itemsep{0em}
 	\item FISTA (Fast Iterative Shrinkage-Thresholding Algorithm): permite resolver problemas inversos lineales mediante un algoritmo iterativo rápido
@@ -111,9 +125,10 @@ Esta aplicación permite la reconstrucción de receptores y disparos sísmicos m
 	\item TwIST (Two-step Iterative Shrinkage/Thresholding): basado en el algoritmo ISTA, permite la resolución de problemas inversos
 	\item ADMM (Alternating Direction Method of Multipliers): resuelve problemas de optimización convexos dividiéndolos en partes más pequeñas.
 \end{itemize}
-El usuario puede configurar cada uno de los algoritmos de reconstrucción de tal manera que pueda realizar diferentes tipos de submuestreo y ajuste de parámetros, todo desde una interfaz gráfica de usuario simple y clara, tal cual como se observa en la figura \ref{fig:vision}.
 
-La interfaz gráfica de la aplicación se encuentra distribuida en 7 secciones, a mencionar: 
+El usuario puede configurar cada uno de los algoritmos de reconstrucción de tal manera que pueda realizar diferentes tipos de submuestreo y ajuste de parámetros, todo desde una interfaz gráfica de usuario simple y clara. Aunque los modos de reconstrucción RR y RD presentan diferencias en su operación, están diseñados bajo las mismas directivas. Por esta razón, ambas interfaces gráficas cuentan con varias secciones en común.
+
+La figura \ref{fig:vision} presenta las 7 secciones de la interfaz general del modo Reds - RR, a mencionar:
 \begin{dingautolist}{192}
 	\setlength\itemsep{0em}
 	\item Barra del menú
@@ -127,8 +142,8 @@ La interfaz gráfica de la aplicación se encuentra distribuida en 7 secciones, 
 
 \begin{Figure}
     \centering
-    \includegraphics[width=1\linewidth]{main.png}
-     \captionof{figure}{Secciones de la interfaz general de la aplicación ReDs.}
+    \includegraphics[width=1\linewidth]{figures/vision_v2}
+     \captionof{figure}{Secciones de la interfaz general del modo Reds - RR.}
     \label{fig:vision}
 \end{Figure}
 
@@ -749,7 +764,7 @@ Como se mencionó al principio de este manual, esta aplicación se encuentra aso
 \begin{Figure}
     \centering
     \includegraphics[width=0.25\linewidth]{about-tab.png}
-     \captionof{figure}{Botón de Acerca de.}
+    \captionof{figure}{Botón de Acerca de.}
     \label{fig:about_tab}
 \end{Figure}
 
