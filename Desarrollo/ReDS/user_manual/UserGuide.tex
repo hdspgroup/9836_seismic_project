@@ -67,9 +67,9 @@
 \setlength{\itemsep}{0em}
 
 \title{\large{Manual de Usuario}\\ \vspace{10mm} \huge{Reconstrucción de Datos Sísmicos}\\ \vspace{5mm} \huge{ReDs}}
-\author{\includegraphics[width=14cm]{figures/upper_logo.png} \\ \includegraphics[width=14cm]{figures/lower_logo.png} \\ Emmanuel Martínez \\ Crisóstomo A. Barajas-Solano}
+\author{\includegraphics[width=14cm]{figures/all_logos3.png} \\ Emmanuel Martínez \\ Crisóstomo A. Barajas-Solano}
 \softwarelogo{\includegraphics[width=7cm]{figures/icon}}
-\version{2022.7}
+\version{2022.10}
 
 
 
@@ -80,7 +80,7 @@
 \newpage\null\thispagestyle{empty}\newpage
 
 \begin{center}
-\includegraphics[width=.9\linewidth]{header.png}
+\includegraphics[width=.65\linewidth]{launch.png}
 \end{center}
 \begin{abstract}
 %\includegraphics[width=1.0\linewidth]{PhysLogger.png}\\
@@ -103,11 +103,11 @@ Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarbur
 
 \section{Visión General de la Aplicación ReDs}
 
-Esta aplicación permite la reconstrucción de trazas de datos sísmicos mediante 4 algoritmos diferentes:
+Esta aplicación permite la reconstrucción de receptores y disparos sísmicos mediante 4 algoritmos diferentes:
 \begin{itemize}[leftmargin=0.5in]
 	\setlength\itemsep{0em}
 	\item FISTA (Fast Iterative Shrinkage-Thresholding Algorithm): permite resolver problemas inversos lineales mediante un algoritmo iterativo rápido
-	\item GAP (Generalized Alternating Projection): resuelve el problema de seguimiento de base grupal, que extiende el seguimiento de base reemplazando la norma l1 por una norma ponderada l2,1.
+	\item GAP (Generalized Alternating Projection): resuelve el problema de seguimiento de base grupal, que extiende el seguimiento de base reemplazando la norma $ \ell_1 $ por una norma ponderada $ \ell_{2,1} $.
 	\item TwIST (Two-step Iterative Shrinkage/Thresholding): basado en el algoritmo ISTA, permite la resolución de problemas inversos
 	\item ADMM (Alternating Direction Method of Multipliers): resuelve problemas de optimización convexos dividiéndolos en partes más pequeñas.
 \end{itemize}
