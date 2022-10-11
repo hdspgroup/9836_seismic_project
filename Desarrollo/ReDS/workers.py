@@ -121,10 +121,11 @@ class ShotWorker(QtCore.QObject):
             self.progress.emit(self.data_name, itr, res_dict, self.sampling_dict, self.graphics)
 
             if itr == self.maxiter:
+                x_result, hist = res_dict['result'], res_dict['hist']
                 break
 
-        # get last yield
-        x_result, hist = next(generator)
+        # # get last yield
+        # x_result, hist = next(generator)
 
         self.finished.emit(self.data_name, {'result': x_result, 'hist': hist, 'sampling_dict': self.sampling_dict},
                            self.graphics)

@@ -501,12 +501,12 @@ class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
 class ShotPerformanceGraphic(FigureCanvasQTAgg):
     def __init__(self, is_complete=True):
         self.is_complete = is_complete
-        self.performance_data = dict(iteracion=[], error=[], psnr=[], ssim=[], tv=[])
+        self.performance_data = dict(iteracion=[], psnr=[], ssim=[], tv=[])
         self.figure = plt.figure()
         plt.subplots_adjust(left=0.1, right=0.9, bottom=0.08, top=0.92)
         super(ShotPerformanceGraphic, self).__init__(self.figure)
 
-    def update_values(self, iteracion, error, psnr, ssim, tv):
+    def update_values(self, iteracion, psnr, ssim, tv):
         self.performance_data['iteracion'] = iteracion
         self.performance_data['psnr'] = psnr
         self.performance_data['ssim'] = ssim
@@ -564,8 +564,8 @@ class ShotReconstructionGraphic(FigureCanvasQTAgg):
         self.is_complete = is_complete
         self.report_data = None
         self.figure = plt.figure()
-        left, right, bottom, top = [0.05, 0.95, 0.05, 0.90] if is_complete else [0.05, 0.98, 0.05, 0.85]
-        plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top)
+        left, right, bottom, top = [0.05, 0.95, 0.05, 0.85] if is_complete else [0.05, 0.98, 0.05, 0.85]
+        plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=0.3, hspace=0.5)
         super(ShotReconstructionGraphic, self).__init__(self.figure)
 
     def update_report(self, report_data):
@@ -592,36 +592,91 @@ class ShotReconstructionGraphic(FigureCanvasQTAgg):
             H_elim = temp[pattern_rand_b2]
 
             case = str(self.report_data['algorithm_name'])
-            self.figure.suptitle(f'Resultados del algoritmo {case}')
+            self.figure.suptitle(f'Resultados del algoritmo {str.replace(case, "_", " ").capitalize()}')
 
+            rem_shots = np.arange(len(pattern_rand))
+            rem_shots = rem_shots[pattern_rand == 0]
             if self.is_complete:
-                axs = self.figure.subplots(2, 2)
+                axs = self.figure.subplots(2, 4)
 
-                axs[0, 0].imshow(x, cmap='gray', aspect='auto')
-                axs[0, 0].set_title('Referencia')
+                psnr_vec = []
+                for s in rem_shots:
+                    psnr_vec.append(PSNR(x[..., s], x_result[..., s]))
+                idxs = (-np.array(psnr_vec)).argsort()
+                rem_shots = rem_shots[idxs]
 
-                ytemp = y_rand.copy()
-                condition = H_elim.size > 0
-                if condition:
-                    ytemp[:, H_elim] = 1
-                axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
-                axs[1, 0].set_title('Medidas')
+                axs[0, 0].imshow(x[:, int(x.shape[1] / 2)].copy(), cmap='gray', aspect='auto')
+                axs[0, 0].set_title("Reference")
+                axs[0, 0].set_xlabel("Shots")
+                axs[0, 0].set_ylabel("Time")
 
-                aux_x = x[:, H_elim] if condition else x
-                aux_x_result = x_result[:, H_elim] if condition else x_result
-                metric = PSNR(aux_x, aux_x_result)
-                metric_ssim = ssim(aux_x, aux_x_result)
-                axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
-                axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+                # axs[0, 0].imshow(x[..., rem_shots[0]], cmap='gray', aspect='auto')
+                # axs[0, 0].set_title(f'Reference, shot {rem_shots[0]}')
 
-                index = 5
-                # aux_H_elim = index if condition else H_elim[index]
-                aux_H_elim = H_elim[index]
-                axs[1, 1].plot(x[:, aux_H_elim], 'r', label='Referencia')
-                axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
-                axs[1, 1].legend(loc='best')
-                axs[1, 1].set_title('Traza ' + str("{:.0f}".format(aux_H_elim)))
-                axs[1, 1].grid(axis='both', linestyle='--')
+                axs[1, 0].imshow(x[..., rem_shots[1]], cmap='gray', aspect='auto')
+                axs[1, 0].set_title(f'Reference, shot {rem_shots[1]}')
+
+                axs[0, 1].imshow(y_rand, cmap='gray', aspect='auto')
+                axs[0, 1].set_title("Removed shots")
+                axs[0, 1].set_xlabel("Shots")
+                axs[0, 1].set_ylabel("Time")
+
+                # metric = PSNR(x[..., rem_shots[0]], x_result[..., rem_shots[0]])
+                # metric_ssim = ssim(x[..., rem_shots[0]], x_result[..., rem_shots[0]])
+                # axs[0, 1].imshow(x_result[..., rem_shots[0]], cmap='gray', aspect='auto')
+                # axs[0, 1].set_title(
+                #     f'Reconstructed shot {rem_shots[0]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
+
+                metric = PSNR(x[..., rem_shots[1]], x_result[..., rem_shots[1]])
+                metric_ssim = ssim(x[..., rem_shots[1]], x_result[..., rem_shots[1]])
+                axs[1, 1].imshow(x_result[..., rem_shots[1]], cmap='gray', aspect='auto')
+                axs[1, 1].set_title(
+                    f'Reconstructed shot {rem_shots[1]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
+
+                # ====
+                axs[0, 2].imshow(x[..., rem_shots[2]], cmap='gray', aspect='auto')
+                axs[0, 2].set_title(f'Reference, shot {rem_shots[2]}')
+
+                axs[1, 2].imshow(x[..., rem_shots[3]], cmap='gray', aspect='auto')
+                axs[1, 2].set_title(f'Reference, shot {rem_shots[3]}')
+
+                metric = PSNR(x[..., rem_shots[2]], x_result[..., rem_shots[2]])
+                metric_ssim = ssim(x[..., rem_shots[2]], x_result[..., rem_shots[2]])
+                axs[0, 3].imshow(x_result[..., rem_shots[2]], cmap='gray', aspect='auto')
+                axs[0, 3].set_title(
+                    f'Reconstructed shot {rem_shots[2]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
+
+                metric = PSNR(x[..., rem_shots[3]], x_result[..., rem_shots[3]])
+                metric_ssim = ssim(x[..., rem_shots[3]], x_result[..., rem_shots[3]])
+                axs[1, 3].imshow(x_result[..., rem_shots[3]], cmap='gray', aspect='auto')
+                axs[1, 3].set_title(
+                    f'Reconstructed shot {rem_shots[3]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
+
+                # axs[0, 0].imshow(x, cmap='gray', aspect='auto')
+                # axs[0, 0].set_title('Referencia')
+                #
+                # ytemp = y_rand.copy()
+                # condition = H_elim.size > 0
+                # if condition:
+                #     ytemp[:, H_elim] = 1
+                # axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
+                # axs[1, 0].set_title('Medidas')
+                #
+                # aux_x = x[:, H_elim] if condition else x
+                # aux_x_result = x_result[:, H_elim] if condition else x_result
+                # metric = PSNR(aux_x, aux_x_result)
+                # metric_ssim = ssim(aux_x, aux_x_result)
+                # axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
+                # axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
+                #
+                # index = 5
+                # # aux_H_elim = index if condition else H_elim[index]
+                # aux_H_elim = H_elim[index]
+                # axs[1, 1].plot(x[:, aux_H_elim], 'r', label='Referencia')
+                # axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
+                # axs[1, 1].legend(loc='best')
+                # axs[1, 1].set_title('Traza ' + str("{:.0f}".format(aux_H_elim)))
+                # axs[1, 1].grid(axis='both', linestyle='--')
 
             else:
                 axs = self.figure.subplots(2, 3)

@@ -72,7 +72,10 @@ class Sampling:
         sampling_dict : dictionary that contains all information about sample
                         and its compression
         '''
-        M, N = x.shape
+        if x.ndim == 2:
+            M, N = x.shape
+        else:
+            M, N = x[:, int(x.shape[1] / 2), :].shape
 
         # sampling
         tasa_compression = int(compression_ratio * N)
@@ -85,9 +88,21 @@ class Sampling:
         pattern_vec[ss[0:tasa_compression]] = 0
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
 
-        out = x * H0
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
+
+        if x.ndim == 2:
+            out = x * H0
+        else:
+            pattern_rand = [int(h) for h in H]
+            pattern_rand = np.array(pattern_rand)
+            out = x[:, int(x.shape[1] / 2)].copy()
+            out[:, pattern_rand == 0] = 0
+
+            x -= x.min()
+            x /= x.max()
+            x *= 255
+            x = x.astype('uint8')
 
         sampling_dict = {
             "x_ori": x,
@@ -111,7 +126,11 @@ class Sampling:
         sampling_dict : dictionary that contains all information about sample
                         and its compression
         '''
-        M, N = x.shape
+        if x.ndim == 2:
+            M, N = x.shape
+        else:
+            M, N = x[:, int(x.shape[1] / 2), :].shape
+
         pattern_vec = np.ones((N,), dtype=int)
         n_col_rmv = np.round(N * compression_ratio)
         x_distance = np.round(N / n_col_rmv)
@@ -124,9 +143,21 @@ class Sampling:
         # Sampling pattern
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
 
-        out = x * H0
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
+
+        if x.ndim == 2:
+            out = x * H0
+        else:
+            pattern_rand = [int(h) for h in H]
+            pattern_rand = np.array(pattern_rand)
+            out = x[:, int(x.shape[1] / 2)].copy()
+            out[:, pattern_rand == 0] = 0
+
+            x -= x.min()
+            x /= x.max()
+            x *= 255
+            x = x.astype('uint8')
 
         sampling_dict = {
             "x_ori": x,
@@ -153,7 +184,10 @@ class Sampling:
         sampling_dict : dictionary that contains all information about sample
                         and its compression
         '''
-        M, N = x.shape
+        if x.ndim == 2:
+            M, N = x.shape
+        else:
+            M, N = x[:, int(x.shape[1] / 2), :].shape
 
         # sensing pattern (zero when not measure that position)
         pattern_vec = np.zeros((N,))
@@ -181,9 +215,22 @@ class Sampling:
 
         # Sampling pattern
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
-        out = x * H0
+
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
+
+        if x.ndim == 2:
+            out = x * H0
+        else:
+            pattern_rand = [int(h) for h in H]
+            pattern_rand = np.array(pattern_rand)
+            out = x[:, int(x.shape[1] / 2)].copy()
+            out[:, pattern_rand == 0] = 0
+
+            x -= x.min()
+            x /= x.max()
+            x *= 255
+            x = x.astype('uint8')
 
         sampling_dict = {
             "x_ori": x,
@@ -197,7 +244,10 @@ class Sampling:
         return np.array(list(sampling_dict.items()), dtype=object), H
 
     def list_sampling(self, x, lista):
-        M, N = x.shape
+        if x.ndim == 2:
+            M, N = x.shape
+        else:
+            M, N = x[:, int(x.shape[1] / 2), :].shape
 
         # sampling
 
@@ -205,9 +255,21 @@ class Sampling:
         pattern_vec[np.array(lista)] = 0
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
 
-        out = x * H0
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
+
+        if x.ndim == 2:
+            out = x * H0
+        else:
+            pattern_rand = [int(h) for h in H]
+            pattern_rand = np.array(pattern_rand)
+            out = x[:, int(x.shape[1] / 2)].copy()
+            out[:, pattern_rand == 0] = 0
+
+            x -= x.min()
+            x /= x.max()
+            x *= 255
+            x = x.astype('uint8')
 
         sampling_dict = {
             "x_ori": x,
@@ -1127,7 +1189,7 @@ class ShotAlgorithms:
             raise 'The algorithm entered was not found.'
 
         results = [output for i, output in enumerate(alg())][-1]
-        x_result, hist = results
+        x_result, hist = results[-1].values()
 
         return x_result, hist
 
@@ -1169,7 +1231,7 @@ class ShotAlgorithms:
             hist[i, 1] = ssim_val
             hist[i, 2] = tv_val
 
-            yield i, dict(output=output, hist=hist)
+            yield i, dict(result=np.transpose(output, [0, 2, 1]), hist=hist)
 
         x_copy = np.reshape(x_copy, [imShape[0], imShape[1], imShape[2]])
         x = x_copy.copy()
@@ -1187,4 +1249,4 @@ class ShotAlgorithms:
         if self.print_info:
             print(hist[-1])
 
-        yield output, hist
+        yield max_itr, dict(result=output, hist=hist)
