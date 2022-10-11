@@ -12,6 +12,7 @@ import platform
 from itertools import product
 from pathlib import Path
 
+import hdf5storage
 import numpy as np
 import pandas as pd
 from PyQt5.Qt import Qt
@@ -988,63 +989,63 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                         "Por favor, solo cargue resultados obtenidos en el menú principal", details=msg)
                     return
 
-            elif tab_mode == 'tuning':
-                try:
-                    data = np.load(uploaded_directory, allow_pickle=True)
-                    algorithm_name = str(data['algorithm']).lower()
-                    tuning_data = pd.DataFrame({item[0]: item[1] for item in data['tuning_data']})
-                    fixed_params = {item[0]: item[1] for item in data['fixed_params']}
-                    current_scale = str(data['scale']).lower()
-
-                    data_name = uploaded_directory.split('/')[-1].split('.')[0]
-
-                    expTuningTab, tuningGraphic = self.add_tab(data_name, self.tuningTabWidget,
-                                                               TuningGraphic(is_complete=is_complete))
-                    self.graphics['tuning'][data_mode][data_name] = tuningGraphic
-                    tuningGraphic.update_tuning(algorithm_name, tuning_data, fixed_params, current_scale)
-                    tuningGraphic.update_figure()
-
-                    self.all_tabs['report'].append([expTuningTab, tuningGraphic])
-
-                except BaseException as err:
-                    msg = f"Unexpected {err=}, {type(err)=}"
-                    showCritical(
-                        "Se intentó cargar un resultados que no corresponden a la herramienta actual."
-                        "Por favor, solo cargue resultados obtenidos en el menú de ajuste de parámetros", details=msg)
-                    return
-
-            else:
-                try:
-                    data = np.load(uploaded_directory, allow_pickle=True)
-                    comparison_data = {item[0]: item[1] for item in data['comparison_data']}
-
-                    data_name = uploaded_directory.split('/')[-1].split('.')[0]
-
-                    expCompPerformanceTab, compPerformanceGraphic = self.add_tab(data_name,
-                                                                                 self.comparisonPerformanceTabWidget,
-                                                                                 ComparisonPerformanceGraphic(
-                                                                                     is_complete=is_complete))
-                    self.graphics['comparison'][data_mode]['performance'][data_name] = compPerformanceGraphic
-                    compPerformanceGraphic.update_values(**comparison_data)
-                    compPerformanceGraphic.update_figure()
-
-                    expCompReportTab, compReconstructionGraphic = self.add_tab(data_name,
-                                                                               self.comparisonReportTabWidget,
-                                                                               ComparisonReconstructionGraphic(
-                                                                                   is_complete=is_complete))
-                    self.graphics['comparison'][data_mode]['report'][data_name] = compReconstructionGraphic
-                    compReconstructionGraphic.update_report(data)
-                    compReconstructionGraphic.update_figure()
-
-                    self.all_tabs['report'].append([expCompPerformanceTab, compPerformanceGraphic])
-                    self.all_tabs['report'].append([expCompReportTab, compReconstructionGraphic])
-
-                except BaseException as err:
-                    msg = f"Unexpected {err=}, {type(err)=}"
-                    showCritical(
-                        "Se intentó cargar un resultados que no corresponden a la herramienta actual."
-                        "Por favor, solo cargue resultados obtenidos en el menú de comparaciones", details=msg)
-                    return
+            # elif tab_mode == 'tuning':
+            #     try:
+            #         data = np.load(uploaded_directory, allow_pickle=True)
+            #         algorithm_name = str(data['algorithm']).lower()
+            #         tuning_data = pd.DataFrame({item[0]: item[1] for item in data['tuning_data']})
+            #         fixed_params = {item[0]: item[1] for item in data['fixed_params']}
+            #         current_scale = str(data['scale']).lower()
+            #
+            #         data_name = uploaded_directory.split('/')[-1].split('.')[0]
+            #
+            #         expTuningTab, tuningGraphic = self.add_tab(data_name, self.tuningTabWidget,
+            #                                                    TuningGraphic(is_complete=is_complete))
+            #         self.graphics['tuning'][data_mode][data_name] = tuningGraphic
+            #         tuningGraphic.update_tuning(algorithm_name, tuning_data, fixed_params, current_scale)
+            #         tuningGraphic.update_figure()
+            #
+            #         self.all_tabs['report'].append([expTuningTab, tuningGraphic])
+            #
+            #     except BaseException as err:
+            #         msg = f"Unexpected {err=}, {type(err)=}"
+            #         showCritical(
+            #             "Se intentó cargar un resultados que no corresponden a la herramienta actual."
+            #             "Por favor, solo cargue resultados obtenidos en el menú de ajuste de parámetros", details=msg)
+            #         return
+            #
+            # else:
+            #     try:
+            #         data = np.load(uploaded_directory, allow_pickle=True)
+            #         comparison_data = {item[0]: item[1] for item in data['comparison_data']}
+            #
+            #         data_name = uploaded_directory.split('/')[-1].split('.')[0]
+            #
+            #         expCompPerformanceTab, compPerformanceGraphic = self.add_tab(data_name,
+            #                                                                      self.comparisonPerformanceTabWidget,
+            #                                                                      ComparisonPerformanceGraphic(
+            #                                                                          is_complete=is_complete))
+            #         self.graphics['comparison'][data_mode]['performance'][data_name] = compPerformanceGraphic
+            #         compPerformanceGraphic.update_values(**comparison_data)
+            #         compPerformanceGraphic.update_figure()
+            #
+            #         expCompReportTab, compReconstructionGraphic = self.add_tab(data_name,
+            #                                                                    self.comparisonReportTabWidget,
+            #                                                                    ComparisonReconstructionGraphic(
+            #                                                                        is_complete=is_complete))
+            #         self.graphics['comparison'][data_mode]['report'][data_name] = compReconstructionGraphic
+            #         compReconstructionGraphic.update_report(data)
+            #         compReconstructionGraphic.update_figure()
+            #
+            #         self.all_tabs['report'].append([expCompPerformanceTab, compPerformanceGraphic])
+            #         self.all_tabs['report'].append([expCompReportTab, compReconstructionGraphic])
+            #
+            #     except BaseException as err:
+            #         msg = f"Unexpected {err=}, {type(err)=}"
+            #         showCritical(
+            #             "Se intentó cargar un resultados que no corresponden a la herramienta actual."
+            #             "Por favor, solo cargue resultados obtenidos en el menú de comparaciones", details=msg)
+            #         return
 
     def remove_report_tabs(self):
         for page, graph in self.all_tabs['report']:
@@ -1730,7 +1731,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         if Path(uploaded_directory).suffix == '.npy':
             data = np.load(uploaded_directory)
         else:
-            data = loadmat(uploaded_directory)
+            data = hdf5storage.loadmat(uploaded_directory)
             keys = list(data.keys())
             keys.remove('__header__')
             keys.remove('__version__')
@@ -1738,7 +1739,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
             data = data[keys[0]]
 
         data = np.nan_to_num(data, nan=0)
-        data = data / np.max(np.abs(data))
+        # data = data / np.max(np.abs(data))
 
         # data direction
         data = np.nan_to_num(data, nan=0)
@@ -1760,7 +1761,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         lista = self.elementLineEdit
 
         try:
-            sampling_dict, H = self.sampling.apply_sampling(data[:, int(data.shape[1] / 2), :], mode, jitter_params,
+            sampling_dict, H = self.sampling.apply_sampling(data, mode, jitter_params,
                                                             lista, seed, compression_ratio)
 
             if data_mode == 'incomplete':
@@ -1788,7 +1789,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                 performance_graphic = self.graphics['main'][data_mode]['performance'][data_name]
             else:
                 performance_tab, performance_graphic = self.add_tab(data_name, self.performanceTabWidget,
-                                                                    PerformanceGraphic(is_complete=is_complete))
+                                                                    ShotPerformanceGraphic(is_complete=is_complete))
                 self.graphics['main'][data_mode]['performance'][data_name] = performance_graphic
                 self.all_tabs['normal'].append([performance_tab, performance_graphic])
 
@@ -1796,7 +1797,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                 report_graphic = self.graphics['main'][data_mode]['report'][data_name]
             else:
                 report_tab, report_graphic = self.add_tab(data_name, self.reportTabWidget,
-                                                          ReconstructionGraphic(is_complete=is_complete))
+                                                          ShotReconstructionGraphic(is_complete=is_complete))
                 self.graphics['main'][data_mode]['report'][data_name] = report_graphic
                 self.all_tabs['normal'].append([report_tab, report_graphic])
 
@@ -1807,112 +1808,112 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                 sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
             return ShotWorker(data_name, algorithm, self.max_iter, sampling_dict, performance_graphic, report_graphic)
 
-        elif self.global_variables['tab_mode'] == 'tuning':
-            param_list = []
-            parameters = []
-
-            if data_name in self.graphics['tuning'][data_mode].keys():
-                tuning_graphic = self.graphics['tuning'][data_mode][data_name]
-            else:
-                tuning_tab, tuning_graphic = self.add_tab(data_name, self.tuningTabWidget,
-                                                          TuningGraphic(is_complete=is_complete))
-                self.graphics['tuning'][data_mode][data_name] = tuning_graphic
-                self.all_tabs['normal'].append([tuning_tab, tuning_graphic])
-
-            num_params = len(self.params[self.algorithm_name])
-            for i in range(num_params):
-
-                number_init = self.tuning_params[i][1].text()
-                number_end = self.tuning_params[i][3].text()
-
-                i_comparison = i == fixed_param
-                if tuning_type == 'intervalo':
-                    if i_comparison:
-                        scale = np.linspace
-                        if self.current_scale != 'lineal':
-                            scale = np.logspace
-                            number_init, number_end = np.log10(float(number_init)), np.log10(float(number_end))
-
-                        param_list.append(list(scale(float(number_init), float(number_end),
-                                                     int(self.paramValuesSpinBox.text()))))
-
-                    else:
-                        num_init = float(number_init)
-                        aux_fixed_param = {self.params[self.algorithm_name][i][0]: num_init}
-                        self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name].update(
-                            aux_fixed_param)
-                        param_list.append([num_init])
-
-                if tuning_type == 'lista':
-                    if i_comparison:
-                        lista = [float(number) for number in number_init.replace(' ', '').split(',')]
-                        lista.sort()
-
-                        param_list.append(lista)
-
-                    else:
-                        num_init = float(number_init)
-                        aux_fixed_param = {self.params[self.algorithm_name][i][0]: num_init}
-                        self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name].update(
-                            aux_fixed_param)
-                        param_list.append([num_init])
-
-            func = None
-            param_arg_names = ['param1', 'param2', 'param3']
-            for ps in product(*param_list):
-                aux_params = {param_arg_names[i]: ps[i] for i in range(num_params)}
-
-                Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')
-                func, params = Alg.get_algorithm(self.algorithm_name, self.max_iter, **aux_params)
-
-                parameters.append(params)
-
-            self.total_num_run = len(parameters)
-
-            # update worker behaviour
-            return TuningWorker(data_name, func, parameters, self.max_iter, tuning_graphic)
-
-        else:
-            funcs = []
-            param_list = []
-
-            if data_name in self.graphics['comparison'][data_mode]['performance'].keys():
-                comp_performance_graphic = self.graphics['comparison'][data_mode]['performance'][data_name]
-            else:
-                comp_performance_tab, comp_performance_graphic = self.add_tab(data_name,
-                                                                              self.comparisonPerformanceTabWidget,
-                                                                              ComparisonPerformanceGraphic(
-                                                                                  is_complete=is_complete))
-                self.graphics['comparison'][data_mode]['performance'][data_name] = comp_performance_graphic
-                self.all_tabs['normal'].append([comp_performance_tab, comp_performance_graphic])
-
-            if data_name in self.graphics['comparison'][data_mode]['report'].keys():
-                comp_report_graphic = self.graphics['comparison'][data_mode]['report'][data_name]
-            else:
-                comp_report_tab, comp_report_graphic = self.add_tab(data_name, self.comparisonReportTabWidget,
-                                                                    ComparisonReconstructionGraphic(
-                                                                        is_complete=is_complete))
-                self.graphics['comparison'][data_mode]['report'][data_name] = comp_report_graphic
-                self.all_tabs['normal'].append([comp_report_tab, comp_report_graphic])
-
-            algorithm_names = ['fista', 'gap', 'twist', 'admm']
-            param_arg_names = ['param1', 'param2', 'param3']
-            for alg_name, params in zip(algorithm_names, self.comparison_params):
-                aux_params = {param_arg_names[i]: param.text() for i, param in enumerate(params)}
-
-                Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')
-                func, params = Alg.get_algorithm(alg_name, self.max_iter, **aux_params)
-
-                funcs.append(func)
-                param_list.append(params)
-
-            # # update worker behaviour
-
-            if not is_complete:
-                sampling_dict['H'] = Alg.H_raw
-                sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
-            return ComparisonWorker(data_name, funcs, param_list, self.max_iter, sampling_dict,
-                                    comp_performance_graphic, comp_report_graphic)
+        # elif self.global_variables['tab_mode'] == 'tuning':
+        #     param_list = []
+        #     parameters = []
+        #
+        #     if data_name in self.graphics['tuning'][data_mode].keys():
+        #         tuning_graphic = self.graphics['tuning'][data_mode][data_name]
+        #     else:
+        #         tuning_tab, tuning_graphic = self.add_tab(data_name, self.tuningTabWidget,
+        #                                                   TuningGraphic(is_complete=is_complete))
+        #         self.graphics['tuning'][data_mode][data_name] = tuning_graphic
+        #         self.all_tabs['normal'].append([tuning_tab, tuning_graphic])
+        #
+        #     num_params = len(self.params[self.algorithm_name])
+        #     for i in range(num_params):
+        #
+        #         number_init = self.tuning_params[i][1].text()
+        #         number_end = self.tuning_params[i][3].text()
+        #
+        #         i_comparison = i == fixed_param
+        #         if tuning_type == 'intervalo':
+        #             if i_comparison:
+        #                 scale = np.linspace
+        #                 if self.current_scale != 'lineal':
+        #                     scale = np.logspace
+        #                     number_init, number_end = np.log10(float(number_init)), np.log10(float(number_end))
+        #
+        #                 param_list.append(list(scale(float(number_init), float(number_end),
+        #                                              int(self.paramValuesSpinBox.text()))))
+        #
+        #             else:
+        #                 num_init = float(number_init)
+        #                 aux_fixed_param = {self.params[self.algorithm_name][i][0]: num_init}
+        #                 self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name].update(
+        #                     aux_fixed_param)
+        #                 param_list.append([num_init])
+        #
+        #         if tuning_type == 'lista':
+        #             if i_comparison:
+        #                 lista = [float(number) for number in number_init.replace(' ', '').split(',')]
+        #                 lista.sort()
+        #
+        #                 param_list.append(lista)
+        #
+        #             else:
+        #                 num_init = float(number_init)
+        #                 aux_fixed_param = {self.params[self.algorithm_name][i][0]: num_init}
+        #                 self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name].update(
+        #                     aux_fixed_param)
+        #                 param_list.append([num_init])
+        #
+        #     func = None
+        #     param_arg_names = ['param1', 'param2', 'param3']
+        #     for ps in product(*param_list):
+        #         aux_params = {param_arg_names[i]: ps[i] for i in range(num_params)}
+        #
+        #         Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')
+        #         func, params = Alg.get_algorithm(self.algorithm_name, self.max_iter, **aux_params)
+        #
+        #         parameters.append(params)
+        #
+        #     self.total_num_run = len(parameters)
+        #
+        #     # update worker behaviour
+        #     return TuningWorker(data_name, func, parameters, self.max_iter, tuning_graphic)
+        #
+        # else:
+        #     funcs = []
+        #     param_list = []
+        #
+        #     if data_name in self.graphics['comparison'][data_mode]['performance'].keys():
+        #         comp_performance_graphic = self.graphics['comparison'][data_mode]['performance'][data_name]
+        #     else:
+        #         comp_performance_tab, comp_performance_graphic = self.add_tab(data_name,
+        #                                                                       self.comparisonPerformanceTabWidget,
+        #                                                                       ComparisonPerformanceGraphic(
+        #                                                                           is_complete=is_complete))
+        #         self.graphics['comparison'][data_mode]['performance'][data_name] = comp_performance_graphic
+        #         self.all_tabs['normal'].append([comp_performance_tab, comp_performance_graphic])
+        #
+        #     if data_name in self.graphics['comparison'][data_mode]['report'].keys():
+        #         comp_report_graphic = self.graphics['comparison'][data_mode]['report'][data_name]
+        #     else:
+        #         comp_report_tab, comp_report_graphic = self.add_tab(data_name, self.comparisonReportTabWidget,
+        #                                                             ComparisonReconstructionGraphic(
+        #                                                                 is_complete=is_complete))
+        #         self.graphics['comparison'][data_mode]['report'][data_name] = comp_report_graphic
+        #         self.all_tabs['normal'].append([comp_report_tab, comp_report_graphic])
+        #
+        #     algorithm_names = ['fista', 'gap', 'twist', 'admm']
+        #     param_arg_names = ['param1', 'param2', 'param3']
+        #     for alg_name, params in zip(algorithm_names, self.comparison_params):
+        #         aux_params = {param_arg_names[i]: param.text() for i, param in enumerate(params)}
+        #
+        #         Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')
+        #         func, params = Alg.get_algorithm(alg_name, self.max_iter, **aux_params)
+        #
+        #         funcs.append(func)
+        #         param_list.append(params)
+        #
+        #     # # update worker behaviour
+        #
+        #     if not is_complete:
+        #         sampling_dict['H'] = Alg.H_raw
+        #         sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
+        #     return ComparisonWorker(data_name, funcs, param_list, self.max_iter, sampling_dict,
+        #                             comp_performance_graphic, comp_report_graphic)
 
     def start_experiment(self):
 
@@ -1926,13 +1927,13 @@ class UIMainBWindow(QtWidgets.QMainWindow):
 
         try:
             self.iters = 0
-            self.max_iter = None  # int(self.maxiterSpinBox.text())
 
             for uploaded_directory in uploaded_directories:
                 data_name = uploaded_directory.split('/')[-1].split('.')[0]
 
                 self.update_variables(data_name)
                 seismic_data = self.load_seismic_data(uploaded_directory)
+                self.max_iter = seismic_data.shape[-2] - 1
                 sampling_dict, H = self.load_parameters(seismic_data)
                 worker = self.load_algorithm(data_name, seismic_data, H, sampling_dict)
 
@@ -1951,7 +1952,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                 if tab_mode == 'main':
                     report_progress = self.report_main_progress
                     save_experiment = self.save_main_experiment
-                    self.max_iter_progress = len(uploaded_directories)  # * self.max_iter
+                    self.max_iter_progress = len(uploaded_directories) * self.max_iter
                 elif tab_mode == 'tuning':
                     report_progress = self.report_tuning_progress
                     save_experiment = self.save_tuning_experiment
@@ -1959,7 +1960,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                 else:
                     report_progress = self.report_comparison_progress
                     save_experiment = self.save_comparison_experiment
-                    self.max_iter_progress = len(uploaded_directories)  # * self.max_iter
+                    self.max_iter_progress = len(uploaded_directories) * self.max_iter
 
                 self.workers[-1].progress.connect(report_progress)
                 self.threads[-1].start()
@@ -1984,10 +1985,9 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
 
         # update figure
-        err = res_dict['hist'][iter, 0]
-        psnr = np.round(res_dict['hist'][iter, 1], 3)
-        ssim = np.round(res_dict['hist'][iter, 2], 3)
-        tv = np.round(res_dict['hist'][iter, 3], 3)
+        psnr = np.round(res_dict['hist'][iter, 0], 3)
+        ssim = np.round(res_dict['hist'][iter, 1], 3)
+        tv = np.round(res_dict['hist'][iter, 2], 3)
 
         iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration'][data_name]
         psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr'][data_name]
@@ -2000,6 +2000,9 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         tv_list.append(tv)
 
         if iter % (self.max_iter // 10) == 0 or iter == self.max_iter:
+            if iter == self.max_iter:
+                print('xd')
+
             graphics['performance'].update_values(iteration_list, psnr_list, ssim_list, tv_list)
             graphics['performance'].update_figure()
 
@@ -2047,6 +2050,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         graphics['tuning'].update_figure()
 
     def save_tuning_experiment(self, data_name, graphics):
+        self.iters += 1
         fixed_params = self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name]
         fixed_params = np.array(list(fixed_params.items()), dtype=object)
         tuning_data = np.array(list(graphics['tuning'].tuning_data.items()), dtype=object)
@@ -2102,6 +2106,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
             graphics['report'].update_figure()
 
     def save_comparison_experiment(self, data_name, res_dict, graphics):
+        self.iters += 1
         comparison_data = np.array(list(graphics['performance'].comparison_data.items()), dtype=object)
 
         tab_mode = self.global_variables['tab_mode']
