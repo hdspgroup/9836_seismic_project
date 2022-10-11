@@ -4,7 +4,13 @@ from skimage import transform
 from scipy.io import loadmat
 from scipy.sparse import csr_matrix
 from skimage.metrics import structural_similarity as ssim
+from matplotlib import pyplot as plt
 import inspect
+try:
+    from pyct.fdct2 import fdct2
+except ImportError:
+    from pyct.fdct2 import fdct2
+    print("segundo intento")
 import scipy.sparse.linalg as ln
 from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
                                  denoise_wavelet, estimate_sigma)
@@ -138,7 +144,7 @@ class Sampling:
         M, N = x.shape
 
         # sensing pattern (zero when not measure that position)
-        pattern_vec = np.zeros((N,))
+        pattern_vec = np.ones((N,))
         # first pisition
         init_value = ((1 - gamma) / 2) + gamma
         # compute the centroids of the regular grid sampling
@@ -159,7 +165,7 @@ class Sampling:
         # apply the perturbation to the centroids
         positions = centroids - res
         # placing a one in the new position
-        pattern_vec[positions.astype(int)] = 1
+        pattern_vec[positions.astype(int)] = 0
 
         # Sampling pattern
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
@@ -322,7 +328,7 @@ class Operator:
         of the operator for the model.
     '''
 
-    def __init__(self, H, m, n, operator_dir, operator_inv):
+    def __init__(self, H, m, n, operator_dir, operator_inv, operator):#jams: added operator since the the behavior is different for curvelet
         '''
         Parameters
         ----------
@@ -345,6 +351,7 @@ class Operator:
         self.n = n
         self.operator_dir = operator_dir
         self.operator_inv = operator_inv
+        self.operator = operator
 
     def transpose(self, x):  # y = D'H' * x
         '''
@@ -370,12 +377,20 @@ class Operator:
             The traspose operation applied to the input
             vector.
         '''
-        Ht = self.H.transpose()
-        y = Ht * np.squeeze(x.T.reshape(-1))  # H' * x
+        if self.operator == 'DCT2D':
+            Ht = self.H.transpose()
+            y = Ht * np.squeeze(x.T.reshape(-1))  # H' * x
 
-        y = np.reshape(y, [self.m, self.n], order='F')
+            y = np.reshape(y, [self.m, self.n], order='F')
 
-        y = self.operator_dir(y)
+            y = self.operator_dir(y)
+        else:
+            Ht = self.H.transpose()
+            y = Ht * np.squeeze(x)  # H' * x
+
+            y = np.reshape(y, [self.n, self.m]) #data
+
+            y = self.operator_dir(y) # curvelet vector
 
         return y
 
@@ -403,11 +418,17 @@ class Operator:
             The traspose operation applied to the input
             vector.
         '''
-        x = np.reshape(x, [self.m, self.n], order='F')  # ordenar
+        #x = np.reshape(x, [self.m, self.n], order='F')  # ordenar
+        if self.operator == 'DCT2D':
+            x = np.reshape(x, [self.m, self.n], order='F')  # ordenar
 
-        theta = self.operator_inv(x)  # D * x
+            theta = self.operator_inv(x)  # D * x
 
-        y = self.H * np.squeeze(theta.T.reshape(-1))  # H * D * x
+            y = self.H * np.squeeze(theta.T.reshape(-1))  # H * D * x
+        else:
+            theta = self.operator_inv(x)  # D * x
+
+            y = self.H * np.squeeze(theta.reshape(-1))  # H * D * x
 
         return y
 
@@ -597,15 +618,20 @@ class Algorithms:
         else:
             if operator_dir == 'DCT2D':
                 self.operator_dir = dct2()
+            elif operator_dir == 'FDCT2':
+                self.objtransform = fdct2((n, m), 4, 16, ac=True, norm=False)
+                self.operator_dir = self.objtransform.fwd
 
         if inspect.isfunction(operator_inv):
             self.operator_inv = operator_inv
         else:
             if operator_inv == 'IDCT2D':
                 self.operator_inv = idct2()
+            elif operator_dir == 'FDCT2':
+                self.operator_inv = self.objtransform.inv
 
         # ------------ This is a special class of operator ------------
-        self.A = Operator(self.H, self.m, self.n, self.operator_dir, self.operator_inv)
+        self.A = Operator(self.H, self.m, self.n, self.operator_dir, self.operator_inv, operator_dir)
 
         # ------------ Deleted traces vector --------------------------
         H_elim = np.linspace(0, len(self.pattern) - 1, len(self.pattern), dtype=int)
@@ -728,7 +754,7 @@ class Algorithms:
         # print('FISTA: \n')
 
         dim = self.x.shape
-        x = np.zeros(dim)
+        x = self.A.transpose(y)#np.zeros(dim)
         q = 1
         s = x
         hist = np.zeros((max_itr + 1, 4))
@@ -738,8 +764,8 @@ class Algorithms:
             x_old = x
             s_old = s
             q_old = q
-
-            grad = self.A.transpose(self.A.direct(s_old) - y)  # Ht * (H * s_old - y)
+            temp = self.A.direct(s_old) - y
+            grad = self.A.transpose(temp)  # Ht * (H * s_old - y)
             z = s_old - mu * (grad)
 
             # proximal
@@ -751,17 +777,21 @@ class Algorithms:
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
 
             # if self.is_complete_data:
-            psnr_val = PSNR(self.x[:, self.H_elim], self.operator_inv(s)[:, self.H_elim])
-            ssim_val = ssim(self.x[:, self.H_elim], self.operator_inv(s)[:, self.H_elim])
+            psnr_val = PSNR(self.x[:, :], np.transpose(self.operator_inv(s))[:, :])
+            ssim_val = ssim(self.x[:, :], np.transpose(self.operator_inv(s))[:, :])
             tv_val = tv_norm(self.operator_inv(s))
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
             hist[itr, 2] = ssim_val
             hist[itr, 3] = tv_val
+            nz_x = (x != 0.0) * 1
+            num_nz_x = np.sum(nz_x)
+            f = 0.5 * np.sum(temp * temp) + lmb * np.sum(np.abs(x))
 
-            #print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-            #      '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
+            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t Obj:', format(f, ".2e"), '\t nz:',
+                  format(num_nz_x, "d"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
+                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
 
             yield itr, dict(result=self.operator_inv(s), hist=hist)
 
@@ -798,8 +828,8 @@ class Algorithms:
 
         #print('---------GAP method---------- \n')
 
-        dim = self.x.shape
-        x = np.zeros(dim)
+        #dim = self.x.shape
+        x = self.A.transpose(y)
         hist = np.zeros((max_itr + 1, 4))
 
         residualx = 1
@@ -821,17 +851,24 @@ class Algorithms:
 
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
 
-            psnr_val = PSNR(self.x[:, self.H_elim], self.operator_inv(x)[:, self.H_elim])
-            ssim_val = ssim(self.x[:, self.H_elim], self.operator_inv(x)[:, self.H_elim])
+            f = 0.5 * np.sum(temp * temp) + lmb * np.sum(np.abs(x))
+            if self.A.operator == 'DCT2D':
+                psnr_val = PSNR(self.x[:, :], (self.operator_inv(x))[:, :]) #
+                ssim_val = ssim(self.x[:, :], (self.operator_inv(x))[:, :])
+            else:
+                psnr_val = PSNR(self.x[:, :], np.transpose(self.operator_inv(x))[:, :])  # np.transpose
+                ssim_val = ssim(self.x[:, :], np.transpose(self.operator_inv(x))[:, :])
             tv_val = tv_norm(self.operator_inv(x))
 
             hist[itr, 0] = residualx
             hist[itr, 1] = psnr_val
             hist[itr, 2] = ssim_val
             hist[itr, 3] = tv_val
+            nz_x = (x != 0.0) * 1
+            num_nz_x = np.sum(nz_x)
 
-            #print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-            #      '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
+            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t Obj:', format(f, ".2e"), '\t nz:', format(num_nz_x, "d"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
+                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
 
             yield itr, dict(result=self.operator_inv(x), hist=hist)
 
@@ -868,36 +905,80 @@ class Algorithms:
         print('---------TwIST method---------- \n')
 
         dim = self.x.shape
-        x = np.zeros(dim)
+        #x = np.zeros((635835, 1)) #check sizes
+        x = self.A.transpose(np.zeros(y.shape))
+        test = self.A.direct(x)
         hist = np.zeros((max_itr + 1, 4))
 
         residualx = 1
         tol = 1e-3
 
+        nz_x = (x != 0.0)*1.0
+        num_nz_x = np.sum(nz_x)
+
         #print('itr \t ||x-xold|| \t PSNR \n')
         itr = 0
         x_old = x
+        IST_iters = 0
+        TwIST_iters = 0
+        xm2 = x
+        xm1 = x
+        max_svd = 1
+        resid = y - self.A.direct(x)
+        verbose = True
+        enforceMonotone = True
+        prev_f = 0.5 * np.sum(resid * resid) #"+ lmb * np.sum(np.abs(xm2))
+        lm1 = 0.1
+        rho0 = (1 - lm1 / 1) / (1 + lm1 / 1)
+        alpha = 2 / (1 + np.sqrt(1 - rho0 ** 2))
+        beta = alpha * 2/(lm1+1)
+        while itr < max_itr:
+            grad = self.A.transpose(resid)
+            while True:
+                x = soft_threshold(xm1+(grad/max_svd), lmb/max_svd)
+                if (IST_iters >= 2) or (TwIST_iters != 0):
+                    #for sparse
+                    mask = (x != 0) * 1.0
+                    xm1 = xm1 * mask
+                    xm2 = xm2 * mask
+                    #end for sparse
+                    xm2 = (alpha-beta)*xm1 + (1-alpha)*xm2 + beta*x
+                    resid = y - self.A.direct(x)
+                    f = 0.5 * np.sum(resid * resid) + lmb * np.sum(np.abs(xm2))
+                    if f > prev_f and enforceMonotone:
+                        TwIST_iters = 0
+                    else:
+                        TwIST_iters = TwIST_iters + 1
+                        IST_iters = 0
+                        x = xm2
+                        if TwIST_iters % 10000 == 0:
+                            max_svd = 0.9 * max_svd
+                        break
+                else:
+                    resid = y - self.A.direct(x)
+                    f = 0.5 * np.sum(resid * resid) + lmb * np.sum(np.abs(xm2))
+                    if f > prev_f:
+                        max_svd = 1.5 * max_svd
+                        if verbose:
+                            print("Increasing S={mx: 2.2f}\n".format(mx=max_svd))
+                            IST_iters = 0
+                            TwIST_iters = 0
+                        break
+                    else:
+                        TwIST_iters = TwIST_iters + 1
+                        break
 
-        while (itr < max_itr):  # & residualx <= tol):
-
-            temp = self.A.direct(x) - y
-
-            grad = self.A.transpose(temp)
-            z = x - grad
-
-            # proximal
-            s = soft_threshold(z, lmb)
-
-            # Actualizacion
-            temp = (1 - alpha) * x_old + (alpha - beta) * x + beta * s
-            x_old = x
-            x = temp
-
+            xm2 = xm1
+            xm1 = x
+            nz_x_prev = nz_x
+            nz_x = (x != 0.0)*1
+            num_nz_x = np.sum(nz_x)
+            num_changes_active = (np.sum(nz_x != nz_x_prev))
             itr = itr + 1
-
+            prev_f = f
             residualx = np.linalg.norm(x - x_old) / np.linalg.norm(x)
-            psnr_val = PSNR(self.x[:, self.H_elim], self.operator_inv(x)[:, self.H_elim])
-            ssim_val = ssim(self.x[:, self.H_elim], self.operator_inv(x)[:, self.H_elim])
+            psnr_val = PSNR(self.x[:, :], np.transpose(self.operator_inv(x))[:, :])#self.H_elim
+            ssim_val = ssim(self.x[:, :], np.transpose(self.operator_inv(x))[:, :])
             tv_val = tv_norm(self.operator_inv(x))
 
             hist[itr, 0] = residualx
@@ -905,12 +986,12 @@ class Algorithms:
             hist[itr, 2] = ssim_val
             hist[itr, 3] = tv_val
 
-            #print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-            #      '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
-
+            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
+                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"))
+            print(" obj={obj: 2.2f}, nz_x={nz: d}\n".format( obj=f, nz=int(num_nz_x)))
             yield itr, dict(result=self.operator_inv(x), hist=hist)
-
         yield self.operator_inv(x), hist
+
 
     def ADMM(self, rho, gamma, lmb, max_itr):
         # '''
