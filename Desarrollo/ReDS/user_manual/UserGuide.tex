@@ -147,9 +147,15 @@ La figura \ref{fig:vision} presenta las 7 secciones de la interfaz general del m
     \label{fig:vision}
 \end{Figure}
 
-A continuación se mostrará de forma especifica las herramientas principales de la aplicación y, las diferentes configuraciones y opciones que pueden ser aplicadas a los datos sísmicos para la realización de diferentes tipos de experimentos. Cabe resaltar que de acuerdo al tipo de prueba que se quiera realizar, el comportamiento de los paneles cambiará para adecuarse a dicha tarea.
+{\color{red}La figura ToDo presenta las ToDo secciones de la interfaz general del modo ReDs - RD, a mencionar:
 
-\section{Menú Principal}
+ToDo}
+
+\section{Módulo ReDs - RR}
+
+A continuación se mostrará de forma especifican los modos de uso del módulo ReDs - RR, las diferentes configuraciones y opciones que pueden ser aplicadas a los datos sísmicos para la realización de diferentes tipos de experimentos. Cabe resaltar que de acuerdo al tipo de prueba que se quiera realizar, el comportamiento de los paneles cambiará para adecuarse a dicha tarea.
+
+\subsection{Modo Sencillo}
 
 La aplicación cuenta con una barra de tareas, que se encuentra en la parte superior \circled{1} de la figura \ref{fig:vision}. Aquí se observan 3 botones distintos que permitirán realizar distintos tipos de pruebas sobre los datos sísmicos.
 
@@ -168,7 +174,7 @@ Como se observa en la figura \ref{fig:main_button}, el primer botón habilitará
 
 El menú principal permite realizar experimentos con los datos sísmicos siguiendo el orden que se observa en la figura \ref{fig:vision}. A continuación se muestra paso a paso el funcionamiento de cada uno los paneles, desde la lectura de datos sísmicos hasta la visualización y guardado de resultados.
 
-\subsection{Lectura de Datos}
+\subsubsection{Lectura de Datos}
 
 El panel de lectura de datos \circled{2}, situado al extremo izquierdo superior en la figura \ref{fig:vision}, muestra los nombres de los datos sísmicos que el usuario haya cargado en la aplicación para realizar diversas pruebas.\\
 
@@ -208,7 +214,7 @@ Una vez seleccionado el dato sísmico, se debe pulsar en la opción \emph{Abrir}
 
 \end{multicols}
 
-\subsection{Algoritmos}
+\subsubsection{Algoritmos}
 
 Los algoritmos disponibles en la aplicación son \emph{FISTA}, \emph{GAP}, \emph{TwIST} y \emph{ADMM}, tal como se observa en el panel \circled{3}, en el extremo izquierdo de la figura \ref{fig:vision}. En este panel se pueden observar las opciones de configuración de parámetros según el algoritmo seleccionado, incluyendo la cantidad máxima de iteraciones a realizar. 
 
@@ -246,7 +252,7 @@ Los algoritmos disponibles en la aplicación son \emph{FISTA}, \emph{GAP}, \emph
 
 Adicionalmente, el botón\hspace{0.5mm} \faEye \hspace{0.5mm} permite visualizar los diferentes algoritmos con sus correspondientes parámetros, como se observa en la figura \ref{fig:algorithms}. Cada uno de los algoritmos disponibles cuenta con una colección propia de parámetros, los cuales el pueden ser configurados por el usuario según lo desee.
 
-\subsection{Submuestreo}\label{subsampling}
+\subsubsection{Submuestreo}\label{subsampling}
 
 Debido a que hay varias formas de recuperar una traza a partir de las medidas recolectadas previamente, el panel de submuestreo \circled{4} permite configurar cuál tipo de submuestreo se desea realizar al dato sísmico, a manera de simulación. Todos los tipos de submuestreo, excepto el de tipo lista, comparten el mismo nivel de compresión que el usuario desee asignar. A continuación se presentan los tipos de submuestreo a aplicar en ReDs:\\
 
@@ -331,12 +337,12 @@ Las condiciones son las siguientes:
 
 \end{multicols}
 
-\subsection{Experimentos}
+\subsubsection{Experimentos}
 \label{sec:experiment}
 
 Una vez ya se ha cargado un dato sísmico, seleccionado el algoritmo, ajustado sus parámetros y configurado el tipo de submuestreo, entonces se podrá realizar un experimento. El panel \circled{5}, en el extremo izquierdo de la figura \ref{fig:vision}, permite controlar el progreso de la ejecución del experimento a realizar.
 
-\subsubsection{Realizando un experimento}
+\subsubsection*{Realizando un experimento}
 
 \begin{multicols}{2}
 
@@ -374,7 +380,7 @@ Para correr el experimento se debe pulsar en el botón \hspace{0.5mm} \faPlay \h
 
 \end{multicols}
 
-\subsection{Visualización de Resultados}
+\subsubsection{Visualización de Resultados}
 
 Finalmente, los resultados de todos los experimentos que se realicen a través de esta aplicación se pueden observar en el panel \circled{7}, en el extremo derecho de la figura \ref{fig:vision}. En este panel se encuentran dos tipos de visualización: la visualización del rendimiento (iteraciones vs. error/psnr) y visualización de la reconstrucción, como se observa en la figura \ref{fig:main_result_1}.
 
@@ -392,7 +398,7 @@ Como se mencionó en la sección \ref{sec:experiment}, para los experimentos que
 
 \end{multicols}
 
-\subsubsection{Rendimiento}
+\subsubsection*{Rendimiento}
 
 En esta subventana se observa el rendimiento actual del experimento que esté corriendo, como se muestra en la figura \ref{fig:main_result_2}. Esta figura presenta una gráfica con dos ejes: el \textcolor{red}{eje izquierdo} representa el indice de similaridad estructural (SSIM); y el \textcolor{blue}{eje derecho} representa la proporción máxima de señal a ruido (PSNR) de las trazas reconstruidas con respecto a las verdaderas. En general, ambas métricas cuantifican la degradación de la calidad de la imagen.
 
@@ -465,7 +471,7 @@ En la parte superior de la gráfica \textit{Resultados del experimento} se obser
 
 \end{multicols}
 
-\subsubsection{Reconstrucción de Trazas}
+\subsubsection*{Reconstrucción de Trazas}
 
 Por otra parte, los resultados cuantitativos del experimento se observan en el subpanel de \emph{Reporte}, como se muestra en la figura \ref{fig:main_result_6}. Esta gráfica se divide en 4 secciones:
 
@@ -489,7 +495,7 @@ Por otra parte, los resultados cuantitativos del experimento se observan en el s
 \end{Figure}
 
 \vspace{0.5cm}
-\section{Ajuste de parámetros}
+\subsection{Modo Ajuste de parámetros}
 
 \begin{multicols}{2}
 
@@ -526,7 +532,7 @@ A continuación se listan los cambios que realiza la aplicación cuando se activ
 
 A continuación, se analiza el panel de ajuste de parámetros y la visualización de resultados.
 
-\subsection{Configuraciones}
+\subsubsection{Configuraciones}
 
 El panel de ajuste de parámetros, como se muestra en la figura \ref{fig:tuning_panel}, permite al usuario configurar el tipo de prueba que desea realizar. Se encuentra dividido en las siguientes secciones:
 
@@ -556,7 +562,7 @@ El panel de ajuste de parámetros, como se muestra en la figura \ref{fig:tuning_
     
 \end{itemize}
 
-\subsubsection{Realizando un ajuste de parámetros óptimo}
+\subsubsection*{Realizando un ajuste de parámetros óptimo}
 
 Para realizar un ajuste de parámetros óptimo, primero se deberá cargar el dato sísmico, tal como se indica en la sección \ref{sec:data_lecture}.
 
@@ -607,7 +613,7 @@ Ahora, para encontrar el valor óptimo $\mu^*$, se toma el valor de $\lambda^*$ 
     \label{fig:tuning_2}
 \end{Figure}
 
-\section{Comparación de Algoritmos}
+\subsection{Modo Comparación de Algoritmos}
 
 \begin{multicols}{2}
 
@@ -638,7 +644,7 @@ Al igual que con el modo de ajuste de parámetros, el modo de comparación modif
 
 A continuación, se analiza el panel de comparación de algoritmos y la visualización de resultados para este modo.
 
-\subsection{Configuraciones}
+\subsubsection{Configuraciones}
 
 El panel comparación de algoritmos, como se muestra en la figura \ref{fig:comp_panel}, permite al usuario configurar el tipo de prueba que desea realizar. Se encuentra dividido en las siguientes secciones:
 
@@ -661,7 +667,7 @@ El panel comparación de algoritmos, como se muestra en la figura \ref{fig:comp_
 	
 \end{multicols}
 
-\subsubsection{Realizando una comparación de algoritmos}
+\subsubsection*{Realizando una comparación de algoritmos}
 
 Para realizar una comparación de algoritmos primero se deberá cargar el dato sísmico, tal como se indica en la sección \ref{sec:data_lecture}.
 
@@ -685,11 +691,11 @@ Una vez termina la ejecución de los cuatro algoritmos, se presentan los resulta
 	\label{fig:result-comp2}
 \end{Figure}
 
-\section{Visualización general de Resultados}
+\subsection{Visualización general de Resultados}
 
 Los experimentos realizados quedan almacenados en el directorio escogidos por el usuario de forma local en su computadora. Esos resultados pueden ser visualizados a través del panel de visualización \circled{6} en el extremo inferior izquierdo de la figura \ref{fig:vision}.
 
-\subsection{Menú principal}
+\subsubsection{Menú principal}
 
 \begin{multicols}{2}
 
@@ -728,7 +734,7 @@ Como se observa en la figura \ref{fig:report_2}, el usuario podrá seleccionar e
 
 Finalmente, los datos cargados se pueden visualizar en el panel de gráficas a la derecha de la aplicación, como se observa en la figura \ref{fig:report_4}.
 
-\subsection{Menú de ajuste de parámetros}
+\subsubsection{Menú de ajuste de parámetros}
 
 Similar al proceso de lectura de datos para experimentos realizados en el menú principal, para esta ocasión se debe estar en el menú de ajuste de parámetros, como se muestra en la figura \ref{fig:tuning}, y repetir el proceso explicado previamente pero cargando los resultados de algún experimento de ajuste de parámetros. A modo de ejemplo, se cargó el archivo de resultados \emph{resultados\_2.npz}, tal como se visualiza en la figura \ref{fig:report_5}. Este modo es exclusivamente de visualización y no permite modificar el rango de valores evaluados.
 
@@ -746,7 +752,7 @@ Similar al proceso de lectura de datos para experimentos realizados en el menú 
     \label{fig:report_5}
 \end{Figure}
 
-\subsection{Menú de comparación de algoritmos}
+\subsubsection{Menú de comparación de algoritmos}
 
 Por último, es posible cargar resultados de comparaciones de algoritmos. Para esto habilitamos el modo \textit{Comparación de Algoritmos} (ver figura \ref{fig:comp}), y presionamos el botón \textit{Ver Resultados} en la parte inferior izquierda. A modo de ejemplo, se cargó el archivo de resultados \emph{results\_comp.npz}, tal como se visualiza en la figura \ref{fig:report_6}. Este modo es exclusivamente de visualización y no permite modificar el rango de valores evaluados.
 
