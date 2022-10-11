@@ -2132,7 +2132,7 @@ class UIMainAWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("mainWindow", "ReDs - Universidad Industrial de Santander"))
+        self.setWindowTitle(_translate("mainWindow", "ReDs - Reconstruccion de Receptores | Universidad Industrial de Santander"))
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))
         self.typeDataLabel.setText(_translate("mainWindow", "Tipo:"))
         self.dataComboBox.setItemText(0, _translate("mainWindow", "Datos completos"))
