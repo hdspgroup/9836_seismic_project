@@ -151,7 +151,16 @@ La figura \ref{fig:vision} presenta las 7 secciones de la interfaz general del m
 
 ToDo}
 
-\section{Módulo ReDs - RR}
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.75\linewidth]{figures/blank}
+	\captionof{figure}{{\color{red}Secciones de la interfaz general del modo Reds - RD.}}
+	\label{fig:rd}
+\end{Figure}
+
+\section{Módulo ReDs - Reconstrucción de Receptores (RR)}
+
+{\color{red}Párrafo corto describiendo lo que hace RR, específicamente}
 
 A continuación se mostrará de forma especifican los modos de uso del módulo ReDs - RR, las diferentes configuraciones y opciones que pueden ser aplicadas a los datos sísmicos para la realización de diferentes tipos de experimentos. Cabe resaltar que de acuerdo al tipo de prueba que se quiera realizar, el comportamiento de los paneles cambiará para adecuarse a dicha tarea.
 
@@ -165,7 +174,7 @@ Como se observa en la figura \ref{fig:main_button}, el primer botón habilitará
 
 \begin{Figure}
     \centering
-    \includegraphics[width=0.4\linewidth]{main-tab.png}
+    \includegraphics[width=0.4\linewidth]{single-tab}
      \captionof{figure}{Botón del menú principal.}
     \label{fig:main_button}
 \end{Figure}
@@ -184,7 +193,7 @@ El panel de lectura de datos \circled{2}, situado al extremo izquierdo superior 
 	
 \begin{Figure}
 	\centering
-	\includegraphics[width=.9\linewidth]{data-lecture-1.png}
+	\includegraphics[width=.9\linewidth]{data-lecture-1.pdf}
 	\captionof{figure}{Cargando un dato sísmico.}
 	\label{fig:data_lecture_1}
 \end{Figure}
@@ -201,13 +210,15 @@ La aplicación ReDs reconoce las extensiones \emph{.npy} y \emph{.mat} para carg
     \label{fig:data_lecture_2}
 \end{Figure}
 
+Existen dos tipos de datos sísmicos que pueden ser cargados desde ReDs: \textit{Datos Completos} y \textit{Datos Incompletos}. El tipo de dato a ser cargado puede ser seleccionado desde la lista desplegable en la Figura \ref{fig:data_lecture_1}.
+
 \begin{multicols}{2}
 
 Una vez seleccionado el dato sísmico, se debe pulsar en la opción \emph{Abrir}. Se podrá observar entonces en \circled{2} el dato sísmico cargado, como se muestra en la figura \ref{fig:data_lecture_3}. Aquí los datos se observan siguiendo la siguiente estructura: \circled{I} representa al directorio padre y \circled{II} es el dato sísmico cargado hijo del directorio padre.
 
 \begin{Figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{data-lecture-3.png}
+    \includegraphics[width=0.6\linewidth]{data-lecture-3.pdf}
      \captionof{figure}{Panel con un dato sísmico cargado.}
     \label{fig:data_lecture_3}
 \end{Figure}
