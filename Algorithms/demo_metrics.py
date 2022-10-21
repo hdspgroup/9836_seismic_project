@@ -61,6 +61,8 @@ def tv_norm(image, norm=None):
         performance /= np.linalg.norm(image, ord=1)
     elif norm == 'l2':
         performance /= np.linalg.norm(image, ord=2)
+    elif norm == 'l21':
+        performance /= np.linalg.norm(image, ord=2, axis=1).sum()
 
     return performance
 
@@ -68,7 +70,7 @@ def tv_norm(image, norm=None):
 # load dataset sample
 
 x = np.load('../Desarrollo/ReDS/data/shots/data_sample.npy')
-x_noise = add_noise(x, 10)
+x_noise = add_noise(x, 1)
 
 pnsr_image = PSNR(x, x_noise)
 
@@ -76,18 +78,22 @@ tv_image = tv_norm(x)
 tv_image_l0 = tv_norm(x, norm='l0')
 tv_image_l1 = tv_norm(x, norm='l1')
 tv_image_l2 = tv_norm(x, norm='l2')
+tv_image_l21 = tv_norm(x, norm='l21')
 
 tv_noise_image = tv_norm(x_noise)
 tv_noise_image_l0 = tv_norm(x_noise, norm='l0')
 tv_noise_image_l1 = tv_norm(x_noise, norm='l1')
 tv_noise_image_l2 = tv_norm(x_noise, norm='l2')
+tv_noise_image_l21 = tv_norm(x, norm='l21')
 
 print('PSNR: ', pnsr_image)
 print('TV: ', tv_image)
 print('TV L0: ', tv_image_l0)
 print('TV L1: ', tv_image_l1)
 print('TV L2: ', tv_image_l2)
+print('TV L21: ', tv_image_l21)
 print('TV Noise: ', tv_noise_image)
 print('TV Noise L0: ', tv_noise_image_l0)
 print('TV Noise L1: ', tv_noise_image_l1)
 print('TV Noise L2: ', tv_noise_image_l2)
+print('TV Noise L21: ', tv_noise_image_l21)
