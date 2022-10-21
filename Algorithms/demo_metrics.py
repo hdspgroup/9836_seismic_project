@@ -57,10 +57,10 @@ def tv_norm(image, norm=None):
 
     if norm == 'l0':
         performance /= np.linalg.norm(np.reshape(image, -1), ord=0)
-    elif norm == 'l2':
-        performance /= np.linalg.norm(image, ord=2)
     elif norm == 'l1':
         performance /= np.linalg.norm(image, ord=1)
+    elif norm == 'l2':
+        performance /= np.linalg.norm(image, ord=2)
 
     return performance
 
