@@ -128,7 +128,35 @@ Ambos modos de operación, RR y RD, realizan la reconstrucción de datos sísmic
 
 El usuario puede configurar cada uno de los algoritmos de reconstrucción de tal manera que pueda realizar diferentes tipos de submuestreo y ajuste de parámetros, todo desde una interfaz gráfica de usuario simple y clara. Aunque los modos de reconstrucción RR y RD presentan diferencias en su operación, están diseñados bajo las mismas directivas. Por esta razón, ambas interfaces gráficas cuentan con varias secciones en común.
 
-La figura \ref{fig:vision} presenta las 7 secciones de la interfaz general del modo Reds - RR, a mencionar:
+
+
+\newpage
+\section{Módulo ReDs - Reconstrucción de Receptores (RR)}
+
+El módulo ReDS-RR (reconstrucción de receptores) realiza la estimación de trazas faltantes en un disparo sísmico, usando algoritmos de gradiente descendiente y aprovechando representaciones escasas de los datos en dominios transformados como Curvelet, DCT y Wavelets.
+
+A continuación se mostrará de forma especifican los modos de uso del módulo ReDs - RR, las diferentes configuraciones y opciones que pueden ser aplicadas a los datos sísmicos para la realización de diferentes tipos de experimentos. Cabe resaltar que de acuerdo al tipo de prueba que se quiera realizar, el comportamiento de los paneles cambiará para adecuarse a dicha tarea.
+
+\subsection{Modo Sencillo}
+
+La aplicación ReDs - RR cuenta con una barra de tareas en la parte superior de la ventana. Aquí se observan 3 botones distintos que permitirán realizar distintos tipos de pruebas sobre los datos sísmicos.
+
+\begin{multicols}{2}
+	
+	Como se observa en la figura \ref{fig:main_button}, el primer botón habilitará a el Modo Sencillo para realizar pruebas generales sobre los datos sísmicos.
+	
+	La figura \ref{fig:vision} presenta las 7 secciones de la interfaz general del Modo Sencillo de ReDs - RR, a mencionar:
+	
+	\begin{Figure}
+		\centering
+		\includegraphics[width=0.5\linewidth]{single-tab}
+		\captionof{figure}{Botón del menú principal.}
+		\label{fig:main_button}
+	\end{Figure}
+	
+\end{multicols}
+
+
 \begin{dingautolist}{192}
 	\setlength\itemsep{0em}
 	\item Barra del menú
@@ -141,46 +169,13 @@ La figura \ref{fig:vision} presenta las 7 secciones de la interfaz general del m
 \end{dingautolist}
 
 \begin{Figure}
-    \centering
-    \includegraphics[width=1\linewidth]{figures/vision_v2}
-     \captionof{figure}{Secciones de la interfaz general del modo Reds - RR.}
-    \label{fig:vision}
-\end{Figure}
-
-{\color{red}La figura ToDo presenta las ToDo secciones de la interfaz general del modo ReDs - RD, a mencionar:
-
-ToDo}
-
-\begin{Figure}
 	\centering
-	\includegraphics[width=0.75\linewidth]{figures/blank}
-	\captionof{figure}{{\color{red}Secciones de la interfaz general del modo Reds - RD.}}
-	\label{fig:rd}
+	\includegraphics[width=1\linewidth]{figures/vision_v2}
+	\captionof{figure}{Secciones de la interfaz general del modo Reds - RR.}
+	\label{fig:vision}
 \end{Figure}
 
-\newpage
-\section{Módulo ReDs - Reconstrucción de Receptores (RR)}
 
-El módulo ReDS-RR (reconstrucción de receptores) realiza la estimación de trazas faltantes en un disparo sísmico, usando algoritmos de gradiente descendiente y aprovechando representaciones escasas de los datos en dominios transformados como Curvelet, DCT y Wavelets.
-
-A continuación se mostrará de forma especifican los modos de uso del módulo ReDs - RR, las diferentes configuraciones y opciones que pueden ser aplicadas a los datos sísmicos para la realización de diferentes tipos de experimentos. Cabe resaltar que de acuerdo al tipo de prueba que se quiera realizar, el comportamiento de los paneles cambiará para adecuarse a dicha tarea.
-
-\subsection{Modo Sencillo}
-
-La aplicación cuenta con una barra de tareas, que se encuentra en la parte superior \circled{1} de la figura \ref{fig:vision}. Aquí se observan 3 botones distintos que permitirán realizar distintos tipos de pruebas sobre los datos sísmicos.
-
-\begin{multicols}{2}
-
-Como se observa en la figura \ref{fig:main_button}, el primer botón habilitará a la aplicación para realizar pruebas generales sobre los datos sísmicos, este es el menú principal.
-
-\begin{Figure}
-    \centering
-    \includegraphics[width=0.4\linewidth]{single-tab}
-     \captionof{figure}{Botón del menú principal.}
-    \label{fig:main_button}
-\end{Figure}
-
-\end{multicols}
 
 El menú principal permite realizar experimentos con los datos sísmicos siguiendo el orden que se observa en la figura \ref{fig:vision}. A continuación se muestra paso a paso el funcionamiento de cada uno los paneles, desde la lectura de datos sísmicos hasta la visualización y guardado de resultados.
 
@@ -199,10 +194,12 @@ El panel de lectura de datos \circled{2}, situado al extremo izquierdo superior 
 	\label{fig:data_lecture_1}
 \end{Figure}
 
-Para leer un dato sísmico, se pulsa la opción \emph{Cargar} en \circled{2}, como se observa en la figura \ref{fig:data_lecture_1}. Inmediatamente se abrirá la ventana \textit{Abrir dato sísmico}, como se observa en la figura \ref{fig:data_lecture_2}, donde el usuario podrá seleccionar un dato sísmico. Para este ejemplo cargaremos \emph{data.npy}.
+Para leer un dato sísmico, se pulsa la opción \emph{Cargar} en el panel \circled{2}, como se observa en la figura \ref{fig:data_lecture_1}. Inmediatamente se abrirá la ventana \textit{Abrir dato sísmico}, como se observa en la figura \ref{fig:data_lecture_2}, donde el usuario podrá seleccionar un dato sísmico. Para este ejemplo cargaremos \emph{data.npy}.
 La aplicación ReDs reconoce las extensiones \emph{.npy} y \emph{.mat} para cargar datos sísmicos.
 
 \end{multicols}
+
+Existen dos tipos de datos sísmicos que pueden ser cargados desde ReDs - RR: \textit{Datos Completos} y \textit{Datos Incompletos}. El tipo de dato a ser cargado puede ser seleccionado desde la lista desplegable en la Figura \ref{fig:data_lecture_1}.
 
 \begin{Figure}
     \centering
@@ -210,8 +207,6 @@ La aplicación ReDs reconoce las extensiones \emph{.npy} y \emph{.mat} para carg
      \captionof{figure}{Ventana de selección de dato sísmico.}
     \label{fig:data_lecture_2}
 \end{Figure}
-
-Existen dos tipos de datos sísmicos que pueden ser cargados desde ReDs: \textit{Datos Completos} y \textit{Datos Incompletos}. El tipo de dato a ser cargado puede ser seleccionado desde la lista desplegable en la Figura \ref{fig:data_lecture_1}.
 
 \begin{multicols}{2}
 
@@ -266,7 +261,9 @@ Adicionalmente, el botón\hspace{0.5mm} \faEye \hspace{0.5mm} permite visualizar
 
 \subsubsection{Submuestreo}\label{subsampling}
 
-Debido a que hay varias formas de recuperar una traza a partir de las medidas recolectadas previamente, el panel de submuestreo \circled{4} permite configurar cuál tipo de submuestreo se desea realizar al dato sísmico, a manera de simulación. Todos los tipos de submuestreo, excepto el de tipo lista, comparten el mismo nivel de compresión que el usuario desee asignar. A continuación se presentan los tipos de submuestreo a aplicar en ReDs:\\
+Debido a que hay varias formas de recuperar una traza a partir de las medidas recolectadas previamente, el panel de submuestreo \circled{4} permite configurar cuál tipo de submuestreo se desea realizar al dato sísmico, a manera de simulación. Todos los tipos de submuestreo, excepto el de tipo lista, comparten el mismo nivel de compresión que el usuario desee asignar. Por otra parte, al cargar datos incompletos el panel de submuestreo se deshabilita.
+
+A continuación se presentan los tipos de submuestreo a aplicar en ReDs:\\
 
 \underline{\textbf{Submuestreo Aleatorio}}
 
@@ -353,7 +350,7 @@ Las condiciones son las siguientes:
 \label{sec:experiment}
 
 Una vez ya se ha cargado un dato sísmico, seleccionado el algoritmo, ajustado sus parámetros y configurado el tipo de submuestreo, entonces se podrá realizar un experimento. El panel \circled{5}, en el extremo izquierdo de la figura \ref{fig:vision}, permite controlar el progreso de la ejecución del experimento a realizar.
-
+\newpage
 \subsubsection*{Realizando un experimento}
 
 \begin{multicols}{2}
@@ -392,9 +389,9 @@ Para correr el experimento se debe pulsar en el botón \hspace{0.5mm} \faPlay \h
 
 \end{multicols}
 
-\subsubsection{Visualización de Resultados}
+\subsubsection{Visualización de Resultados de Datos Completos}
 
-Finalmente, los resultados de todos los experimentos que se realicen a través de esta aplicación se pueden observar en el panel \circled{7}, en el extremo derecho de la figura \ref{fig:vision}. En este panel se encuentran dos tipos de visualización: la visualización del rendimiento (iteraciones vs. error/psnr) y visualización de la reconstrucción, como se observa en la figura \ref{fig:main_result_1}.
+Los resultados de todos los experimentos que se realicen a través de esta aplicación se pueden observar en el panel \circled{7}, en el extremo derecho de la figura \ref{fig:vision}. En este panel se encuentran dos tipos de visualización: la visualización del rendimiento (iteraciones vs. error/psnr) y visualización de la reconstrucción, como se observa en la figura \ref{fig:main_result_1}.
 
 \begin{multicols}{2}
 
@@ -507,6 +504,28 @@ Por otra parte, los resultados cuantitativos del experimento se observan en el s
 \end{Figure}
 
 \vspace{0.5cm}
+
+\subsubsection{Visualización de Resultados de Datos Incompletos}
+
+Los resultados de los experimentos usando datos incompletos difieren de los resultados usando datos completos dado que no existe una medida real de comparación. Por esta razón no es posible calcular métricas de error como el psnr. Para el caso de datos incompletos se usa la medida \textit{Total Variation} (TV) como una medida de la suavidad de la reconstrucción. La figura \ref{fig:res-incompletos} muestra un ejemplo de la evolución del TV para un ejemplo práctico.
+
+Por otra parte, el panel de experimento para datos incompletos es similar al caso cuando se usan datos completos, tal y cual se muestra en la figura \ref{fig:res-incompletos2}.
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.85\linewidth]{res-incompletos}
+	\captionof{figure}{Rendimiento de un experimento realizado usando datos incompletos.}
+	\label{fig:res-incompletos}
+\end{Figure}
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.85\linewidth]{res-incompletos2}
+	\captionof{figure}{Reporte cuantitativo de un experimento realizado usando datos incompletos.}
+	\label{fig:res-incompletos2}
+\end{Figure}
+
+\newpage
 \subsection{Modo Ajuste de parámetros}
 
 \begin{multicols}{2}
@@ -779,6 +798,17 @@ Por último, es posible cargar resultados de comparaciones de algoritmos. Para e
 \section{Módulo ReDs - Reconstrucción de Disparos (RD)}
 
 El módulo ReDS-RD (reconstrucción de disparos) realiza la estimación de disparos sísmicos completos, faltantes en la adquisición, usando algoritmos de gradiente descendiente que aprovechan representaciones escasas de los datos en dominios transformados como Curvelet, DCT y Wavelets.
+
+{\color{red}La figura ToDo presenta las ToDo secciones de la interfaz general del modo ReDs - RD, a mencionar:
+	
+	ToDo}
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.75\linewidth]{figures/blank}
+	\captionof{figure}{{\color{red}Secciones de la interfaz general del modo Reds - RD.}}
+	\label{fig:rd}
+\end{Figure}
 
 \newpage
 \section{Acerca de}

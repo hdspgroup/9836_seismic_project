@@ -1,14 +1,15 @@
 \babel@toc {spanish}{}\relax 
 \contentsline {section}{\numberline {1}Visión General de la Aplicación ReDs}{7}{section.1}%
-\contentsline {section}{\numberline {2}Módulo ReDs - Reconstrucción de Receptores (RR)}{10}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Modo Sencillo}{10}{subsection.2.1}%
-\contentsline {subsubsection}{\numberline {2.1.1}Lectura de Datos}{10}{subsubsection.2.1.1}%
-\contentsline {subsubsection}{\numberline {2.1.2}Algoritmos}{11}{subsubsection.2.1.2}%
-\contentsline {subsubsection}{\numberline {2.1.3}Submuestreo}{12}{subsubsection.2.1.3}%
-\contentsline {subsubsection}{\numberline {2.1.4}Experimentos}{13}{subsubsection.2.1.4}%
-\contentsline {subsubsection}{\numberline {2.1.5}Visualización de Resultados}{14}{subsubsection.2.1.5}%
-\contentsline {subsection}{\numberline {2.2}Modo Ajuste de parámetros}{17}{subsection.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.1}Configuraciones}{18}{subsubsection.2.2.1}%
+\contentsline {section}{\numberline {2}Módulo ReDs - Reconstrucción de Receptores (RR)}{8}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Modo Sencillo}{8}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Lectura de Datos}{9}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Algoritmos}{10}{subsubsection.2.1.2}%
+\contentsline {subsubsection}{\numberline {2.1.3}Submuestreo}{10}{subsubsection.2.1.3}%
+\contentsline {subsubsection}{\numberline {2.1.4}Experimentos}{12}{subsubsection.2.1.4}%
+\contentsline {subsubsection}{\numberline {2.1.5}Visualización de Resultados de Datos Completos}{13}{subsubsection.2.1.5}%
+\contentsline {subsubsection}{\numberline {2.1.6}Visualización de Resultados de Datos Incompletos}{16}{subsubsection.2.1.6}%
+\contentsline {subsection}{\numberline {2.2}Modo Ajuste de parámetros}{18}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Configuraciones}{19}{subsubsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.3}Modo Comparación de Algoritmos}{21}{subsection.2.3}%
 \contentsline {subsubsection}{\numberline {2.3.1}Configuraciones}{22}{subsubsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.4}Visualización general de Resultados}{24}{subsection.2.4}%
@@ -16,5 +17,5 @@
 \contentsline {subsubsection}{\numberline {2.4.2}Menú de ajuste de parámetros}{25}{subsubsection.2.4.2}%
 \contentsline {subsubsection}{\numberline {2.4.3}Menú de comparación de algoritmos}{27}{subsubsection.2.4.3}%
 \contentsline {section}{\numberline {3}Módulo ReDs - Reconstrucción de Disparos (RD)}{29}{section.3}%
-\contentsline {section}{\numberline {4}Acerca de}{29}{section.4}%
-\contentsline {section}{\numberline {5}Recomendaciones de uso}{29}{section.5}%
+\contentsline {section}{\numberline {4}Acerca de}{30}{section.4}%
+\contentsline {section}{\numberline {5}Recomendaciones de uso}{30}{section.5}%
