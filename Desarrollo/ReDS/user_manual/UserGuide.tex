@@ -547,7 +547,7 @@ La aplicación ReDs se adapta a los tipos de pruebas que se quieran realizar, po
 
 \begin{Figure}
     \centering
-    \includegraphics[width=1\linewidth]{tuning.png}
+    \includegraphics[width=1\linewidth]{tuning.pdf}
      \captionof{figure}{Partes del ajuste de parámetros en la aplicación.}
     \label{fig:tuning}
 \end{Figure}
@@ -644,6 +644,17 @@ Ahora, para encontrar el valor óptimo $\mu^*$, se toma el valor de $\lambda^*$ 
     \label{fig:tuning_2}
 \end{Figure}
 
+\subsubsection{Ajuste de Parámetros de Datos Incompletos}
+
+El ajuste de parámetros usando datos incompletos sigue exactamente el mismo procedimiento que si se usaran datos incompletos. De nuevo, el módulo de sub-muestreo se desactiva cuando se selecciona usar datos incompletos. El resto del procedimiento es igual que lo presentado en el numeral anterior, tal y como se presenta en la figura \ref{fig:tuninginc}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\linewidth]{figures/tuninginc}
+	\caption{Ajuste de parámetros usando datos incompletos usando el algoritmo FISTA.}
+	\label{fig:tuninginc}
+\end{figure}
+
 \subsection{Modo Comparación de Algoritmos}
 
 \begin{multicols}{2}
@@ -660,18 +671,19 @@ El tercer modo de ejecución de ReDs permite correr los cuatro algoritmos de rec
 \end{multicols}
 Al igual que con el modo de ajuste de parámetros, el modo de comparación modifica la interfaz gráfica, tal y como se muestra en la figura \ref{fig:main-comp}. A continuación se listan los cambios que realiza la aplicación cuando se activa el modo de comparación de algoritmos:
 
+\begin{Figure}
+	\centering
+	\includegraphics[width=1\linewidth]{main-comp.png}
+	\captionof{figure}{Interfaz modo de comparación de algoritmos.}
+	\label{fig:main-comp}
+\end{Figure}
+
+\newpage
 \begin{dingautolist}{192}
 	\setlength\itemsep{0em}
 	\item Se presentan los cuatro algoritmos de reconstrucción, con sus parámetros
 	\item La visualización de resultados se simplifica a una sola gráfica
 \end{dingautolist}
-
-\begin{Figure}
-	\centering
-	\includegraphics[width=0.85\linewidth]{main-comp.png}
-	\captionof{figure}{Interfaz modo de comparación de algoritmos.}
-	\label{fig:main-comp}
-\end{Figure}
 
 A continuación, se analiza el panel de comparación de algoritmos y la visualización de resultados para este modo.
 
@@ -710,17 +722,39 @@ Una vez termina la ejecución de los cuatro algoritmos, se presentan los resulta
 
 \begin{Figure}
 	\centering
-	\includegraphics[width=0.8\linewidth]{result-comp1.png}
+	\includegraphics[width=0.9\linewidth]{result-comp1.png}
 	\captionof{figure}{Rendimiento de la comparación de algoritmos}
 	\label{fig:result-comp1}
 \end{Figure}
 
 \begin{Figure}
 	\centering
-	\includegraphics[width=0.8\linewidth]{result-comp2.png}
+	\includegraphics[width=0.9\linewidth]{result-comp2.png}
 	\captionof{figure}{Reporte de reconstrucción de la comparación de algoritmos}
 	\label{fig:result-comp2}
 \end{Figure}
+
+\newpage
+
+\subsubsection{Comparación de Algoritmos de Datos Incompletos}
+
+Realizar una comparación de algoritmos usando datos incompletos genera diferencias en la presentación de resultados. La primera gráfica de resultados es muy similar a si se usaran datos completos. La figura \ref{fig:ajusteinca} es similar a la figura \ref{fig:result-comp2}. Sin embargo, la gráfica de Reporte de Reconstrucción difiere sustancialmente al incluir no solo las reconstrucciones sino las gráficas FK, tal y como se muestra en la figura \ref{fig:ajusteincb}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{figures/ajusteinca}
+	\caption{Rendimiento de la comparación de algoritmos de datos incompletos.}
+	\label{fig:ajusteinca}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{figures/ajusteincb}
+	\caption{Reporte de reconstrucción de la comparación de algoritmos de datos incompletos.}
+	\label{fig:ajusteincb}
+\end{figure}
+
+\newpage
 
 \subsection{Visualización general de Resultados}
 

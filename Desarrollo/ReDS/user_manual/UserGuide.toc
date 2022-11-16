@@ -10,12 +10,14 @@
 \contentsline {subsubsection}{\numberline {2.1.6}Visualización de Resultados de Datos Incompletos}{16}{subsubsection.2.1.6}%
 \contentsline {subsection}{\numberline {2.2}Modo Ajuste de parámetros}{18}{subsection.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.1}Configuraciones}{19}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Ajuste de Parámetros de Datos Incompletos}{21}{subsubsection.2.2.2}%
 \contentsline {subsection}{\numberline {2.3}Modo Comparación de Algoritmos}{21}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}Configuraciones}{22}{subsubsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.4}Visualización general de Resultados}{24}{subsection.2.4}%
-\contentsline {subsubsection}{\numberline {2.4.1}Menú principal}{24}{subsubsection.2.4.1}%
-\contentsline {subsubsection}{\numberline {2.4.2}Menú de ajuste de parámetros}{25}{subsubsection.2.4.2}%
-\contentsline {subsubsection}{\numberline {2.4.3}Menú de comparación de algoritmos}{27}{subsubsection.2.4.3}%
-\contentsline {section}{\numberline {3}Módulo ReDs - Reconstrucción de Disparos (RD)}{29}{section.3}%
-\contentsline {section}{\numberline {4}Acerca de}{30}{section.4}%
-\contentsline {section}{\numberline {5}Recomendaciones de uso}{30}{section.5}%
+\contentsline {subsubsection}{\numberline {2.3.1}Configuraciones}{23}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Comparación de Algoritmos de Datos Incompletos}{25}{subsubsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.4}Visualización general de Resultados}{26}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Menú principal}{26}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Menú de ajuste de parámetros}{27}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}Menú de comparación de algoritmos}{29}{subsubsection.2.4.3}%
+\contentsline {section}{\numberline {3}Módulo ReDs - Reconstrucción de Disparos (RD)}{31}{section.3}%
+\contentsline {section}{\numberline {4}Acerca de}{32}{section.4}%
+\contentsline {section}{\numberline {5}Recomendaciones de uso}{32}{section.5}%
