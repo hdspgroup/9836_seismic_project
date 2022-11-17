@@ -6,6 +6,7 @@ from scipy.sparse import csr_matrix
 from skimage.metrics import structural_similarity as ssim
 from matplotlib import pyplot as plt
 import inspect
+from scipy.sparse import identity
 try:
     from pyct.fdct2 import fdct2
 except ImportError:
@@ -243,6 +244,12 @@ def random_sampling(x, sr, seed=None):
     pattern_bool = np.asarray(pattern_vec, dtype=bool)
 
     return out, pattern_vec, pattern_bool
+
+
+
+
+
+
 
 
 def dct2():

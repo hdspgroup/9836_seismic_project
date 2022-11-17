@@ -164,17 +164,17 @@ def searchparameters(iter1, iter2, limits2=[0,5], iter3=1, limits3=[0,5], iter4=
 from scipy.io import savemat
 def simulationsfixedparameters():
     sampling = Sampling()
-    seismic_data1 = load_seismic_data('/home/jams/Documents/9836_seismic_project/Desarrollo/ReDS/data/spii15s.npy')
+    seismic_data1 = load_seismic_data('/home/jams/Documents/9836_seismic_project/Desarrollo/ReDS/data/cube4.npy')
     reps = 5
     psnrs = np.zeros((reps,1))
     snrs = np.zeros((reps,1))
     ssims = np.zeros((reps,1))
     jitparams = dict(gamma=3, epsilon=3)
     mstr = "aleatorio"
-    algstr = "gap"
+    algstr = "twist"
     ss2 = np.array(seismic_data1, copy=True)
-    transform = 'FDCT2'
-    transforminv = 'FDCT2'
+    transform = 'FDCT2'#DCT2D
+    transforminv = 'FDCT2'#IDCT2D
 
     #seismic_data1 = (seismic_data1**2)*np.sign(seismic_data1)
     for i in range(reps):
@@ -199,7 +199,7 @@ def simulationsfixedparameters():
             params = dict(param1=0.03)
         elif algstr=="fista":
             params = dict(param1=0.001, param2=1.2)
-        iters = 50
+        iters = 1500
         algorithm, parameters = Alg.get_algorithm(algstr, iters, **params)
 
         res = algorithm(**parameters)
@@ -232,6 +232,7 @@ def simulationsfixedparameters():
     savemat('./FK-'+algstr+mstr+'33-s.mat',{'psnrs':psnrs,'snrs':snrs, 'ssims':ssims})
 
 simulationsfixedparameters()
+
 #searchparameters(3, 12, limits2=[0,3], iter3=12, limits3=[0,3], iter4=20, limits4=[0,5], algstr="twist", mstr = "aleatorio")
 #searchparameters(3, 40, limits2=[0,15], iter3=1, limits3=[0,5], iter4=1, limits4=[0,5], algstr="gap", mstr = "aleatorio")
 #searchparameters(3, 20, limits2=[0,3], iter3=20, limits3=[0,3], iter4=1, limits4=[0,5], algstr="fista", mstr = "aleatorio")
