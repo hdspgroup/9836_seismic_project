@@ -10,8 +10,7 @@ from skimage.metrics import structural_similarity as ssim
 from Algorithms.Function import random_sampling, ShotAlgorithms, PSNR
 
 # ----------------- --------------------
-# data_name = '../Desarrollo/ReDS/data/cube4.npy'
-data_name = '../Desarrollo/ReDS/data/syn3D_cross-spread2.npy'
+data_name = '../Desarrollo/ReDS/data/cube4.npy'
 data_format = 'numpy'
 
 if data_format == 'matlab':
