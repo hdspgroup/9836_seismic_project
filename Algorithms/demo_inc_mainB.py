@@ -9,9 +9,11 @@ from skimage.metrics import structural_similarity as ssim
 
 from Algorithms.Function import random_sampling, ShotAlgorithms, PSNR
 
+# data = alg.measurements().permute(0, 2, 1)
+# np.save('inc_cube4.npy', data)
+
 # ----------------- --------------------
-# data_name = '../Desarrollo/ReDS/data/cube4.npy'
-data_name = '../Desarrollo/ReDS/data/syn3D_cross-spread2.npy'
+data_name = '../Desarrollo/ReDS/data/incomplete_samples/inc_cube4.npy'
 data_format = 'numpy'
 
 if data_format == 'matlab':
@@ -25,8 +27,9 @@ if 'data.npy' in data_name:
 '''
 ---------------  SAMPLING --------------------
 '''
-sr_rand = 0.5  # 1-compression
-_, _, H = random_sampling(x[:, int(x.shape[1] / 2), :], sr_rand, seed=0)
+# sr_rand = 0.5  # 1-compression
+# _, _, H = random_sampling(x[:, int(x.shape[1] / 2), :], sr_rand, seed=0)
+H = None
 
 '''
 ---------------- RECOVERY ALGORITHM -----------------
@@ -36,6 +39,8 @@ case = 'FastMarching'
 alg = ShotAlgorithms(x, H)
 x_result, hist = alg.get_results(case)
 x = x.astype('uint8')
+
+H = alg.H
 
 # -------------- Visualization ----------------
 

@@ -54,7 +54,7 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         message_box.pos()
         message_box.setIcon(QtWidgets.QMessageBox.Question)
         message_box.setWindowTitle('Cerrar aplicación')
-        message_box.setText('¿Estás segur@ que quieres cerrar la aplicación?')
+        message_box.setText('¿Estás segur@ que quieres cerrar este módulo?')
         message_box.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
         yesButton = message_box.button(QtWidgets.QMessageBox.Yes)
         yesButton.setText('Si')

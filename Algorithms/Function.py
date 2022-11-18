@@ -1125,11 +1125,31 @@ class ShotAlgorithms:
     """
 
     def __init__(self, x, H, print_info=True):
+        '''
+        Parameters
+        ----------
+        x : array-like
+            An 3D input image.
+        H : array-like
+            The sensing matrix. A matrix with the positions of the
+            missing elements.
+        '''
         self.print_info = print_info
+        self.is_complete_data = True
 
+        # ------ Build sensing matrix for incomplete data ---------
+        if H is None:
+            x = np.nan_to_num(x, nan=0)
+            aux = np.einsum('ijk->k', x)
+            H = aux != 0
+            self.is_complete_data = False
+
+        # ---------------------------------------------------------
+
+        x = np.double(x)
         x = np.transpose(x, [0, 2, 1])
-        x -= x.min()
-        x /= x.max()
+        x -= np.min(x)
+        x /= np.max(x)
         x *= 255
         self.x = x.astype('uint8')
         self.H = H
