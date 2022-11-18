@@ -49,7 +49,6 @@ def add_noise(image, snr):
 
 def tv_norm(image, norm=None):
     """Compute the mean (isotropic) TV norm of an image"""
-
     grad_x1 = np.diff(image, axis=0)
     grad_x2 = np.diff(image, axis=1)
 

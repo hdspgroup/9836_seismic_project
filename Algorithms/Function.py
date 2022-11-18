@@ -1160,6 +1160,8 @@ class ShotAlgorithms:
         self.mask = np.zeros(x.shape).astype('uint8')
         self.mask[:, self.pattern_rand == 0, :] = 1
 
+        self.H_elim = np.where(self.H == 0)[0]
+
     def measurements(self):
         '''
         Operator measurement models the subsampled acquisition process given a
@@ -1243,9 +1245,9 @@ class ShotAlgorithms:
             aux = (tmp.astype('float32') + aux.astype('float32')) / 2
             output[..., [i - 1, i, i + 1]] = aux = aux.astype('uint8')
 
-            psnr_val = PSNR(x, output)
-            ssim_val = ssim(x, output)
-            tv_val = tv_norm(x)
+            psnr_val = PSNR(x[:, self.H_elim, :], output[:, self.H_elim, :])
+            ssim_val = ssim(x[:, self.H_elim, :], output[:, self.H_elim, :])
+            tv_val = tv_norm(output.transpose((0, 2, 1)))
 
             hist[i, 0] = psnr_val
             hist[i, 1] = ssim_val
@@ -1258,9 +1260,9 @@ class ShotAlgorithms:
         output = np.transpose(output, [0, 2, 1])
         x = np.transpose(x, [0, 2, 1])
 
-        psnr_val = PSNR(x, output)
-        ssim_val = ssim(x, output)
-        tv_val = tv_norm(x)
+        psnr_val = PSNR(x[:, self.H_elim, :], output[:, self.H_elim, :])
+        ssim_val = ssim(x[:, self.H_elim, :], output[:, self.H_elim, :])
+        tv_val = tv_norm(output.transpose((0, 2, 1)))
 
         hist[max_itr, 0] = psnr_val
         hist[max_itr, 1] = ssim_val
