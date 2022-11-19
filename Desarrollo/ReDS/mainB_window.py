@@ -124,9 +124,6 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.algorithmComboBox = QtWidgets.QComboBox(self.algorithmGroupBox)
         self.algorithmComboBox.setObjectName("algorithmComboBox")
         self.algorithmComboBox.addItem("")
-        # self.algorithmComboBox.addItem("")
-        # self.algorithmComboBox.addItem("")
-        # self.algorithmComboBox.addItem("")
         self.algorithmHLayout.addWidget(self.algorithmComboBox)
         self.algorithmPushButton = QtWidgets.QPushButton(self.algorithmGroupBox)
         self.algorithmPushButton.setEnabled(True)
@@ -137,55 +134,8 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.algorithmPushButton.setIcon(icon)
         self.algorithmPushButton.setObjectName("algorithmPushButton")
         self.algorithmHLayout.addWidget(self.algorithmPushButton)
-        # self.maxiterLabel = QtWidgets.QLabel(self.algorithmGroupBox)
-        # self.maxiterLabel.setObjectName("maxiterLabel")
-        # self.algorithmHLayout.addWidget(self.maxiterLabel)
-        # self.maxiterSpinBox = QtWidgets.QSpinBox(self.algorithmGroupBox)
-        # self.maxiterSpinBox.setMinimum(1)
-        # self.maxiterSpinBox.setMaximum(9999)
-        # self.maxiterSpinBox.setProperty("value", 10)
-        # self.maxiterSpinBox.setObjectName("maxiterSpinBox")
-        # self.algorithmHLayout.addWidget(self.maxiterSpinBox)
         self.algorithmHLayout.setStretch(0, 5)
         self.algorithmGroupVLayout.addLayout(self.algorithmHLayout)
-        # self.paramsHLayout = QtWidgets.QHBoxLayout()
-        # self.paramsHLayout.setObjectName("paramsHLayout")
-        # self.param1Label = QtWidgets.QLabel(self.algorithmGroupBox)
-        # self.param1Label.setText("")
-        # self.param1Label.setTextFormat(QtCore.Qt.AutoText)
-        # self.param1Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
-        # self.param1Label.setScaledContents(True)
-        # self.param1Label.setWordWrap(False)
-        # self.param1Label.setIndent(-1)
-        # self.param1Label.setObjectName("param1Label")
-        # self.paramsHLayout.addWidget(self.param1Label)
-        # self.param1LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
-        # self.param1LineEdit.setObjectName("param1LineEdit")
-        # self.paramsHLayout.addWidget(self.param1LineEdit)
-        # self.param2Label = QtWidgets.QLabel(self.algorithmGroupBox)
-        # self.param2Label.setEnabled(True)
-        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        # sizePolicy.setHorizontalStretch(0)
-        # sizePolicy.setVerticalStretch(0)
-        # sizePolicy.setHeightForWidth(self.param2Label.sizePolicy().hasHeightForWidth())
-        # self.param2Label.setSizePolicy(sizePolicy)
-        # self.param2Label.setText("")
-        # self.param2Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu.png")))
-        # self.param2Label.setScaledContents(True)
-        # self.param2Label.setObjectName("param2Label")
-        # self.paramsHLayout.addWidget(self.param2Label)
-        # self.param2LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
-        # self.param2LineEdit.setObjectName("param2LineEdit")
-        # self.paramsHLayout.addWidget(self.param2LineEdit)
-        # self.param3Label = QtWidgets.QLabel(self.algorithmGroupBox)
-        # self.param3Label.setText("")
-        # self.param3Label.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho.png")))
-        # self.param3Label.setObjectName("param3Label")
-        # self.paramsHLayout.addWidget(self.param3Label)
-        # self.param3LineEdit = QtWidgets.QLineEdit(self.algorithmGroupBox)
-        # self.param3LineEdit.setObjectName("param3LineEdit")
-        # self.paramsHLayout.addWidget(self.param3LineEdit)
-        # self.algorithmGroupVLayout.addLayout(self.paramsHLayout)
         self.mainLayout.addWidget(self.algorithmGroupBox)
 
         self.tuningGroupBox = QtWidgets.QGroupBox(self.centralwidget)
@@ -744,9 +694,6 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         icon7.addPixmap(QtGui.QPixmap(solve_path("assets/icons/comparison.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.comparisonAction.setIcon(icon7)
         self.comparisonAction.setObjectName("comparisonAction")
-        # self.toolBar.addAction(self.mainAction)
-        # self.toolBar.addAction(self.tuningAction)
-        # self.toolBar.addAction(self.comparisonAction)
         self.toolBar.addAction(self.aboutOfAction)
 
         self.retranslateUi()
@@ -776,7 +723,6 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         algorithm = self.algorithmComboBox.currentText().lower()
         tuning_type = self.paramTuningComboBox.currentText().lower()
 
-        # self.update_main_visible_algorithms(algorithm)
         self.update_tuning_visible_algorithms(algorithm, tuning_type)
 
         self.tuningGroupBox.setVisible(False)
@@ -837,24 +783,9 @@ class UIMainBWindow(QtWidgets.QMainWindow):
 
         self.icons_path = 'assets/parameters'
 
-        # lmb = 'lambda'
-        # mu = 'mu'
-        # rho = 'rho'
-        # alpha = 'alpha'
-        # beta = 'beta'
-        # gamma = 'gamma'
-
         self.param_type = ['init', 'end', 'list']
-
-        # self.params = dict(fista=[[lmb, 0.1, 0.5], [mu, 0.3, 0.7]],
-        #                    gap=[[lmb, 1.0, 1.5]],
-        #                    twist=[[lmb, 0.9, 1.5], [alpha, 1.2, 1.7], [beta, 1.998, 2.3]],
-        #                    admm=[[rho, 0.5, 1.5], [gamma, 1.0, 1.7], [lmb, 0.0078, 0.009]])
         self.params = dict(fast_marching=[['init', 0.0, 0.0], ['end', 0.0, 0.0]])
 
-        # self.main_params = [[self.param1Label, self.param1LineEdit],
-        #                     [self.param2Label, self.param2LineEdit],
-        #                     [self.param3Label, self.param3LineEdit]]
         self.main_params = None
 
         self.tuning_params = [[self.param1InitLabel, self.param1InitLineEdit,
@@ -988,64 +919,6 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                         "Se intentó cargar un resultados que no corresponden a la herramienta actual."
                         "Por favor, solo cargue resultados obtenidos en el menú principal", details=msg)
                     return
-
-            # elif tab_mode == 'tuning':
-            #     try:
-            #         data = np.load(uploaded_directory, allow_pickle=True)
-            #         algorithm_name = str(data['algorithm']).lower()
-            #         tuning_data = pd.DataFrame({item[0]: item[1] for item in data['tuning_data']})
-            #         fixed_params = {item[0]: item[1] for item in data['fixed_params']}
-            #         current_scale = str(data['scale']).lower()
-            #
-            #         data_name = uploaded_directory.split('/')[-1].split('.')[0]
-            #
-            #         expTuningTab, tuningGraphic = self.add_tab(data_name, self.tuningTabWidget,
-            #                                                    TuningGraphic(is_complete=is_complete))
-            #         self.graphics['tuning'][data_mode][data_name] = tuningGraphic
-            #         tuningGraphic.update_tuning(algorithm_name, tuning_data, fixed_params, current_scale)
-            #         tuningGraphic.update_figure()
-            #
-            #         self.all_tabs['report'].append([expTuningTab, tuningGraphic])
-            #
-            #     except BaseException as err:
-            #         msg = f"Unexpected {err=}, {type(err)=}"
-            #         showCritical(
-            #             "Se intentó cargar un resultados que no corresponden a la herramienta actual."
-            #             "Por favor, solo cargue resultados obtenidos en el menú de ajuste de parámetros", details=msg)
-            #         return
-            #
-            # else:
-            #     try:
-            #         data = np.load(uploaded_directory, allow_pickle=True)
-            #         comparison_data = {item[0]: item[1] for item in data['comparison_data']}
-            #
-            #         data_name = uploaded_directory.split('/')[-1].split('.')[0]
-            #
-            #         expCompPerformanceTab, compPerformanceGraphic = self.add_tab(data_name,
-            #                                                                      self.comparisonPerformanceTabWidget,
-            #                                                                      ComparisonPerformanceGraphic(
-            #                                                                          is_complete=is_complete))
-            #         self.graphics['comparison'][data_mode]['performance'][data_name] = compPerformanceGraphic
-            #         compPerformanceGraphic.update_values(**comparison_data)
-            #         compPerformanceGraphic.update_figure()
-            #
-            #         expCompReportTab, compReconstructionGraphic = self.add_tab(data_name,
-            #                                                                    self.comparisonReportTabWidget,
-            #                                                                    ComparisonReconstructionGraphic(
-            #                                                                        is_complete=is_complete))
-            #         self.graphics['comparison'][data_mode]['report'][data_name] = compReconstructionGraphic
-            #         compReconstructionGraphic.update_report(data)
-            #         compReconstructionGraphic.update_figure()
-            #
-            #         self.all_tabs['report'].append([expCompPerformanceTab, compPerformanceGraphic])
-            #         self.all_tabs['report'].append([expCompReportTab, compReconstructionGraphic])
-            #
-            #     except BaseException as err:
-            #         msg = f"Unexpected {err=}, {type(err)=}"
-            #         showCritical(
-            #             "Se intentó cargar un resultados que no corresponden a la herramienta actual."
-            #             "Por favor, solo cargue resultados obtenidos en el menú de comparaciones", details=msg)
-            #         return
 
     def remove_report_tabs(self):
         for page, graph in self.all_tabs['report']:
@@ -1761,7 +1634,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         lista = self.elementLineEdit
 
         try:
-            sampling_dict, H = self.sampling.apply_sampling(data, mode, jitter_params,
+            sampling_dict, H = self.sampling.apply_sampling(data.astype('float32'), mode, jitter_params,
                                                             lista, seed, compression_ratio)
 
             if data_mode == 'incomplete':
@@ -1775,8 +1648,6 @@ class UIMainBWindow(QtWidgets.QMainWindow):
     def load_algorithm(self, data_name, seismic_data, H, sampling_dict):
         self.algorithm_name = self.algorithmComboBox.currentText().lower()
         self.algorithm_name = str.replace(self.algorithm_name, ' ', '_')
-        tuning_type = self.paramTuningComboBox.currentText().lower()
-        fixed_param = self.paramComboBox.currentIndex()
         self.current_scale = self.scaleComboBox.currentText().lower()
         data_mode = self.global_variables['data_mode']
         is_complete = True if data_mode == 'complete' else False
@@ -1804,116 +1675,9 @@ class UIMainBWindow(QtWidgets.QMainWindow):
             # update worker behaviour
 
             if not is_complete:
-                sampling_dict['H'] = Alg.H_raw
+                sampling_dict['H'] = Alg.H
                 sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
             return ShotWorker(data_name, algorithm, self.max_iter, sampling_dict, performance_graphic, report_graphic)
-
-        # elif self.global_variables['tab_mode'] == 'tuning':
-        #     param_list = []
-        #     parameters = []
-        #
-        #     if data_name in self.graphics['tuning'][data_mode].keys():
-        #         tuning_graphic = self.graphics['tuning'][data_mode][data_name]
-        #     else:
-        #         tuning_tab, tuning_graphic = self.add_tab(data_name, self.tuningTabWidget,
-        #                                                   TuningGraphic(is_complete=is_complete))
-        #         self.graphics['tuning'][data_mode][data_name] = tuning_graphic
-        #         self.all_tabs['normal'].append([tuning_tab, tuning_graphic])
-        #
-        #     num_params = len(self.params[self.algorithm_name])
-        #     for i in range(num_params):
-        #
-        #         number_init = self.tuning_params[i][1].text()
-        #         number_end = self.tuning_params[i][3].text()
-        #
-        #         i_comparison = i == fixed_param
-        #         if tuning_type == 'intervalo':
-        #             if i_comparison:
-        #                 scale = np.linspace
-        #                 if self.current_scale != 'lineal':
-        #                     scale = np.logspace
-        #                     number_init, number_end = np.log10(float(number_init)), np.log10(float(number_end))
-        #
-        #                 param_list.append(list(scale(float(number_init), float(number_end),
-        #                                              int(self.paramValuesSpinBox.text()))))
-        #
-        #             else:
-        #                 num_init = float(number_init)
-        #                 aux_fixed_param = {self.params[self.algorithm_name][i][0]: num_init}
-        #                 self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name].update(
-        #                     aux_fixed_param)
-        #                 param_list.append([num_init])
-        #
-        #         if tuning_type == 'lista':
-        #             if i_comparison:
-        #                 lista = [float(number) for number in number_init.replace(' ', '').split(',')]
-        #                 lista.sort()
-        #
-        #                 param_list.append(lista)
-        #
-        #             else:
-        #                 num_init = float(number_init)
-        #                 aux_fixed_param = {self.params[self.algorithm_name][i][0]: num_init}
-        #                 self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name].update(
-        #                     aux_fixed_param)
-        #                 param_list.append([num_init])
-        #
-        #     func = None
-        #     param_arg_names = ['param1', 'param2', 'param3']
-        #     for ps in product(*param_list):
-        #         aux_params = {param_arg_names[i]: ps[i] for i in range(num_params)}
-        #
-        #         Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')
-        #         func, params = Alg.get_algorithm(self.algorithm_name, self.max_iter, **aux_params)
-        #
-        #         parameters.append(params)
-        #
-        #     self.total_num_run = len(parameters)
-        #
-        #     # update worker behaviour
-        #     return TuningWorker(data_name, func, parameters, self.max_iter, tuning_graphic)
-        #
-        # else:
-        #     funcs = []
-        #     param_list = []
-        #
-        #     if data_name in self.graphics['comparison'][data_mode]['performance'].keys():
-        #         comp_performance_graphic = self.graphics['comparison'][data_mode]['performance'][data_name]
-        #     else:
-        #         comp_performance_tab, comp_performance_graphic = self.add_tab(data_name,
-        #                                                                       self.comparisonPerformanceTabWidget,
-        #                                                                       ComparisonPerformanceGraphic(
-        #                                                                           is_complete=is_complete))
-        #         self.graphics['comparison'][data_mode]['performance'][data_name] = comp_performance_graphic
-        #         self.all_tabs['normal'].append([comp_performance_tab, comp_performance_graphic])
-        #
-        #     if data_name in self.graphics['comparison'][data_mode]['report'].keys():
-        #         comp_report_graphic = self.graphics['comparison'][data_mode]['report'][data_name]
-        #     else:
-        #         comp_report_tab, comp_report_graphic = self.add_tab(data_name, self.comparisonReportTabWidget,
-        #                                                             ComparisonReconstructionGraphic(
-        #                                                                 is_complete=is_complete))
-        #         self.graphics['comparison'][data_mode]['report'][data_name] = comp_report_graphic
-        #         self.all_tabs['normal'].append([comp_report_tab, comp_report_graphic])
-        #
-        #     algorithm_names = ['fista', 'gap', 'twist', 'admm']
-        #     param_arg_names = ['param1', 'param2', 'param3']
-        #     for alg_name, params in zip(algorithm_names, self.comparison_params):
-        #         aux_params = {param_arg_names[i]: param.text() for i, param in enumerate(params)}
-        #
-        #         Alg = Algorithms(seismic_data, H, 'DCT2D', 'IDCT2D')
-        #         func, params = Alg.get_algorithm(alg_name, self.max_iter, **aux_params)
-        #
-        #         funcs.append(func)
-        #         param_list.append(params)
-        #
-        #     # # update worker behaviour
-        #
-        #     if not is_complete:
-        #         sampling_dict['H'] = Alg.H_raw
-        #         sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
-        #     return ComparisonWorker(data_name, funcs, param_list, self.max_iter, sampling_dict,
-        #                             comp_performance_graphic, comp_report_graphic)
 
     def start_experiment(self):
 
@@ -1987,7 +1751,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         # update figure
         psnr = np.round(res_dict['hist'][iter, 0], 3)
         ssim = np.round(res_dict['hist'][iter, 1], 3)
-        tv = np.round(res_dict['hist'][iter, 2], 3)
+        tv = np.round(res_dict['hist'][iter, 2], 8)
 
         iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration'][data_name]
         psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnr'][data_name]
@@ -2028,100 +1792,6 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                  is_complete=True if data_mode == 'complete' else False)
         print("Results saved [Ok]")
 
-    def report_tuning_progress(self, data_name, num_run, res_dict, params, graphics):
-        self.iters += 1
-        self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
-
-        # update figure
-        data = {key: [float(value)] for key, value in params.items()}
-        data['error'] = [res_dict['hist'][-1, 0]]
-        data['psnr'] = [np.round(res_dict['hist'][-1, 1], 3)]
-        data['ssim'] = [np.round(res_dict['hist'][-1, 2], 3)]
-        data['tv'] = [np.round(res_dict['hist'][-1, 3], 3)]
-
-        if num_run == 1:
-            self.tuning_data = pd.DataFrame(data)
-        else:
-            self.tuning_data = pd.concat([self.tuning_data, pd.DataFrame(data)])
-
-        fixed_params = self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name]
-        graphics['tuning'].update_tuning(self.algorithm_name.lower(), self.tuning_data, fixed_params,
-                                         self.current_scale.lower())
-        graphics['tuning'].update_figure()
-
-    def save_tuning_experiment(self, data_name, graphics):
-        self.iters += 1
-        fixed_params = self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name]
-        fixed_params = np.array(list(fixed_params.items()), dtype=object)
-        tuning_data = np.array(list(graphics['tuning'].tuning_data.items()), dtype=object)
-
-        tab_mode = self.global_variables['tab_mode']
-        data_mode = self.global_variables['data_mode']
-        temp_saved = self.directories[tab_mode][data_mode]['temp_saved']
-
-        os.makedirs(temp_saved, exist_ok=True)
-        save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_mode}_{data_name}.npz')
-
-        self.directories[tab_mode][data_mode]['saved'] = save_path
-        np.savez(save_path,
-                 algorithm=self.algorithm_name, tuning_data=tuning_data, fixed_params=fixed_params,
-                 scale=self.current_scale, is_complete=True if data_mode == 'complete' else False)
-        print("Results saved [Ok]")
-
-    def report_comparison_progress(self, data_name, iter, outputs, sampling_dict, graphics):
-        self.iters += 1
-        self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
-
-        # update figure
-        errs, psnrs, ssims, tvs = [], [], [], []
-        for output in outputs:
-            errs.append(output['hist'][iter, 0])
-            psnrs.append(np.round(output['hist'][iter, 1], 3))
-            ssims.append(np.round(output['hist'][iter, 2], 3))
-            tvs.append(np.round(output['hist'][iter, 3], 3))
-
-        iteration_list = self.state[self.global_variables['tab_mode']]['progress']['iteration'][data_name]
-        error_list = self.state[self.global_variables['tab_mode']]['progress']['errors'][data_name]
-        psnr_list = self.state[self.global_variables['tab_mode']]['progress']['psnrs'][data_name]
-        ssim_list = self.state[self.global_variables['tab_mode']]['progress']['ssims'][data_name]
-        tv_list = self.state[self.global_variables['tab_mode']]['progress']['tvs'][data_name]
-
-        iteration_list.append(iter)
-        error_list.append(errs)
-        psnr_list.append(psnrs)
-        ssim_list.append(ssims)
-        tv_list.append(tvs)
-
-        if iter % (self.max_iter // 10) == 0 or iter == self.max_iter:
-            graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list, tv_list)
-            graphics['performance'].update_figure()
-
-            x_results, hists = [], []
-            for output in outputs:
-                x_results.append(output['result'])
-                hists.append(output['hist'])
-
-            graphics['report'].update_report(
-                dict(x_results=x_results, hist=hists, sampling=sampling_dict, algorithm_name=self.algorithm_name))
-            graphics['report'].update_figure()
-
-    def save_comparison_experiment(self, data_name, res_dict, graphics):
-        self.iters += 1
-        comparison_data = np.array(list(graphics['performance'].comparison_data.items()), dtype=object)
-
-        tab_mode = self.global_variables['tab_mode']
-        data_mode = self.global_variables['data_mode']
-        temp_saved = self.directories[tab_mode][data_mode]['temp_saved']
-
-        os.makedirs(temp_saved, exist_ok=True)
-        save_path = str(Path(temp_saved) / f'exp_{tab_mode}_{data_mode}_{data_name}.npz')
-
-        self.directories[tab_mode][data_mode]['saved'] = save_path
-        np.savez(save_path,
-                 x_results=res_dict['results'], hists=res_dict['hists'], sampling=res_dict['sampling_dict'],
-                 comparison_data=comparison_data, is_complete=True if data_mode == 'complete' else False)
-        print("Results saved [Ok]")
-
     def reset_values(self):
         if self.iters / self.max_iter_progress == 1.0:
             self.startPushButton.setEnabled(True)
@@ -2140,14 +1810,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.loadPushButton.setText(_translate("mainWindow", "Cargar"))
         self.algorithmGroupBox.setTitle(_translate("mainWindow", "Algoritmos"))
         self.algorithmComboBox.setItemText(0, _translate("mainWindow", "Fast Marching"))
-        # self.algorithmComboBox.setItemText(1, _translate("mainWindow", "GAP"))
-        # self.algorithmComboBox.setItemText(2, _translate("mainWindow", "TwIST"))
-        # self.algorithmComboBox.setItemText(3, _translate("mainWindow", "ADMM"))
         self.algorithmPushButton.setToolTip(_translate("mainWindow", "Ver ecuación"))
-        # self.maxiterLabel.setText(_translate("mainWindow", "Máxima iteración"))
-        # self.param1LineEdit.setText(_translate("mainWindow", "0.1"))
-        # self.param2LineEdit.setText(_translate("mainWindow", "0.3"))
-        # self.param3LineEdit.setText(_translate("mainWindow", "1"))
         self.tuningGroupBox.setTitle(_translate("mainWindow", "Ajuste de parámetros"))
         self.paramTuningLabel.setText(_translate("mainWindow", "Tipo"))
         self.paramTuningComboBox.setItemText(0, _translate("mainWindow", "Intervalo"))
