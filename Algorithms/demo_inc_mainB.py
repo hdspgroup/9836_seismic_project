@@ -88,7 +88,7 @@ axs[0, 1].set_ylabel("Time")
 
 metric = tv_norm(x_result[..., rem_shots[1]])
 axs[1, 1].imshow(x_result[..., rem_shots[1]], cmap='gray', aspect='auto')
-axs[1, 1].set_title(f'Reconstructed shot {rem_shots[1]}, \n TV-norm L1: {metric:0.4f}')
+axs[1, 1].set_title(f'Reconstructed shot {rem_shots[1]}, \n Norma TV/L1: {metric:0.4f}')
 
 # ====
 FK, f, kx = fk(x_result[..., rem_shots[2]], dt, dx)
@@ -101,11 +101,11 @@ axs[1, 2].set_title(f'FK Reference, shot {rem_shots[3]}')
 
 metric = tv_norm(x_result[..., rem_shots[2]])
 axs[0, 3].imshow(x_result[..., rem_shots[2]], cmap='gray', aspect='auto')
-axs[0, 3].set_title(f'Reconstructed shot {rem_shots[2]}, \n TV-norm L1: {metric:0.4f}')
+axs[0, 3].set_title(f'Reconstructed shot {rem_shots[2]}, \n Norma TV/L1: {metric:0.4f}')
 
 metric = tv_norm(x_result[..., rem_shots[3]])
 axs[1, 3].imshow(x_result[..., rem_shots[3]], cmap='gray', aspect='auto')
-axs[1, 3].set_title(f'Reconstructed shot {rem_shots[3]}, \n TV-norm L1: {metric:0.4f}')
+axs[1, 3].set_title(f'Reconstructed shot {rem_shots[3]}, \n Norma TV/L1: {metric:0.4f}')
 
 fig.tight_layout()
 plt.show()
@@ -119,7 +119,7 @@ axes = fig.add_subplot(111)
 
 color = 'tab:blue'
 axes.set_xlabel('iteraciones')
-axes.plot(iteracion, hist[1:, -1], color=color, label='Norma TV-L1')
+axes.plot(iteracion, hist[1:, -1], color=color, label='Norma TV/L1')
 axes.tick_params(axis='y', labelcolor=color, length=5)
 axes.grid(axis='both', linestyle='--')
 

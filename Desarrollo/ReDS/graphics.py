@@ -522,34 +522,48 @@ class ShotPerformanceGraphic(FigureCanvasQTAgg):
             self.figure.clear()
             self.figure.suptitle(f'Resultados del experimento')
 
-            axes_1 = self.figure.add_subplot(111)
-            axes_2 = axes_1.twinx()
-
-            color = 'tab:red'
-            axes_1.set_xlabel('iteraciones')
-            axes_1.plot(iteracion, ssim if self.is_complete else ssim, color=color,
-                        label='SSIM' if self.is_complete else 'SSIM')
-            axes_1.tick_params(axis='y', labelcolor=color, length=5)
-            axes_1.grid(axis='both', linestyle='--')
-
-            axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
-
-            color = 'tab:blue'
-            axes_2.plot(iteracion, psnr if self.is_complete else tv, '--', color=color)
-            axes_1.plot(np.nan, '--', color=color, label='PSNR' if self.is_complete else 'Norma TV')
-            axes_2.tick_params(axis='y', labelcolor=color, length=5)
-            axes_2.grid(axis='both', linestyle='--')
-
-            axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
-
             if self.is_complete:
-                if np.abs(psnr[-1]) == np.inf:
-                    # print a text in the bottom part of axes_2 that indicates that the psnr is infinite
-                    text_kwargs = dict(ha='center', va='center', fontsize=16, color=color)
-                    axes_2.text(0.5, 0.1, f'PSNR is {psnr[-1]}, it will be not plotted', horizontalalignment='center',
-                                verticalalignment='center', transform=axes_2.transAxes, **text_kwargs)
+                axes_1 = self.figure.add_subplot(111)
+                axes_2 = axes_1.twinx()
 
-            axes_1.legend(loc='best')
+                color = 'tab:red'
+                axes_1.set_xlabel('iteraciones')
+                axes_1.plot(iteracion, ssim if self.is_complete else ssim, color=color,
+                            label='SSIM' if self.is_complete else 'SSIM')
+                axes_1.tick_params(axis='y', labelcolor=color, length=5)
+                axes_1.grid(axis='both', linestyle='--')
+
+                axes_1.set_yticks(np.linspace(axes_1.get_ybound()[0], axes_1.get_ybound()[1], 8))
+
+                color = 'tab:blue'
+                axes_2.plot(iteracion, psnr if self.is_complete else tv, '--', color=color)
+                axes_1.plot(np.nan, '--', color=color, label='PSNR' if self.is_complete else 'Norma TV/L1')
+                axes_2.tick_params(axis='y', labelcolor=color, length=5)
+                axes_2.grid(axis='both', linestyle='--')
+
+                axes_2.set_yticks(np.linspace(axes_2.get_ybound()[0], axes_2.get_ybound()[1], 8))
+
+                if self.is_complete:
+                    if np.abs(psnr[-1]) == np.inf:
+                        # print a text in the bottom part of axes_2 that indicates that the psnr is infinite
+                        text_kwargs = dict(ha='center', va='center', fontsize=16, color=color)
+                        axes_2.text(0.5, 0.1, f'PSNR is {psnr[-1]}, it will be not plotted', horizontalalignment='center',
+                                    verticalalignment='center', transform=axes_2.transAxes, **text_kwargs)
+
+                axes_1.legend(loc='best')
+
+            else:
+                axes = self.figure.add_subplot(111)
+
+                color = 'tab:blue'
+                axes.set_xlabel('iteraciones')
+                axes.plot(iteracion, tv, color=color, label='Norma TV/L1')
+                axes.tick_params(axis='y', labelcolor=color, length=5)
+                axes.grid(axis='both', linestyle='--')
+
+                axes.set_yticks(np.linspace(axes.get_ybound()[0], axes.get_ybound()[1], 8))
+                axes.legend(loc='best')
+
             self.draw()
 
         except BaseException as err:
@@ -584,7 +598,7 @@ class ShotReconstructionGraphic(FigureCanvasQTAgg):
                 pattern_rand = sampling['pattern_rand']
             else:
                 x = sampling['x_ori']
-                y_rand = x
+                y_rand = x[:, int(x.shape[1] / 2)].copy()
                 pattern_rand = np.double(sampling['H'])
 
             temp = np.asarray(range(0, pattern_rand.shape[0]))
@@ -596,6 +610,7 @@ class ShotReconstructionGraphic(FigureCanvasQTAgg):
 
             rem_shots = np.arange(len(pattern_rand))
             rem_shots = rem_shots[pattern_rand == 0]
+
             if self.is_complete:
                 axs = self.figure.subplots(2, 4)
 
@@ -610,9 +625,6 @@ class ShotReconstructionGraphic(FigureCanvasQTAgg):
                 axs[0, 0].set_xlabel("Shots")
                 axs[0, 0].set_ylabel("Time")
 
-                # axs[0, 0].imshow(x[..., rem_shots[0]], cmap='gray', aspect='auto')
-                # axs[0, 0].set_title(f'Reference, shot {rem_shots[0]}')
-
                 axs[1, 0].imshow(x[..., rem_shots[1]], cmap='gray', aspect='auto')
                 axs[1, 0].set_title(f'Reference, shot {rem_shots[1]}')
 
@@ -620,12 +632,6 @@ class ShotReconstructionGraphic(FigureCanvasQTAgg):
                 axs[0, 1].set_title("Removed shots")
                 axs[0, 1].set_xlabel("Shots")
                 axs[0, 1].set_ylabel("Time")
-
-                # metric = PSNR(x[..., rem_shots[0]], x_result[..., rem_shots[0]])
-                # metric_ssim = ssim(x[..., rem_shots[0]], x_result[..., rem_shots[0]])
-                # axs[0, 1].imshow(x_result[..., rem_shots[0]], cmap='gray', aspect='auto')
-                # axs[0, 1].set_title(
-                #     f'Reconstructed shot {rem_shots[0]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
 
                 metric = PSNR(x[..., rem_shots[1]], x_result[..., rem_shots[1]])
                 metric_ssim = ssim(x[..., rem_shots[1]], x_result[..., rem_shots[1]])
@@ -652,65 +658,51 @@ class ShotReconstructionGraphic(FigureCanvasQTAgg):
                 axs[1, 3].set_title(
                     f'Reconstructed shot {rem_shots[3]}, \n PSNR: {metric:0.2f} dB, \n SSIM:{metric_ssim:0.2f}')
 
-                # axs[0, 0].imshow(x, cmap='gray', aspect='auto')
-                # axs[0, 0].set_title('Referencia')
-                #
-                # ytemp = y_rand.copy()
-                # condition = H_elim.size > 0
-                # if condition:
-                #     ytemp[:, H_elim] = 1
-                # axs[1, 0].imshow(ytemp, cmap='gray', aspect='auto')
-                # axs[1, 0].set_title('Medidas')
-                #
-                # aux_x = x[:, H_elim] if condition else x
-                # aux_x_result = x_result[:, H_elim] if condition else x_result
-                # metric = PSNR(aux_x, aux_x_result)
-                # metric_ssim = ssim(aux_x, aux_x_result)
-                # axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
-                # axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
-                #
-                # index = 5
-                # # aux_H_elim = index if condition else H_elim[index]
-                # aux_H_elim = H_elim[index]
-                # axs[1, 1].plot(x[:, aux_H_elim], 'r', label='Referencia')
-                # axs[1, 1].plot(x_result[:, aux_H_elim], 'b', label='Recuperado')
-                # axs[1, 1].legend(loc='best')
-                # axs[1, 1].set_title('Traza ' + str("{:.0f}".format(aux_H_elim)))
-                # axs[1, 1].grid(axis='both', linestyle='--')
-
             else:
-                axs = self.figure.subplots(2, 3)
+                axs = self.figure.subplots(2, 4)
+                dt = 0.568
+                dx = 5
 
-                metric = tv_norm(x)
-                axs[0, 0].imshow(x, cmap='gray', aspect='auto')
-                axs[0, 0].set_title(f'Reference \n TV-norm: {metric:0.2f}')
+                psnr_vec = []
+                for s in rem_shots:
+                    psnr_vec.append(PSNR(x[..., s], x_result[..., s]))
+                idxs = (-np.array(psnr_vec)).argsort()
+                rem_shots = rem_shots[idxs]
 
-                metric = tv_norm(x_result)
-                axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
-                axs[0, 1].set_title(f'Reconstructed \n TV norm: {metric:0.2f}')
+                axs[0, 0].imshow(x[:, int(x.shape[1] / 2)].copy(), cmap='gray', aspect='auto')
+                axs[0, 0].set_title("Reference")
+                axs[0, 0].set_xlabel("Shots")
+                axs[0, 0].set_ylabel("Time")
 
-                index = 5
-                axs[0, 2].plot(x_result[:, H_elim[index]], 'b', label='Recovered')
-                axs[0, 2].legend(loc='best')
-                axs[0, 2].set_title('Trace ' + str("{:.0f}".format(H_elim[index])))
-                axs[0, 2].grid(axis='both', linestyle='--')
+                FK, f, kx = fk(x_result[..., rem_shots[1]], dt, dx)
+                axs[1, 0].imshow(FK, aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[1, 0].set_title(f'FK reference, shot {rem_shots[1]}')
 
-                # fk domain
+                axs[0, 1].imshow(x_result[:, int(x.shape[1] / 2)].copy(), cmap='gray', aspect='auto')
+                axs[0, 1].set_title("Reconstructed shots")
+                axs[0, 1].set_xlabel("Shots")
+                axs[0, 1].set_ylabel("Time")
 
-                # calculate FK domain
-                FK, f, kx = fk(x, dt=0.568, dx=5)
-                axs[1, 0].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
-                axs[1, 0].set_title('FK reference')
+                metric = tv_norm(x_result[..., rem_shots[1]])
+                axs[1, 1].imshow(x_result[..., rem_shots[1]], cmap='gray', aspect='auto')
+                axs[1, 1].set_title(f'Reconstructed shot {rem_shots[1]}, \n Norma TV/L1: {metric:0.4f}')
 
-                FK, f, kx = fk(x_result, dt=0.568, dx=5)
-                axs[1, 1].imshow(FK[:200], aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
-                axs[1, 1].set_title('FK reconstruction')
+                # ====
+                FK, f, kx = fk(x_result[..., rem_shots[2]], dt, dx)
+                axs[0, 2].imshow(FK, aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[0, 2].set_title(f'FK Reference, shot {rem_shots[2]}')
 
-                index = -1
-                axs[1, 2].plot(x_result[:, H_elim[index]], 'b', label='Recovered')
-                axs[1, 2].legend(loc='best')
-                axs[1, 2].set_title('Trace ' + str("{:.0f}".format(H_elim[index])))
-                axs[1, 2].grid(axis='both', linestyle='--')
+                FK, f, kx = fk(x_result[..., rem_shots[3]], dt, dx)
+                axs[1, 2].imshow(FK, aspect='auto', cmap='jet', extent=[kx.min(), kx.max(), 65, 0])
+                axs[1, 2].set_title(f'FK Reference, shot {rem_shots[3]}')
+
+                metric = tv_norm(x_result[..., rem_shots[2]])
+                axs[0, 3].imshow(x_result[..., rem_shots[2]], cmap='gray', aspect='auto')
+                axs[0, 3].set_title(f'Reconstructed shot {rem_shots[2]}, \n Norma TV/L1: {metric:0.4f}')
+
+                metric = tv_norm(x_result[..., rem_shots[3]])
+                axs[1, 3].imshow(x_result[..., rem_shots[3]], cmap='gray', aspect='auto')
+                axs[1, 3].set_title(f'Reconstructed shot {rem_shots[3]}, \n Norma TV/L1: {metric:0.4f}')
 
             self.draw()
 
