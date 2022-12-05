@@ -1764,9 +1764,6 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         tv_list.append(tv)
 
         if iter % (self.max_iter // 10) == 0 or iter == self.max_iter:
-            if iter == self.max_iter:
-                print('xd')
-
             graphics['performance'].update_values(iteration_list, psnr_list, ssim_list, tv_list)
             graphics['performance'].update_figure()
 
