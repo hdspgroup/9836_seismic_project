@@ -833,16 +833,223 @@ Por último, es posible cargar resultados de comparaciones de algoritmos. Para e
 
 El módulo ReDS-RD (reconstrucción de disparos) realiza la estimación de disparos sísmicos completos, faltantes en la adquisición, usando algoritmos de gradiente descendiente que aprovechan representaciones escasas de los datos en dominios transformados como Curvelet, DCT y Wavelets.
 
-{\color{red}La figura ToDo presenta las ToDo secciones de la interfaz general del modo ReDs - RD, a mencionar:
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.75\linewidth]{figures/rd}
+	\captionof{figure}{Secciones de la interfaz general del modo Reds - RD.}
+	\label{fig:rd}
+\end{Figure}
+
+A diferencia del Módulo RR, el Módulo RD solo consta de un único modo de uso por lo que la interfaz no cambia. Sin embargo, el Módulo RD comparte varios paneles con el Módulo RR, los cuales explicaremos a continuación.
+
+\subsection{Lectura de Datos}
+
+El panel de lectura de datos \circled{1}, situado al extremo izquierdo superior en la figura \ref{fig:rd}, muestra los nombres de los datos sísmicos que el usuario haya cargado en la aplicación para realizar diversas pruebas.\\
+
+\textbf{Leyendo un dato sísmico} \label{sec:data_lecturerd}
+
+\begin{multicols}{2}
 	
-	ToDo}
+	\begin{Figure}
+		\centering
+		\includegraphics[width=.9\linewidth]{data-lecture-1.pdf}
+		\captionof{figure}{Cargando un dato sísmico.}
+		\label{fig:data_lecture_1rd}
+	\end{Figure}
+	
+	Para leer un dato sísmico, se pulsa la opción \emph{Cargar} en el panel \circled{1}, como se observa en la figura \ref{fig:data_lecture_1rd}. Inmediatamente se abrirá la ventana \textit{Abrir dato sísmico}, como se observa en la figura \ref{fig:data_lecture_2rd}, donde el usuario podrá seleccionar un dato sísmico. Para este ejemplo cargaremos \emph{data.npy}.
+	La aplicación ReDs reconoce las extensiones \emph{.npy} y \emph{.mat} para cargar datos sísmicos.
+	
+\end{multicols}
+
+Existen dos tipos de datos sísmicos que pueden ser cargados desde ReDs - RD: \textit{Datos Completos} y \textit{Datos Incompletos}. El tipo de dato a ser cargado puede ser seleccionado desde la lista desplegable en la Figura \ref{fig:data_lecture_1}.
 
 \begin{Figure}
 	\centering
-	\includegraphics[width=0.75\linewidth]{figures/blank}
-	\captionof{figure}{{\color{red}Secciones de la interfaz general del modo Reds - RD.}}
-	\label{fig:rd}
+	\includegraphics[width=1\linewidth]{data-lecture-2.png}
+	\captionof{figure}{Ventana de selección de dato sísmico.}
+	\label{fig:data_lecture_2rd}
 \end{Figure}
+
+\begin{multicols}{2}
+	
+	Una vez seleccionado el dato sísmico, se debe pulsar en la opción \emph{Abrir}. Se podrá observar entonces en \circled{1} el dato sísmico cargado, como se muestra en la figura \ref{fig:data_lecture_3rd}. Aquí los datos se observan siguiendo la siguiente estructura: \circled{I} representa al directorio padre y \circled{II} es el dato sísmico cargado hijo del directorio padre.
+	
+	\begin{Figure}
+		\centering
+		\includegraphics[width=0.6\linewidth]{data-lecture-3.pdf}
+		\captionof{figure}{Panel con un dato sísmico cargado.}
+		\label{fig:data_lecture_3rd}
+	\end{Figure}
+	
+\end{multicols}
+
+\subsection{Algoritmos}
+
+El Módulo RD solo tiene un único algoritmo disponible: Fast Marching, tal como se observa en el panel \circled{2}, en el extremo izquierdo de la figura \ref{fig:rd}. El algoritmo Fast Marching no tiene parámetros a configurar, por lo que no es posible hacer una variación paramétrica.
+
+\begin{multicols}{2}
+	
+	\begin{figure}[!ht]
+		\centering
+		\includegraphics[width=\textwidth]{blank.pdf}
+		\caption{Algoritmo Fast Marching}
+		\label{fig:fast}	
+	\end{figure}
+	
+	El botón\hspace{0.5mm} \faEye \hspace{0.5mm} permite visualizar el modelo matemático del algoritmo Fast Marching.	
+
+\end{multicols}
+
+
+\subsection{Submuestreo}\label{subsamplingrd}
+
+Debido a que hay varias formas de recuperar una traza a partir de las medidas recolectadas previamente, el panel de submuestreo \circled{3} permite configurar cuál tipo de submuestreo se desea realizar al dato sísmico, a manera de simulación. Todos los tipos de submuestreo, excepto el de tipo lista, comparten el mismo nivel de compresión que el usuario desee asignar. Por otra parte, al cargar datos incompletos el panel de submuestreo se deshabilita.
+
+A continuación se presentan los tipos de submuestreo a aplicar en ReDs:\\
+
+\underline{\textbf{Submuestreo Aleatorio}}
+
+\begin{multicols}{2}
+	\begin{Figure}
+		\centering
+		\includegraphics[width=0.8\linewidth]{subsampling-random.png}
+		\captionof{figure}{Submuestreo aleatorio.}
+		\label{fig:subsampling_randomrd}
+	\end{Figure}
+	
+	Aplica un submuestreo aleatorio a las trazas sísmicas de acuerdo al nivel de compresión. Al habilitar la semilla, se puede establecer el mismo submuestreo para todas las veces que se ejecute un experimento, como se observa en la figura \ref{fig:subsampling_randomrd}.
+	
+\end{multicols}
+
+\underline{\textbf{Submuestreo Uniforme}}
+
+\begin{multicols}{2}
+	
+	Aplica un submuestreo uniforme a las trazas sísmicas de acuerdo al nivel de compresión, como se observa en la figura \ref{fig:subsampling_uniformrd}.
+	
+	\begin{Figure}
+		\centering
+		\includegraphics[width=0.8\linewidth]{subsampling-uniform.png}
+		\captionof{figure}{Submuestreo uniforme.}
+		\label{fig:subsampling_uniformrd}
+	\end{Figure}
+	
+\end{multicols}
+
+\underline{\textbf{Submuestreo Jitter}}
+
+\begin{multicols}{2}
+	
+	\begin{Figure}
+		\centering
+		\includegraphics[width=0.8\linewidth]{subsampling-jitter.png}
+		\captionof{figure}{Submuestreo jitter.}
+		\label{fig:subsampling_jitterrd}
+	\end{Figure}
+	
+	Aplica un submuestreo aleatorio o uniforme de acuerdo a la cantidad de bloques ingresados por el usuario a las trazas sísmicas de acuerdo al nivel de compresión, como se observa en la figura \ref{fig:subsampling_jitterrd}.
+	
+\end{multicols}
+
+\underline{\textbf{Submuestreo Lista}}
+
+\begin{multicols}{2}
+	
+	Aplica un submuestreo de tipo lista donde las trazas a remover son ingresados por el usuario, como se observa en la figura \ref{fig:subsampling_listrd}. Para este tipo de submuestreo es necesario validar que el usuario ingrese los datos con un formato lógico y especifico.
+	
+	\begin{Figure}
+		\vspace{5mm}
+		\centering
+		\includegraphics[width=0.8\linewidth]{subsampling-list.png}
+		\captionof{figure}{Submuestreo de tipo lista.}
+		\label{fig:subsampling_listrd}
+	\end{Figure}
+	
+\end{multicols}
+
+Las condiciones son las siguientes:
+
+\begin{multicols}{2}
+	
+	\begin{Figure}
+		\vspace{5mm}
+		\centering
+		\includegraphics[width=1\linewidth]{subsampling-list-1.png}
+		\captionof{figure}{Ejemplo de submuestreo de tipo lista.}
+		\label{fig:subsampling_list_1rd}
+	\end{Figure}
+	
+	\begin{itemize}
+		\setlength\itemsep{0em}
+		\item La secuencia debe ser $x_1,x_2,x_n$, tal que $x_i \in \mathbb{Z}^+$ representa los índices de las trazas a resolver, donde entre cada $x_i$ no deben haber espacios y estar separados por números, como se observa en la figura \ref{fig:subsampling_list_1rd}.
+		\item Cada $x_i$ debe cumplir $0 \leq x_i \leq N$, donde $N$ es la cantidad máxima lineas de receptores que contiene un \emph{shot}.
+		\item Deben haber mínimo siete $x_i$ distintos.
+	\end{itemize}
+	
+\end{multicols}
+
+\subsection{Experimentos}
+\label{sec:experimentrd}
+
+Una vez ya se ha cargado un dato sísmico, seleccionado el algoritmo, ajustado sus parámetros y configurado el tipo de submuestreo, entonces se podrá realizar un experimento. El panel \circled{4}, en el extremo izquierdo de la figura \ref{fig:rd}, permite controlar el progreso de la ejecución del experimento a realizar.
+
+\subsubsection*{Realizando un experimento}
+
+\begin{multicols}{2}
+	
+	Para iniciar un nuevo experimento se debe pulsar el botón \hspace{0.5mm} \faSave \hspace{0.5mm} que se observa en la figura \ref{fig:experiment_1rd}. Aquí el usuario seleccionará el directorio donde desee que los resultados de su experimento sean guardados, como se observa en la figura \ref{fig:experiment_2rd}.
+	
+	\begin{Figure}
+		\vspace{5mm}
+		\centering
+		\includegraphics[width=0.8\linewidth]{experiment-1.png}
+		\captionof{figure}{Panel de experimentos.}
+		\label{fig:experiment_1rd}
+	\end{Figure}
+	
+\end{multicols}
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=1\linewidth]{experiment-2.png}
+	\captionof{figure}{Ventana de guardado de resultados.}
+	\label{fig:experiment_2rd}
+\end{Figure}
+
+Es necesario asignar un nombre al experimento para poder guardarlo. En este ejemplo usaremos \emph{nuevo\_experimento} como nombre del archivo de salida, con la extensión \emph{.npz}. Finalmente, presionamos el botón \emph{Guardar}.
+
+\begin{multicols}{2}
+	
+	\begin{Figure}
+		\centering
+		\includegraphics[width=0.7\linewidth]{experiment-4.png}
+		\captionof{figure}{Ejecución de un experimento en tiempo real.}
+		\label{fig:experiment_4rd}
+	\end{Figure}
+	
+	Para correr el experimento se debe pulsar en el botón \hspace{0.5mm} \faPlay \hspace{0.5mm}. En la barra de progreso, a la izquierda de dicho botón, se podrá el progreso del actual experimento, como se observa en la figura \ref{fig:experiment_4rd}.
+
+\end{multicols}
+
+\subsubsection{Visualización de Resultados de Datos Completos}
+
+Los resultados de todos los experimentos que se realicen a través de esta aplicación se pueden observar en el panel \circled{6}, en el extremo derecho de la figura \ref{fig:rd}. En este panel se encuentran dos tipos de visualización: la visualización del rendimiento (iteraciones vs. error/psnr) y visualización de la reconstrucción, como se observa en la figura \ref{fig:main_result_1rd}.
+
+\begin{multicols}{2}
+	
+	Como se mencionó en la sección \ref{sec:experiment}, para los experimentos que sean ejecutados se podrá ver tanto el rendimiento como la reconstrucción de las trazas en tiempo real. A continuación se detallará que es lo que se observa exactamente en cada una de estos subpaneles.
+	
+	\begin{Figure}
+		%\vspace{1cm}
+		\centering
+		\includegraphics[width=0.7\linewidth]{main-result-1.png}
+		\captionof{figure}{Panel de resultados.}
+		\label{fig:main_result_1rd}
+	\end{Figure}
+	
+\end{multicols}
+
 
 \newpage
 \section{Acerca de}
