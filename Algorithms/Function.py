@@ -1234,6 +1234,7 @@ class ShotAlgorithms:
         output = cv2.inpaint(x, self.mask, t_m + 1, flags=paint_method)
         output = np.reshape(output, [imShape[0], imShape[1], imShape[2]])
         x = np.reshape(x, [imShape[0], imShape[1], imShape[2]])
+        x_copy = np.reshape(x_copy, [imShape[0], imShape[1], imShape[2]])
         mask = np.reshape(self.mask, [imShape[0], imShape[1], imShape[2]])
 
         hist = []
@@ -1245,9 +1246,13 @@ class ShotAlgorithms:
             aux = (tmp.astype('float32') + aux.astype('float32')) / 2
             output[..., [i - 1, i, i + 1]] = aux = aux.astype('uint8')
 
-            psnr_val = PSNR(x[:, self.H_elim, :], output[:, self.H_elim, :])
-            ssim_val = ssim(x[:, self.H_elim, :], output[:, self.H_elim, :])
+            psnr_val = PSNR(x_copy[:, self.H_elim, :], output[:, self.H_elim, :])
+            ssim_val = ssim(x_copy[:, self.H_elim, :], output[:, self.H_elim, :])
             tv_val = tv_norm(output.transpose((0, 2, 1)))
+
+            # psnr_val = PSNR(x, output)
+            # ssim_val = ssim(x, output)
+            # tv_val = tv_norm(output.transpose((0, 2, 1)))
 
             hist[i, 0] = psnr_val
             hist[i, 1] = ssim_val
@@ -1255,14 +1260,16 @@ class ShotAlgorithms:
 
             yield i, dict(result=np.transpose(output, [0, 2, 1]), hist=hist)
 
-        x_copy = np.reshape(x_copy, [imShape[0], imShape[1], imShape[2]])
-        x = x_copy.copy()
+        x_copy = np.transpose(x_copy, [0, 2, 1])
         output = np.transpose(output, [0, 2, 1])
-        x = np.transpose(x, [0, 2, 1])
 
-        psnr_val = PSNR(x[:, self.H_elim, :], output[:, self.H_elim, :])
-        ssim_val = ssim(x[:, self.H_elim, :], output[:, self.H_elim, :])
+        psnr_val = PSNR(x_copy[:, self.H_elim, :], output[:, self.H_elim, :])
+        ssim_val = ssim(x_copy[:, self.H_elim, :], output[:, self.H_elim, :])
         tv_val = tv_norm(output.transpose((0, 2, 1)))
+
+        # psnr_val = PSNR(x, output)
+        # ssim_val = ssim(x, output)
+        # tv_val = tv_norm(output.transpose((0, 2, 1)))
 
         hist[max_itr, 0] = psnr_val
         hist[max_itr, 1] = ssim_val

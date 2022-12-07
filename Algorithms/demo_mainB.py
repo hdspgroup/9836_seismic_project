@@ -57,11 +57,12 @@ fig.suptitle('Results from the ' + str(case) + ' Algorithm')
 rem_shots = np.arange(len(pattern_rand))
 rem_shots = rem_shots[pattern_rand == 0]
 
-psnr_vec = []
-for s in rem_shots:
-    psnr_vec.append(PSNR(x[..., s], x_result[..., s]))
-idxs = (-np.array(psnr_vec)).argsort()
-rem_shots = rem_shots[idxs]
+# psnr_vec = []
+# for s in rem_shots:
+#     psnr_vec.append(PSNR(x[..., s], x_result[..., s]))
+# idxs = (-np.array(psnr_vec)).argsort()
+# rem_shots = rem_shots[idxs]
+
 # axs[0, 0].imshow(x[..., rem_shots[0]], cmap='gray', aspect='auto')
 # axs[0, 0].set_title(f'Reference, shot {rem_shots[0]}')
 

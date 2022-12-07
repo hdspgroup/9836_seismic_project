@@ -614,11 +614,11 @@ class ShotReconstructionGraphic(FigureCanvasQTAgg):
             if self.is_complete:
                 axs = self.figure.subplots(2, 4)
 
-                psnr_vec = []
-                for s in rem_shots:
-                    psnr_vec.append(PSNR(x[..., s], x_result[..., s]))
-                idxs = (-np.array(psnr_vec)).argsort()
-                rem_shots = rem_shots[idxs]
+                # psnr_vec = []
+                # for s in rem_shots:
+                #     psnr_vec.append(PSNR(x[..., s], x_result[..., s]))
+                # idxs = (-np.array(psnr_vec)).argsort()
+                # rem_shots = rem_shots[idxs]
 
                 axs[0, 0].imshow(x[:, int(x.shape[1] / 2)].copy(), cmap='gray', aspect='auto')
                 axs[0, 0].set_title("Reference")

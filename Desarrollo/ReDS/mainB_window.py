@@ -1223,6 +1223,11 @@ class UIMainBWindow(QtWidgets.QMainWindow):
             child_name = filename[-1]
 
             data = np.load(directory, allow_pickle=True)
+
+            if data.ndim != 3:
+                showWarning(f"El archivo {child_name} no es un dato sísmico válido. Debe contener 3 dimensiones.")
+                continue
+
             if hasattr(data, 'keys'):
                 if view_mode == 'normal':
                     showWarning(f"El dato cargado {child_name} no es un reporte de algún experimento previamente hecho"
@@ -1645,39 +1650,38 @@ class UIMainBWindow(QtWidgets.QMainWindow):
 
         return sampling_dict, H if data_mode == 'complete' else None
 
-    def load_algorithm(self, data_name, seismic_data, H, sampling_dict):
+    def load_algorithm(self, data_name, seismic_data, H, sampling_dict, max_iter):
         self.algorithm_name = self.algorithmComboBox.currentText().lower()
         self.algorithm_name = str.replace(self.algorithm_name, ' ', '_')
         self.current_scale = self.scaleComboBox.currentText().lower()
         data_mode = self.global_variables['data_mode']
         is_complete = True if data_mode == 'complete' else False
 
-        if self.global_variables['tab_mode'] == 'main':
-            Alg = ShotAlgorithms(seismic_data, H)
-            algorithm = Alg.get_algorithm(self.algorithm_name)
+        Alg = ShotAlgorithms(seismic_data, H)
+        algorithm = Alg.get_algorithm(self.algorithm_name)
 
-            if data_name in self.graphics['main'][data_mode]['performance'].keys():
-                performance_graphic = self.graphics['main'][data_mode]['performance'][data_name]
-            else:
-                performance_tab, performance_graphic = self.add_tab(data_name, self.performanceTabWidget,
-                                                                    ShotPerformanceGraphic(is_complete=is_complete))
-                self.graphics['main'][data_mode]['performance'][data_name] = performance_graphic
-                self.all_tabs['normal'].append([performance_tab, performance_graphic])
+        if data_name in self.graphics['main'][data_mode]['performance'].keys():
+            performance_graphic = self.graphics['main'][data_mode]['performance'][data_name]
+        else:
+            performance_tab, performance_graphic = self.add_tab(data_name, self.performanceTabWidget,
+                                                                ShotPerformanceGraphic(is_complete=is_complete))
+            self.graphics['main'][data_mode]['performance'][data_name] = performance_graphic
+            self.all_tabs['normal'].append([performance_tab, performance_graphic])
 
-            if data_name in self.graphics['main'][data_mode]['report'].keys():
-                report_graphic = self.graphics['main'][data_mode]['report'][data_name]
-            else:
-                report_tab, report_graphic = self.add_tab(data_name, self.reportTabWidget,
-                                                          ShotReconstructionGraphic(is_complete=is_complete))
-                self.graphics['main'][data_mode]['report'][data_name] = report_graphic
-                self.all_tabs['normal'].append([report_tab, report_graphic])
+        if data_name in self.graphics['main'][data_mode]['report'].keys():
+            report_graphic = self.graphics['main'][data_mode]['report'][data_name]
+        else:
+            report_tab, report_graphic = self.add_tab(data_name, self.reportTabWidget,
+                                                      ShotReconstructionGraphic(is_complete=is_complete))
+            self.graphics['main'][data_mode]['report'][data_name] = report_graphic
+            self.all_tabs['normal'].append([report_tab, report_graphic])
 
-            # update worker behaviour
+        # update worker behaviour
 
-            if not is_complete:
-                sampling_dict['H'] = Alg.H
-                sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
-            return ShotWorker(data_name, algorithm, self.max_iter, sampling_dict, performance_graphic, report_graphic)
+        if not is_complete:
+            sampling_dict['H'] = Alg.H
+            sampling_dict = np.array(list(sampling_dict.items()), dtype=object)
+        return ShotWorker(data_name, algorithm, max_iter, sampling_dict, performance_graphic, report_graphic)
 
     def start_experiment(self):
 
@@ -1691,15 +1695,17 @@ class UIMainBWindow(QtWidgets.QMainWindow):
 
         try:
             self.iters = 0
+            self.max_iter = 0
 
             for uploaded_directory in uploaded_directories:
                 data_name = uploaded_directory.split('/')[-1].split('.')[0]
 
                 self.update_variables(data_name)
                 seismic_data = self.load_seismic_data(uploaded_directory)
-                self.max_iter = seismic_data.shape[-2] - 1
+                max_iter = seismic_data.shape[-2] - 1
+                self.max_iter += max_iter
                 sampling_dict, H = self.load_parameters(seismic_data)
-                worker = self.load_algorithm(data_name, seismic_data, H, sampling_dict)
+                worker = self.load_algorithm(data_name, seismic_data, H, sampling_dict, max_iter)
 
                 # run experiment in a thread
 
@@ -1712,19 +1718,9 @@ class UIMainBWindow(QtWidgets.QMainWindow):
                 self.workers[-1].finished.connect(self.workers[-1].deleteLater)
                 self.threads[-1].finished.connect(self.threads[-1].deleteLater)
 
-                tab_mode = self.global_variables['tab_mode']
-                if tab_mode == 'main':
-                    report_progress = self.report_main_progress
-                    save_experiment = self.save_main_experiment
-                    self.max_iter_progress = len(uploaded_directories) * self.max_iter
-                elif tab_mode == 'tuning':
-                    report_progress = self.report_tuning_progress
-                    save_experiment = self.save_tuning_experiment
-                    self.max_iter_progress = len(uploaded_directories) * self.total_num_run
-                else:
-                    report_progress = self.report_comparison_progress
-                    save_experiment = self.save_comparison_experiment
-                    self.max_iter_progress = len(uploaded_directories) * self.max_iter
+                report_progress = self.report_main_progress
+                save_experiment = self.save_main_experiment
+                self.max_iter_progress = self.max_iter
 
                 self.workers[-1].progress.connect(report_progress)
                 self.threads[-1].start()
