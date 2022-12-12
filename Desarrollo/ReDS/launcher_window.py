@@ -16,12 +16,42 @@ from Desarrollo.ReDS.mainB_window import UIMainBWindow
 
 
 def solve_path(relative_path):
+    '''Solve path for different OS'''
     if hasattr(sys, '_MEIPASS'):
         return os.path.join(sys._MEIPASS, relative_path)
     return os.path.join(os.path.abspath('.'), relative_path)
 
 
 class UILauncherWindow(QtWidgets.QMainWindow):
+    '''
+    Main class to launch the software.
+
+    This class is the main class to launch the software. It contains the main window
+    and the buttons to launch the modules.
+
+    Attributes
+    ----------
+    main_A_window : QWidget
+        Main window of the module A.
+    main_B_window : QWidget
+        Main window of the module B.
+    ui_main_A_window : UIMainAWindow
+        Main window of the module A.
+    ui_main_B_window : UIMainBWindow
+        Main window of the module B.
+
+    Methods
+    -------
+    open_module_A()
+        Open the main window of the module A.
+    open_module_B()
+        Open the main window of the module B.
+    retranslateUi()
+        Translate the UI.
+    setupUi()
+        Setup the UI.
+    '''
+
     def __init__(self):
         super(UILauncherWindow, self).__init__()
         self.setupUi()

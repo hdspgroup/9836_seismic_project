@@ -12,7 +12,7 @@ import platform
 from itertools import product
 from pathlib import Path
 
-import hdf5storage
+from scipy.io import loadmat
 import numpy as np
 import pandas as pd
 from PyQt5.Qt import Qt
@@ -1609,7 +1609,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         if Path(uploaded_directory).suffix == '.npy':
             data = np.load(uploaded_directory)
         else:
-            data = hdf5storage.loadmat(uploaded_directory)
+            data = loadmat(uploaded_directory)
             keys = list(data.keys())
             keys.remove('__header__')
             keys.remove('__version__')
@@ -1866,17 +1866,15 @@ class UIMainBWindow(QtWidgets.QMainWindow):
 
         self.toolBar.setWindowTitle(_translate("mainWindow", "toolBar"))
         self.aboutOfAction.setText(_translate("mainWindow", "about"))
-        self.aboutOfAction.setToolTip(
-            _translate("mainWindow", "<html><head/><body><p>Acerca de este proyecto</p></body></html>"))
+        self.aboutOfAction.setToolTip(_translate("mainWindow", "Acerca de ReDs"))
         self.reportAction.setText(_translate("mainWindow", "report"))
         self.reportAction.setToolTip(_translate("mainWindow", "Visualización de resultados"))
         self.mainAction.setText(_translate("mainWindow", "main"))
-        self.mainAction.setToolTip(_translate("mainWindow", "Ir al menú principal"))
+        self.mainAction.setToolTip(_translate("mainWindow", "Ir a Modo Individual"))
         self.tuningAction.setText(_translate("mainWindow", "tuning"))
-        self.tuningAction.setToolTip(_translate("mainWindow", "Ajuste de parámetros"))
+        self.tuningAction.setToolTip(_translate("mainWindow", "Ir a Modo Ajuste de Parámetros"))
         self.comparisonAction.setText(_translate("mainWindow", "comparison"))
-        self.comparisonAction.setToolTip(
-            _translate("mainWindow", "Hacer comparación de experimento con todos los algoritmos"))
+        self.comparisonAction.setToolTip(_translate("mainWindow", "Ir a Modo Comparación de Algoritmos"))
 
 
 if __name__ == "__main__":

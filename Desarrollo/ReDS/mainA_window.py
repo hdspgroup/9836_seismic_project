@@ -36,13 +36,37 @@ from workers import Worker, TuningWorker, ComparisonWorker, TabWorker
 
 
 def solve_path(relative_path):
+    '''Solve path for different OS'''
     if hasattr(sys, '_MEIPASS'):
         return os.path.join(sys._MEIPASS, relative_path)
     return os.path.join(os.path.abspath('.'), relative_path)
 
 
 class UIMainAWindow(QtWidgets.QMainWindow):
+    '''
+    Class for module A. Trace reconstruction.
+
+    Attributes
+    ----------
+    launcher : QMainWindow
+        Main window of the application.
+    global_variables : dict
+        Dictionary with global variables.
+    directories : dict
+        Dictionary with directories.
+    tab_widgets : dict
+        Dictionary with tab widgets.
+
+    '''
+
     def __init__(self, launcher):
+        '''
+        Parameters
+        ----------
+        launcher : QMainWindow
+            Main window of the application.
+
+        '''
         super(UIMainAWindow, self).__init__()
         self.launcher = launcher
         self.setupUi()
@@ -50,6 +74,14 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.sampling = Sampling()
 
     def closeEvent(self, event):
+        '''
+        Close event.
+
+        Parameters
+        ----------
+        event : QEvent
+            Close event.
+        '''
         message_box = QtWidgets.QMessageBox(self)
         message_box.pos()
         message_box.setIcon(QtWidgets.QMessageBox.Question)
@@ -71,6 +103,11 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             event.ignore()
 
     def setupUi(self):
+        '''
+        Setup UI.
+
+        Init components, variables and connections.
+        '''
         self.setWindowTitle("ReDs")
         self.setWindowIcon(QIcon("assets/icons/g868.ico"))
         self.setObjectName("mainWindow")
@@ -765,6 +802,14 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.init_visible_widgets(width=320)
 
     def init_visible_widgets(self, width=320):
+        '''
+        Initialize the visible widgets
+
+        Parameters
+        ----------
+        width : int, optional
+            The width of the widget, by default 320
+        '''
         self.inputGroupBox.setMinimumWidth(width)
         self.inputGroupBox.setMaximumWidth(width)
         self.algorithmGroupBox.setMinimumWidth(width)
@@ -795,13 +840,45 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.jitterPushButton.setVisible(False)
 
     def init_global_variables(self):
+        '''
+        Initialize the global variables.
 
-        # variables setup
+        These variables are used to store the data of the experiments.
 
-        # Tab mode ['main', 'tuning', 'comparison']
-        # View mode ['normal', 'report']
-        # Data mode ['complete', 'incomplete']
+        Variables
+        ----------
+        global_varibles : dict
+            The global variables
+                # Tab mode ['main', 'tuning', 'comparison']
+                # View mode ['normal', 'report']
+                # Data mode ['complete', 'incomplete']
 
+        tab_mode : list
+            The tab mode according to selected tool
+        data_mode : list
+            The view mode according to kind of datasets
+        directories : dict
+            The directories of the project
+        state : dict
+            The state of the project, considering tab mode, view mode and data mode
+        graphics : dict
+            The graphics of the project
+        threads : list
+            The threads of the project for multiple experiments
+        workers : list
+            The workers of the project for multiple experiments
+        all_tabs : dict
+            The tabs of the project for generating a normal or report view
+        tab_widgets: dict
+            The tab widgets of the project
+        iters: int
+            The number of iterations for experiments
+        max_iter: int
+            The maximum number of iterations for experiments
+        max_iter_progress: int
+            The maximum number of iterations for progress bar for multiple experiments
+
+        '''
         self.global_variables = dict(tab_mode='main', view_mode='normal', data_mode='complete', algorithm_name='')
 
         tab_mode = ['main', 'tuning', 'comparison']
@@ -2132,7 +2209,8 @@ class UIMainAWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("mainWindow", "ReDs - Reconstruccion de Receptores | Universidad Industrial de Santander"))
+        self.setWindowTitle(
+            _translate("mainWindow", "ReDs - Reconstruccion de Receptores | Universidad Industrial de Santander"))
         self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))
         self.typeDataLabel.setText(_translate("mainWindow", "Tipo:"))
         self.dataComboBox.setItemText(0, _translate("mainWindow", "Datos completos"))
@@ -2211,17 +2289,15 @@ class UIMainAWindow(QtWidgets.QMainWindow):
 
         self.toolBar.setWindowTitle(_translate("mainWindow", "toolBar"))
         self.aboutOfAction.setText(_translate("mainWindow", "about"))
-        self.aboutOfAction.setToolTip(
-            _translate("mainWindow", "<html><head/><body><p>Acerca de este proyecto</p></body></html>"))
+        self.aboutOfAction.setToolTip(_translate("mainWindow", "Acerca de ReDs"))
         self.reportAction.setText(_translate("mainWindow", "report"))
         self.reportAction.setToolTip(_translate("mainWindow", "Visualización de resultados"))
         self.mainAction.setText(_translate("mainWindow", "main"))
-        self.mainAction.setToolTip(_translate("mainWindow", "Ir al menú principal"))
+        self.mainAction.setToolTip(_translate("mainWindow", "Ir a Modo Individual"))
         self.tuningAction.setText(_translate("mainWindow", "tuning"))
-        self.tuningAction.setToolTip(_translate("mainWindow", "Ajuste de parámetros"))
+        self.tuningAction.setToolTip(_translate("mainWindow", "Ir a Modo Ajuste de Parámetros"))
         self.comparisonAction.setText(_translate("mainWindow", "comparison"))
-        self.comparisonAction.setToolTip(
-            _translate("mainWindow", "Hacer comparación de experimento con todos los algoritmos"))
+        self.comparisonAction.setToolTip(_translate("mainWindow", "Ir a Modo Comparación de Algoritmos"))
 
 
 if __name__ == "__main__":
