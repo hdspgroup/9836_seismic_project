@@ -877,7 +877,16 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             The maximum number of iterations for experiments
         max_iter_progress: int
             The maximum number of iterations for progress bar for multiple experiments
-
+        icons_path : str
+            The path of the icons
+        param_type : str
+            The type of the parameter
+        main_params : list
+            The main parameters
+        tuning_params : list
+            The tuning parameters
+        comparison_params : list
+            The comparison parameters
         '''
         self.global_variables = dict(tab_mode='main', view_mode='normal', data_mode='complete', algorithm_name='')
 
@@ -945,6 +954,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
                                   [self.compParam1LineEdit4, self.compParam2LineEdit4, self.compParam3LineEdit4]]
 
     def init_actions(self):
+        '''
+        Initialize the actions.
+        '''
         self.onlydouble = QtGui.QDoubleValidator(decimals=10)
         self.onlyInt = QtGui.QIntValidator()
         self.experimentProgressBar.setValue(0)
@@ -984,6 +996,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.seedCheckBox.stateChanged.connect(self.activate_seed)
 
     def add_tab(self, data_name, tab_widget, graphic):
+        '''
+        Add a tab to the tab widget.
+        '''
         tab = QtWidgets.QWidget()
         tab.setObjectName(data_name)
         tabHLayout = QtWidgets.QHBoxLayout(tab)
@@ -1013,6 +1028,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         return [tab, graphic]
 
     def set_visible_normal_tabs(self, directories, data_mode, set_visible):
+        '''
+        Set visible the normal tabs.
+        '''
         tab_mode = self.global_variables['tab_mode']
         for uploaded_directory in directories[data_mode]['uploaded']:
             tab_name = uploaded_directory.split('/')[-1].split('.')[0]
@@ -1028,6 +1046,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
                         tab_widget.setCurrentIndex(index[0])
 
     def load_report_tabs(self):
+        '''
+        Load the report tabs.
+        '''
         tab_mode = self.global_variables['tab_mode']
         data_mode = self.global_variables['data_mode']
         is_complete = True if data_mode == 'complete' else False
@@ -1121,6 +1142,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
                     return
 
     def remove_report_tabs(self):
+        '''
+        Remove the report tabs.
+        '''
         for page, graph in self.all_tabs['report']:
             for tab_widget in self.tab_widgets[self.global_variables['tab_mode']]:
                 index = tab_widget.indexOf(page)
@@ -1129,6 +1153,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         plt.close('all')
 
     def update_tabs(self):
+        '''
+        Update the tabs.
+        '''
         self.remove_report_tabs()
 
         directories = self.directories[self.global_variables['tab_mode']]
@@ -1148,6 +1175,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         # self.set_current_index_tab_last()
 
     def set_current_index_tab_last(self):
+        '''
+        Set the current index of the tab to the last one.
+        '''
         self.performanceTabWidget.setCurrentIndex(self.performanceTabWidget.count() - 1)
         self.reportTabWidget.setCurrentIndex(self.reportTabWidget.count() - 1)
         self.tuningTabWidget.setCurrentIndex(self.tuningTabWidget.count() - 1)
@@ -1155,6 +1185,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.comparisonReportTabWidget.setCurrentIndex(self.comparisonReportTabWidget.count() - 1)
 
     def update_tab_thread(self):
+        '''
+        Update the tabs in a thread.
+        '''
         self.thread_tab = QtCore.QThread()
         self.worker_tab = TabWorker()
 
@@ -1181,6 +1214,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.thread_tab.finished.connect(self.update_tab_finished)
 
     def update_tab_finished(self):
+        '''
+        Update the tabs finished.
+        '''
         self.mainAction.setEnabled(True)
         self.tuningAction.setEnabled(True)
         self.comparisonAction.setEnabled(True)
@@ -1193,6 +1229,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.resultPushButton.setEnabled(True)
 
     def update_main_visible_algorithms(self, algorithm):
+        '''
+        Update the main visible algorithms.
+        '''
         for i in range(3):
             label = self.main_params[i][0]
             line_edit = self.main_params[i][1]
@@ -1215,12 +1254,17 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             line_edit.setValidator(self.onlydouble)
 
     def update_tuning_visible_param(self, param):
+        '''
+        Update the tuning visible parameters.
+        '''
         algorithm = self.algorithmComboBox.currentText().lower()
         tuning_type = self.paramTuningComboBox.currentText().lower()
         self.update_tuning_visible_algorithms(algorithm, tuning_type)
 
     def update_tuning_visible_algorithms(self, algorithm, tuning_type):
-
+        '''
+        Update the tuning visible algorithms.
+        '''
         for i in range(3):
             label_init = self.tuning_params[i][0]
             line_edit_init = self.tuning_params[i][1]
@@ -1266,6 +1310,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
                 line_edit_end.setVisible(False)
 
     def set_visible_algorithm(self, algorithm):
+        '''
+        Set the visible algorithm.
+        '''
         algorithm = algorithm.lower()
 
         if self.global_variables['tab_mode'] == 'main':
@@ -1288,7 +1335,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             self.update_tuning_visible_algorithms(algorithm, tuning_param)
 
     def clear_data(self):
-
+        '''
+        Clear the data in the software.
+        '''
         if self.dataTreeWidget.findItems('', Qt.MatchContains | Qt.MatchRecursive):
             message_box = QtWidgets.QMessageBox(self)
             message_box.pos()
@@ -1329,6 +1378,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
                     plt.close('all')
 
     def update_directories(self, file_type, filenames):
+        '''
+        Update the directories.
+        '''
         tab_mode = self.global_variables['tab_mode']
         data_mode = self.global_variables['data_mode']
 
@@ -1370,6 +1422,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
                 new_filenames.append(filename)
 
     def load_files(self):
+        '''
+        Load files in the software as filenames.
+        '''
         kwargs = {}
         if 'SNAP' in os.environ:
             kwargs['options'] = QtWidgets.QFileDialog.DontUseNativeDialog
@@ -1411,6 +1466,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             self.update_tab_thread()
 
     def verify_type_data(self, directories):
+        '''
+        Verify if data is complete or incomplete.
+        '''
         view_mode = self.global_variables['view_mode']
         data_type = self.dataComboBox.currentText().lower()
 
@@ -1453,6 +1511,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.data_fname[0] = [self.data_fname[0][i] for i in indices]
 
     def save_files(self):
+        '''
+        Save files in the software with filenames.
+        '''
         kwargs = {}
         if 'SNAP' in os.environ:
             kwargs['options'] = QFileDialog.DontUseNativeDialog
@@ -1478,6 +1539,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.directories[tab_mode][data_mode]['temp_saved'] = save_name[0]
 
     def update_data_tree(self, directories):
+        '''
+        Update data tree with the new data.
+        '''
         self.dataTreeWidget.clear()
 
         if directories in ['', []]:
@@ -1507,6 +1571,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
                 parent.setExpanded(True)
 
     def save_as_text_changed(self):
+        '''
+        Update the save name when the text is changed.
+        '''
         save_name = self.saveAsLineEdit.text()
 
         op_sys = platform.system().lower()
@@ -1525,6 +1592,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             'temp_saved'] = save_name
 
     def show_about_of(self):
+        '''
+        Show about of the software.
+        '''
         self.about_window = QtWidgets.QWidget()
         self.ui_about_window = UIAboutWindow()
         self.ui_about_window.setupUi(self.about_window)
@@ -1532,6 +1602,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.about_window.show()
 
     def show_main(self):
+        '''
+        Show main window mode.
+        '''
         self.global_variables['tab_mode'] = 'main'
         view_mode = self.global_variables['view_mode']
         comparison = True if view_mode == 'normal' else False
@@ -1547,6 +1620,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.set_result_view()
 
     def show_tuning(self):
+        '''
+        Show tuning window mode.
+        '''
         self.global_variables['tab_mode'] = 'tuning'
         view_mode = self.global_variables['view_mode']
         comparison = True if view_mode == 'normal' else False
@@ -1569,6 +1645,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.set_result_view()
 
     def show_comparison(self):
+        '''
+        Show comparison window mode.
+        '''
         self.global_variables['tab_mode'] = 'comparison'
         view_mode = self.global_variables['view_mode']
         comparison = True if view_mode == 'normal' else False
@@ -1584,6 +1663,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.set_result_view()
 
     def set_result_view(self):
+        '''
+        Set the result view.
+        '''
         self.update_tab_thread()
         tab_mode = self.global_variables['tab_mode']
         data_mode = self.global_variables['data_mode']
@@ -1596,6 +1678,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             self.update_data_tree(self.directories[tab_mode][data_mode]['report'])
 
     def show_results(self):
+        '''
+        Show results window mode.
+        '''
         self.dataTreeWidget.clear()
 
         icon = QtGui.QIcon()
@@ -1614,6 +1699,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.resultPushButton.setIcon(icon)
 
     def set_main_view(self):
+        '''
+        Set the main view.
+        '''
         self.set_visible_algorithm(self.algorithmComboBox.currentText().lower())
 
         tab_mode = self.global_variables['tab_mode']
@@ -1629,6 +1717,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.set_result_view()
 
     def set_report_view(self):
+        '''
+        Set the report view.
+        '''
         self.algorithmGroupBox.setVisible(False)
         self.tuningGroupBox.setVisible(False)
         self.samplingGroupBox.setVisible(False)
@@ -1641,6 +1732,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.set_result_view()
 
     def update_data(self, value):
+        '''
+        Update data.
+        '''
         if value.lower() == 'datos completos':
             self.samplingGroupBox.setVisible(True if self.global_variables['view_mode'] == 'normal' else False)
             self.global_variables['data_mode'] = 'complete'
@@ -1652,37 +1746,58 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.set_result_view()
 
     def algorithm_changed(self, value):
+        '''
+        Algorithm changed.
+        '''
         self.set_visible_algorithm(value.lower())
 
     def algorithm_equation_clicked(self):
+        '''
+        Algorithm equation clicked.
+        '''
         self.ui_equation_window = UIEquationWindow()
         self.ui_equation_window.setupUi(self.algorithmComboBox.currentText())
         self.ui_equation_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.ui_equation_window.show()
 
     def comparison_algorithm_equation_clicked(self):
+        '''
+        Comparison algorithm equation clicked.
+        '''
         self.ui_comparison_equation_window = UIComparisonEquationWindow()
         self.ui_comparison_equation_window.setupUi()
         self.ui_comparison_equation_window.show()
 
     def element_help_clicked(self):
+        '''
+        Element help clicked.
+        '''
         self.ui_element_help_window = UIElementHelpWindow()
         self.ui_element_help_window.setupUi()
         self.ui_element_help_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.ui_element_help_window.show()
 
     def seed_help_clicked(self):
+        '''
+        Seed help clicked.
+        '''
         self.ui_seed_help_window = UISeedHelpWindow()
         self.ui_seed_help_window.setupUi()
         self.ui_seed_help_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.ui_seed_help_window.show()
 
     def jitter_sampling_clicked(self):
+        '''
+        Jitter sampling clicked.
+        '''
         self.jitter_sampling_window = UIJitterWindow()
         self.jitter_sampling_window.setupUi()
         self.jitter_sampling_window.show()
 
     def param_tuning_changed(self, value):
+        '''
+        Param tuning changed.
+        '''
         self.paramValuesLabel.setVisible(True if value.lower() == 'intervalo' else False)
         self.paramValuesSpinBox.setVisible(True if value.lower() == 'intervalo' else False)
 
@@ -1690,12 +1805,21 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         self.update_tuning_visible_algorithms(algorithm, value.lower())
 
     def param_changed(self, value):
+        '''
+        Param changed.
+        '''
         self.update_tuning_visible_param(value.lower())
 
     def activate_seed(self, activate):
+        '''
+        Activate seed.
+        '''
         self.seedSpinBox.setEnabled(activate)
 
     def on_sampling_changed(self, value):
+        '''
+        On sampling changed.
+        '''
         sampling = value.lower()
 
         self.spacerItem4.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -1730,6 +1854,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             self.spacerItem5.changeSize(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
 
     def verify_parameters(self, uploaded_directories):
+        '''
+        Verify parameters for experiments.
+        '''
 
         if not uploaded_directories:
             return False
@@ -1783,6 +1910,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         return True
 
     def update_variables(self, data_name):
+        '''
+        Update variables for experiments.
+        '''
         self.experimentProgressBar.setValue(0)
 
         tab_mode = self.global_variables['tab_mode']
@@ -1799,6 +1929,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             self.state[tab_mode]['progress']['fixed_params'][data_name] = {}
 
     def load_seismic_data(self, uploaded_directory):
+        '''
+        Load seismic data for experiments.
+        '''
         if Path(uploaded_directory).suffix == '.npy':
             data = np.load(uploaded_directory)
         else:
@@ -1825,6 +1958,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         return data
 
     def load_parameters(self, data):
+        '''
+        Load parameters for experiments.
+        '''
         data_mode = self.global_variables['data_mode']
         seed = None
         if self.seedCheckBox.checkState():
@@ -1849,6 +1985,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         return sampling_dict, H if data_mode == 'complete' else None
 
     def load_algorithm(self, data_name, seismic_data, H, sampling_dict):
+        '''
+        Load algorithm for experiments.
+        '''
         self.algorithm_name = self.algorithmComboBox.currentText().lower()
         tuning_type = self.paramTuningComboBox.currentText().lower()
         fixed_param = self.paramComboBox.currentIndex()
@@ -1996,7 +2135,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
                                     comp_performance_graphic, comp_report_graphic)
 
     def start_experiment(self):
-
+        '''
+        Start the experiment
+        '''
         uploaded_directories = self.directories[self.global_variables['tab_mode']][self.global_variables['data_mode']][
             'uploaded']
         validate = self.verify_parameters(uploaded_directories)
@@ -2061,6 +2202,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             return
 
     def report_main_progress(self, data_name, iter, res_dict, sampling_dict, graphics):
+        '''
+        Report progress of the main experiment
+        '''
         self.iters += 1
         self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
 
@@ -2092,6 +2236,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             graphics['report'].update_figure()
 
     def save_main_experiment(self, data_name, res_dict, graphics):
+        '''
+        Save the main experiment
+        '''
         performance_data = np.array(list(graphics['performance'].performance_data.items()), dtype=object)
 
         tab_mode = self.global_variables['tab_mode']
@@ -2109,6 +2256,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         print("Results saved [Ok]")
 
     def report_tuning_progress(self, data_name, num_run, res_dict, params, graphics):
+        '''
+        Report progress of the tuning experiment
+        '''
         self.iters += 1
         self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
 
@@ -2130,6 +2280,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         graphics['tuning'].update_figure()
 
     def save_tuning_experiment(self, data_name, graphics):
+        '''
+        Save the tuning experiment
+        '''
         fixed_params = self.state[self.global_variables['tab_mode']]['progress']['fixed_params'][data_name]
         fixed_params = np.array(list(fixed_params.items()), dtype=object)
         tuning_data = np.array(list(graphics['tuning'].tuning_data.items()), dtype=object)
@@ -2148,6 +2301,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         print("Results saved [Ok]")
 
     def report_comparison_progress(self, data_name, iter, outputs, sampling_dict, graphics):
+        '''
+        Report progress of the comparison experiment
+        '''
         self.iters += 1
         self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
 
@@ -2185,6 +2341,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             graphics['report'].update_figure()
 
     def save_comparison_experiment(self, data_name, res_dict, graphics):
+        '''
+        Save the comparison experiment
+        '''
         comparison_data = np.array(list(graphics['performance'].comparison_data.items()), dtype=object)
 
         tab_mode = self.global_variables['tab_mode']
@@ -2201,6 +2360,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         print("Results saved [Ok]")
 
     def reset_values(self):
+        '''
+        Reset values
+        '''
         if self.iters / self.max_iter_progress == 1.0:
             self.startPushButton.setEnabled(True)
             self.experimentProgressBar.setValue(0)
@@ -2208,6 +2370,9 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             self.threads = []
 
     def retranslateUi(self):
+        '''
+        Retranslate UI
+        '''
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(
             _translate("mainWindow", "ReDs - Reconstruccion de Receptores | Universidad Industrial de Santander"))
