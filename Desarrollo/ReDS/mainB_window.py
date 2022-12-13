@@ -1639,7 +1639,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         Algorithm equation clicked.
         '''
         self.ui_equation_window = UIEquationWindow()
-        self.ui_equation_window.setupUi(self.algorithmComboBox.currentText())
+        self.ui_equation_window.setupUi(self.algorithmComboBox.currentText().lower().replace(' ', '_'))
         self.ui_equation_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.ui_equation_window.show()
 
