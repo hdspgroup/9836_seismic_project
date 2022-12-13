@@ -1,17 +1,16 @@
 import scipy.io
 import numpy as np
+
 from skimage import transform
 from scipy.io import loadmat
 from scipy.sparse import csr_matrix
 from skimage.metrics import structural_similarity as ssim
 import inspect
-import scipy.sparse.linalg as ln
-from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
-                                 denoise_wavelet, estimate_sigma)
 import time
-# from pymitter import EventEmitter
 
-# Need to use this (EventEmitter) for comunication with the GUI, please don't remove it, I used this trough the code
+from tqdm import tqdm
+import cv2
+
 from Algorithms.tv_norm import tv_norm
 from Desarrollo.ReDS.gui.scripts.alerts import showWarning, showCritical
 
@@ -73,7 +72,10 @@ class Sampling:
         sampling_dict : dictionary that contains all information about sample
                         and its compression
         '''
-        M, N = x.shape
+        if x.ndim == 2:
+            M, N = x.shape
+        else:
+            M, N = x[:, int(x.shape[1] / 2), :].shape
 
         # sampling
         tasa_compression = int(compression_ratio * N)
@@ -86,9 +88,21 @@ class Sampling:
         pattern_vec[ss[0:tasa_compression]] = 0
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
 
-        out = x * H0
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
+
+        if x.ndim == 2:
+            out = x * H0
+        else:
+            pattern_rand = [int(h) for h in H]
+            pattern_rand = np.array(pattern_rand)
+            out = x[:, int(x.shape[1] / 2)].copy()
+            out[:, pattern_rand == 0] = 0
+
+            x -= x.min()
+            x /= x.max()
+            x *= 255
+            x = x.astype('uint8')
 
         sampling_dict = {
             "x_ori": x,
@@ -100,7 +114,7 @@ class Sampling:
             "H0": H0
         }
 
-        return np.array(list(sampling_dict.items())), H
+        return np.array(list(sampling_dict.items()), dtype=object), H
 
     def uniform_sampling(self, x, compression_ratio):
         '''
@@ -112,7 +126,11 @@ class Sampling:
         sampling_dict : dictionary that contains all information about sample
                         and its compression
         '''
-        M, N = x.shape
+        if x.ndim == 2:
+            M, N = x.shape
+        else:
+            M, N = x[:, int(x.shape[1] / 2), :].shape
+
         pattern_vec = np.ones((N,), dtype=int)
         n_col_rmv = np.round(N * compression_ratio)
         x_distance = np.round(N / n_col_rmv)
@@ -125,9 +143,21 @@ class Sampling:
         # Sampling pattern
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
 
-        out = x * H0
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
+
+        if x.ndim == 2:
+            out = x * H0
+        else:
+            pattern_rand = [int(h) for h in H]
+            pattern_rand = np.array(pattern_rand)
+            out = x[:, int(x.shape[1] / 2)].copy()
+            out[:, pattern_rand == 0] = 0
+
+            x -= x.min()
+            x /= x.max()
+            x *= 255
+            x = x.astype('uint8')
 
         sampling_dict = {
             "x_ori": x,
@@ -139,8 +169,7 @@ class Sampling:
             "H0": H0
         }
 
-        return np.array(list(sampling_dict.items())), H
-
+        return np.array(list(sampling_dict.items()), dtype=object), H
 
     def jitter_sampling(self, x, seed, gamma=3, epsilon=3):
         # https://slim.gatech.edu/Publications/Public/Journals/Geophysics/2008/hennenfent08GEOsdw/paper_html/node14.html
@@ -155,7 +184,10 @@ class Sampling:
         sampling_dict : dictionary that contains all information about sample
                         and its compression
         '''
-        M, N = x.shape
+        if x.ndim == 2:
+            M, N = x.shape
+        else:
+            M, N = x[:, int(x.shape[1] / 2), :].shape
 
         # sensing pattern (zero when not measure that position)
         pattern_vec = np.zeros((N,))
@@ -183,9 +215,22 @@ class Sampling:
 
         # Sampling pattern
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
-        out = x * H0
+
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
+
+        if x.ndim == 2:
+            out = x * H0
+        else:
+            pattern_rand = [int(h) for h in H]
+            pattern_rand = np.array(pattern_rand)
+            out = x[:, int(x.shape[1] / 2)].copy()
+            out[:, pattern_rand == 0] = 0
+
+            x -= x.min()
+            x /= x.max()
+            x *= 255
+            x = x.astype('uint8')
 
         sampling_dict = {
             "x_ori": x,
@@ -196,10 +241,13 @@ class Sampling:
             "H": H,
             "H0": H0
         }
-        return np.array(list(sampling_dict.items())), H
+        return np.array(list(sampling_dict.items()), dtype=object), H
 
     def list_sampling(self, x, lista):
-        M, N = x.shape
+        if x.ndim == 2:
+            M, N = x.shape
+        else:
+            M, N = x[:, int(x.shape[1] / 2), :].shape
 
         # sampling
 
@@ -207,9 +255,21 @@ class Sampling:
         pattern_vec[np.array(lista)] = 0
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
 
-        out = x * H0
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
+
+        if x.ndim == 2:
+            out = x * H0
+        else:
+            pattern_rand = [int(h) for h in H]
+            pattern_rand = np.array(pattern_rand)
+            out = x[:, int(x.shape[1] / 2)].copy()
+            out[:, pattern_rand == 0] = 0
+
+            x -= x.min()
+            x /= x.max()
+            x *= 255
+            x = x.astype('uint8')
 
         sampling_dict = {
             "x_ori": x,
@@ -221,7 +281,7 @@ class Sampling:
             "H0": H0
         }
 
-        return np.array(list(sampling_dict.items())), H
+        return np.array(list(sampling_dict.items()), dtype=object), H
 
 
 def random_sampling(x, sr, seed=None):
@@ -549,7 +609,7 @@ class Algorithms:
         algorithm to solve the optimization problem.
     '''
 
-    def __init__(self, x, H, operator_dir, operator_inv):
+    def __init__(self, x, H, operator_dir, operator_inv, print_info=True):
         '''
         Parameters
         ----------
@@ -565,11 +625,15 @@ class Algorithms:
             This function applies the inverse transform of the
             `operator_dir` function.
         '''
+        self.print_info = print_info
         self.is_complete_data = True
         # ------ Build sensing matrix for incomplete data ---------
         if H is None:
             x = np.nan_to_num(x, nan=0)
             H = np.all(x != 0, axis=0)
+            if not H.any():
+                x = x.T
+                H = np.all(x != 0, axis=0)
             self.is_complete_data = False
 
         # ------- change the dimension of the inputs image --------
@@ -782,8 +846,9 @@ class Algorithms:
             hist[itr, 2] = ssim_val
             hist[itr, 3] = tv_val
 
-            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
+            if self.print_info:
+                print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
+                      '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
 
             yield itr, dict(result=self.operator_inv(s), hist=hist)
 
@@ -852,8 +917,9 @@ class Algorithms:
             hist[itr, 2] = ssim_val
             hist[itr, 3] = tv_val
 
-            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
+            if self.print_info:
+                print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
+                      '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
 
             yield itr, dict(result=self.operator_inv(x), hist=hist)
 
@@ -927,8 +993,9 @@ class Algorithms:
             hist[itr, 2] = ssim_val
             hist[itr, 3] = tv_val
 
-            print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
-                  '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
+            if self.print_info:
+                print(itr, '\t Error:', format(hist[itr, 0], ".2e"), '\t PSNR:', format(hist[itr, 1], ".3f"), 'dB',
+                      '\t SSIM:', format(hist[itr, 2], ".3f"), '\t TV norm: ', format(hist[itr, 3], ".2f"), '\n')
 
             yield itr, dict(result=self.operator_inv(x), hist=hist)
 
@@ -1030,13 +1097,185 @@ class Algorithms:
             hist[itr, 2] = ssim_val
             hist[itr, 3] = tv_val
 
-            if (itr + 1) % 5 == 0:
+            if self.print_info:
                 # mse = np.mean(np.sum((y-A(v,Phi))**2,axis=(0,1)))
                 end_time = time.time()
                 # Error = %2.2f,
-                print("ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB, SSIM = %1.2f, TV norm = %4.2f time = %3.1fs." % (
-                    itr + 1, residualx, psnr_val, ssim_val, tv_val, end_time - begin_time))
+                print(
+                    "ADMM-TV: Iteration %3d,  Error = %2.2f, PSNR = %2.2f dB, SSIM = %1.2f, TV norm = %4.2f time = %3.1fs." % (
+                        itr + 1, residualx, psnr_val, ssim_val, tv_val, end_time - begin_time))
 
             yield itr, dict(result=x, hist=hist)
 
         yield x, hist
+
+
+class ShotAlgorithms:
+    """
+    Parameters
+    ----------
+    data_format: format of the data (Matlab or Numpy)
+    data_path: path where the data is, the data should be in the format (time, traces, shots).
+    exp_number: number of experiments. The results shows at the end is the average.
+    H: Boolean vector indicating the removed shots
+
+    Returns
+    -------
+    The reconstructed cube
+    """
+
+    def __init__(self, x, H, print_info=True):
+        '''
+        Parameters
+        ----------
+        x : array-like
+            An 3D input image.
+        H : array-like
+            The sensing matrix. A matrix with the positions of the
+            missing elements.
+        '''
+        self.print_info = print_info
+        self.is_complete_data = True
+
+        # ------ Build sensing matrix for incomplete data ---------
+        if H is None:
+            x = np.nan_to_num(x, nan=0)
+            aux = np.einsum('ijk->k', x)
+            H = aux != 0
+            self.is_complete_data = False
+
+        # ---------------------------------------------------------
+
+        x = np.double(x)
+        x = np.transpose(x, [0, 2, 1])
+        x -= np.min(x)
+        x /= np.max(x)
+        x *= 255
+        self.x = x.astype('uint8')
+        self.H = H
+
+        pattern_rand = [int(h) for h in self.H]
+        self.pattern_rand = np.array(pattern_rand)
+
+        self.mask = np.zeros(x.shape).astype('uint8')
+        self.mask[:, self.pattern_rand == 0, :] = 1
+
+        self.H_elim = np.where(self.H == 0)[0]
+
+    def measurements(self):
+        '''
+        Operator measurement models the subsampled acquisition process given a
+        sampling matrix H
+
+        Returns
+        -------
+        measures : Y = H@x
+        '''
+
+        print(f'H.shape={self.H.shape}, mask.shape={self.mask.shape}')
+        return self.x * (1 - self.mask)
+
+    def get_algorithm(self, algorithm_case):
+        if algorithm_case == "fast_marching":
+            func = self.FastMarching
+
+        else:
+            showCritical(
+                "No se encontró el algoritmo. Por favor intente nuevamente o utilice un algoritmo diferente.")
+            return
+
+        return func
+
+    def get_results(self, alg_name):
+        '''
+        This function allows to get the final results of the implemented algorithms
+        in this class.
+
+        This is due to algorithms functions works as generators, where each iteration
+        returns the current output info of the algorithm and the last iteration
+        returns the desired output of the function.
+
+        Parameters
+        ----------
+        alg_name :    str
+                      The name of the algorithm to solve.
+
+        Returns
+        -------
+        x_results : recovery results of the selected algorithm.
+        hist      : history of the selected algorithm.
+        '''
+        if alg_name == 'FastMarching':
+            alg = self.FastMarching
+        else:
+            raise 'The algorithm entered was not found.'
+
+        results = [output for i, output in enumerate(alg())][-1]
+        x_result, hist = results[-1].values()
+
+        return x_result, hist
+
+    def FastMarching(self):
+        paint_method = cv2.INPAINT_TELEA
+
+        imShape = self.x.shape
+        self.x = np.reshape(self.x, [imShape[0] * imShape[1], imShape[2]])
+        self.mask = np.reshape(self.mask, [imShape[0] * imShape[1], imShape[2]])
+
+        tmp = str(self.pattern_rand.astype('uint8')).split('1')
+        t_m = 0
+        for t in tmp:
+            if t.strip().count('0') > t_m:
+                t_m = t.strip().count('0')
+
+        x_copy = self.x.copy()
+        x = self.measurements()
+
+        output = cv2.inpaint(x, self.mask, t_m + 1, flags=paint_method)
+        output = np.reshape(output, [imShape[0], imShape[1], imShape[2]])
+        x = np.reshape(x, [imShape[0], imShape[1], imShape[2]])
+        x_copy = np.reshape(x_copy, [imShape[0], imShape[1], imShape[2]])
+        mask = np.reshape(self.mask, [imShape[0], imShape[1], imShape[2]])
+
+        hist = []
+        max_itr = x.shape[-1] - 1
+        hist = np.zeros((max_itr + 1, 3))
+        for i in tqdm(range(1, max_itr)):
+            tmp = cv2.inpaint(x[:, :, [i - 1, i, i + 1]], mask[..., 0], t_m + 1, flags=paint_method)
+            aux = output[..., [i - 1, i, i + 1]]
+            aux = (tmp.astype('float32') + aux.astype('float32')) / 2
+            output[..., [i - 1, i, i + 1]] = aux = aux.astype('uint8')
+
+            psnr_val = PSNR(x_copy[:, self.H_elim, :], output[:, self.H_elim, :])
+            ssim_val = ssim(x_copy[:, self.H_elim, :], output[:, self.H_elim, :])
+            tv_val = tv_norm(output.transpose((0, 2, 1)))
+
+            # psnr_val = PSNR(x, output)
+            # ssim_val = ssim(x, output)
+            # tv_val = tv_norm(output.transpose((0, 2, 1)))
+
+            hist[i, 0] = psnr_val
+            hist[i, 1] = ssim_val
+            hist[i, 2] = tv_val
+
+            yield i, dict(result=np.transpose(output, [0, 2, 1]), hist=hist)
+
+        x_copy = np.transpose(x_copy, [0, 2, 1])
+        output = np.transpose(output, [0, 2, 1])
+
+        psnr_val = PSNR(x_copy[:, self.H_elim, :], output[:, self.H_elim, :])
+        ssim_val = ssim(x_copy[:, self.H_elim, :], output[:, self.H_elim, :])
+        tv_val = tv_norm(output.transpose((0, 2, 1)))
+
+        # psnr_val = PSNR(x, output)
+        # ssim_val = ssim(x, output)
+        # tv_val = tv_norm(output.transpose((0, 2, 1)))
+
+        hist[max_itr, 0] = psnr_val
+        hist[max_itr, 1] = ssim_val
+        hist[max_itr, 2] = tv_val
+
+        if self.print_info:
+            print(hist[-1])
+
+        yield max_itr, dict(result=output, hist=hist)

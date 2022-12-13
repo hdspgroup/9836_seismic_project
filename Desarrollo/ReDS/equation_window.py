@@ -37,7 +37,7 @@ class UIEquationWindow(QtWidgets.QWidget):
 
     def retranslateUi(self, case):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("UIEquationWindow", f"Algoritmo {case}"))
+        self.setWindowTitle(_translate("UIEquationWindow", f"Algoritmo {case.replace('_', ' ').capitalize()}"))
         self.equationGroupBox.setTitle(_translate("UIEquationWindow", "Algoritmo y parámetros"))
 
     def update_equation(self, case):
