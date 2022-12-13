@@ -48,8 +48,6 @@ class UIMainAWindow(QtWidgets.QMainWindow):
 
     Attributes
     ----------
-    launcher : QMainWindow
-        Main window of the application.
     global_variables : dict
         Dictionary with global variables.
     directories : dict
@@ -1857,7 +1855,6 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         '''
         Verify parameters for experiments.
         '''
-
         if not uploaded_directories:
             return False
 
