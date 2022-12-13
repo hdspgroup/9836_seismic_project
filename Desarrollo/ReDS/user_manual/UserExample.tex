@@ -69,7 +69,7 @@
 \title{\large{Ejemplos de Uso}\\ \vspace{10mm} \huge{Reconstrucción de Datos Sísmicos}\\ \vspace{5mm} \huge{ReDs}}
 \author{\includegraphics[width=14cm]{figures/all_logos3.png} \\ Emmanuel Martínez \\ Crisóstomo A. Barajas-Solano}
 \softwarelogo{\includegraphics[width=7cm]{figures/icon}}
-\version{2022.10}
+\version{2022.12}
 
 
 
@@ -113,6 +113,8 @@ Este ejemplo ilustra como realizar la reconstrucción de datos sísmicos.
 
 \begin{enumerate}
 	
+	\item Inicie la aplicación ReDs y en la pantalla de inicio escoja la opción \textit{Iniciar RR}.
+	
 	\begin{multicols}{2}		
 		\item Ubique, en la parte superior de la aplicación, el botón del menú principal		
 		\begin{Figure}
@@ -126,7 +128,7 @@ Este ejemplo ilustra como realizar la reconstrucción de datos sísmicos.
 	\begin{multicols}{2}
 		\begin{Figure}
 			\centering
-			\includegraphics[width=.9\linewidth]{data-lecture-1.png}
+			\includegraphics[width=.9\linewidth]{data-lecture-1.pdf}
 			\captionof{figure}{Cargando un dato sísmico.}
 			\label{fig:data_lecture_1}
 		\end{Figure}
@@ -217,6 +219,8 @@ Este ejemplo ilustra como realizar un ajuste de parámetros
 
 \begin{enumerate}
 	
+	\item Inicie la aplicación ReDs y en la pantalla de inicio escoja la opción \textit{Iniciar RR}.
+	
 	\begin{multicols}{2}
 		\item Ubique, en la parte superior de la aplicación, el botón del menú de ajuste de parámetros.
 		\begin{Figure}			
@@ -230,7 +234,7 @@ Este ejemplo ilustra como realizar un ajuste de parámetros
 	\begin{multicols}{2}
 		\begin{Figure}
 			\centering
-			\includegraphics[width=.9\linewidth]{data-lecture-1.png}
+			\includegraphics[width=.9\linewidth]{data-lecture-1.pdf}
 			\captionof{figure}{Cargando un dato sísmico.}
 			\label{fig:data_lecture_1a}
 		\end{Figure}
@@ -316,6 +320,8 @@ Este ejemplo ilustra como realizar una comparación de algoritmos
 
 \begin{enumerate}
 	
+	\item Inicie la aplicación ReDs y en la pantalla de inicio escoja la opción \textit{Iniciar RR}.
+	
 	\begin{multicols}{2}
 		\item Ubique, en la parte superior de la aplicación, el botón del menú de comparación de algoritmos.
 		\begin{Figure}
@@ -329,7 +335,7 @@ Este ejemplo ilustra como realizar una comparación de algoritmos
 	\begin{multicols}{2}
 		\begin{Figure}
 			\centering
-			\includegraphics[width=.9\linewidth]{data-lecture-1.png}
+			\includegraphics[width=.9\linewidth]{data-lecture-1.pdf}
 			\captionof{figure}{Cargando un dato sísmico.}
 			\label{fig:data_lecture_1b}
 		\end{Figure}
@@ -399,5 +405,71 @@ Este ejemplo ilustra como realizar una comparación de algoritmos
 	\end{Figure}
 
 \end{enumerate}
+
+
+\section{Reconstrucción de Disparos}
+
+Este ejemplo ilustra como realizar una reconstrucción de disparos.
+
+\begin{enumerate}
+	
+	\item Inicie la aplicación ReDs y en la pantalla de inicio escoja la opción \textit{Iniciar RD}.
+	
+	\begin{multicols}{2}
+		\item En el extremo izquierdo, en el panel \textit{Datos Sísmicos}, haga click en el botón \textit{Cargar}
+		\item En la ventana \textit{Abrir dato sísmico}, como se observa en la figura \ref{fig:data_lecture_2brd}, donde el usuario podrá seleccionar un dato sísmico. Para este ejemplo cargaremos \emph{data.npy}. La aplicación ReDs reconoce las extensiones \emph{.npy} y \emph{.mat} para cargar datos sísmicos.
+		\begin{Figure}
+			\centering
+			\includegraphics[width=.9\linewidth]{data-lecture-1.pdf}
+			\captionof{figure}{Cargando un dato sísmico.}
+			\label{fig:data_lecture_1brd}
+		\end{Figure}		
+	\end{multicols}
+	
+	\begin{Figure}
+		\centering
+		\includegraphics[width=1\linewidth]{data-lecture-2.png}
+		\captionof{figure}{Ventana de selección de dato sísmico.}
+		\label{fig:data_lecture_2brd}
+	\end{Figure}
+
+	\begin{multicols}{2}
+		\begin{Figure}
+			\vspace{5mm}
+			\centering
+			\includegraphics[width=0.9\linewidth]{experiment-1.png}
+			\captionof{figure}{Panel de experimentos.}
+			\label{fig:experiment_1brd}
+		\end{Figure}
+		\item Seleccione un archivo para guardar los resultados de la reconstrucción con el botón \hspace{0.5mm} \faSave \hspace{0.5mm} ubicado en el panel \textit{Experimentos}. En la ventana \textit{Guardar reconstrucciones} introduzca el nombre \textit{nuevo\_experimento}, tal como se observa en la figura \ref{fig:experiment_1brd}.								
+	\end{multicols}
+
+	\begin{multicols}{2}
+		\item Inicie la reconstrucción pulsando el botón \hspace{0.5mm} \faPlay \hspace{0.5mm}. En la barra de progreso, a la izquierda de dicho botón, se podrá el progreso del actual experimento, como se observa en la figura \ref{fig:experiment_4brd}.		
+		\begin{Figure}
+			\centering
+			\includegraphics[width=0.7\linewidth]{experiment-4.png}
+			\captionof{figure}{Ejecución de un experimento en tiempo real.}
+			\label{fig:experiment_4brd}
+		\end{Figure}
+	\end{multicols}
+	
+	\item La solución de la reconstrucción de disparos se presenta en las pestañas Rendimiento y Reporte de reconstrucción, tal como se muestra en las figuras \ref{fig:result-comp1rd} y \ref{fig:result-comp2rd} respectivamente.
+	
+	\begin{Figure}
+		\centering
+		\includegraphics[width=0.75\linewidth]{rendrd}
+		\captionof{figure}{Rendimiento de la reconstrucción de disparos}
+		\label{fig:result-comp1rd}
+	\end{Figure}
+	
+	\begin{Figure}
+		\centering
+		\includegraphics[width=0.75\linewidth]{rendrd2}
+		\captionof{figure}{Reporte de la reconstrucción de disparos}
+		\label{fig:result-comp2rd}
+	\end{Figure}
+	
+\end{enumerate}	
 
 \end{document}

@@ -1,28 +1,29 @@
 \babel@toc {spanish}{}\relax 
 \contentsline {section}{\numberline {1}Visión General de la Aplicación ReDs}{7}{section.1}%
-\contentsline {section}{\numberline {2}Módulo ReDs - Reconstrucción de Receptores (RR)}{8}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Modo Sencillo}{8}{subsection.2.1}%
-\contentsline {subsubsection}{\numberline {2.1.1}Lectura de Datos}{9}{subsubsection.2.1.1}%
-\contentsline {subsubsection}{\numberline {2.1.2}Algoritmos}{10}{subsubsection.2.1.2}%
-\contentsline {subsubsection}{\numberline {2.1.3}Submuestreo}{10}{subsubsection.2.1.3}%
-\contentsline {subsubsection}{\numberline {2.1.4}Experimentos}{12}{subsubsection.2.1.4}%
-\contentsline {subsubsection}{\numberline {2.1.5}Visualización de Resultados de Datos Completos}{13}{subsubsection.2.1.5}%
-\contentsline {subsubsection}{\numberline {2.1.6}Visualización de Resultados de Datos Incompletos}{16}{subsubsection.2.1.6}%
-\contentsline {subsection}{\numberline {2.2}Modo Ajuste de parámetros}{18}{subsection.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.1}Configuraciones}{19}{subsubsection.2.2.1}%
-\contentsline {subsubsection}{\numberline {2.2.2}Ajuste de Parámetros de Datos Incompletos}{21}{subsubsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.3}Modo Comparación de Algoritmos}{21}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}Configuraciones}{23}{subsubsection.2.3.1}%
-\contentsline {subsubsection}{\numberline {2.3.2}Comparación de Algoritmos de Datos Incompletos}{25}{subsubsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.4}Visualización general de Resultados}{26}{subsection.2.4}%
-\contentsline {subsubsection}{\numberline {2.4.1}Menú principal}{26}{subsubsection.2.4.1}%
-\contentsline {subsubsection}{\numberline {2.4.2}Menú de ajuste de parámetros}{27}{subsubsection.2.4.2}%
-\contentsline {subsubsection}{\numberline {2.4.3}Menú de comparación de algoritmos}{29}{subsubsection.2.4.3}%
-\contentsline {section}{\numberline {3}Módulo ReDs - Reconstrucción de Disparos (RD)}{31}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Lectura de Datos}{31}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Algoritmos}{32}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Submuestreo}{32}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Experimentos}{34}{subsection.3.4}%
-\contentsline {subsubsection}{\numberline {3.4.1}Visualización de Resultados de Datos Completos}{35}{subsubsection.3.4.1}%
-\contentsline {section}{\numberline {4}Acerca de}{36}{section.4}%
-\contentsline {section}{\numberline {5}Recomendaciones de uso}{36}{section.5}%
+\contentsline {section}{\numberline {2}Módulo ReDs - Reconstrucción de Receptores (RR)}{9}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Modo Sencillo}{9}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Lectura de Datos}{10}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Algoritmos}{11}{subsubsection.2.1.2}%
+\contentsline {subsubsection}{\numberline {2.1.3}Submuestreo}{11}{subsubsection.2.1.3}%
+\contentsline {subsubsection}{\numberline {2.1.4}Experimentos}{13}{subsubsection.2.1.4}%
+\contentsline {subsubsection}{\numberline {2.1.5}Visualización de Resultados de Datos Completos}{14}{subsubsection.2.1.5}%
+\contentsline {subsubsection}{\numberline {2.1.6}Visualización de Resultados de Datos Incompletos}{17}{subsubsection.2.1.6}%
+\contentsline {subsection}{\numberline {2.2}Modo Ajuste de parámetros}{19}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Configuraciones}{20}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Ajuste de Parámetros de Datos Incompletos}{22}{subsubsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.3}Modo Comparación de Algoritmos}{22}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Configuraciones}{24}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Comparación de Algoritmos de Datos Incompletos}{26}{subsubsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.4}Visualización general de Resultados}{27}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Menú principal}{27}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Menú de ajuste de parámetros}{28}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}Menú de comparación de algoritmos}{30}{subsubsection.2.4.3}%
+\contentsline {section}{\numberline {3}Módulo ReDs - Reconstrucción de Disparos (RD)}{33}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Lectura de Datos}{33}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Algoritmos}{34}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Submuestreo}{34}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Experimentos}{36}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Visualización de Resultados de Datos Completos}{37}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Visualización de Resultados de Datos Incompletos}{40}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Acerca de}{43}{section.4}%
+\contentsline {section}{\numberline {5}Recomendaciones de uso}{45}{section.5}%

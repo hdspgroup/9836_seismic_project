@@ -69,7 +69,7 @@
 \title{\large{Manual de Usuario}\\ \vspace{10mm} \huge{Reconstrucción de Datos Sísmicos}\\ \vspace{5mm} \huge{ReDs}}
 \author{\includegraphics[width=14cm]{figures/all_logos3.png} \\ Emmanuel Martínez \\ Crisóstomo A. Barajas-Solano}
 \softwarelogo{\includegraphics[width=7cm]{figures/icon}}
-\version{2022.10}
+\version{2022.12}
 
 
 
@@ -130,7 +130,8 @@ El usuario puede configurar cada uno de los algoritmos de reconstrucción de tal
 
 
 
-\newpage
+\cleardoublepage
+
 \section{Módulo ReDs - Reconstrucción de Receptores (RR)}
 
 El módulo ReDS-RR (reconstrucción de receptores) realiza la estimación de trazas faltantes en un disparo sísmico, usando algoritmos de gradiente descendiente y aprovechando representaciones escasas de los datos en dominios transformados como Curvelet, DCT y Wavelets.
@@ -391,7 +392,7 @@ Para correr el experimento se debe pulsar en el botón \hspace{0.5mm} \faPlay \h
 
 \subsubsection{Visualización de Resultados de Datos Completos}
 
-Los resultados de todos los experimentos que se realicen a través de esta aplicación se pueden observar en el panel \circled{7}, en el extremo derecho de la figura \ref{fig:vision}. En este panel se encuentran dos tipos de visualización: la visualización del rendimiento (iteraciones vs. error/psnr) y visualización de la reconstrucción, como se observa en la figura \ref{fig:main_result_1}.
+Los resultados de todos los experimentos se pueden observar en el panel \circled{7}, en el extremo derecho de la figura \ref{fig:vision}. En este panel se encuentran dos tipos de visualización: la visualización del rendimiento (iteraciones vs. error/psnr) y visualización de la reconstrucción, como se observa en la figura \ref{fig:main_result_1}.
 
 \begin{multicols}{2}
 
@@ -828,7 +829,7 @@ Por último, es posible cargar resultados de comparaciones de algoritmos. Para e
 	\label{fig:report_6}
 \end{Figure}
 
-\newpage
+\cleardoublepage
 \section{Módulo ReDs - Reconstrucción de Disparos (RD)}
 
 El módulo ReDS-RD (reconstrucción de disparos) realiza la estimación de disparos sísmicos completos, faltantes en la adquisición, usando algoritmos de gradiente descendiente que aprovechan representaciones escasas de los datos en dominios transformados como Curvelet, DCT y Wavelets.
@@ -886,21 +887,14 @@ Existen dos tipos de datos sísmicos que pueden ser cargados desde ReDs - RD: \t
 
 \subsection{Algoritmos}
 
-El Módulo RD solo tiene un único algoritmo disponible: Fast Marching, tal como se observa en el panel \circled{2}, en el extremo izquierdo de la figura \ref{fig:rd}. El algoritmo Fast Marching no tiene parámetros a configurar, por lo que no es posible hacer una variación paramétrica.
+El Módulo RD solo tiene un único algoritmo disponible: Fast Marching, tal como se observa en el panel \circled{2}, en el extremo izquierdo de la figura \ref{fig:rd}. El algoritmo Fast Marching no tiene parámetros a configurar, por lo que no es posible hacer una variación paramétrica. El botón\hspace{0.5mm} \faEye \hspace{0.5mm} permite visualizar el modelo matemático del algoritmo Fast Marching, tal como se indica en la imagen \ref{fig:fast}.
 
-\begin{multicols}{2}
-	
-	\begin{figure}[!ht]
+\begin{figure}
 		\centering
-		\includegraphics[width=\textwidth]{blank.pdf}
+		\includegraphics[width=\textwidth]{fast.pdf}
 		\caption{Algoritmo Fast Marching}
 		\label{fig:fast}	
-	\end{figure}
-	
-	El botón\hspace{0.5mm} \faEye \hspace{0.5mm} permite visualizar el modelo matemático del algoritmo Fast Marching.	
-
-\end{multicols}
-
+\end{figure}
 
 \subsection{Submuestreo}\label{subsamplingrd}
 
@@ -1032,9 +1026,9 @@ Es necesario asignar un nombre al experimento para poder guardarlo. En este ejem
 
 \end{multicols}
 
-\subsubsection{Visualización de Resultados de Datos Completos}
+\subsection{Visualización de Resultados de Datos Completos}
 
-Los resultados de todos los experimentos que se realicen a través de esta aplicación se pueden observar en el panel \circled{6}, en el extremo derecho de la figura \ref{fig:rd}. En este panel se encuentran dos tipos de visualización: la visualización del rendimiento (iteraciones vs. error/psnr) y visualización de la reconstrucción, como se observa en la figura \ref{fig:main_result_1rd}.
+Los resultados de todos los experimentos se pueden observar en el panel \circled{6}, en el extremo derecho de la figura \ref{fig:rd}. En este panel se encuentran dos tipos de visualización: la visualización del rendimiento (iteraciones vs. error/psnr) y visualización de la reconstrucción, como se observa en la figura \ref{fig:main_result_1rd}.
 
 \begin{multicols}{2}
 	
@@ -1050,8 +1044,112 @@ Los resultados de todos los experimentos que se realicen a través de esta aplic
 	
 \end{multicols}
 
+\subsubsection*{Rendimiento}
 
-\newpage
+En esta subventana se observa el rendimiento actual del experimento que esté corriendo, como se muestra en la figura \ref{fig:main_result_2rd}. Esta figura presenta una gráfica con dos ejes: el \textcolor{red}{eje izquierdo} representa el indice de similaridad estructural (SSIM); y el \textcolor{blue}{eje derecho} representa la proporción máxima de señal a ruido (PSNR) de las trazas reconstruidas con respecto a las verdaderas. En general, ambas métricas cuantifican la degradación de la calidad de la imagen.
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.8\linewidth]{rendrd.pdf}
+	\captionof{figure}{Rendimiento de un experimento realizado.}
+	\label{fig:main_result_2rd}
+\end{Figure}
+
+\begin{multicols}{2}
+	
+	\begin{Figure}
+		\vspace{0.7cm}
+		\centering
+		\includegraphics[width=0.9\linewidth]{main-result-3.png}
+		\captionof{figure}{Opciones de la gráfica.}
+		\label{fig:main_result_3rd}
+	\end{Figure}
+	
+	En la parte superior de la gráfica \textit{Resultados del experimento} se observa una barra de herramientas, tal como se muestra en la figura \ref{fig:main_result_3rd}. Estas modifican alguna característica de la gráfica de resultados, tal como se indica a continuación:
+	
+\end{multicols}
+
+\vspace{0.2cm}
+
+\begin{multicols}{2}
+	
+	\begin{itemize}
+		\setlength\itemsep{0em}
+		\item[I.]  El botón \hspace{0.5mm} \faHome \hspace{0.5mm} permite volver a la gráfica a su estado original. Los otros dos botones, \hspace{0.5mm} \faArrowLeft \hspace{0.5mm} y \hspace{0.5mm} \faArrowRight \hspace{0.5mm}, permiten ir hacia adelante o atrás en las modificaciones realizadas a la gráfica.
+		
+		\item[II.] El botón \hspace{0.5mm} \faArrows \hspace{0.5mm} permite desplazar la gráfica en cualquier dirección, mientras que el botón \hspace{0.5mm} \faSearch \hspace{0.5mm} permite realizar un acercamiento o alejamiento de la gráfica.
+		
+	\end{itemize}
+	
+	\vfill\null
+	\columnbreak
+	
+	\begin{Figure}
+		%\vspace{-1.5cm}
+		\centering
+		\includegraphics[width=0.6\linewidth]{main-result-4.png}
+		\captionof{figure}{Configuración de subplots.}
+		\label{fig:main_result_4rd}
+	\end{Figure}
+	
+\end{multicols}
+
+\begin{multicols}{2}
+	
+	\begin{Figure}
+		%\vspace{-1.5cm}
+		\centering
+		\includegraphics[width=0.7\linewidth]{main-result-5.png}
+		\captionof{figure}{Editor de ejes, curvas y parámetros de la gráfica.}
+		\label{fig:main_result_5rd}
+	\end{Figure}
+	
+	\vfill\null
+	\columnbreak
+	
+	\begin{itemize}
+		\setlength\itemsep{0em}
+		
+		\item[III.] Los siguientes botones tienen un comportamiento más complejo. El botón \hspace{0.5mm} \faBars \hspace{0.5mm} abre la subventana que se observa en la figura \ref{fig:main_result_4rd}. Esto permitirá ajustar la visualización de los bordes de la gráfica y el espaciado con respecto a su contenedor padre. Por otra parte, el botón \hspace{0.5mm} \faLineChart \hspace{0.5mm} permitirá configurar la visualización de los ejes (cantidad de valores) y el tipo de escala para cada eje, como se observa en la figura \ref{fig:main_result_5rd}.
+		
+		\item[IV.] Finalmente, el botón \hspace{0.5mm} \faSave \hspace{0.5mm} permitirá guardar una imagen de la gráfica exactamente como se observe en ese instante. Los formatos soportados para exportar una gráfica son: \textit{.eps}, \textit{.jpg}, \textit{.pgf}, \textit{.pdf}, \textit{.png}, \textit{.ps}, \textit{.raw}, \textit{.svg}, \textit{.tiff}.
+	\end{itemize}
+	
+\end{multicols}
+
+\subsubsection*{Reporte de Reconstrucción}
+
+Por otra parte, los resultados cuantitativos del experimento se observan en el subpanel de \emph{Reporte}, como se muestra en la figura \ref{fig:main_result_6rd}. Esta gráfica presenta las referencias y reconstrucciones para diferentes shots, con sus correspondientes métricas de reconstrucción.
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=1\linewidth]{rendrd2}
+	\captionof{figure}{Reporte cuantitativo de un experimento realizado.}
+	\label{fig:main_result_6rd}
+\end{Figure}
+
+\subsection{Visualización de Resultados de Datos Incompletos}
+
+Los resultados de los experimentos usando datos incompletos difieren de los resultados usando datos completos dado que no existe una medida real de comparación. Por esta razón no es posible calcular métricas de error como el psnr. Para el caso de datos incompletos se usa la medida \textit{Total Variation} (TV) como una medida de la suavidad de la reconstrucción. La figura \ref{fig:res-incompletosrd} muestra un ejemplo de la evolución del TV para un ejemplo práctico.
+
+Por otra parte, el panel de experimento para datos incompletos es similar al caso cuando se usan datos completos, tal y cual se muestra en la figura \ref{fig:res-incompletos2rd}.
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.85\linewidth]{incrd}
+	\captionof{figure}{Rendimiento de un experimento realizado usando datos incompletos.}
+	\label{fig:res-incompletosrd}
+\end{Figure}
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=0.85\linewidth]{incrd2}
+	\captionof{figure}{Reporte cuantitativo de un experimento realizado usando datos incompletos.}
+	\label{fig:res-incompletos2rd}
+\end{Figure}
+
+\cleardoublepage
+
 \section{Acerca de}
 
 Como se mencionó al principio de este manual, esta aplicación se encuentra asociada con varias compañias colombianas relacionadas en el sector de la sísmica. Por lo tanto, si se pulsa el botón \emph{Acerca de}, como se muestra en la figura \ref{fig:about_tab}, se abrirá una nueva ventana donde se menciona dicha información de manera más detallada, como se observa en la figura \ref{fig:about_of}.
@@ -1069,6 +1167,8 @@ Como se mencionó al principio de este manual, esta aplicación se encuentra aso
      \captionof{figure}{Acerca de.}
     \label{fig:about_of}
 \end{Figure}
+
+\cleardoublepage
 
 \section{Recomendaciones de uso}
 
