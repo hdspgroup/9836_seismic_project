@@ -3,6 +3,26 @@ from PyQt5 import QtCore
 
 
 class Worker(QtCore.QObject):
+    '''
+    Worker for run experiment in a thread in main mode
+
+    Parameters
+    ----------
+    name : str
+        Name of the experiment
+    function : function
+        Function to run
+    parameters : dict
+        Parameters of the function
+    maxiter : int
+        Maximum number of iterations
+    sampling_dict : dict
+        Dictionary with the sampling information
+    performance_graphic : pyqtgraph.PlotWidget
+        Graphic to show the performance
+    report_graphic : pyqtgraph.PlotWidget
+        Graphic to show the report
+    '''
     finished = QtCore.pyqtSignal(str, dict, dict)
     progress = QtCore.pyqtSignal(str, int, dict, np.ndarray, dict)
 
@@ -31,6 +51,22 @@ class Worker(QtCore.QObject):
 
 
 class TuningWorker(QtCore.QObject):
+    '''
+    Worker for run experiment in a thread in tuning mode
+
+    Parameters
+    ----------
+    name : str
+        Name of the experiment
+    function : function
+        Function to run
+    parameters : dict
+        Parameters of the function
+    maxiter : int
+        Maximum number of iterations
+    tuning_graphic : pyqtgraph.PlotWidget
+        Graphic to show the tuning
+    '''
     finished = QtCore.pyqtSignal(str, dict)
     progress = QtCore.pyqtSignal(str, int, dict, dict, dict)
 
@@ -56,6 +92,26 @@ class TuningWorker(QtCore.QObject):
 
 
 class ComparisonWorker(QtCore.QObject):
+    '''
+    Worker for run experiment in a thread in comparison mode
+
+    Parameters
+    ----------
+    name : str
+        Name of the experiment
+    function : function
+        Function to run
+    parameters : dict
+        Parameters of the function
+    maxiter : int
+        Maximum number of iterations
+    sampling_dict : dict
+        Dictionary with the sampling information
+    comp_performance_graphic : pyqtgraph.PlotWidget
+        Graphic to show the performance
+    comp_report_graphic : pyqtgraph.PlotWidget
+        Graphic to show the report
+    '''
     finished = QtCore.pyqtSignal(str, dict, dict)
     progress = QtCore.pyqtSignal(str, int, tuple, np.ndarray, dict)
 
@@ -93,6 +149,13 @@ class ComparisonWorker(QtCore.QObject):
 
 
 class TabWorker(QtCore.QObject):
+    '''
+    Worker for run tabs in a thread
+
+    Parameters
+    ----------
+
+    '''
     finished = QtCore.pyqtSignal()
     progress = QtCore.pyqtSignal()
 
@@ -104,6 +167,24 @@ class TabWorker(QtCore.QObject):
 # ------------------------------------------------- Shots -------------------------------------------------
 
 class ShotWorker(QtCore.QObject):
+    '''
+    Worker for run experiment in a thread for shot reconstruction
+
+    Parameters
+    ----------
+    name : str
+        Name of the experiment
+    function : function
+        Function to run
+    maxiter : int
+        Maximum number of iterations
+    sampling_dict : dict
+        Dictionary with the sampling information
+    performance_graphic : pyqtgraph.PlotWidget
+        Graphic to show the performance
+    report_graphic : pyqtgraph.PlotWidget
+        Graphic to show the report
+    '''
     finished = QtCore.pyqtSignal(str, dict, dict)
     progress = QtCore.pyqtSignal(str, int, dict, np.ndarray, dict)
 

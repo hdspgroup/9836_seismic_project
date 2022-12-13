@@ -15,6 +15,21 @@ from gui.scripts.alerts import showCritical
 
 # custom toolbar with lorem ipsum text
 class CustomToolbar(NavigationToolbar2QT):
+    '''
+    Custom toolbar for experiment reports
+
+    Parameters
+    ----------
+    canvas_ : FigureCanvasQTAgg
+        Canvas of the figure
+    parent_ : QWidget
+        Parent widget
+
+    Attributes
+    ----------
+    toolitems : tuple
+        Tuple of tuples with the toolbar items
+    '''
     def __init__(self, canvas_, parent_):
         self.toolitems = (
             ('Home', 'Volver a la vista original', 'home', 'home'),
@@ -33,6 +48,28 @@ class CustomToolbar(NavigationToolbar2QT):
 
 
 class PerformanceGraphic(FigureCanvasQTAgg):
+    '''
+    Graphics for visualize the performance of the experiment for main mode
+
+    Parameters
+    ----------
+    is_complete : bool
+        If the experiment is complete or not
+
+    Attributes
+    ----------
+    performance_data : dict
+        Dictionary with the performance data
+    figure : Figure
+        Figure of the graphic
+
+    Methods
+    -------
+    update_values(iteracion, error, psnr, ssim, tv)
+        Update the performance data
+    update_figure()
+        Update the figure
+    '''
     def __init__(self, is_complete=True):
         self.is_complete = is_complete
         self.performance_data = dict(iteracion=[], error=[], psnr=[], ssim=[], tv=[])
@@ -96,6 +133,28 @@ class PerformanceGraphic(FigureCanvasQTAgg):
 
 
 class ReconstructionGraphic(FigureCanvasQTAgg):
+    '''
+    Graphics for visualize the reconstruction results of the experiment for main mode
+
+    Parameters
+    ----------
+    is_complete : bool
+        If the experiment is complete or not
+
+    Attributes
+    ----------
+    report_data : dict
+        Dictionary with the reported data
+    figure : Figure
+        Figure of the graphic
+
+    Methods
+    -------
+    update_report(report_data)
+        Update the report data
+    update_figure()
+        Update the figure
+    '''
     def __init__(self, is_complete=True):
         self.is_complete = is_complete
         self.report_data = None
@@ -203,6 +262,32 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
 
 
 class TuningGraphic(FigureCanvasQTAgg):
+    '''
+    Graphics for visualize the reconstruction results of the experiment for tuning mode
+
+    Parameters
+    ----------
+    is_complete : bool
+        If the experiment is complete or not
+
+    Attributes
+    ----------
+    algorithm : str
+        Algorithm name
+    tuning_data : dict
+        Dictionary with the tuning data
+    fixed_params : dict
+        Dictionary with the fixed parameters
+    figure : Figure
+        Figure of the graphic
+
+    Methods
+    -------
+    update_tuning(algoritm, tuning_data, fixed_params, current_scale)
+        Update the tuning data
+    update_figure()
+        Update the figure
+    '''
     def __init__(self, is_complete):
         self.is_complete = is_complete
         self.algorithm = None
@@ -288,6 +373,28 @@ class TuningGraphic(FigureCanvasQTAgg):
 
 
 class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
+    '''
+    Graphics for visualize the reconstruction results of the experiment for comparison mode
+
+    Parameters
+    ----------
+    is_complete : bool
+        If the experiment is complete or not
+
+    Attributes
+    ----------
+    comparison_data : dict
+        Dictionary with the comparision data
+    figure : Figure
+        Figure of the graphic
+
+    Methods
+    -------
+    update_values(iteracion, errors, psnrs, ssims, tvs)
+        Update the values
+    update_figure()
+        Update the figure
+    '''
     def __init__(self, is_complete):
         self.is_complete = is_complete
         self.algorithm_names = ['FISTA', 'GAP', 'TwIST', 'ADMM']
@@ -351,6 +458,28 @@ class ComparisonPerformanceGraphic(FigureCanvasQTAgg):
 
 
 class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
+    '''
+    Graphics for visualize the reconstruction results of the experiment for comparison mode
+
+    Parameters
+    ----------
+    is_complete : bool
+        If the experiment is complete or not
+
+    Attributes
+    ----------
+    comparison_data : dict
+        Dictionary with the comparison data
+    figure : Figure
+        Figure of the graphic
+
+    Methods
+    -------
+    update_report(comparison_data)
+        Update the comparison data
+    update_figure()
+        Update the figure
+    '''
     def __init__(self, is_complete):
         self.is_complete = is_complete
         self.algorithm_names = ['FISTA', 'GAP', 'TwIST', 'ADMM']
@@ -499,6 +628,28 @@ class ComparisonReconstructionGraphic(FigureCanvasQTAgg):
 # ---------------------------------------------- shots ----------------------------------------------
 
 class ShotPerformanceGraphic(FigureCanvasQTAgg):
+    '''
+    Graphics for visualize the performance of the experiment for shot reconstruction
+
+    Parameters
+    ----------
+    is_complete : bool
+        If the experiment is complete or not
+
+    Attributes
+    ----------
+    performance_data : dict
+        Dictionary with the data
+    figure : Figure
+        Figure of the graphic
+
+    Methods
+    -------
+    update_values(iteracion, error, ssim, tv)
+        Update the values
+    update_figure()
+        Update the figure
+    '''
     def __init__(self, is_complete=True):
         self.is_complete = is_complete
         self.performance_data = dict(iteracion=[], psnr=[], ssim=[], tv=[])
@@ -574,6 +725,28 @@ class ShotPerformanceGraphic(FigureCanvasQTAgg):
 
 
 class ShotReconstructionGraphic(FigureCanvasQTAgg):
+    '''
+    Graphics for visualize the results of the experiment for shot reconstruction
+
+    Parameters
+    ----------
+    is_complete : bool
+        If the experiment is complete or not
+
+    Attributes
+    ----------
+    report_data : dict
+        Dictionary with the reported data
+    figure : Figure
+        Figure of the graphic
+
+    Methods
+    -------
+    update_report(report_data)
+        Update the reported data
+    update_figure()
+        Update the figure
+    '''
     def __init__(self, is_complete=True):
         self.is_complete = is_complete
         self.report_data = None
