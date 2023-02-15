@@ -22,38 +22,6 @@ Esta es una guía para instalar las dependencias necesarias para poder ejecutar 
 
 De acuerdo al sistema operativo las anteriores instrucciones se deben cumplir de distintas formas, para obtener indicaciones más detalladas ingrese al siguiente enlace: [Instalación de dependencias](https://github.com/carlosh93/9836_seismic_project/wiki/I.-Manual-de-Instalación-Aplicación-ReDs,-Modo-Desarrolador).
 
-Si ya posee un conocimiento más avanzado del tema, puede crear su propio entorno virtual e instalar las siguientes dependencias:
-
-```
-pip install numpy
-pip install matplotlib
-pip install scikit-image
-pip install scipy
-pip install pandas
-pip install PyQt5
-pip install pyinstaller
-pip install scikit-image
-pip install scipy
-```
-
-También puede realizar la instalación de dependencias de forma rápida usando la instrucción:
-
-```
-pip install -r requirements.txt
-```
-
-Es necesario haber realizado la correcta instalación de las dependencias mencionadas anteriormente antes de acceder a los recursos principales para construir la aplicación ReDs.
-
-Luego, ejecute el script `main_window.py` como:
-
-`python main_window.py`
-
-# Instalación Independiente
-
----
-
-Si desea usar el software directamente, dirijase a este enlace [guia de instalación](https://github.com/carlosh93/9836_seismic_project/wiki/III.-Versi%C3%B3n-Ejecutable-ReDs-(Release),-Modo-Usuario-Final) donde encontrará la instrucciones para instalar el software y usarlo directamente.
-
 # **Datos sísmicos**
 
 ---
