@@ -18,7 +18,7 @@ Esta es una guía para instalar las dependencias necesarias para poder ejecutar 
 2. Crear entorno virtual en anaconda. 
 3. Instalar Pycharm.
 4. Instalar dependencias en el entorno virtual creado.
-5. Correr `main_window.py` con el entorno virtual creado.
+5. Correr `launch_window.py` con el entorno virtual creado.
 
 De acuerdo al sistema operativo las anteriores instrucciones se deben cumplir de distintas formas, para obtener indicaciones más detalladas ingrese al siguiente enlace: [Instalación de dependencias](https://github.com/carlosh93/9836_seismic_project/wiki/I.-Manual-de-Instalación-Aplicación-ReDs,-Modo-Desarrolador).
 
