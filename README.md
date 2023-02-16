@@ -4,7 +4,7 @@
 
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 ![fund](https://img.shields.io/badge/Fundby-Minciencias--ANH-red)
-![coverage](https://img.shields.io/badge/status-40%25-yellowgreen)
+![coverage](https://img.shields.io/badge/status-90%25-yellowgreen)
 
 Esta herramienta software hace parte del proyecto 9836 - "Nuevas tecnologías computacionales para el diseño de sistemas de adquisición sísmica 3D terrestre con muestreo compresivo para la reducción de costos económicos e impactos ambientales en la exploración de hidrocarburos en cuencas terrestres colombianas" adscrito a la Convocatoria para la financiación de proyectos de investigación en geociencias para el sector de hidrocarburos, desarrollado por la alianza, Universidad Industrial de Santander (UIS), ECOPETROL y la Asociación Colombiana de Geólogos y Geofísicos del Petróleo (ACGGP). Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarburos (ANH). Los derechos sobre este software están reservados a las entidades aportantes.
 
