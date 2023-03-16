@@ -15,6 +15,12 @@ class Tau_pTransform:
     """
 
     def __init__(self, x, t, dx, dt, slowness, mu=0.01):
+        if x.shape[0] > 1 and x.shape[1] == 1:
+            x = x.T
+        if t.shape[0] > 1 and t.shape[1] == 1:
+            t = t.T
+        if slowness.shape[0] > 1 and slowness.shape[1] == 1:
+            slowness = slowness.T
         self.slowness = slowness
         self.lp = len(slowness.T)
         self.x = x
@@ -28,7 +34,6 @@ class Tau_pTransform:
         self.Gi = [0] * self.lt
         self.I = identity(self.lx) * mu
         self.grad = np.zeros((self.lp, self.lt)).astype(complex)
-        print(self.lt)
         print("generando matrices\n -------------------------------------------")
         Di = np.zeros((1, self.lp)).astype(complex)
         for i in range(self.lt):

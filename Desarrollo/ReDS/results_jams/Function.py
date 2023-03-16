@@ -37,13 +37,10 @@ class Sampling:
             # if jitter_params['gamma'] % 2 != 0:
             #     showWarning("El valor de gamma debe ser un número impar.")
             #     return
-
             return self.jitter_sampling(x, seed, **jitter_params)
         else:  # mode == lista
             try:
                 lista = [int(number) for number in lista.text().replace(' ', '').split(',')]
-
-
             except:
                 pass
                 return
@@ -61,22 +58,17 @@ class Sampling:
                         and its compression
         '''
         M, N = x.shape
-
         # sampling
         tasa_compression = int(compression_ratio * N)
         pattern_vec = np.ones((N,))
-
         if seed is not None:
             np.random.seed(seed)
-
         ss = np.random.permutation(list(range(1, N - 1)))
         pattern_vec[ss[0:tasa_compression]] = 0
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
-
         out = x * H0
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
-
         sampling_dict = {
             "x_ori": x,
             "sr_rand": compression_ratio,
@@ -86,7 +78,6 @@ class Sampling:
             "H": H,
             "H0": H0
         }
-
         return np.array(list(sampling_dict.items())), H
 
     def uniform_sampling(self, x, compression_ratio):
@@ -103,19 +94,15 @@ class Sampling:
         pattern_vec = np.ones((N,), dtype=int)
         n_col_rmv = np.round(N * compression_ratio)
         x_distance = np.round(N / n_col_rmv)
-
         i = 0
         while i * int(x_distance) < N:
             pattern_vec[i * int(x_distance)] = 0
             i = i + 1
-
         # Sampling pattern
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
-
         out = x * H0
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
-
         sampling_dict = {
             "x_ori": x,
             "sr_rand": compression_ratio,
@@ -125,9 +112,7 @@ class Sampling:
             "H": H,
             "H0": H0
         }
-
         return np.array(list(sampling_dict.items())), H
-
 
     def jitter_sampling(self, x, seed, gamma=3, epsilon=3):
         # https://slim.gatech.edu/Publications/Public/Journals/Geophysics/2008/hennenfent08GEOsdw/paper_html/node14.html
@@ -143,7 +128,6 @@ class Sampling:
                         and its compression
         '''
         M, N = x.shape
-
         # sensing pattern (zero when not measure that position)
         pattern_vec = np.ones((N,))
         # first pisition
@@ -154,10 +138,8 @@ class Sampling:
         limits = np.floor(epsilon / 2)
         # add 0.49 in order to make all number equally probable (edges problem)
         limits = limits + 0.49
-
         if seed is not None:
             np.random.seed(seed)
-
         # generate the perturbation following U(-epsilon/2, epsilon/2)
         res = (np.random.rand(len(centroids), ) * (2 * limits)) - limits
         # convert to integer
@@ -167,13 +149,11 @@ class Sampling:
         positions = centroids - res
         # placing a one in the new position
         pattern_vec[positions.astype(int)] = 0
-
         # Sampling pattern
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
         out = x * H0
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
-
         sampling_dict = {
             "x_ori": x,
             "sr_rand": 1 / gamma,
@@ -187,17 +167,13 @@ class Sampling:
 
     def list_sampling(self, x, lista):
         M, N = x.shape
-
         # sampling
-
         pattern_vec = np.ones((N,))
         pattern_vec[np.array(lista)] = 0
         H0 = np.tile(pattern_vec.reshape(1, -1), (M, 1))
-
         out = x * H0
         pattern_bool = np.asarray(pattern_vec, dtype=bool)
         H = pattern_bool
-
         sampling_dict = {
             "x_ori": x,
             "lista": lista,
@@ -207,7 +183,6 @@ class Sampling:
             "H": H,
             "H0": H0
         }
-
         return np.array(list(sampling_dict.items())), H
 
 
@@ -246,10 +221,64 @@ def random_sampling(x, sr, seed=None):
     return out, pattern_vec, pattern_bool
 
 
+class Tau_pTransform:
+    """
+    Perform the tau-p transform over a gather shot.
+    input:
+         x: a numpy array with the positions of the receiver (from 0 to max_x) (row array)
+         t: a numpy array with the time recorded (from 0 to max_t) (row array)
+         dx: sample rate in the offset
+         dt: sample rate in the temporal axis
+         slowness: a numpy array with the reciprocal of the velocities (1/v)
+    """
+    def __init__(self, x, t, dx, dt, slowness, mu=0.01):
+        if x.shape[0] > 1 and x.shape[1] == 1:
+            x = x.T
+        if t.shape[0] > 1 and t.shape[1] == 1:
+            t = t.T
+        if slowness.shape[0] > 1 and slowness.shape[1] == 1:
+            slowness = slowness.T
+        self.slowness = slowness
+        self.lp = len(slowness.T)
+        self.x = x
+        self.dx = dx
+        self.lx = len(x.T)
+        self.t = t
+        self.dt = dt
+        self.lt = len(t.T)
+        pm = np.max(self.slowness)
+        self.IF = [0] * self.lt
+        self.Gi = [0] * self.lt
+        self.I = identity(self.lx) * mu
+        self.grad = np.zeros((self.lp, self.lt)).astype(complex)
+        print("generando matrices\n -------------------------------------------")
+        Di = np.zeros((1, self.lp)).astype(complex)
+        for i in range(self.lt):
+            print("matrix {0} de {1}".format(i, self.lt - 1))
+            G = np.exp(-2j * np.pi * ((i / self.lt) * (1 / self.dt)) * x.T.dot(self.slowness))
+            Di[:] = np.exp(
+                -1j * np.pi * (i / self.lt) * (1.0 / self.dt) * 1.0 * np.sqrt(pm ** 2 - self.slowness ** 2)) - np.exp(
+                1j * np.pi * (i / self.lt) * (1.0 / self.dt) * np.sqrt(pm ** 2 - self.slowness ** 2))
+            for k in range(self.lx):
+                G[k, :] = G[k, :] * Di
+            self.IF[i] = np.linalg.pinv(G.dot(np.conj(G.T)) + self.I)
+            self.Gi[i] = G
+        print("finished")
 
+    def inverse(self):
+        def transform(X):
+            for i in range(X.shape[1]):
+                self.grad[:, i] = (np.conj(self.Gi[i].T).dot(self.IF[i])).dot(X[:, i])
+            return self.grad.copy()
+        return transform
 
-
-
+    def direct(self):
+        def transform(X):
+            resid = np.zeros((self.lx, self.lt)).astype(complex)
+            for i in range(X.shape[1]):
+                resid[:, i] = self.Gi[i].dot(X[:, i])
+            return resid
+        return transform
 
 
 def dct2():
@@ -273,7 +302,6 @@ def dct2():
 
     def dct2_function(x):
         return (scipy.fft.dct(scipy.fft.dct(x).T)).T
-
     return dct2_function
 
 
@@ -297,10 +325,8 @@ def idct2():
     To compute the 2D transform, the 1D transform is applied
     to the rows and the columns of the input matrix.
     '''
-
     def idct2_function(x):
         return (scipy.fft.idct(scipy.fft.idct(x).T)).T
-
     return idct2_function
 
 
@@ -364,61 +390,46 @@ class Operator:
         '''
         Applies the equivalent of the matricial transpose
         operator to the input vector.
-
         Mathematically is defined as
-
         .. math::
             y = D^T H^T x
-
         where H is the sensing matrix and D the transformation
         basis.
-
         Parameters
         ----------
         x : array-like
             An array to apply the operator.
-
         Returns
         -------
         y : array-like
-            The traspose operation applied to the input
+            The transpose operation applied to the input
             vector.
         '''
         if self.operator == 'DCT2D':
             Ht = self.H.transpose()
             y = Ht * np.squeeze(x.T.reshape(-1))  # H' * x
-
             y = np.reshape(y, [self.m, self.n], order='F')
-
             y = self.operator_dir(y)
         else:
             Ht = self.H.transpose()
             y = Ht * np.squeeze(x)  # H' * x
-
             y = np.reshape(y, [self.n, self.m]) #data
-
             y = self.operator_dir(y) # curvelet vector
-
         return y
 
     def direct(self, x):  # y = H * D * x
         '''
         Applies the equivalent of the matricial direct
         operator to the input vector.
-
         Mathematically is defined as
-
         .. math::
             y = H D x
-
         where H is the sensing matrix and D the transformation
         basis.
-
         Parameters
         ----------
         x : array-like
             An array to apply the operator.
-
         Returns
         -------
         y : array-like
@@ -428,15 +439,11 @@ class Operator:
         #x = np.reshape(x, [self.m, self.n], order='F')  # ordenar
         if self.operator == 'DCT2D':
             x = np.reshape(x, [self.m, self.n], order='F')  # ordenar
-
             theta = self.operator_inv(x)  # D * x
-
             y = self.H * np.squeeze(theta.T.reshape(-1))  # H * D * x
         else:
             theta = self.operator_inv(x)  # D * x
-
             y = self.H * np.squeeze(theta.reshape(-1))  # H * D * x
-
         return y
 
 
@@ -556,7 +563,6 @@ class Algorithms:
         Applies a Time to Walking Independently After Stroke (TwIST)
         algorithm to solve the optimization problem.
     '''
-
     def __init__(self, x, H, operator_dir, operator_inv):
         '''
         Parameters
@@ -628,6 +634,16 @@ class Algorithms:
             elif operator_dir == 'FDCT2':
                 self.objtransform = fdct2((n, m), 4, 16, ac=True, norm=False)
                 self.operator_dir = self.objtransform.fwd
+            elif operator_dir == 'TAUP':
+                dx = 25
+                dt = 0.003
+                s = np.linspace(800, 4900, 1026)
+                s1 = np.linspace(-4900, -800, 1026)
+                s = np.concatenate([s1,s])
+                s = np.expand_dims(s, -1)
+                s = s.T
+                slowness = 1 / s
+                self.objtransform = Tau_pTransform(x,t,dx,dt,slowness)
 
         if inspect.isfunction(operator_inv):
             self.operator_inv = operator_inv

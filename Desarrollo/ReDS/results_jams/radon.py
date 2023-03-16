@@ -51,10 +51,10 @@ taxis, taxis2, xaxis, yaxis = pylops.utils.seismicevents.makeaxis(par)
 wav = ricker(taxis[:41], f0=par["f0"])[0]
 
 # generate model
-'''y = (
+y = (
     pylops.utils.seismicevents.linear2d(xaxis, taxis, v, t0, theta, amp, wav)[1]
     + pylops.utils.seismicevents.parabolic2d(xaxis, taxis, tp0, px, pxx, ampp, wav)[1]
-)'''
+)
 y = np.load('/home/jams/Documents/9836_seismic_project/Desarrollo/ReDS/data/cube4.npy')
 y = y[:,:,17]
 y=y[:,20:]
