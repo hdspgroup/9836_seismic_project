@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1412</width>
-    <height>1185</height>
+    <width>1666</width>
+    <height>1345</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>9836 Proyecto de Sísmica</string>
+   <string>ReDs - Reconstruccion de Receptores | Universidad Industrial de Santander</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="centralWidgetHLayout" stretch="1,10">
+   <layout class="QHBoxLayout" name="centralWidgetHLayout" stretch="3,10">
     <item>
      <layout class="QVBoxLayout" name="mainLayout" stretch="0,0,0,0,0,0,0">
       <item>
@@ -76,13 +76,20 @@
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="TransposeCheckBox">
+             <property name="text">
+              <string>Transpuesta</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="clearDataPushButton">
              <property name="text">
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../assets/assets.qrc">
-               <normaloff>:/icons/icons/stop.png</normaloff>:/icons/icons/stop.png</iconset>
+              <iconset>
+               <normaloff>assets/icons/stop.png</normaloff>assets/icons/stop.png</iconset>
              </property>
             </widget>
            </item>
@@ -151,8 +158,8 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../assets/assets.qrc">
-               <normaloff>:/icons/icons/view.png</normaloff>:/icons/icons/view.png</iconset>
+              <iconset>
+               <normaloff>assets/icons/view.png</normaloff>assets/icons/view.png</iconset>
              </property>
             </widget>
            </item>
@@ -302,21 +309,21 @@
            <item>
             <widget class="QComboBox" name="paramComboBox">
              <property name="currentText">
-              <string>param1</string>
+              <string/>
              </property>
              <item>
               <property name="text">
-               <string>param1</string>
+               <string/>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>param2</string>
+               <string/>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>param3</string>
+               <string/>
               </property>
              </item>
             </widget>
@@ -534,23 +541,10 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../assets/assets.qrc">
-               <normaloff>:/icons/icons/view.png</normaloff>:/icons/icons/view.png</iconset>
+              <iconset>
+               <normaloff>assets/icons/view.png</normaloff>assets/icons/view.png</iconset>
              </property>
             </widget>
-           </item>
-           <item>
-            <spacer name="comparisonHSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
            </item>
            <item>
             <widget class="QLabel" name="comparisonMaxiterLabel">
@@ -981,8 +975,8 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../assets/assets.qrc">
-               <normaloff>:/icons/icons/help.png</normaloff>:/icons/icons/help.png</iconset>
+              <iconset>
+               <normaloff>assets/icons/help.png</normaloff>assets/icons/help.png</iconset>
              </property>
             </widget>
            </item>
@@ -1064,19 +1058,6 @@
          <item>
           <layout class="QHBoxLayout" name="sdHLayout">
            <item>
-            <spacer name="seedHSpacer1">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
             <layout class="QHBoxLayout" name="seedHLayout">
              <item>
               <widget class="QCheckBox" name="seedCheckBox">
@@ -1117,17 +1098,15 @@
             </layout>
            </item>
            <item>
-            <spacer name="seedHSpacer2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+            <widget class="QPushButton" name="seedHelpButton">
+             <property name="text">
+              <string/>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
+             <property name="icon">
+              <iconset>
+               <normaloff>assets/icons/help.png</normaloff>assets/icons/help.png</iconset>
              </property>
-            </spacer>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1158,8 +1137,8 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../assets/assets.qrc">
-               <normaloff>:/icons/icons/save.png</normaloff>:/icons/icons/save.png</iconset>
+              <iconset>
+               <normaloff>assets/icons/save.png</normaloff>assets/icons/save.png</iconset>
              </property>
             </widget>
            </item>
@@ -1183,8 +1162,8 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../assets/assets.qrc">
-               <normaloff>:/icons/icons/run.png</normaloff>:/icons/icons/run.png</iconset>
+              <iconset>
+               <normaloff>assets/icons/run.png</normaloff>assets/icons/run.png</iconset>
              </property>
             </widget>
            </item>
@@ -1198,22 +1177,9 @@
         <property name="title">
          <string>Resultados</string>
         </property>
-        <layout class="QVBoxLayout" name="resultGroupBoxHLayout">
+        <layout class="QVBoxLayout" name="resultGroupBoxHLayout" stretch="0">
          <item>
-          <layout class="QHBoxLayout" name="resultHLayout" stretch="1,1,1,1">
-           <item>
-            <spacer name="resultHSpacer1">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
+          <layout class="QHBoxLayout" name="resultHLayout" stretch="0,0">
            <item>
             <widget class="QLabel" name="resultLabel">
              <property name="text">
@@ -1230,8 +1196,8 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../assets/assets.qrc">
-               <normaloff>:/icons/icons/report.png</normaloff>:/icons/icons/report.png</iconset>
+              <iconset>
+               <normaloff>assets/icons/report.png</normaloff>assets/icons/report.png</iconset>
              </property>
              <property name="autoDefault">
               <bool>false</bool>
@@ -1243,19 +1209,6 @@
               <bool>false</bool>
              </property>
             </widget>
-           </item>
-           <item>
-            <spacer name="resultHSpacer2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </item>
@@ -1276,8 +1229,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>997</width>
-           <height>309</height>
+           <width>1154</width>
+           <height>368</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1333,8 +1286,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>997</width>
-           <height>309</height>
+           <width>1154</width>
+           <height>368</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1431,8 +1384,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>997</width>
-           <height>309</height>
+           <width>1154</width>
+           <height>368</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1488,8 +1441,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>997</width>
-           <height>309</height>
+           <width>1154</width>
+           <height>368</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1563,8 +1516,8 @@
   </widget>
   <action name="aboutOfAction">
    <property name="icon">
-    <iconset resource="../assets/assets.qrc">
-     <normaloff>:/icons/icons/info.png</normaloff>:/icons/icons/info.png</iconset>
+    <iconset>
+     <normaloff>assets/icons/info.png</normaloff>assets/icons/info.png</iconset>
    </property>
    <property name="text">
     <string>about</string>
@@ -1587,8 +1540,8 @@
   </action>
   <action name="mainAction">
    <property name="icon">
-    <iconset resource="../assets/assets.qrc">
-     <normaloff>:/icons/icons/main.png</normaloff>:/icons/icons/main.png</iconset>
+    <iconset>
+     <normaloff>assets/icons/main.png</normaloff>assets/icons/main.png</iconset>
    </property>
    <property name="text">
     <string>main</string>
@@ -1599,8 +1552,8 @@
   </action>
   <action name="tuningAction">
    <property name="icon">
-    <iconset resource="../assets/assets.qrc">
-     <normaloff>:/icons/icons/tuning.png</normaloff>:/icons/icons/tuning.png</iconset>
+    <iconset>
+     <normaloff>assets/icons/tuning.png</normaloff>assets/icons/tuning.png</iconset>
    </property>
    <property name="text">
     <string>tuning</string>
@@ -1612,7 +1565,7 @@
   <action name="comparisonAction">
    <property name="icon">
     <iconset>
-     <normaloff>:/icons/icons/comparison.png</normaloff>:/icons/icons/comparison.png</iconset>
+     <normaloff>assets/icons/comparison.png</normaloff>assets/icons/comparison.png</iconset>
    </property>
    <property name="text">
     <string>comparison</string>

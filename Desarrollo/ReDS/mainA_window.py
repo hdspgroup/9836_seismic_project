@@ -12,6 +12,8 @@ import platform
 from itertools import product
 from pathlib import Path
 
+import scipy.io
+import segyio
 import numpy as np
 import pandas as pd
 from PyQt5.Qt import Qt
@@ -1444,7 +1446,7 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             file_type = 'npz'
 
         self.data_fname = QtWidgets.QFileDialog.getOpenFileNames(self, message, uploaded_directory[-1],
-                                                                 filter=f'numpy file (*.{file_type});;matlab file (*.mat)',
+                                                                 filter=f'numpy file (*.{file_type});;matlab file (*.mat);;segy file (*.sgy *.segy)',
                                                                  **kwargs)
 
         if self.data_fname[0] in ['', []]:
@@ -1475,34 +1477,18 @@ class UIMainAWindow(QtWidgets.QMainWindow):
             filename = directory.split('/')
             child_name = filename[-1]
 
-            data = np.load(directory, allow_pickle=True)
-            if hasattr(data, 'keys'):
-                if view_mode == 'normal':
-                    showWarning(f"El dato cargado {child_name} no es un reporte de algún experimento previamente hecho"
-                                f"en este software. Se ignorará el dato.")
+            data = self.load_seismic_data(directory)[1:-1, 1:-1]
+            data = np.nan_to_num(data, nan=0)
+
+            # check if some row or column of data contains only zeros
+            if np.all(data == 0, axis=1).any():
+                if data_type == 'datos completos':
+                    showWarning(f"El dato cargado {child_name} no es completo. Se ignorará el dato.")
                     continue
-
-                if not data['is_complete']:
-                    if data_type == 'datos completos':
-                        showWarning(f"El dato cargado {child_name} no es completo. Se ignorará el dato.")
-                        continue
-                else:
-                    if data_type == 'datos incompletos':
-                        showWarning(f"El dato cargado {child_name} no es incompleto. Se ignorará el dato.")
-                        continue
             else:
-                data = self.load_seismic_data(directory)[1:-1, 1:-1]
-                data = np.nan_to_num(data, nan=0)
-
-                # check if some row or column of data contains only zeros
-                if np.all(data == 0, axis=0).any() or np.all(data == 0, axis=1).any():
-                    if data_type == 'datos completos':
-                        showWarning(f"El dato cargado {child_name} no es completo. Se ignorará el dato.")
-                        continue
-                else:
-                    if data_type == 'datos incompletos':
-                        showWarning(f"El dato cargado {child_name} no es incompleto. Se ignorará el dato.")
-                        continue
+                if data_type == 'datos incompletos':
+                    showWarning(f"El dato cargado {child_name} no es incompleto. Se ignorará el dato.")
+                    continue
 
             indices.append(i)
 
@@ -1931,13 +1917,22 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         '''
         if Path(uploaded_directory).suffix == '.npy':
             data = np.load(uploaded_directory)
-        else:
+        elif Path(uploaded_directory).suffix == '.mat':
             data = loadmat(uploaded_directory)
             keys = list(data.keys())
             keys.remove('__header__')
             keys.remove('__version__')
             keys.remove('__globals__')
             data = data[keys[0]]
+        elif Path(uploaded_directory).suffix.lower() == '.sgy' or Path(uploaded_directory).suffix.lower() == '.segy':
+            data = None
+            with segyio.open(uploaded_directory) as f:
+                data = np.zeros((len(f.samples), len(f.xlines)))
+                pos = 0
+                for trace in f.trace:
+                    data[:, pos] = trace
+                    pos = pos + 1
+
 
         if data.ndim > 2:
             data = data[..., int(data.shape[-1] / 2)]
@@ -2372,20 +2367,20 @@ class UIMainAWindow(QtWidgets.QMainWindow):
         '''
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(
-            _translate("mainWindow", "ReDs - Reconstruccion de Receptores | Universidad Industrial de Santander"))
-        self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))
-        self.typeDataLabel.setText(_translate("mainWindow", "Tipo:"))
-        self.dataComboBox.setItemText(0, _translate("mainWindow", "Datos completos"))
-        self.dataComboBox.setItemText(1, _translate("mainWindow", "Datos incompletos"))
-        self.dataTreeWidget.headerItem().setText(0, _translate("mainWindow", "Datos actuales"))
-        self.loadPushButton.setText(_translate("mainWindow", "Cargar"))
-        self.algorithmGroupBox.setTitle(_translate("mainWindow", "Algoritmos"))
-        self.algorithmComboBox.setItemText(0, _translate("mainWindow", "FISTA"))
-        self.algorithmComboBox.setItemText(1, _translate("mainWindow", "GAP"))
-        self.algorithmComboBox.setItemText(2, _translate("mainWindow", "TwIST"))
-        self.algorithmComboBox.setItemText(3, _translate("mainWindow", "ADMM"))
-        self.algorithmPushButton.setToolTip(_translate("mainWindow", "Ver ecuación"))
-        self.maxiterLabel.setText(_translate("mainWindow", "Máxima iteración"))
+            _translate("mainWindow", "ReDs - Reconstruccion de Receptores | Universidad Industrial de Santander"))##
+        self.inputGroupBox.setTitle(_translate("mainWindow", "Datos sísmicos"))##
+        self.typeDataLabel.setText(_translate("mainWindow", "Tipo:"))##
+        self.dataComboBox.setItemText(0, _translate("mainWindow", "Datos completos"))##
+        self.dataComboBox.setItemText(1, _translate("mainWindow", "Datos incompletos"))##
+        self.dataTreeWidget.headerItem().setText(0, _translate("mainWindow", "Datos actuales"))##
+        self.loadPushButton.setText(_translate("mainWindow", "Cargar"))##
+        self.algorithmGroupBox.setTitle(_translate("mainWindow", "Algoritmos"))##
+        self.algorithmComboBox.setItemText(0, _translate("mainWindow", "FISTA"))##
+        self.algorithmComboBox.setItemText(1, _translate("mainWindow", "GAP"))##
+        self.algorithmComboBox.setItemText(2, _translate("mainWindow", "TwIST"))##
+        self.algorithmComboBox.setItemText(3, _translate("mainWindow", "ADMM"))##
+        self.algorithmPushButton.setToolTip(_translate("mainWindow", "Ver ecuación"))##
+        self.maxiterLabel.setText(_translate("mainWindow", "Máxima iteración"))##
         self.param1LineEdit.setText(_translate("mainWindow", "0.1"))
         self.param2LineEdit.setText(_translate("mainWindow", "0.3"))
         self.param3LineEdit.setText(_translate("mainWindow", "1"))
