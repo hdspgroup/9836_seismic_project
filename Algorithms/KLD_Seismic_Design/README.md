@@ -13,3 +13,12 @@ https://drive.google.com/file/d/1mN_hi7KzSjnjOPTyrfyIGTdK6bwMUDhE/view?usp=share
 # Demo
 
 Run a demo of the End-to-End optimization of the acquistion geometry and the reconstruction network with the proposed the Divergence-based regularization in `Main.ipynb` 
+
+# Sensing models
+
+The differentiable modeling o f the compressive seismic acquistion is in ´SensingModel2D.py´, `sampling_schemes.py` and `models2D.py`
+
+# Recovery models
+
+Different recovery networks are implemented in `Une2D.py`, `Resnet.py and  `Conv.py`
+
