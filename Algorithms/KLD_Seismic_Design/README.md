@@ -16,7 +16,7 @@ Run a demo of the End-to-End optimization of the acquistion geometry and the rec
 
 # Sensing models
 
-The differentiable modeling o f the compressive seismic acquistion is in ´SensingModel2D.py´, `sampling_schemes.py` and `models2D.py`
+The differentiable modeling o f the compressive seismic acquistion is in `SensingModel2D.py`, `sampling_schemes.py` and `models2D.py`
 
 # Recovery models
 
