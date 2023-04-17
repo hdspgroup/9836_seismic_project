@@ -20,5 +20,5 @@ The differentiable modeling o f the compressive seismic acquistion is in ´Sensi
 
 # Recovery models
 
-Different recovery networks are implemented in `Une2D.py`, `Resnet.py and  `Conv.py`
+Different recovery networks are implemented in `Une2D.py`, `Resnet.py` and  `Conv.py`
 
