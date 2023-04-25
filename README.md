@@ -4,7 +4,7 @@
 
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 ![fund](https://img.shields.io/badge/Fundby-Minciencias--ANH-red)
-![coverage](https://img.shields.io/badge/status-40%25-yellowgreen)
+![coverage](https://img.shields.io/badge/status-90%25-yellowgreen)
 
 Esta herramienta software hace parte del proyecto 9836 - "Nuevas tecnologías computacionales para el diseño de sistemas de adquisición sísmica 3D terrestre con muestreo compresivo para la reducción de costos económicos e impactos ambientales en la exploración de hidrocarburos en cuencas terrestres colombianas" adscrito a la Convocatoria para la financiación de proyectos de investigación en geociencias para el sector de hidrocarburos, desarrollado por la alianza, Universidad Industrial de Santander (UIS), ECOPETROL y la Asociación Colombiana de Geólogos y Geofísicos del Petróleo (ACGGP). Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarburos (ANH). Los derechos sobre este software están reservados a las entidades aportantes.
 
@@ -18,41 +18,9 @@ Esta es una guía para instalar las dependencias necesarias para poder ejecutar 
 2. Crear entorno virtual en anaconda. 
 3. Instalar Pycharm.
 4. Instalar dependencias en el entorno virtual creado.
-5. Correr `main_window.py` con el entorno virtual creado.
+5. Correr `launch_window.py` con el entorno virtual creado.
 
 De acuerdo al sistema operativo las anteriores instrucciones se deben cumplir de distintas formas, para obtener indicaciones más detalladas ingrese al siguiente enlace: [Instalación de dependencias](https://github.com/carlosh93/9836_seismic_project/wiki/I.-Manual-de-Instalación-Aplicación-ReDs,-Modo-Desarrolador).
-
-Si ya posee un conocimiento más avanzado del tema, puede crear su propio entorno virtual e instalar las siguientes dependencias:
-
-```
-pip install numpy
-pip install matplotlib
-pip install scikit-image
-pip install scipy
-pip install pandas
-pip install PyQt5
-pip install pyinstaller
-pip install scikit-image
-pip install scipy
-```
-
-También puede realizar la instalación de dependencias de forma rápida usando la instrucción:
-
-```
-pip install -r requirements.txt
-```
-
-Es necesario haber realizado la correcta instalación de las dependencias mencionadas anteriormente antes de acceder a los recursos principales para construir la aplicación ReDs.
-
-Luego, ejecute el script `main_window.py` como:
-
-`python main_window.py`
-
-# Instalación Independiente
-
----
-
-Si desea usar el software directamente, dirijase a este enlace [guia de instalación](https://github.com/carlosh93/9836_seismic_project/wiki/III.-Versi%C3%B3n-Ejecutable-ReDs-(Release),-Modo-Usuario-Final) donde encontrará la instrucciones para instalar el software y usarlo directamente.
 
 # **Datos sísmicos**
 

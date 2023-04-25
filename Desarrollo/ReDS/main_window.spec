@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['main_window.py'],
+    ['launcher_window.py','mainA_window.py','mainB_window.py'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -64,7 +64,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='main_window',
+    name='laun_window',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -84,5 +84,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='main_window',
+    name='launch_window',
 )
