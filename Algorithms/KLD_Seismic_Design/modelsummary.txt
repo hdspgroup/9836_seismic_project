@@ -1,0 +1,1 @@
+<bound method Model.summary of <keras.engine.functional.Functional object at 0x7fc687d32fa0>>
