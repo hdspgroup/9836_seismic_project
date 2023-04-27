@@ -54,4 +54,3 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.moduleAPushButton.setText(_translate("MainWindow", "Modulo A: Reconstrucción de trazas"))
         self.moduleBPushButton.setText(_translate("MainWindow", "Modulo B: Reconstrucción de disparos"))
-import assets_rc

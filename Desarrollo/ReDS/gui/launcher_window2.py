@@ -105,4 +105,3 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">ReDS - RD</span></p><p align=\"center\"><span style=\" font-size:14pt;\">Reconstrucción de Disparos</span></p></body></html>"))
         self.moduleAPushButton.setText(_translate("MainWindow", "Iniciar RR"))
         self.moduleBPushButton.setText(_translate("MainWindow", "Iniciar RD"))
-import assets_rc

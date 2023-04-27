@@ -141,6 +141,11 @@
                <string>ADMM</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>DeepNetwork</string>
+              </property>
+             </item>
             </widget>
            </item>
            <item>
@@ -1229,8 +1234,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1154</width>
-           <height>368</height>
+           <width>1167</width>
+           <height>363</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1286,8 +1291,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1154</width>
-           <height>368</height>
+           <width>1167</width>
+           <height>363</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1384,8 +1389,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1154</width>
-           <height>368</height>
+           <width>1167</width>
+           <height>363</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1441,8 +1446,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1154</width>
-           <height>368</height>
+           <width>1167</width>
+           <height>363</height>
           </rect>
          </property>
          <attribute name="label">
