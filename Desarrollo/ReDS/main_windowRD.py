@@ -118,55 +118,7 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/view.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.algorithmPushButton.setIcon(icon)
 
-        self.param1InitLabel.setText("")
-        self.param1InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda_init.png")))
 
-        self.param1EndLabel.setText("")
-        self.param1EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda_end.png")))
-
-        self.param2InitLabel.setText("")
-        self.param2InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu_init.png")))
-
-        self.param2EndLabel.setText("")
-        self.param2EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu_end.png")))
-
-        self.param3InitLabel.setText("")
-        self.param3InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho_init.png")))
-
-        self.param3EndLabel.setText("")
-        self.param3EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho_end.png")))
-
-
-        self.compParam1Label1.setText("")
-        self.compParam1Label1.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label1.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
-
-        self.compParam2Label1.setText("")
-        self.compParam2Label1.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu.png")))
-
-        self.compParam1Label2.setText("")
-        self.compParam1Label2.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label2.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
-
-        self.compParam1Label3.setText("")
-        self.compParam1Label3.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
-
-        self.compParam2Label3.setText("")
-        self.compParam2Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/alpha.png")))
-
-        self.compParam3Label3.setText("")
-        self.compParam3Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/beta.png")))
-
-        self.compParam1Label4.setText("")
-        self.compParam1Label4.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho.png")))
-
-        self.compParam2Label4.setText("")
-        self.compParam2Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/gamma.png")))
-
-        self.compParam3Label4.setText("")
-        self.compParam3Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
 
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("assets/icons/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -203,15 +155,7 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         icon7.addPixmap(QtGui.QPixmap(solve_path("assets/icons/comparison.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.comparisonAction.setIcon(icon7)
 
-
-        self.retranslateUi()
-        self.resultsToolBox.setCurrentIndex(0)
-        self.performanceTabWidget.setCurrentIndex(0)
-        self.reportTabWidget.setCurrentIndex(0)
         self.tuningTabWidget.setCurrentIndex(0)
-        self.comparisonsToolBox.setCurrentIndex(0)
-        self.comparisonPerformanceTabWidget.setCurrentIndex(0)
-        self.comparisonReportTabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(self)
 
         # others
@@ -233,23 +177,17 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.algorithmGroupBox.setMinimumWidth(width)
         self.algorithmGroupBox.setMaximumWidth(width)
         self.samplingGroupBox.setMaximumWidth(width)
-        self.comparisonGroupBox.setMaximumWidth(width)
         self.runGroupBox.setMaximumWidth(width)
 
         algorithm = self.algorithmComboBox.currentText().lower()
-        tuning_type = self.paramTuningComboBox.currentText().lower()
 
-        self.update_tuning_visible_algorithms(algorithm, tuning_type)
+        #self.update_tuning_visible_algorithms(algorithm, tuning_type)
 
-        self.tuningGroupBox.setVisible(False)
         self.tuningTabWidget.setVisible(False)
-        self.comparisonsToolBox.setVisible(False)
-        self.comparisonGroupBox.setVisible(False)
-        self.paramComboBox.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.elementLabel.setVisible(False)
         self.elementLineEdit.setVisible(False)
-        self.elementHelpButton.setVisible(False)
+        self.elementHelpButton.setVisible(True)
         self.gammaLabel.setVisible(False)
         self.gammaSpinBox.setVisible(False)
         self.epsilonLabel.setVisible(False)
@@ -329,8 +267,7 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         # tabs setup
 
         self.all_tabs = dict(normal=[], report=[])  # contains all tab references distributed by view mode
-        self.tab_widgets = dict(main=[self.performanceTabWidget, self.reportTabWidget], tuning=[self.tuningTabWidget],
-                                comparison=[self.comparisonPerformanceTabWidget, self.comparisonReportTabWidget])
+
 
         # parameters setup
 
@@ -344,18 +281,6 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.params = dict(fast_marching=[['init', 0.0, 0.0], ['end', 0.0, 0.0]])
 
         self.main_params = None
-
-        self.tuning_params = [[self.param1InitLabel, self.param1InitLineEdit,
-                               self.param1EndLabel, self.param1EndLineEdit],
-                              [self.param2InitLabel, self.param2InitLineEdit,
-                               self.param2EndLabel, self.param2EndLineEdit],
-                              [self.param3InitLabel, self.param3InitLineEdit,
-                               self.param3EndLabel, self.param3EndLineEdit]]
-
-        self.comparison_params = [[self.compParam1LineEdit1, self.compParam2LineEdit1],
-                                  [self.compParam1LineEdit2],
-                                  [self.compParam1LineEdit3, self.compParam2LineEdit3, self.compParam3LineEdit3],
-                                  [self.compParam1LineEdit4, self.compParam2LineEdit4, self.compParam3LineEdit4]]
 
     def init_actions(self):
         '''
@@ -376,13 +301,9 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.dataComboBox.currentTextChanged.connect(self.update_data)
         self.algorithmComboBox.currentTextChanged.connect(self.algorithm_changed)
         self.algorithmPushButton.clicked.connect(self.algorithm_equation_clicked)
-        self.comparisonAlgorithmPushButton.clicked.connect(self.comparison_algorithm_equation_clicked)
         self.elementHelpButton.clicked.connect(self.element_help_clicked)
-        self.seedHelpButton.clicked.connect(self.seed_help_clicked)
 
         # tuning
-        self.paramTuningComboBox.currentTextChanged.connect(self.param_tuning_changed)
-        self.paramComboBox.currentTextChanged.connect(self.param_changed)
         self.jitterPushButton.clicked.connect(self.jitter_sampling_clicked)
 
         # sampling

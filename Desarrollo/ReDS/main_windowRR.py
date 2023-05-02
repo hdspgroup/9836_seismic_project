@@ -8,6 +8,7 @@ from workers import Worker, TuningWorker, ComparisonWorker, TabWorker
 import numpy as np
 from pathlib import Path
 import segyio
+from shutil import copyfile
 import pandas as pd
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QMainWindow
@@ -1395,7 +1396,7 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
                 self.graphics['comparison'][data_mode]['report'][data_name] = comp_report_graphic
                 self.all_tabs['normal'].append([comp_report_tab, comp_report_graphic])
 
-            algorithm_names = ['fista', 'gap', 'twist', 'admm']
+            algorithm_names = ['fista', 'gap', 'twist', 'admm','deep-red']
             param_arg_names = ['param1', 'param2', 'param3']
             for alg_name, params in zip(algorithm_names, self.comparison_params):
                 aux_params = {param_arg_names[i]: param.text() for i, param in enumerate(params)}
@@ -1431,6 +1432,7 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
             self.max_iter = int(self.maxiterSpinBox.text())
 
             for uploaded_directory in uploaded_directories:
+                self.current_file = uploaded_directory
                 data_name = uploaded_directory.split('/')[-1].split('.')[0]
 
                 self.update_variables(data_name)
@@ -1533,6 +1535,8 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         np.savez(save_path, x_result=res_dict['result'], hist=res_dict['hist'], sampling=res_dict['sampling_dict'],
                  algorithm_name=self.algorithm_name, performance_data=performance_data,
                  is_complete=True if data_mode == 'complete' else False)
+        #aca
+        print(self.current_file)
         print("Results saved [Ok]")
 
     def report_tuning_progress(self, data_name, num_run, res_dict, params, graphics):
