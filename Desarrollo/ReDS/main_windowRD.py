@@ -177,17 +177,23 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.algorithmGroupBox.setMinimumWidth(width)
         self.algorithmGroupBox.setMaximumWidth(width)
         self.samplingGroupBox.setMaximumWidth(width)
+        #self.comparisonGroupBox.setMaximumWidth(width)
         self.runGroupBox.setMaximumWidth(width)
 
         algorithm = self.algorithmComboBox.currentText().lower()
+        #tuning_type = self.paramTuningComboBox.currentText().lower()
 
         #self.update_tuning_visible_algorithms(algorithm, tuning_type)
 
+        #self.tuningGroupBox.setVisible(False)
         self.tuningTabWidget.setVisible(False)
+        #self.comparisonsToolBox.setVisible(False)
+        #self.comparisonGroupBox.setVisible(False)
+        #self.paramComboBox.view().setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.elementLabel.setVisible(False)
         self.elementLineEdit.setVisible(False)
-        self.elementHelpButton.setVisible(True)
+        self.elementHelpButton.setVisible(False)
         self.gammaLabel.setVisible(False)
         self.gammaSpinBox.setVisible(False)
         self.epsilonLabel.setVisible(False)
@@ -267,7 +273,7 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         # tabs setup
 
         self.all_tabs = dict(normal=[], report=[])  # contains all tab references distributed by view mode
-
+        self.tab_widgets = dict(tuning=[self.tuningTabWidget])
 
         # parameters setup
 
@@ -281,6 +287,18 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.params = dict(fast_marching=[['init', 0.0, 0.0], ['end', 0.0, 0.0]])
 
         self.main_params = None
+
+        #self.tuning_params = [[self.param1InitLabel, self.param1InitLineEdit,
+        #                       self.param1EndLabel, self.param1EndLineEdit],
+        #                      [self.param2InitLabel, self.param2InitLineEdit,
+        #                       self.param2EndLabel, self.param2EndLineEdit],
+        #                      [self.param3InitLabel, self.param3InitLineEdit,
+        #                       self.param3EndLabel, self.param3EndLineEdit]]
+
+        #self.comparison_params = [[self.compParam1LineEdit1, self.compParam2LineEdit1],
+        #                          [self.compParam1LineEdit2],
+        #                          [self.compParam1LineEdit3, self.compParam2LineEdit3, self.compParam3LineEdit3],
+        #                          [self.compParam1LineEdit4, self.compParam2LineEdit4, self.compParam3LineEdit4]]
 
     def init_actions(self):
         '''
@@ -301,9 +319,13 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.dataComboBox.currentTextChanged.connect(self.update_data)
         self.algorithmComboBox.currentTextChanged.connect(self.algorithm_changed)
         self.algorithmPushButton.clicked.connect(self.algorithm_equation_clicked)
+        #self.comparisonAlgorithmPushButton.clicked.connect(self.comparison_algorithm_equation_clicked)
         self.elementHelpButton.clicked.connect(self.element_help_clicked)
+        self.seedHelpButton.clicked.connect(self.seed_help_clicked)
 
         # tuning
+        #self.paramTuningComboBox.currentTextChanged.connect(self.param_tuning_changed)
+        #self.paramComboBox.currentTextChanged.connect(self.param_changed)
         self.jitterPushButton.clicked.connect(self.jitter_sampling_clicked)
 
         # sampling
@@ -1100,8 +1122,8 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         '''
         sampling = value.lower()
 
-        self.spacerItem4.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.spacerItem5.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        #self.spacerItem4.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        #self.spacerItem5.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.samplingHLine.setVisible(False if sampling in 'uniforme' else True)
 
         visible = True if sampling not in ['jitter', 'lista'] else False
@@ -1127,9 +1149,7 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.elementLineEdit.setVisible(visible)
         self.elementHelpButton.setVisible(visible)
 
-        if sampling in ['aleatorio']:
-            self.spacerItem4.changeSize(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-            self.spacerItem5.changeSize(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+
 
     def verify_parameters(self, uploaded_directories):
         '''
@@ -1410,8 +1430,6 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
             self.experimentProgressBar.setValue(0)
             self.workers = []
             self.threads = []
-
-
 
 
 if __name__ == "__main__":

@@ -1536,7 +1536,13 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
                  algorithm_name=self.algorithm_name, performance_data=performance_data,
                  is_complete=True if data_mode == 'complete' else False)
         #aca
-        print(self.current_file)
+        if Path(self.current_file).suffix.lower() == '.sgy' or Path(self.current_file).suffix.lower() == '.segy':
+            output_file = str(Path(temp_saved) / f'reconstructed_{data_name}.sgy')
+            copyfile(self.current_file, output_file)
+            with segyio.open(output_file, "r+") as src:
+                for i in range(src.trace.length):
+                    src.trace[i] = res_dict['result'][:, i]
+
         print("Results saved [Ok]")
 
     def report_tuning_progress(self, data_name, num_run, res_dict, params, graphics):
