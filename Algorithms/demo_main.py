@@ -61,7 +61,7 @@ elif case == 'ADMM':
                   }
 
 elif case == 'DeepNetwork':
-    parameters = {}
+    parameters = { 'max_itr' : 0 }
 
 x_result, hist = alg.get_results(case, **parameters)
 

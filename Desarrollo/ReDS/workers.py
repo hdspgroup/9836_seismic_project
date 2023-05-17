@@ -37,12 +37,11 @@ class Worker(QtCore.QObject):
 
     def run(self):
         generator = self.function(**self.parameters)
+
         for itr, res_dict in generator:
             self.progress.emit(self.data_name, itr, res_dict, self.sampling_dict, self.graphics)
-
             if itr == self.maxiter:
                 break
-
         # get last yield
         x_result, hist = next(generator)
 

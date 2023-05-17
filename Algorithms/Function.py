@@ -752,11 +752,14 @@ class Algorithms:
             raise 'The algorithm entered was not found.'
 
         if alg_name == 'DeepNetwork':
-            results = alg(**parameters)
+            # results = alg(**parameters)
+            results = [output for i, output in enumerate(alg(**parameters)) if i == 1][0]
             x_result, hist = results
         else:
             results = [output for i, output in enumerate(alg(**parameters)) if parameters["max_itr"] == i][0]
             x_result, hist = results
+        # results = [output for i, output in enumerate(alg(**parameters)) if parameters["max_itr"] == i][-1]
+        # x_result, hist = results
 
         return x_result, hist
 
@@ -785,6 +788,10 @@ class Algorithms:
                           "lmb": float(params['param3']),  # Lambda
                           "max_itr": maxiter}
             func = self.ADMM
+
+        elif algorithm_case == "deepnetwork":
+            parameters = {"max_itr": 0}
+            func = self.DeepNetwork
 
         else:
             showCritical(
@@ -1122,7 +1129,7 @@ class Algorithms:
 
         yield x, hist
 
-    def DeepNetwork(self):
+    def DeepNetwork(self,max_itr):
         '''
         This is the python implementation of the UNet Network to recover missing seismic traces.
         For this implementation we load a trained model and perform the inference step.
@@ -1225,7 +1232,8 @@ class Algorithms:
                     "Deep Network: PSNR = %2.2f dB, SSIM = %1.2f, time = %3.1fs." % (
                         psnr_val, ssim_val, end_time - begin_time))
             itr = 0
-        return x, hist
+        yield itr, dict(result=x, hist=hist)
+        yield  x, hist
 
 
 class ShotAlgorithms:
