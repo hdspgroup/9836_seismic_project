@@ -29,9 +29,9 @@ H = pattern_index
 
 '''
 ---------------- RECOVERY ALGORITHM -----------------
-Select the Algorithm: FISTA , GAP , TWIST , ADMM
+Select the Algorithm: FISTA , GAP , TWIST , ADMM, DEEPNetwork
 '''
-case = 'ADMM'
+case = 'DeepNetwork'
 alg = Algorithms(x, H, 'DCT2D', 'IDCT2D')
 
 parameters = {}
@@ -60,6 +60,9 @@ elif case == 'ADMM':
                   'gamma': 1
                   }
 
+elif case == 'DeepNetwork':
+    parameters = { 'max_itr' : 0 }
+
 x_result, hist = alg.get_results(case, **parameters)
 
 # -------------- Visualization ----------------
@@ -83,7 +86,7 @@ axs[1, 0].set_title('Measurements')
 
 # axs[1, 0].sharex(axs[0, 0])
 metric = PSNR(x[:, H_elim], x_result[:, H_elim])
-metric_ssim = ssim(x[:, H_elim], x_result[:, H_elim])
+metric_ssim = ssim(x[:, H_elim], x_result[:, H_elim], data_range=2.0)
 axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
 axs[0, 1].set_title(f'Reconstructed \n PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
 print(metric_ssim)

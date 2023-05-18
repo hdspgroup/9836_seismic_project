@@ -14,6 +14,11 @@ import cv2
 from Algorithms.tv_norm import tv_norm
 from Desarrollo.ReDS.gui.scripts.alerts import showWarning, showCritical
 
+#Libraries for deep neural network method
+import tensorflow as tf
+import keras
+from sporco import array
+
 
 class Sampling:
     '''
@@ -607,6 +612,8 @@ class Algorithms:
     TwIST(lmb, alpha, beta, max_itr)
         Applies a Time to Walking Independently After Stroke (TwIST)
         algorithm to solve the optimization problem.
+    DeepNetwork()
+        Applies a pretrained neural network (UNET) to recover the missing traces .
     '''
 
     def __init__(self, x, H, operator_dir, operator_inv, print_info=True):
@@ -739,11 +746,20 @@ class Algorithms:
             alg = self.TwIST
         elif alg_name == 'ADMM':
             alg = self.ADMM
+        elif alg_name == 'DeepNetwork':
+            alg = self.DeepNetwork
         else:
             raise 'The algorithm entered was not found.'
 
-        results = [output for i, output in enumerate(alg(**parameters)) if parameters["max_itr"] == i][0]
-        x_result, hist = results
+        if alg_name == 'DeepNetwork':
+            # results = alg(**parameters)
+            results = [output for i, output in enumerate(alg(**parameters)) if i == 1][0]
+            x_result, hist = results
+        else:
+            results = [output for i, output in enumerate(alg(**parameters)) if parameters["max_itr"] == i][0]
+            x_result, hist = results
+        # results = [output for i, output in enumerate(alg(**parameters)) if parameters["max_itr"] == i][-1]
+        # x_result, hist = results
 
         return x_result, hist
 
@@ -772,6 +788,10 @@ class Algorithms:
                           "lmb": float(params['param3']),  # Lambda
                           "max_itr": maxiter}
             func = self.ADMM
+
+        elif algorithm_case == "deepnetwork":
+            parameters = {"max_itr": 0}
+            func = self.DeepNetwork
 
         else:
             showCritical(
@@ -1108,6 +1128,112 @@ class Algorithms:
             yield itr, dict(result=x, hist=hist)
 
         yield x, hist
+
+    def DeepNetwork(self,max_itr):
+        '''
+        This is the python implementation of the UNet Network to recover missing seismic traces.
+        For this implementation we load a trained model and perform the inference step.
+        In this case there is not regularization parameters
+
+        Input:
+            self:       They have the variables of the Algorithm class, such as H,y, sparsity basis.
+        '''
+
+        # Get measurement from pattern
+        idx = np.where(self.pattern== False) # Ids for removed receivers
+        idx = np.array(idx)[0]
+        y   = self.x
+        y[:,idx] = 0
+
+        # Normalize between -1 and 1
+        #y *=2
+        #y -=1
+
+        print('---------Deep Network method---------- \n')
+        print('Loading pretrained model ... \n')
+        # TODO: Load model from given directory
+        R2 = keras.models.load_model(
+            '/media/edmav/DATOS/Documentos/Edwin/HDSP_ed/Seismic_Project_9836/9836_seismic_project/Algorithms/ReconDeepLearning/Unet_reconblcks1000_variation2.h5')
+        R2.compile()
+        R2.summary
+        # with tf.device('/cpu:0'):
+        #     R2 = keras.models.load_model(
+        #     '/media/edmav/DATOS/Documentos/Edwin/HDSP_ed/Seismic_Project_9836/9836_seismic_project/Algorithms/ReconDeepLearning/Unet_reconblcks1000_variation2.h5')
+        #     R2.compile()
+        #     R2.summary
+
+
+        hist = np.zeros((1, 4))
+        dim = self.x.shape
+
+        # Resize data
+        # y_min = y.min()
+        # if y_min < 0:
+        #     y += np.abs(y_min) # Convert to positive values to resize
+        y = transform.resize(y, (128,128), anti_aliasing=True) # Resize to fed the data to the neural network
+        # if y_min < 0:
+        #     y -= np.abs(y_min)
+
+
+        begin_time = time.time()
+
+        residualx = 1
+        tol = 1e-3
+
+        # blksz : Tamaño del bloque, es fijo!
+        # stpsz : strides, variable (recomendado máximo 5, ideal 1)
+
+        blksz = (28, 28)
+        stpsz = (1, 1)
+
+        blcks = array.extract_blocks(y, blksz, stpsz)
+        # bloques en arreglo para ingresar a la red
+        subblcks = blcks.transpose(2, 0, 1)[:, :, :, np.newaxis]
+        print(subblcks.shape)
+        # bloques salida de la red - reconstruidos
+        recov_blcks = R2.predict(subblcks)
+
+        # Recover whole image from estimate subblocks
+        Urec = recov_blcks.squeeze().transpose(1, 2, 0)
+        Urec = Urec.reshape(np.product(blksz), -1)
+
+        # Dado que los bloques tienen overlapping, es necesario aplicar una operación para obtener un único valor en cierta posición
+        # se puede seleccionar la media o la mediana
+
+        imgd_mean = array.average_blocks(Urec.reshape(blksz + (-1,))
+                                         , y.shape, stpsz)
+
+        imgd_median = array.combine_blocks(Urec.reshape(blksz + (-1,))
+                                           , y.shape, stpsz, np.median)
+
+        x = imgd_median # TODO: Include option mean or median agregation
+        x = transform.resize(x, (self.m,self.n), anti_aliasing=True) #Resize to the original size of the input image
+        x = np.float64(x)
+        # Convert back to 0 and 1
+        # x += 1
+        # x /= 2
+        # x = np.clip(x, a_min=0,a_max=1)
+
+        residualx = 0
+        psnr_val = PSNR(self.x[:, self.H_elim], x[:, self.H_elim])
+        ssim_val = ssim(self.x[:, self.H_elim], x[:, self.H_elim],data_range= 2.0)
+
+
+        hist[0, 0] = residualx
+        hist[0, 1] = psnr_val
+        hist[0, 2] = ssim_val
+        hist[0, 3] = 0
+
+        if self.print_info:
+            # mse = np.mean(np.sum((y-A(v,Phi))**2,axis=(0,1)))
+            end_time = time.time()
+            # Error = %2.2f,
+            print(
+                    "Deep Network: PSNR = %2.2f dB, SSIM = %1.2f, time = %3.1fs." % (
+                        psnr_val, ssim_val, end_time - begin_time))
+            itr = 0
+        yield itr, dict(result=x, hist=hist)
+        yield  x, hist
 
 
 class ShotAlgorithms:

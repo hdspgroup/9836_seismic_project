@@ -225,7 +225,8 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         self.params = dict(fista=[[lmb, 0.1, 0.5], [mu, 0.3, 0.7]],
                            gap=[[lmb, 1.0, 1.5]],
                            twist=[[lmb, 0.9, 1.5], [alpha, 1.2, 1.7], [beta, 1.998, 2.3]],
-                           admm=[[rho, 0.5, 1.5], [gamma, 1.0, 1.7], [lmb, 0.0078, 0.009]])
+                           admm=[[rho, 0.5, 1.5], [gamma, 1.0, 1.7], [lmb, 0.0078, 0.009]],
+                           deepnetwork = [])
 
         self.main_params = [[self.param1Label, self.param1LineEdit],
                             [self.param2Label, self.param2LineEdit],
@@ -609,6 +610,16 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         self.resultPushButton.setEnabled(True)
 
     def update_main_visible_algorithms(self, algorithm):
+        # Update the iteration parameters if deepnetwork selected
+        if algorithm == 'deepnetwork':
+            self.maxiterSpinBox.setVisible(False)
+            self.maxiterLabel.setVisible(False)
+            self.maxiterSpinBox.setMinimum(0)
+            self.maxiterSpinBox.setValue(0)
+        else:
+            self.maxiterSpinBox.setVisible(True)
+            self.maxiterLabel.setVisible(True)
+            self.maxiterSpinBox.setMinimum(1)
         '''
         Update the main visible algorithms.
         '''
@@ -632,6 +643,8 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
             line_edit.setVisible(comparison1)
 
             line_edit.setValidator(self.onlydouble)
+
+
 
     def update_tuning_visible_param(self, param):
         '''
@@ -1160,8 +1173,8 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         '''
         sampling = value.lower()
 
-        #self.spacerItem4.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        #self.spacerItem5.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        # self.spacerItem4.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        # self.spacerItem5.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.samplingHLine.setVisible(False if sampling in 'uniforme' else True)
 
         visible = True if sampling not in ['jitter', 'lista'] else False
@@ -1548,7 +1561,10 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         Report progress of the main experiment
         '''
         self.iters += 1
-        self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
+        if self.max_iter_progress == 0:
+            self.experimentProgressBar.setValue(int(100))
+        else:
+            self.experimentProgressBar.setValue(int((self.iters / self.max_iter_progress) * 100))
 
         # update figure
         err = res_dict['hist'][iter, 0]
@@ -1568,7 +1584,15 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         ssim_list.append(ssim)
         tv_list.append(tv)
 
-        if iter % (self.max_iter // 10) == 0 or iter == self.max_iter:
+        if self.max_iter == 0:
+            graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list, tv_list)
+            graphics['performance'].update_figure()
+
+            graphics['report'].update_report(
+                dict(x_result=res_dict['result'], hist=res_dict['hist'], sampling=sampling_dict,
+                     algorithm_name=self.algorithm_name))
+            graphics['report'].update_figure()
+        elif self.max_iter != 0 and (iter % (self.max_iter // 10) == 0 or iter == self.max_iter):
             graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list, tv_list)
             graphics['performance'].update_figure()
 
@@ -1705,7 +1729,12 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         '''
         Reset values
         '''
-        if self.iters / self.max_iter_progress == 1.0:
+        if self.max_iter_progress == 0:
+            self.startPushButton.setEnabled(True)
+            self.experimentProgressBar.setValue(0)
+            self.workers = []
+            self.threads = []
+        if self.max_iter_progress != 0 and self.iters / self.max_iter_progress == 1.0:
             self.startPushButton.setEnabled(True)
             self.experimentProgressBar.setValue(0)
             self.workers = []
