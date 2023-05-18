@@ -10,7 +10,7 @@ from matplotlib.ticker import MaxNLocator
 from Algorithms.Function import PSNR
 from Algorithms.fk_domain import fk
 from Algorithms.tv_norm import tv_norm
-from gui.scripts.alerts import showCritical
+from Desarrollo.ReDS.gui.scripts.alerts import showCritical
 
 
 # custom toolbar with lorem ipsum text

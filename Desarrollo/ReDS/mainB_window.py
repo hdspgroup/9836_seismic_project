@@ -24,15 +24,15 @@ from scipy.io import loadmat
 from PyQt5.QtGui import QIcon
 
 from Algorithms.Function import Sampling, ShotAlgorithms
-from about_window import UIAboutWindow
-from element_help_window import UIElementHelpWindow
-from equation_window import UIEquationWindow
-from equation_comparison_window import UIComparisonEquationWindow
-from graphics import ShotPerformanceGraphic, ShotReconstructionGraphic
-from gui.scripts.alerts import showWarning, showCritical
-from jitter_window import UIJitterWindow
-from seed_help_window import UISeedHelpWindow
-from workers import ShotWorker, TuningWorker, ComparisonWorker, TabWorker
+from Desarrollo.ReDS.about_window import UIAboutWindow
+from Desarrollo.ReDS.element_help_window import UIElementHelpWindow
+from Desarrollo.ReDS.equation_window import UIEquationWindow
+from Desarrollo.ReDS.equation_comparison_window import UIComparisonEquationWindow
+from Desarrollo.ReDS.graphics import ShotPerformanceGraphic, ShotReconstructionGraphic
+from Desarrollo.ReDS.gui.scripts.alerts import showWarning, showCritical
+from Desarrollo.ReDS.jitter_window import UIJitterWindow
+from Desarrollo.ReDS.seed_help_window import UISeedHelpWindow
+from Desarrollo.ReDS.workers import ShotWorker, TuningWorker, ComparisonWorker, TabWorker
 
 
 def solve_path(relative_path):

@@ -38,7 +38,7 @@ class UIAboutWindow(object):
         "<p align=\"justify\" style=\" margin:20px 50px; -qt-block-indent:0; text-indent:0px;\">Esta herramienta software hace parte del proyecto 9836 - &quot;Nuevas tecnologías computacionales para el diseño de sistemas de adquisición sísmica 3D terrestre con muestreo compresivo para la reducción de costos económicos e impactos ambientales en la exploración de hidrocarburos en cuencas terrestres colombianas&quot; adscrito a la Convocatoria para la financiación de proyectos de investigación en geociencias para el sector de hidrocarburos, desarrollado por la alianza, Universidad Industrial de Santander (UIS), ECOPETROL y la Asociación Colombiana de Geólogos y Geofísicos del Petróleo (ACGGP). Este proyecto es financiado por MINCIENCIAS y la Agencia Nacional de Hidrocarburos (ANH). Los derechos sobre este software están reservados a las entidades aportantes.</p>\n"
         "<p align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\"assets/logos/lower_logo.png\" style=\" text-align:center; display:block; \"/></p>\n"
         "<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Arial\'; font-size:14pt; color:#434343;\"><br /></p></body></html>"))
-import gui.resources.about_widget_resources_rc
+import Desarrollo.ReDS.gui.resources.about_widget_resources_rc
 
 
 if __name__ == "__main__":

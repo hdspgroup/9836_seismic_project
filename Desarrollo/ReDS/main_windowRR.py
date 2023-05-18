@@ -4,7 +4,7 @@ import sys
 from Algorithms.Function import Sampling, Algorithms
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import QCoreApplication
-from workers import Worker, TuningWorker, ComparisonWorker, TabWorker
+from Desarrollo.ReDS.workers import Worker, TuningWorker, ComparisonWorker, TabWorker
 import numpy as np
 from pathlib import Path
 import segyio
@@ -16,16 +16,16 @@ from PyQt5.QtWidgets import QFileDialog
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from scipy.io import loadmat
-from seed_help_window import UISeedHelpWindow
-from jitter_window import UIJitterWindow
-from about_window import UIAboutWindow
-from element_help_window import UIElementHelpWindow
-from equation_window import UIEquationWindow
-from equation_comparison_window import UIComparisonEquationWindow
+from Desarrollo.ReDS.seed_help_window import UISeedHelpWindow
+from Desarrollo.ReDS.jitter_window import UIJitterWindow
+from Desarrollo.ReDS.about_window import UIAboutWindow
+from Desarrollo.ReDS.element_help_window import UIElementHelpWindow
+from Desarrollo.ReDS.equation_window import UIEquationWindow
+from Desarrollo.ReDS.equation_comparison_window import UIComparisonEquationWindow
 import platform
 from itertools import product
-from gui.scripts.alerts import showWarning, showCritical
-from graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic, ComparisonPerformanceGraphic, \
+from Desarrollo.ReDS.gui.scripts.alerts import showWarning, showCritical
+from Desarrollo.ReDS.graphics import PerformanceGraphic, ReconstructionGraphic, TuningGraphic, ComparisonPerformanceGraphic, \
     ComparisonReconstructionGraphic, CustomToolbar
 
 
@@ -284,6 +284,68 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         self.resultPushButton.clicked.connect(self.show_results)
 
         self.seedCheckBox.stateChanged.connect(self.activate_seed)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.clearDataPushButton.setIcon(icon)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/view.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.algorithmPushButton.setIcon(icon1)
+
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.elementHelpButton.setIcon(icon2)
+        self.gammaLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/gamma.png"))
+        self.epsilonLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/epsilon.png"))
+        self.param1InitLabel.setText("Acaaaa")
+        self.param1InitLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/lambda_init.png"))
+        self.param1EndLabel.setText("esteee")
+        self.param1EndLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/lambda_end.png"))
+        self.param2InitLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/mu_init.png"))
+        self.param3Label.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/rho.png"))
+        self.param2Label.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/mu.png"))
+        self.param1Label.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/lambda.png"))
+        self.param2EndLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/mu_end.png"))
+        self.param3InitLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/rho_init.png"))
+        self.param3EndLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/rho_end.png"))
+        self.compParam1Label1.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/lambda.png"))
+        self.compParam2Label1.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/mu.png"))
+        self.compParam1Label2.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/lambda.png"))
+        self.compParam1Label3.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/lambda.png"))
+        self.compParam2Label3.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/alpha.png"))
+        self.compParam3Label3.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/beta.png"))
+        self.compParam1Label4.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/rho.png"))
+        self.compParam2Label4.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/gamma.png"))
+        self.compParam3Label4.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/lambda.png"))
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/view.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.jitterPushButton.setIcon(icon3)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/save.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.saveAsPushButton.setIcon(icon4)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/run.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.startPushButton.setIcon(icon5)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/report.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.resultPushButton.setIcon(icon6)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.aboutOfAction.setIcon(icon7)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/report.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.reportAction.setIcon(icon8)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/main.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.mainAction.setIcon(icon9)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/tuning.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.tuningAction.setIcon(icon10)
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/comparison.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.comparisonAction.setIcon(icon11)
+        self.seedHelpButton.setIcon(icon2)
+        self.comparisonAlgorithmPushButton.setIcon(icon1)
+
 
     def closeEvent(self, event):
         '''
@@ -988,13 +1050,13 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         if self.global_variables['view_mode'] == 'normal':
             self.global_variables['view_mode'] = 'report'
             self.set_report_view()
-            icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/seismic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/seismic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.resultLabel.setText('Realizar experimentos')
 
         else:
             self.global_variables['view_mode'] = 'normal'
             self.set_main_view()
-            icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.resultLabel.setText('Ver resultados')
 
         self.resultPushButton.setIcon(icon)
@@ -1098,8 +1160,8 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         '''
         sampling = value.lower()
 
-        self.spacerItem4.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.spacerItem5.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        #self.spacerItem4.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        #self.spacerItem5.changeSize(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.samplingHLine.setVisible(False if sampling in 'uniforme' else True)
 
         visible = True if sampling not in ['jitter', 'lista'] else False
