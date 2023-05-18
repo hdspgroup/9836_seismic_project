@@ -13,6 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 #from Desarrollo.ReDS.mainA_window import UIMainAWindow
 from Desarrollo.ReDS.main_windowRR import UIMainAWindow
+#from Desarrollo.ReDS.main_windowRD import UIMainBWindow
 from Desarrollo.ReDS.mainB_window import UIMainBWindow
 
 
