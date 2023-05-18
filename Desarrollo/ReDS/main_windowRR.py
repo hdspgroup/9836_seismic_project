@@ -211,7 +211,7 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         self.max_iter = 1
         self.max_iter_progress = 1
 
-        self.icons_path = 'assets/parameters'
+        self.icons_path = 'Desarrollo/ReDS/assets/parameters'
 
         lmb = 'lambda'
         mu = 'mu'
@@ -298,7 +298,7 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         self.gammaLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/gamma.png"))
         self.epsilonLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/epsilon.png"))
         self.param1InitLabel.setText("Acaaaa")
-        self.param1InitLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/lambda_init.png"))
+        #self.param1InitLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/lambda_init.png"))
         self.param1EndLabel.setText("esteee")
         self.param1EndLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/lambda_end.png"))
         self.param2InitLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/mu_init.png"))

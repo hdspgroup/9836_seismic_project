@@ -201,7 +201,7 @@
               <enum>Qt::AutoText</enum>
              </property>
              <property name="pixmap">
-              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/lambda.png</pixmap>
+              <pixmap>../assets/parameters/lambda.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
@@ -239,7 +239,7 @@
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/mu.png</pixmap>
+              <pixmap>../assets/parameters/mu.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
@@ -259,7 +259,10 @@
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="../assets/assets.qrc">:/parameters/parameters/rho.png</pixmap>
+              <pixmap>../assets/parameters/rho.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1234,8 +1237,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1167</width>
-           <height>363</height>
+           <width>1207</width>
+           <height>367</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1291,8 +1294,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1167</width>
-           <height>363</height>
+           <width>1207</width>
+           <height>367</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1389,8 +1392,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1167</width>
-           <height>363</height>
+           <width>1207</width>
+           <height>367</height>
           </rect>
          </property>
          <attribute name="label">
@@ -1446,8 +1449,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1167</width>
-           <height>363</height>
+           <width>1207</width>
+           <height>367</height>
           </rect>
          </property>
          <attribute name="label">
