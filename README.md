@@ -14,11 +14,10 @@ Esta es una guía para instalar las dependencias necesarias para poder ejecutar 
 
 ### **Prerequisitos**
 
-1. Instalar anaconda.
-2. Crear entorno virtual en anaconda. 
-3. Instalar Pycharm.
+1. Instalar Python o anaconda.
+2. Crear entorno virtual. 
 4. Instalar dependencias en el entorno virtual creado.
-5. Correr `launch_window.py` con el entorno virtual creado.
+5. Correr `run_ReDS.py` con el entorno virtual creado.
 
 De acuerdo al sistema operativo las anteriores instrucciones se deben cumplir de distintas formas, para obtener indicaciones más detalladas ingrese al siguiente enlace: [Instalación de dependencias](https://github.com/carlosh93/9836_seismic_project/wiki/I.-Manual-de-Instalación-Aplicación-ReDs,-Modo-Desarrolador).
 
@@ -93,6 +92,9 @@ Summary - algorithms. All needed documentation, including references and so on. 
 
 
 Summary about the GUI, screenshots, and some breif description @Hinojosa-->
+
+# Archivos Segy
+El software tiene la capacidad de leer datos en formato segy, únicamente 2D. Al cargar los datos en este formato, el resultado del proceso de reconstrucción tambien se guarda en formato segy usando los mismo headers y geometría.
 
 # Licencia
 
