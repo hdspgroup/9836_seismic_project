@@ -858,7 +858,7 @@ class Algorithms:
 
             # if self.is_complete_data:
             psnr_val = PSNR(self.x[:, self.H_elim], self.operator_inv(s)[:, self.H_elim])
-            ssim_val = ssim(self.x[:, self.H_elim], self.operator_inv(s)[:, self.H_elim])
+            ssim_val = ssim(self.x[:, self.H_elim], self.operator_inv(s)[:, self.H_elim],data_range=2.0)
             tv_val = tv_norm(self.operator_inv(s))
 
             hist[itr, 0] = residualx

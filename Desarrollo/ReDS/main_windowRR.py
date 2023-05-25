@@ -1586,6 +1586,8 @@ class UIMainAWindow(QMainWindow, Ui_mainWindow):
         ssim_list.append(ssim)
         tv_list.append(tv)
 
+
+
         if self.max_iter == 0:
             graphics['performance'].update_values(iteration_list, error_list, psnr_list, ssim_list, tv_list)
             graphics['performance'].update_figure()
