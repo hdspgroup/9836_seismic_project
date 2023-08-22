@@ -1,18 +1,13 @@
 \babel@toc {spanish}{}\relax 
 \contentsline {section}{\numberline {1}Visión General de la Aplicación ReDs}{7}{section.1}%
-\contentsline {section}{\numberline {2}Módulo ReDs - Reconstrucción de Receptores (RR)}{9}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Requerimientos}{9}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Políticas de diseño}{10}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Diagramas UML}{11}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}Diagramas de casos de uso}{11}{subsubsection.2.3.1}%
-\contentsline {subsubsection}{\numberline {2.3.2}Diagramas de casos de Secuencias}{13}{subsubsection.2.3.2}%
-\contentsline {subsubsection}{\numberline {2.3.3}Diagramas de Componentes}{14}{subsubsection.2.3.3}%
-\contentsline {subsubsection}{\numberline {2.3.4}Diagramas de Clases}{15}{subsubsection.2.3.4}%
-\contentsline {section}{\numberline {3}Módulo ReDs - Reconstrucción de Disparos (RD)}{16}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Requerimientos}{16}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Políticas de diseño}{17}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Diagramas UML}{18}{subsection.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.1}Diagramas de casos de uso}{18}{subsubsection.3.3.1}%
-\contentsline {subsubsection}{\numberline {3.3.2}Diagramas de casos de Secuencias}{20}{subsubsection.3.3.2}%
-\contentsline {subsubsection}{\numberline {3.3.3}Diagramas de Componentes}{21}{subsubsection.3.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.4}Diagramas de Clases}{22}{subsubsection.3.3.4}%
+\contentsline {section}{\numberline {2}Políticas de diseño}{9}{section.2}%
+\contentsline {section}{\numberline {3}Diagramas UML}{9}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Diagrama de Casos de Uso Aplicación General}{9}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Diagrama de Casos de Uso Módulo RR}{9}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Diagrama de Casos de Uso Módulo RD}{9}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Diagrama de Secuencia Para Carga de Datos}{13}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Diagrama de Secuencia para Guardar Experimento}{13}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Diagrama de Secuencia para Ajuste de Algoritmo}{13}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Diagrama de Secuencia de Inicio de Experimentos}{13}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.8}Diagrama de Secuencia para Ajuste de Parámetros}{13}{subsection.3.8}%
+\contentsline {subsection}{\numberline {3.9}Diagrama de Secuencia para Ajuste de Comparaciones}{15}{subsection.3.9}%
