@@ -23,7 +23,7 @@ class UIComparisonEquationWindow(QtWidgets.QWidget):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.equation = QtWidgets.QLabel(self.equationGroupBox)
         self.equation.setText("")
-        self.equation.setPixmap(QtGui.QPixmap("assets/equations/algorithms.png"))
+        self.equation.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/equations/algorithms.png"))
         self.equation.setScaledContents(False)
         self.equation.setObjectName("equation")
         self.horizontalLayout_2.addWidget(self.equation)

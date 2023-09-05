@@ -16,7 +16,7 @@ class UIElementHelpWindow(QtWidgets.QWidget):
     def setupUi(self):
         self.setObjectName("Submuestreo de elementos")
         self.setObjectName("EquationDialog")
-        self.setWindowIcon(QIcon('assets/icons/g868.ico'))
+        self.setWindowIcon(QIcon('Desarrollo/ReDS/assets/icons/g868.ico'))
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
         self.verticalLayout.setObjectName("verticalLayout")
         self.groupBox = QtWidgets.QGroupBox(self)
