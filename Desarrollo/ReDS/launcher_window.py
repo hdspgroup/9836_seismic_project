@@ -163,11 +163,11 @@ class UILauncherWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "ReDS"))
         self.text1Label.setText(_translate("MainWindow",
-                                           "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">Reconstrucción de Datos Sísmicos - ReDS</span></p><p></br></p></body></html>"))
+                                           "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">Reconstruccion de Datos Sismicos - ReDS</span></p><p></br></p></body></html>"))
         self.label_4.setText(_translate("MainWindow",
-                                        "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">ReDS - RR</span></p><p align=\"center\"><span style=\" font-size:14pt;\">Reconstrucción de Receptores</span></p></body></html>"))
+                                        "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">ReDS - RR</span></p><p align=\"center\"><span style=\" font-size:14pt;\">Reconstruccion de Receptores</span></p></body></html>"))
         self.label_3.setText(_translate("MainWindow",
-                                        "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">ReDS - RD</span></p><p align=\"center\"><span style=\" font-size:14pt;\">Reconstrucción de Disparos</span></p></body></html>"))
+                                        "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">ReDS - RD</span></p><p align=\"center\"><span style=\" font-size:14pt;\">Reconstruccion de Disparos</span></p></body></html>"))
         self.moduleAPushButton.setText(_translate("MainWindow", "Iniciar RR"))
         self.moduleBPushButton.setText(_translate("MainWindow", "Iniciar RD"))
 

@@ -108,51 +108,51 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         Init components, variables and connections.
         '''
         self.setWindowTitle("ReDs")
-        self.setWindowIcon(QIcon("assets/icons/g868.ico"))
+        self.setWindowIcon(QIcon("Desarrollo/ReDS/assets/icons/g868.ico"))
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("assets/icons/stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.clearDataPushButton.setIcon(icon)
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/view.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/view.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.algorithmPushButton.setIcon(icon)
 
 
 
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("assets/icons/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.elementHelpButton.setIcon(icon2)
 
         self.gammaLabel.setText("")
-        self.gammaLabel.setPixmap(QtGui.QPixmap("assets/parameters/gamma.png"))
+        self.gammaLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/gamma.png"))
 
         self.epsilonLabel.setText("")
-        self.epsilonLabel.setPixmap(QtGui.QPixmap("assets/parameters/epsilon.png"))
+        self.epsilonLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/epsilon.png"))
 
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(solve_path("assets/icons/save.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/save.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.saveAsPushButton.setIcon(icon1)
 
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(solve_path("assets/icons/run.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/run.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.startPushButton.setIcon(icon2)
 
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(solve_path("assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.resultPushButton.setIcon(icon3)
 
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(solve_path("assets/icons/info.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/info.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.aboutOfAction.setIcon(icon4)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(solve_path("assets/icons/main.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/main.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.mainAction.setIcon(icon5)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(solve_path("assets/icons/tuning.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/tuning.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tuningAction.setIcon(icon6)
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(solve_path("assets/icons/comparison.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/comparison.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.comparisonAction.setIcon(icon7)
 
         self.tuningTabWidget.setCurrentIndex(0)
@@ -281,7 +281,7 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.max_iter = 1
         self.max_iter_progress = 1
 
-        self.icons_path = 'assets/parameters'
+        self.icons_path = 'Desarrollo/ReDS/assets/parameters'
 
         self.param_type = ['init', 'end', 'list']
         self.params = dict(fast_marching=[['init', 0.0, 0.0], ['end', 0.0, 0.0]])
@@ -987,13 +987,13 @@ class UIMainBWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         if self.global_variables['view_mode'] == 'normal':
             self.global_variables['view_mode'] = 'report'
             self.set_report_view()
-            icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/seismic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/seismic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.resultLabel.setText('Realizar experimentos')
 
         else:
             self.global_variables['view_mode'] = 'normal'
             self.set_main_view()
-            icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.resultLabel.setText('Ver resultados')
 
         self.resultPushButton.setIcon(icon)

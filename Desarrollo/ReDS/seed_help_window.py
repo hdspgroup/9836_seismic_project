@@ -17,7 +17,7 @@ class UISeedHelpWindow(QtWidgets.QWidget):
         self.setObjectName("Uso de semilla")
         self.setObjectName("EquationDialog")
         self.resize(250, 100)
-        self.setWindowIcon(QIcon('assets/icons/g868.ico'))
+        self.setWindowIcon(QIcon('Desarrollo/ReDS/assets/icons/g868.ico'))
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
         self.verticalLayout.setObjectName("verticalLayout")
         self.groupBox = QtWidgets.QGroupBox(self)

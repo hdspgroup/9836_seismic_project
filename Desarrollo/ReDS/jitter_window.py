@@ -16,7 +16,7 @@ class UIJitterWindow(QtWidgets.QWidget):
     def setupUi(self):
         self.setObjectName("Algoritmo")
         self.setObjectName("JitterDialog")
-        self.setWindowIcon(QIcon("assets/icons/g868.ico"))
+        self.setWindowIcon(QIcon("Desarrollo/ReDS/assets/icons/g868.ico"))
         self.horizontalLayout = QtWidgets.QHBoxLayout(self)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.equationGroupBox = QtWidgets.QGroupBox(self)
@@ -25,7 +25,7 @@ class UIJitterWindow(QtWidgets.QWidget):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.equation = QtWidgets.QLabel(self.equationGroupBox)
         self.equation.setText("")
-        self.equation.setPixmap(QtGui.QPixmap("assets/equations/jitter.png"))
+        self.equation.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/equations/jitter.png"))
         self.equation.setScaledContents(False)
         self.equation.setObjectName("jitter")
         self.horizontalLayout_2.addWidget(self.equation)
