@@ -1,0 +1,12 @@
+{
+  "base_url": "/",
+  "hostname": "localhost",
+  "notebook_dir": "D:\\9836_seismic_project\\Algorithms",
+  "password": false,
+  "pid": 36000,
+  "port": 8888,
+  "secure": false,
+  "sock": "",
+  "token": "43d972459a74db8417707f679f9f006c703f940d98977688",
+  "url": "http://localhost:8888/"
+}

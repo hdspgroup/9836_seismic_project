@@ -1,0 +1,88 @@
+# -*- mode: python ; coding: utf-8 -*-
+
+
+block_cipher = None
+
+
+a = Analysis(
+    ['run_ReDS.py'],
+    pathex=[],
+    binaries=[],
+    datas=[],
+    hiddenimports=[],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
+a.datas += [("Desarrollo/ReDS/assets/icons/main.png", "Desarrollo/ReDS/assets/icons/main.png", "DATA"),
+            ("Desarrollo/ReDS/assets/icons/tuning.png", "Desarrollo/ReDS/assets/icons/tuning.png", "DATA"),
+            ("Desarrollo/ReDS/assets/icons/comparison.png", "Desarrollo/ReDS/assets/icons/comparison.png", "DATA"),
+            ("Desarrollo/ReDS/assets/icons/view.png", "Desarrollo/ReDS/assets/icons/view.png", "DATA"),
+            ("Desarrollo/ReDS/icons/save.png", "Desarrollo/ReDS/assets/icons/save.png", "DATA"),
+            ("Desarrollo/ReDS/icons/run.png", "Desarrollo/ReDS/assets/icons/run.png", "DATA"),
+            ("Desarrollo/ReDS/icons/report.png", "Desarrollo/ReDS/assets/icons/report.png", "DATA"),
+            ("Desarrollo/ReDS/icons/info.png", "Desarrollo/ReDS/assets/icons/info.png", "DATA"),
+            ("Desarrollo/ReDS/icons/seismic.png", "Desarrollo/ReDS/assets/icons/seismic.png", "DATA"),
+            ("Desarrollo/ReDS/icons/report.png", "Desarrollo/ReDS/assets/icons/report.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/lambda_init.png", "Desarrollo/ReDS/assets/parameters/lambda_init.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/lambda_end.png", "Desarrollo/ReDS/assets/parameters/lambda_end.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/mu_init.png", "Desarrollo/ReDS/assets/parameters/mu_init.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/mu_end.png", "Desarrollo/ReDS/assets/parameters/mu_end.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/rho_init.png", "Desarrollo/ReDS/assets/parameters/rho_init.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/rho_end.png", "Desarrollo/ReDS/assets/parameters/rho_end.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/gamma_init.png", "Desarrollo/ReDS/assets/parameters/gamma_init.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/gamma_end.png", "Desarrollo/ReDS/assets/parameters/gamma_end.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/alpha_init.png", "Desarrollo/ReDS/assets/parameters/alpha_init.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/alpha_end.png", "Desarrollo/ReDS/assets/parameters/alpha_end.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/beta_init.png", "Desarrollo/ReDS/assets/parameters/beta_init.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/beta_end.png", "Desarrollo/ReDS/assets/parameters/beta_end.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/lambda.png", "Desarrollo/ReDS/assets/parameters/lambda.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/mu.png", "Desarrollo/ReDS/assets/parameters/mu.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/rho.png", "Desarrollo/ReDS/assets/parameters/rho.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/gamma.png", "Desarrollo/ReDS/assets/parameters/gamma.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/alpha.png", "Desarrollo/ReDS/assets/parameters/alpha.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/beta.png", "Desarrollo/ReDS/assets/parameters/beta.png", "DATA"),
+            ("Desarrollo/ReDS/parameters/epsilon.png", "Desarrollo/ReDS/assets/parameters/epsilon.png", "DATA"),
+            ("Desarrollo/ReDS/equations/algorithms.png", "Desarrollo/ReDS/assets/equations/algorithms.png", "DATA"),
+            ("Desarrollo/ReDS/equations/fista.png", "Desarrollo/ReDS/assets/equations/fista.png", "DATA"),
+            ("Desarrollo/ReDS/equations/gap.png", "Desarrollo/ReDS/assets/equations/gap.png", "DATA"),
+            ("Desarrollo/ReDS/equations/twist.png", "Desarrollo/ReDS/assets/equations/twist.png", "DATA"),
+            ("Desarrollo/ReDS/equations/admm.png", "Desarrollo/ReDS/assets/equations/admm.png", "DATA"),
+            ("Desarrollo/ReDS/equations/jitter.png", "Desarrollo/ReDS/assets/equations/jitter.png", "DATA"),
+            ("Desarrollo/ReDS/logos/upper_logo.png", "Desarrollo/ReDS/assets/logos/upper_logo.png", "DATA"),
+            ("Desarrollo/ReDS/logos/lower_logo.png", "Desarrollo/ReDS/assets/logos/lower_logo.png", "DATA")]
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    [],
+    exclude_binaries=True,
+    name='laun_window',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    console=True,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='launch_window',
+)

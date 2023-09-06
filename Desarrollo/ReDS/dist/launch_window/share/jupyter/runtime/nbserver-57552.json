@@ -1,0 +1,12 @@
+{
+  "base_url": "/",
+  "hostname": "localhost",
+  "notebook_dir": "D:\\idaes alamo",
+  "password": false,
+  "pid": 57552,
+  "port": 8888,
+  "secure": false,
+  "sock": "",
+  "token": "52dec853cc39d59c80cd3bdfc96b4d4acf9f7664788b9f7d",
+  "url": "http://localhost:8888/"
+}

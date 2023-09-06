@@ -10,7 +10,7 @@ from matplotlib.ticker import MaxNLocator
 from Algorithms.Function import PSNR
 from Algorithms.fk_domain import fk
 from Algorithms.tv_norm import tv_norm
-from gui.scripts.alerts import showCritical
+from Desarrollo.ReDS.gui.scripts.alerts import showCritical
 
 
 # custom toolbar with lorem ipsum text
@@ -205,7 +205,7 @@ class ReconstructionGraphic(FigureCanvasQTAgg):
                 aux_x = x[:, H_elim] if condition else x
                 aux_x_result = x_result[:, H_elim] if condition else x_result
                 metric = PSNR(aux_x, aux_x_result)
-                metric_ssim = ssim(aux_x, aux_x_result)
+                metric_ssim = ssim(aux_x, aux_x_result, data_range=2.0)
                 axs[0, 1].imshow(x_result, cmap='gray', aspect='auto')
                 axs[0, 1].set_title(f'Reconstruido - PSNR: {metric:0.2f} dB, SSIM:{metric_ssim:0.2f}')
 

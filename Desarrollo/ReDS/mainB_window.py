@@ -24,15 +24,15 @@ from scipy.io import loadmat
 from PyQt5.QtGui import QIcon
 
 from Algorithms.Function import Sampling, ShotAlgorithms
-from about_window import UIAboutWindow
-from element_help_window import UIElementHelpWindow
-from equation_window import UIEquationWindow
-from equation_comparison_window import UIComparisonEquationWindow
-from graphics import ShotPerformanceGraphic, ShotReconstructionGraphic
-from gui.scripts.alerts import showWarning, showCritical
-from jitter_window import UIJitterWindow
-from seed_help_window import UISeedHelpWindow
-from workers import ShotWorker, TuningWorker, ComparisonWorker, TabWorker
+from Desarrollo.ReDS.about_window import UIAboutWindow
+from Desarrollo.ReDS.element_help_window import UIElementHelpWindow
+from Desarrollo.ReDS.equation_window import UIEquationWindow
+from Desarrollo.ReDS.equation_comparison_window import UIComparisonEquationWindow
+from Desarrollo.ReDS.graphics import ShotPerformanceGraphic, ShotReconstructionGraphic
+from Desarrollo.ReDS.gui.scripts.alerts import showWarning, showCritical
+from Desarrollo.ReDS.jitter_window import UIJitterWindow
+from Desarrollo.ReDS.seed_help_window import UISeedHelpWindow
+from Desarrollo.ReDS.workers import ShotWorker, TuningWorker, ComparisonWorker, TabWorker
 
 
 def solve_path(relative_path):
@@ -106,7 +106,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         Init components, variables and connections.
         '''
         self.setWindowTitle("ReDs")
-        self.setWindowIcon(QIcon("assets/icons/g868.ico"))
+        self.setWindowIcon(QIcon("Desarrollo/ReDS/assets/icons/g868.ico"))
         self.setObjectName("mainWindow")
         self.resize(1412, 800)
         self.setMinimumSize(1100, 800)
@@ -141,7 +141,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.clearDataPushButton = QtWidgets.QPushButton(self.inputGroupBox)
         self.clearDataPushButton.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("assets/icons/stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.clearDataPushButton.setIcon(icon)
         self.clearDataPushButton.setObjectName("clearDataPushButton")
         self.inputHLayout.addWidget(self.clearDataPushButton)
@@ -164,7 +164,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.algorithmPushButton.setAutoFillBackground(False)
         self.algorithmPushButton.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/view.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/view.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.algorithmPushButton.setIcon(icon)
         self.algorithmPushButton.setObjectName("algorithmPushButton")
         self.algorithmHLayout.addWidget(self.algorithmPushButton)
@@ -235,7 +235,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.param1HLayout.setObjectName("param1HLayout")
         self.param1InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param1InitLabel.setText("")
-        self.param1InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda_init.png")))
+        self.param1InitLabel.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/lambda_init.png")))
         self.param1InitLabel.setObjectName("param1InitLabel")
         self.param1HLayout.addWidget(self.param1InitLabel)
         self.param1InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -243,7 +243,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.param1HLayout.addWidget(self.param1InitLineEdit)
         self.param1EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param1EndLabel.setText("")
-        self.param1EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda_end.png")))
+        self.param1EndLabel.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/lambda_end.png")))
         self.param1EndLabel.setObjectName("param1EndLabel")
         self.param1HLayout.addWidget(self.param1EndLabel)
         self.param1EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -254,7 +254,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.param2HLayout.setObjectName("param2HLayout")
         self.param2InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param2InitLabel.setText("")
-        self.param2InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu_init.png")))
+        self.param2InitLabel.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/mu_init.png")))
         self.param2InitLabel.setObjectName("param2InitLabel")
         self.param2HLayout.addWidget(self.param2InitLabel)
         self.param2InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -262,7 +262,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.param2HLayout.addWidget(self.param2InitLineEdit)
         self.param2EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param2EndLabel.setText("")
-        self.param2EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu_end.png")))
+        self.param2EndLabel.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/mu_end.png")))
         self.param2EndLabel.setObjectName("param2EndLabel")
         self.param2HLayout.addWidget(self.param2EndLabel)
         self.param2EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -273,7 +273,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.param3HLayout.setObjectName("param3HLayout")
         self.param3InitLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param3InitLabel.setText("")
-        self.param3InitLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho_init.png")))
+        self.param3InitLabel.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/rho_init.png")))
         self.param3InitLabel.setObjectName("param3InitLabel")
         self.param3HLayout.addWidget(self.param3InitLabel)
         self.param3InitLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -281,7 +281,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.param3HLayout.addWidget(self.param3InitLineEdit)
         self.param3EndLabel = QtWidgets.QLabel(self.tuningGroupBox)
         self.param3EndLabel.setText("")
-        self.param3EndLabel.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho_end.png")))
+        self.param3EndLabel.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/rho_end.png")))
         self.param3EndLabel.setObjectName("param3EndLabel")
         self.param3HLayout.addWidget(self.param3EndLabel)
         self.param3EndLineEdit = QtWidgets.QLineEdit(self.tuningGroupBox)
@@ -334,7 +334,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.compParam1Label1 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam1Label1.setText("")
         self.compParam1Label1.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label1.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
+        self.compParam1Label1.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/lambda.png")))
         self.compParam1Label1.setScaledContents(True)
         self.compParam1Label1.setWordWrap(False)
         self.compParam1Label1.setIndent(-1)
@@ -351,7 +351,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         sizePolicy.setHeightForWidth(self.compParam2Label1.sizePolicy().hasHeightForWidth())
         self.compParam2Label1.setSizePolicy(sizePolicy)
         self.compParam2Label1.setText("")
-        self.compParam2Label1.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/mu.png")))
+        self.compParam2Label1.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/mu.png")))
         self.compParam2Label1.setScaledContents(True)
         self.compParam2Label1.setObjectName("compParam2Label1")
         self.compParamsHLayout1.addWidget(self.compParam2Label1)
@@ -368,7 +368,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.compParam1Label2 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam1Label2.setText("")
         self.compParam1Label2.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label2.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
+        self.compParam1Label2.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/lambda.png")))
         self.compParam1Label2.setScaledContents(True)
         self.compParam1Label2.setWordWrap(False)
         self.compParam1Label2.setIndent(-1)
@@ -387,7 +387,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.compParam1Label3 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam1Label3.setText("")
         self.compParam1Label3.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
+        self.compParam1Label3.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/lambda.png")))
         self.compParam1Label3.setScaledContents(True)
         self.compParam1Label3.setWordWrap(False)
         self.compParam1Label3.setIndent(-1)
@@ -404,7 +404,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         sizePolicy.setHeightForWidth(self.compParam2Label3.sizePolicy().hasHeightForWidth())
         self.compParam2Label3.setSizePolicy(sizePolicy)
         self.compParam2Label3.setText("")
-        self.compParam2Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/alpha.png")))
+        self.compParam2Label3.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/alpha.png")))
         self.compParam2Label3.setScaledContents(True)
         self.compParam2Label3.setObjectName("compParam2Label3")
         self.compParamsHLayout3.addWidget(self.compParam2Label3)
@@ -413,7 +413,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.compParamsHLayout3.addWidget(self.compParam2LineEdit3)
         self.compParam3Label3 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam3Label3.setText("")
-        self.compParam3Label3.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/beta.png")))
+        self.compParam3Label3.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/beta.png")))
         self.compParam3Label3.setObjectName("compParam3Label3")
         self.compParamsHLayout3.addWidget(self.compParam3Label3)
         self.compParam3LineEdit3 = QtWidgets.QLineEdit(self.comparisonGroupBox)
@@ -429,7 +429,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.compParam1Label4 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam1Label4.setText("")
         self.compParam1Label4.setTextFormat(QtCore.Qt.AutoText)
-        self.compParam1Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/rho.png")))
+        self.compParam1Label4.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/rho.png")))
         self.compParam1Label4.setScaledContents(True)
         self.compParam1Label4.setWordWrap(False)
         self.compParam1Label4.setIndent(-1)
@@ -446,7 +446,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         sizePolicy.setHeightForWidth(self.compParam2Label4.sizePolicy().hasHeightForWidth())
         self.compParam2Label4.setSizePolicy(sizePolicy)
         self.compParam2Label4.setText("")
-        self.compParam2Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/gamma.png")))
+        self.compParam2Label4.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/gamma.png")))
         self.compParam2Label4.setScaledContents(True)
         self.compParam2Label4.setObjectName("compParam2Label4")
         self.compParamsHLayout4.addWidget(self.compParam2Label4)
@@ -455,7 +455,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.compParamsHLayout4.addWidget(self.compParam2LineEdit4)
         self.compParam3Label4 = QtWidgets.QLabel(self.comparisonGroupBox)
         self.compParam3Label4.setText("")
-        self.compParam3Label4.setPixmap(QtGui.QPixmap(solve_path("assets/parameters/lambda.png")))
+        self.compParam3Label4.setPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/parameters/lambda.png")))
         self.compParam3Label4.setObjectName("compParam3Label4")
         self.compParamsHLayout4.addWidget(self.compParam3Label4)
         self.compParam3LineEdit4 = QtWidgets.QLineEdit(self.comparisonGroupBox)
@@ -508,7 +508,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.elementHelpButton = QtWidgets.QPushButton(self.samplingGroupBox)
         self.elementHelpButton.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("assets/icons/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/icons/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.elementHelpButton.setIcon(icon2)
         self.elementHelpButton.setObjectName("elementHelpButton")
         self.elementHLayout.addWidget(self.elementHelpButton)
@@ -517,7 +517,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.jitterHLayout.setObjectName("jitterHLayout")
         self.gammaLabel = QtWidgets.QLabel(self.samplingGroupBox)
         self.gammaLabel.setText("")
-        self.gammaLabel.setPixmap(QtGui.QPixmap("assets/parameters/gamma.png"))
+        self.gammaLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/gamma.png"))
         self.gammaLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.gammaLabel.setObjectName("gammaLabel")
         self.jitterHLayout.addWidget(self.gammaLabel)
@@ -531,7 +531,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.epsilonLabel = QtWidgets.QLabel(self.samplingGroupBox)
         self.epsilonLabel.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.epsilonLabel.setText("")
-        self.epsilonLabel.setPixmap(QtGui.QPixmap("assets/parameters/epsilon.png"))
+        self.epsilonLabel.setPixmap(QtGui.QPixmap("Desarrollo/ReDS/assets/parameters/epsilon.png"))
         self.epsilonLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.epsilonLabel.setWordWrap(False)
         self.epsilonLabel.setObjectName("epsilonLabel")
@@ -598,7 +598,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.saveAsPushButton = QtWidgets.QPushButton(self.runGroupBox)
         self.saveAsPushButton.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(solve_path("assets/icons/save.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/save.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.saveAsPushButton.setIcon(icon1)
         self.saveAsPushButton.setObjectName("saveAsPushButton")
         self.saveAsHLayout.addWidget(self.saveAsPushButton)
@@ -613,7 +613,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.startPushButton = QtWidgets.QPushButton(self.runGroupBox)
         self.startPushButton.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(solve_path("assets/icons/run.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/run.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.startPushButton.setIcon(icon2)
         self.startPushButton.setObjectName("startPushButton")
         self.startHLayout.addWidget(self.startPushButton)
@@ -634,7 +634,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.resultPushButton.setAutoFillBackground(False)
         self.resultPushButton.setText("")
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(solve_path("assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.resultPushButton.setIcon(icon3)
         self.resultPushButton.setAutoDefault(False)
         self.resultPushButton.setDefault(False)
@@ -707,7 +707,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.aboutOfAction = QtWidgets.QAction(self)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(solve_path("assets/icons/info.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/info.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.aboutOfAction.setIcon(icon4)
         self.aboutOfAction.setObjectName("aboutOfAction")
         self.reportAction = QtWidgets.QAction(self)
@@ -715,17 +715,17 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.reportAction.setObjectName("reportAction")
         self.mainAction = QtWidgets.QAction(self)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(solve_path("assets/icons/main.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/main.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.mainAction.setIcon(icon5)
         self.mainAction.setObjectName("mainAction")
         self.tuningAction = QtWidgets.QAction(self)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(solve_path("assets/icons/tuning.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/tuning.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tuningAction.setIcon(icon6)
         self.tuningAction.setObjectName("tuningAction")
         self.comparisonAction = QtWidgets.QAction(self)
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(solve_path("assets/icons/comparison.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/comparison.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.comparisonAction.setIcon(icon7)
         self.comparisonAction.setObjectName("comparisonAction")
         self.toolBar.addAction(self.aboutOfAction)
@@ -864,7 +864,7 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         self.max_iter = 1
         self.max_iter_progress = 1
 
-        self.icons_path = 'assets/parameters'
+        self.icons_path = 'Desarrollo/ReDS/assets/parameters'
 
         self.param_type = ['init', 'end', 'list']
         self.params = dict(fast_marching=[['init', 0.0, 0.0], ['end', 0.0, 0.0]])
@@ -1570,13 +1570,13 @@ class UIMainBWindow(QtWidgets.QMainWindow):
         if self.global_variables['view_mode'] == 'normal':
             self.global_variables['view_mode'] = 'report'
             self.set_report_view()
-            icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/seismic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/seismic.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.resultLabel.setText('Realizar experimentos')
 
         else:
             self.global_variables['view_mode'] = 'normal'
             self.set_main_view()
-            icon.addPixmap(QtGui.QPixmap(solve_path("assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon.addPixmap(QtGui.QPixmap(solve_path("Desarrollo/ReDS/assets/icons/report.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.resultLabel.setText('Ver resultados')
 
         self.resultPushButton.setIcon(icon)

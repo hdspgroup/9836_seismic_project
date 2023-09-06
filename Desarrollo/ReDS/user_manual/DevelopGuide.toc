@@ -1,0 +1,13 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Visión General de la Aplicación ReDs}{7}{section.1}%
+\contentsline {section}{\numberline {2}Políticas de diseño}{9}{section.2}%
+\contentsline {section}{\numberline {3}Diagramas UML}{9}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Diagrama de Casos de Uso Aplicación General}{9}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Diagrama de Casos de Uso Módulo RR}{9}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Diagrama de Casos de Uso Módulo RD}{9}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Diagrama de Secuencia Para Carga de Datos}{13}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Diagrama de Secuencia para Guardar Experimento}{13}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Diagrama de Secuencia para Ajuste de Algoritmo}{13}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Diagrama de Secuencia de Inicio de Experimentos}{13}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.8}Diagrama de Secuencia para Ajuste de Parámetros}{13}{subsection.3.8}%
+\contentsline {subsection}{\numberline {3.9}Diagrama de Secuencia para Ajuste de Comparaciones}{15}{subsection.3.9}%
