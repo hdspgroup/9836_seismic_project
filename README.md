@@ -24,7 +24,7 @@ De acuerdo al sistema operativo las anteriores instrucciones se deben cumplir de
 
 Escribir aqui el modo compilador
 
-### ** Notebooks para ejecutar algoritmos de reconstrucción con deep learning**
+### **Notebooks para ejecutar algoritmos de reconstrucción con deep learning**
 En el siguiente [Link](https://github.com/hdspgroup/9836_seismic_project/tree/main/Algorithms/ReconDeepLearning) se presenta un ejemplo con Tensorflow para ejercicios de reconstrucción de datos sísmicos. Lo anterior, permite usar los requerimientos computacionales para el uso de datos masivos en computación de alto rendimiento, computación en paralelo y unidades de procesamiento gráfica. 
 
 # **Datos sísmicos**
