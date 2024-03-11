@@ -42,7 +42,7 @@ There are four available datasets:
 
 # **Análisis de geometrías**
 
-Describri aqui lo de análisis de geometrías
+El análisis de geometrías se presenta con un [notebook](https://github.com/hdspgroup/9836_seismic_project/blob/main/Algorithms/CodesFold/AnalyzeGeometry9836_GenerateGeometries.ipynb) de ejemplo que explora las herramientas y funcionalidades del uso de datos espaciales tales como posición de fuentes y receptores. 
 
 # Licencia
 
